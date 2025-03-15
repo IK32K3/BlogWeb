@@ -1,0 +1,102 @@
+<!-- Modal for adding/editing posts -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="postModalLabel">Thêm bài viết mới</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="postForm">
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="post-title" class="form-label">Tiêu đề</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="post-title"
+                  required
+                />
+              </div>
+  
+              <div class="col-md-6">
+                <label for="post-category" class="form-label">Danh mục</label>
+                <select
+                  id="post-category"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Chọn danh mục</option>
+                  <option value="1">Lập trình web</option>
+                  <option value="2">Cơ sở dữ liệu</option>
+                  <option value="3">JavaScript</option>
+                  <option value="4">PHP</option>
+                </select>
+              </div>
+  
+              <div class="col-md-6">
+                <label for="post-language" class="form-label">Ngôn ngữ</label>
+                <select
+                  id="post-language"
+                  class="form-select"
+                  required
+                >
+                  <option value="1">Tiếng Việt</option>
+                  <option value="2">English</option>
+                  <option value="3">Français</option>
+                </select>
+              </div>
+              
+              <div class="col-12">
+                <label for="post-slug" class="form-label">Slug</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="post-slug"
+                  required
+                />
+              </div>
+  
+              <div class="col-12">
+                <label for="post-description" class="form-label">Mô tả ngắn</label>
+                <textarea
+                  id="post-description"
+                  rows="3"
+                  class="form-control"
+                  required
+                ></textarea>
+                <div class="form-text">Mô tả ngắn về bài viết (hiển thị ở trang danh sách)</div>
+              </div>
+  
+              <div class="col-12">
+                <label for="post-content" class="form-label">Nội dung</label>
+                <textarea
+                  id="post-content"
+                  rows="10"
+                  class="form-control"
+                  required
+                ></textarea>
+              </div>
+  
+              <div class="col-12 d-flex justify-content-end gap-2 mt-4">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Hủy bỏ
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="savePostButton"
+                >
+                  Tạo bài viết
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

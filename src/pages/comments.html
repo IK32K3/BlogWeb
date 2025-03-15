@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý bình luận - BlogWeb Admin</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+  </head>
+  <body>
+    <!-- Include Sidebar -->
+    <div include-html="../partials/sidebar.html"></div>
+
+    <div class="main-content">
+      <!-- Include Header -->
+      <div include-html="../partials/header.html"></div>
+
+      <!-- Main content -->
+      <div class="container-fluid p-4">
+        <!-- Page header -->
+        <div class="mb-4">
+          <h1 class="fs-2 fw-bold">Quản lý bình luận</h1>
+        </div>
+
+        <!-- Filter and search -->
+        <div class="row g-4 mb-4">
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <label for="post" class="form-label">Bài viết</label>
+                <select id="post" class="form-select">
+                  <option value="">Tất cả bài viết</option>
+                  <option value="1">Giới thiệu về Tailwind CSS</option>
+                  <option value="2">Hướng dẫn sử dụng MySQL</option>
+                  <option value="3">JavaScript cơ bản cho người mới bắt đầu</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <label for="date-range" class="form-label">Thời gian</label>
+                <select id="date-range" class="form-select">
+                  <option value="all">Tất cả thời gian</option>
+                  <option value="today">Hôm nay</option>
+                  <option value="week">Tuần này</option>
+                  <option value="month">Tháng này</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <label for="search" class="form-label">Tìm kiếm</label>
+                <div class="input-group">
+                  <input
+                    type="text"
+                    id="search"
+                    class="form-control"
+                    placeholder="Tìm kiếm bình luận..."
+                  />
+                  <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments list -->
+        <div class="row g-4">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex">
+                    <img
+                      class="rounded-circle"
+                      src="https://ui-avatars.com/api/?name=User1&background=0D8ABC&color=fff"
+                      alt="User"
+                      width="40"
+                      height="40"
+                    />
+                    <div class="ms-3">
+                      <p class="mb-0 fw-medium">user123</p>
+                      <p class="text-muted small mb-0">
+                        Đã bình luận về <a href="#" class="link-primary">Giới thiệu về Tailwind CSS</a>
+                      </p>
+                    </div>
+                  </div>
+                  <p class="text-muted small">15/03/2025</p>
+                </div>
+                <div class="mt-2">
+                  <p class="text-secondary">Bài viết rất hay và bổ ích. Cảm ơn tác giả!</p>
+                </div>
+                <div class="mt-2 d-flex justify-content-end">
+                  <button 
+                    class="btn btn-action btn-outline-primary me-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#commentModal"
+                    data-comment-id="1"
+                    data-comment-user="user123"
+                    data-comment-post="Giới thiệu về Tailwind CSS"
+                    data-comment-content="Bài viết rất hay và bổ ích. Cảm ơn tác giả!"
+                    data-comment-date="15/03/2025"
+                  >
+                    <i class="fas fa-edit me-1"></i> Chỉnh sửa
+                  </button>
+                  <button class="btn btn-action btn-outline-success me-2">
+                    <i class="fas fa-check me-1"></i> Phê duyệt
+                  </button>
+                  <button class="btn btn-action btn-outline-danger">
+                    <i class="fas fa-trash me-1"></i> Xóa
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex">
+                    <img
+                      class="rounded-circle"
+                      src="https://ui-avatars.com/api/?name=User2&background=4CAF50&color=fff"
+                      alt="User"
+                      width="40"
+                      height="40"
+                    />
+                    <div class="ms-3">
+                      <p class="mb-0 fw-medium">reader456</p>
+                      <p class="text-muted small mb-0">
+                        Đã bình luận về <a href="#" class="link-primary">Hướng dẫn sử dụng MySQL</a>
+                      </p>
+                    </div>
+                  </div>
+                  <p class="text-muted small">14/03/2025</p>
+                </div>
+                <div class="mt-2">
+                  <p class="text-secondary">Tôi đã làm theo hướng dẫn nhưng gặp lỗi khi cài đặt. Liệu có thể giúp tôi không?</p>
+                </div>
+                <div class="mt-2 d-flex justify-content-end">
+                  <button class="btn btn-action btn-outline-primary me-2">
+                    <i class="fas fa-edit me-1"></i> Chỉnh sửa
+                  </button>
+                  <button class="btn btn-action btn-outline-success me-2">
+                    <i class="fas fa-check me-1"></i> Phê duyệt
+                  </button>
+                  <button class="btn btn-action btn-outline-danger">
+                    <i class="fas fa-trash me-1"></i> Xóa
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex">
+                    <img
+                      class="rounded-circle"
+                      src="https://ui-avatars.com/api/?name=User3&background=FF9800&color=fff"
+                      alt="User"
+                      width="40"
+                      height="40"
+                    />
+                    <div class="ms-3">
+                      <p class="mb-0 fw-medium">coder789</p>
+                      <p class="text-muted small mb-0">
+                        Đã bình luận về <a href="#" class="link-primary">JavaScript cơ bản cho người mới bắt đầu</a>
+                      </p>
+                    </div>
+                  </div>
+                  <p class="text-muted small">13/03/2025</p>
+                </div>
+                <div class="mt-2">
+                  <p class="text-secondary">Cảm ơn vì bài viết hữu ích. Tôi gặp khó khăn với phần async/await, bạn có thể viết thêm về nó không?</p>
+                </div>
+                <div class="mt-2 d-flex justify-content-end">
+                  <button class="btn btn-action btn-outline-primary me-2">
+                    <i class="fas fa-edit me-1"></i> Chỉnh sửa
+                  </button>
+                  <button class="btn btn-action btn-outline-success me-2">
+                    <i class="fas fa-check me-1"></i> Phê duyệt
+                  </button>
+                  <button class="btn btn-action btn-outline-danger">
+                    <i class="fas fa-trash me-1"></i> Xóa
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+          <div class="text-muted small">
+            Hiển thị <span class="fw-medium">1</span> đến <span class="fw-medium">3</span> của <span class="fw-medium">12</span> bình luận
+          </div>
+          <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm">
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Previous">
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+              </li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">4</a></li>
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Include Footer -->
+      <div include-html="../partials/footer.html"></div>
+    </div>
+
+    <!-- Include Comment Modal -->
+    <div include-html="../partials/modals/comment-modal.html"></div>
+
+    <!-- HTML Include Script -->
+    <script>
+      function includeHTML() {
+        const elements = document.getElementsByTagName("*");
+        for (let i = 0; i < elements.length; i++) {
+          const element = elements[i];
+          const file = element.getAttribute("include-html");
+          if (file) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+              if (this.readyState == 4) {
+                if (this.status == 200) {element.innerHTML = this.responseText;}
+                if (this.status == 404) {element.innerHTML = "Page not found.";}
+                element.removeAttribute("include-html");
+                includeHTML();
+              }
+            }
+            xhttp.open("GET", file, true);
+            xhttp.send();
+            return;
+          }
+        }
+      }
+      
+      // Initialize include HTML
+      document.addEventListener('DOMContentLoaded', includeHTML);
+    </script>
+  </body>
+</html>

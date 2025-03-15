@@ -1,0 +1,59 @@
+<!-- Modal for editing comment -->
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="commentModalLabel">Chỉnh sửa bình luận</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="commentForm">
+            <div class="mb-3">
+              <div class="d-flex align-items-center">
+                <img
+                  id="comment-user-avatar"
+                  class="rounded-circle"
+                  src="https://ui-avatars.com/api/?name=User1&background=0D8ABC&color=fff"
+                  alt="User"
+                  width="32"
+                  height="32"
+                />
+                <span id="comment-user" class="ms-2 fw-medium">user123</span>
+              </div>
+              <div class="mt-2">
+                <span class="text-muted small">
+                  Bình luận về <span id="comment-post" class="fw-medium">Giới thiệu về Tailwind CSS</span>
+                </span>
+              </div>
+            </div>
+  
+            <div class="mb-3">
+              <label for="comment-content" class="form-label">Nội dung bình luận</label>
+              <textarea
+                id="comment-content"
+                class="form-control"
+                rows="4"
+                required
+              >Bài viết rất hay và bổ ích. Cảm ơn tác giả!</textarea>
+            </div>
+  
+            <div class="d-flex justify-content-end gap-2">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Hủy bỏ
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+              >
+                Cập nhật
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
