@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-2 flex justify-between items-center">
+            <a href="HomePage.html" class="text-2xl font-bold text-indigo-800">MyBlog</a>
+            <div class="flex space-x-4 ml-auto">
+                <a href="CategoryPage.html" class="text-gray-700 hover:text-gray-900">Blogs</a>
+                <a href="aboutus.html" class="text-gray-700 hover:text-gray-900">Abouts</a>
+                <a href="contact_us.html" class="text-gray-700 hover:text-gray-900">Contact</a>
+                <a href="login.html" class="text-gray-700 hover:text-gray-900"><i class="fas fa-pen"></i> Write</a>
+                <!-- Profile Icon -->
+            <div class="flex space-x-4 items-center ml-4">
+                <!-- Language Switcher -->
+                <!-- <select id="language-switcher" class="text-gray-700 border rounded-lg focus:outline-none">
+                    <option value="en">English</option>
+                    <option value="vi">Tiếng Việt</option>
+                    <option value="fr">Français</option>
+                    Add more languages as needed
+                </select> -->
+                <!-- Profile Icon -->
+                <a href="login.html" class="text-gray-700 hover:text-gray-900"><i class="fas fa-user"></i> Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Us Section -->
+    <section class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-4">About Us</h1>
+        <p class="text-gray-700 mb-8">Welcome to MyBlog! We are dedicated to providing you with the best content on various topics. Our team of writers and editors work tirelessly to bring you the latest news, tips, and insights.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <img src="https://via.placeholder.com/400x200" alt="Team Member" class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <h3 class="text-xl font-bold mb-2">John Doe</h3>
+                    <p class="text-gray-700 mb-4">Editor-in-Chief</p>
+                    <p class="text-gray-500">John is the driving force behind MyBlog. With over 10 years of experience in the industry, he ensures that all content meets the highest standards.</p>
+                </div>
+            </div>
+            <!-- Repeat for more team members -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl font-bold mb-4">Get The Best Blog Stories Into Your Inbox!</h2>
+            <p class="mb-4">Sign up for free and be the first to get notified about new posts.</p>
+            <form class="flex justify-center mb-4">
+                <input type="email" placeholder="Your email address" class="px-4 py-2 rounded-l-lg focus:outline-none">
+                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-r-lg hover:bg-red-600">Subscribe</button>
+            </form>
+            <div class="flex justify-center space-x-4 mb-4">
+                <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
+                <a href="#" class="text-gray-400 hover:text-white">Instagram</a>
+                <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
+                <a href="#" class="text-gray-400 hover:text-white">YouTube</a>
+            </div>
+            <p class="text-gray-400">&copy; 2023 WebBlog. All rights reserved.</p>
+        </div>
+        <button id="back-to-top" class="fixed bottom-4 right-4 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600" onclick="scrollToTop()">&#8679;</button>
+    </footer>
+
+    <script>
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.addEventListener('scroll', () => {
+            const backToTopButton = document.getElementById('back-to-top');
+            if (window.scrollY > 200) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

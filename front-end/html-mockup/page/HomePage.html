@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="/webblog/front-end/html-mockup/js/components.js" rel="stylesheet">
+    <script src="/webblog/front-end/html-mockup/js/components.js" defer></script>
+    <link rel="stylesheet" href="/webblog/front-end/html-mockup/css/style.css">   
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-2 flex justify-between items-center">
+            <a href="HomePage.html" class="text-2xl font-bold text-indigo-800">MyBlog</a>
+            <div class="flex space-x-4 ml-auto">
+                <a href="CategoryPage.html" class="text-gray-700 hover:text-gray-900">Blogs</a>
+                <a href="aboutus.html" class="text-gray-700 hover:text-gray-900">Abouts</a>
+                <a href="contact_us.html" class="text-gray-700 hover:text-gray-900">Contact</a>
+                <a href="write-post.html" class="text-gray-700 hover:text-gray-900"><i class="fas fa-pen"></i> Write</a>
+            </div>
+            <div class="relative ml-2">
+                <button onclick="toggleDropdown()" class="text-gray-700 hover:text-gray-900"><i class="fas fa-user"></i> Profile</button>
+                <div id="dropdown" class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg hidden " >
+                    <a href="profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Library</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Stories</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Stats</a>
+                    <div class="border-t my-2"></div>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Refine recommendations</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Manage publications</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Help</a>
+                    <div class="border-t my-2"></div>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Become a Medium member</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Create a Mastodon account</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Apply for author verification</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Apply to the Partner Program</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Gift a membership</a>
+                    <div class="border-t my-2"></div>
+                    <a href="login.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">log out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative bg-blue-500 text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <div class="carousel">
+                <div class="carousel-item active">
+                    <img src="https://via.placeholder.com/1200x600" alt="Hero Image" class="w-full h-96 object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center">
+                        <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mb-2">Lifestyle</span>
+                        <h1 class="text-4xl font-bold mb-4">What Are Your Tips for Hosting an Easy Birthday Party?</h1>
+                        <div class="flex items-center space-x-4">
+                            <img src="https://via.placeholder.com/40" alt="Author" class="w-10 h-10 rounded-full">
+                            <div class="text-sm">
+                                <p>David Smith</p>
+                                <p>February 10, 2024</p>
+                            </div>
+                            <p>15 Min Read</p>
+                            <p>2 Comments</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add more carousel items as needed -->
+            </div>
+            <button class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white text-blue-500 px-4 py-2 rounded-full" onclick="prevSlide()">&#10094;</button>
+            <button class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white text-blue-500 px-4 py-2 rounded-full" onclick="nextSlide()">&#10095;</button>
+        </div>
+    </section>
+
+    <!-- Posts Section -->
+    <section class="container mx-auto px-4 py-8 flex">
+        <div class="w-full lg:w-3/4">
+            <h2 class="text-2xl font-bold mb-4">Latest Posts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Post Card -->
+                <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                    <img src="https://via.placeholder.com/400x200" alt="Post Image" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mb-2 tag-button">Food</span>
+                        <h3 class="text-xl font-bold mb-2">What Are Your Tips for Hosting an Easy Birthday Party?</h3>
+                        <p class="text-gray-700 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque nisl eros, pulvinar facilisis justo mollis...</p>
+                        <a href="#" class="text-blue-500 hover:underline">Read More</a>
+                    </div>
+                </div>
+                <!-- Repeat Post Card for more posts -->
+                <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                    <img src="https://via.placeholder.com/400x200" alt="Post Image" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mb-2">Travel</span>
+                        <h3 class="text-xl font-bold mb-2">Exploring the Beauty of Nature</h3>
+                        <p class="text-gray-700 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque nisl eros, pulvinar facilisis justo mollis...</p>
+                        <a href="#" class="text-blue-500 hover:underline">Read More</a>
+                    </div>
+                </div>
+                <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                    <img src="https://via.placeholder.com/400x200" alt="Post Image" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mb-2">Lifestyle</span>
+                        <h3 class="text-xl font-bold mb-2">Creating a Cozy Home Environment</h3>
+                        <p class="text-gray-700 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque nisl eros, pulvinar facilisis justo mollis...</p>
+                        <a href="#" class="text-blue-500 hover:underline">Read More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Sidebar -->
+        <aside class="w-full lg:w-1/4 lg:pl-8">
+            <div class="bg-white shadow-md rounded-lg p-4 mb-6">
+                <h3 class="text-xl font-bold mb-4">Latest Posts</h3>
+                <div class="flex items-center mb-4">
+                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">1</span>
+                    <img src="https://via.placeholder.com/40" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">5 Things I Wish I Knew Before Traveling to...</p>
+                        <p class="text-gray-600 text-sm">January 15, 2022</p>
+                    </div>
+                </div>
+                <div class="flex items-center mb-4">
+                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">2</span>
+                    <img src="https://via.placeholder.com/40" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">Everything you need to know about visiting...</p>
+                        <p class="text-gray-600 text-sm">January 15, 2022</p>
+                    </div>
+                </div>
+                <div class="flex items-center mb-4">
+                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">3</span>
+                    <img src="https://via.placeholder.com/40" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">How to spend interesting vacation...</p>
+                        <p class="text-gray-600 text-sm">January 15, 2022</p>
+                    </div>
+                </div>
+                <div class="flex items-center mb-4">
+                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">4</span>
+                    <img src="https://via.placeholder.com/40" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">10 Best and Most Beautiful Places to...</p>
+                        <p class="text-gray-600 text-sm">January 15, 2022</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white shadow-md rounded-lg p-4 mb-6">
+                <h3 class="text-xl font-bold mb-4">Recommended Topics</h3>
+                <div class="flex flex-wrap gap-2">
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Programming</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Relationships</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Data Science</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Self Improvement</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Technology</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Politics</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Cryptocurrency</a>
+                </div>
+                <a href="#" class="text-blue-500 hover:underline mt-4 block">See more topics</a>
+            </div>
+            <div class="bg-white shadow-md rounded-lg p-4">
+                <h3 class="text-xl font-bold mb-4">Who to Follow</h3>
+                <div class="flex items-center mb-4">
+                    <img src="https://via.placeholder.com/40" alt="Profile Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">letters from rosie</p>
+                        <p class="text-gray-600 text-sm">i love my solitude but i was meant to be a lover. 🌿...</p>
+                    </div>
+                    <button class="ml-auto bg-blue-500 text-white px-4 py-2 rounded-full">Follow</button>
+                </div>
+                <div class="flex items-center mb-4">
+                    <img src="https://via.placeholder.com/40" alt="Profile Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">Android Developers</p>
+                        <p class="text-gray-600 text-sm">Articles on modern tools and resources to help you build...</p>
+                    </div>
+                    <button class="ml-auto bg-blue-500 text-white px-4 py-2 rounded-full">Follow</button>
+                </div>
+                <div class="flex items-center">
+                    <img src="https://via.placeholder.com/40" alt="Profile Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">Michal Malewicz</p>
+                        <p class="text-gray-600 text-sm">One design and one lifestyle...</p>
+                    </div>
+                    <button class="ml-auto bg-blue-500 text-white px-4 py-2 rounded-full">Follow</button>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-item');
+
+        function showSlide(index) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (index + slides.length) + slides.length % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const href = this.getAttribute('href');
+                document.body.classList.add('fade-leave-active');
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500);
+            });
+        });
+
+        window.addEventListener('load', () => {
+            document.body.classList.add('fade-enter-active');
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.addEventListener('scroll', () => {
+            const backToTopButton = document.getElementById('back-to-top');
+            if (window.scrollY > 200) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+        // Change color of "Food" button when clicked
+        document.querySelectorAll('.tag-button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active-tag');
+            });
+        });
+    </script>
+</body>
+</html>

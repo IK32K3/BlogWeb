@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write Post</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-2 flex justify-between items-center">
+            <a href="HomePage.html" class="text-2xl font-bold text-indigo-800 space-x-0 mr-2">MyBlog </a>
+            <span class="text-gray-400 "> Draw in ...</span>
+            <div class="flex space-x-4 ml-auto ">
+                <!-- <a href="CategoryPage.html" class="text-gray-700 hover:text-gray-900">Blogs</a> -->
+                <!-- <a href="aboutus.html" class="text-gray-700 hover:text-gray-900">Abouts</a> -->
+                <!-- <a href="contact_us.html" class="text-gray-700 hover:text-gray-900">Contact</a> -->
+                <!-- <a href="write-post.html" class="text-gray-700 hover:text-gray-900"><i class="fas fa-pen"></i> Write</a> -->
+                 <!-- Profile Icon  -->
+            <div class="flex space-x-4 items-center ml-4">
+                <!-- Language Switcher -->
+                <select id="language-switcher" class="text-gray-700 border rounded-lg focus:outline-none">
+                    <option value="en">English</option>
+                    <option value="vi">Tiếng Việt</option>
+                    <option value="fr">Français</option>
+                    <!-- Add more languages as needed -->
+                </select>
+                <!-- Profile Icon -->
+                <a href="profile.html" class="text-gray-700 hover:text-gray-900"><i class="fas fa-user"></i> Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Write Post Section -->
+    <section class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-4">Write a New Post</h1>
+        <form class="bg-white shadow-md rounded-lg p-6">
+            <div class="mb-4">
+                <label for="title" class="block text-gray-700 font-bold mb-2">Title</label>
+                <input type="text" id="title" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter post title">
+            </div>
+            <div class="mb-4">
+                <label for="subtitle" class="block text-gray-700 font-bold mb-2">Subtitle</label>
+                <input type="text" id="subtitle" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Add a subtitle...">
+            </div>
+            <div class="mb-4">
+                <label for="tags" class="block text-gray-700 font-bold mb-2">Tags</label>
+                <input type="text" id="tags" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Add tags...">
+            </div>
+            <div class="mb-4">
+                <label for="content" class="block text-gray-700 font-bold mb-2">Content</label>
+                <textarea id="content" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Start writing..."></textarea>
+            </div>
+            <div class="flex justify-end space-x-4">
+                <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Save Draft</button>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Submit for Review</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl font-bold mb-4">Get The Best Blog Stories Into Your Inbox!</h2>
+            <p class="mb-4">Sign up for free and be the first to get notified about new posts.</p>
+            <form class="flex justify-center mb-4">
+                <input type="email" placeholder="Your email address" class="px-4 py-2 rounded-l-lg focus:outline-none">
+                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-r-lg hover:bg-red-600">Subscribe</button>
+            </form>
+            <div class="flex justify-center space-x-4 mb-4">
+                <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
+                <a href="#" class="text-gray-400 hover:text-white">Instagram</a>
+                <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
+                <a href="#" class="text-gray-400 hover:text-white">YouTube</a>
+            </div>
+            <p class="text-gray-400">&copy; 2023 WebBlog. All rights reserved.</p>
+        </div>
+        <button id="back-to-top" class="fixed bottom-4 right-4 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600" onclick="scrollToTop()">&#8679;</button>
+    </footer>
+
+    <script>
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.addEventListener('scroll', () => {
+            const backToTopButton = document.getElementById('back-to-top');
+            if (window.scrollY > 100) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+
+        // Initialize CKEditor
+        CKEDITOR.replace('content');
+    </script>
+</body>
+</html>

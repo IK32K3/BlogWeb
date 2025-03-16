@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .category-link:hover {
+            background-color: #000;
+        }
+        .post-image:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
+        .post-title:hover {
+            color: #000;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-2 flex justify-between items-center">
+            <a href="HomePage.html" class="text-2xl font-bold text-indigo-800">MyBlog</a>
+                
+            <div class="flex space-x-4 ml-auto">
+                <a href="CategoryPage.html" class="text-gray-700 hover:text-gray-900">Blogs</a>
+                <a href="aboutus.html" class="text-gray-700 hover:text-gray-900">Abouts</a>
+                <a href="contact_us.html" class="text-gray-700 hover:text-gray-900">Contact</a>
+                <a href="write-post.html" class="text-gray-700 hover:text-gray-900"><i class="fas fa-pen"></i> Write</a>
+                <!-- Profile Icon -->
+            <div class="flex space-x-4 items-center ml-4">
+                <!-- Profile Icon -->
+                <a href="profile.html" class="text-gray-700 hover:text-gray-900"><i class="fas fa-user"></i> Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Category Title and Description -->
+    <section class="container mx-auto px-4 py-8 flex">
+        <div class="w-full lg:w-3/4">
+            <h1 class="text-3xl font-bold mb-4">Category Title</h1>
+            <p class="text-gray-700 mb-4">Category description goes here...</p>
+
+            <!-- Search Bar -->
+            <div class="mb-4">
+                <input type="text" placeholder="Search..." class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <!-- Category Suggestions -->
+            <div class="mb-4 flex flex-wrap gap-2">
+                <a href="#" class="inline-block bg-pink-500 text-white text-xs px-2 py-1 rounded-full hover:bg-black category-link">Lifestyle</a>
+                <a href="#" class="inline-block bg-pink-500 text-white text-xs px-2 py-1 rounded-full hover:bg-black category-link">Travel</a>
+                <a href="#" class="inline-block bg-pink-500 text-white text-xs px-2 py-1 rounded-full hover:bg-black category-link">Food</a>
+                <a href="#" class="inline-block bg-pink-500 text-white text-xs px-2 py-1 rounded-full hover:bg-black category-link">Fashion</a>
+                <a href="#" class="inline-block bg-pink-500 text-white text-xs px-2 py-1 rounded-full hover:bg-black category-link">Interior</a>
+                <a href="#" class="inline-block bg-pink-500 text-white text-xs px-2 py-1 rounded-full hover:bg-black category-link">Art & Design</a>
+            </div>
+
+            <!-- Filter / Sort Options -->
+            <div class="mb-4 flex justify-end">
+                <select class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="all">All</option>
+                    <option value="recent">Most Recent</option>
+                    <option value="popular">Most Popular</option>
+                </select>
+            </div>
+
+            <!-- Featured Post -->
+            <section class="container mx-auto px-4 py-8">
+                <h2 class="text-2xl font-bold mb-4">Featured Post</h2>
+                <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                    <img src="https://via.placeholder.com/400x200" alt="Featured Post Image" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-bold mb-2">Featured Post Title</h3>
+                        <p class="text-gray-700 mb-4">Featured post summary goes here...</p>
+                        <a href="#" class="text-blue-500 hover:underline">Read More</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Related Categories -->
+            <section class="container mx-auto px-4 py-8">
+                <h3 class="text-2xl font-bold mb-4">Related Categories</h3>
+                <ul class="list-disc list-inside">
+                    <li><a href="#" class="text-blue-500 hover:underline">Related Category 1</a></li>
+                    <li><a href="#" class="text-blue-500 hover:underline">Related Category 2</a></li>
+                    <!-- Repeat for more related categories -->
+                </ul>
+            </section>
+
+            <!-- Pagination -->
+            <section class="container mx-auto px-4 py-8">
+                <div class="flex justify-center space-x-4">
+                    <a href="#" class="text-blue-500 hover:underline">&laquo; Previous</a>
+                    <a href="#" class="text-blue-500 hover:underline">1</a>
+                    <a href="#" class="text-blue-500 hover:underline">2</a>
+                    <a href="#" class="text-blue-500 hover:underline">3</a>
+                    <a href="#" class="text-blue-500 hover:underline">Next &raquo;</a>
+                </div>
+            </section>
+        </div>
+        <!-- Sidebar -->
+        <aside class="w-full lg:w-1/4 lg:pl-8">
+            <div class="bg-white shadow-md rounded-lg p-4 mb-6">
+                <h3 class="text-xl font-bold mb-4">Latest Posts</h3>
+                <div class="flex items-center mb-4">
+                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">1</span>
+                    <img src="https://via.placeholder.com/40" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">5 Things I Wish I Knew Before Traveling to...</p>
+                        <p class="text-gray-600 text-sm">January 15, 2022</p>
+                    </div>
+                </div>
+                <div class="flex items-center mb-4">
+                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">2</span>
+                    <img src="https://via.placeholder.com/40" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">Everything you need to know about visiting...</p>
+                        <p class="text-gray-600 text-sm">January 15, 2022</p>
+                    </div>
+                </div>
+                <div class="flex items-center mb-4">
+                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">3</span>
+                    <img src="https://via.placeholder.com/40" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">How to spend interesting vacation...</p>
+                        <p class="text-gray-600 text-sm">January 15, 2022</p>
+                    </div>
+                </div>
+                <div class="flex items-center mb-4">
+                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">4</span>
+                    <img src="https://via.placeholder.com/40" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">10 Best and Most Beautiful Places to...</p>
+                        <p class="text-gray-600 text-sm">January 15, 2022</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white shadow-md rounded-lg p-4 mb-6">
+                <h3 class="text-xl font-bold mb-4">Recommended Topics</h3>
+                <div class="flex flex-wrap gap-2">
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Programming</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Relationships</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Data Science</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Self Improvement</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Technology</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Politics</a>
+                    <a href="#" class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Cryptocurrency</a>
+                </div>
+                <a href="#" class="text-blue-500 hover:underline mt-4 block">See more topics</a>
+            </div>
+            <div class="bg-white shadow-md rounded-lg p-4">
+                <h3 class="text-xl font-bold mb-4">Who to Follow</h3>
+                <div class="flex items-center mb-4">
+                    <img src="https://via.placeholder.com/40" alt="Profile Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">letters from rosie</p>
+                        <p class="text-gray-600 text-sm">i love my solitude but i was meant to be a lover. 🌿...</p>
+                    </div>
+                    <button class="ml-auto bg-blue-500 text-white px-4 py-2 rounded-full">Follow</button>
+                </div>
+                <div class="flex items-center mb-4">
+                    <img src="https://via.placeholder.com/40" alt="Profile Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">Android Developers</p>
+                        <p class="text-gray-600 text-sm">Articles on modern tools and resources to help you build...</p>
+                    </div>
+                    <button class="ml-auto bg-blue-500 text-white px-4 py-2 rounded-full">Follow</button>
+                </div>
+                <div class="flex items-center">
+                    <img src="https://via.placeholder.com/40" alt="Profile Image" class="w-10 h-10 rounded-full mr-4">
+                    <div>
+                        <p class="font-bold">Michal Malewicz</p>
+                        <p class="text-gray-600 text-sm">One design and one lifestyle...</p>
+                    </div>
+                    <button class="ml-auto bg-blue-500 text-white px-4 py-2 rounded-full">Follow</button>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl font-bold mb-4">Get The Best Blog Stories Into Your Inbox!</h2>
+            <p class="mb-4">Sign up for free and be the first to get notified about new posts.</p>
+            <form class="flex justify-center mb-4">
+                <input type="email" placeholder="Your email address" class="px-4 py-2 rounded-l-lg focus:outline-none">
+                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-r-lg hover:bg-red-600">Subscribe</button>
+            </form>
+            <div class="flex justify-center space-x-4 mb-4">
+                <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
+                <a href="#" class="text-gray-400 hover:text-white">Instagram</a>
+                <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
+                <a href="#" class="text-gray-400 hover:text-white">YouTube</a>
+            </div>
+            <p class="text-gray-400">&copy; 2023 WebBlog. All rights reserved.</p>
+        </div>
+        <button id="back-to-top" class="fixed bottom-4 right-4 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600" onclick="scrollToTop()">&#8679;</button>
+    </footer>
+
+    <script>
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.addEventListener('scroll', () => {
+            const backToTopButton = document.getElementById('back-to-top');
+            if (window.scrollY > 200) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
