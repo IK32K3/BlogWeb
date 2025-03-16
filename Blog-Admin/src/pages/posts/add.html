@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add New Post - Blog Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script type="module" src="/src/main.js"></script>
+  <!-- Include a rich text editor like TinyMCE -->
+  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      tinymce.init({
+        selector: '#content',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        height: 400
+      });
+    });
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <div data-inject="/src/components/header.html"></div>
+
+  <!-- Sidebar -->
+  <div data-inject="/src/components/sidebar.html"></div>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Add New Post</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="/src/pages/posts/index.html">Posts</a></li>
+          <li class="breadcrumb-item active">Add New</li>
+        </ol>
+      </nav>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Post Information</h5>
+
+              <form class="row g-3" id="addPostForm" onsubmit="return validateForm('addPostForm')">
+                <div class="col-md-8">
+                  <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                    <div class="invalid-feedback">Please enter a title for the post.</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="slug" class="form-label">Slug</label>
+                    <input type="text" class="form-control" id="slug" name="slug" required>
+                    <div class="invalid-feedback">Please enter a slug for the post.</div>
+                    <small class="text-muted">The slug is the URL-friendly version of the title. It is usually all lowercase and contains only letters, numbers, and hyphens.</small>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="description" class="form-label">Description/Excerpt</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    <div class="invalid-feedback">Please enter a description for the post.</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="content" class="form-label">Content</label>
+                    <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
+                    <div class="invalid-feedback">Please enter content for the post.</div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category_id" required>
+                      <option value="" selected disabled>Select Category</option>
+                      <option value="1">Technology</option>
+                      <option value="2">Travel</option>
+                      <option value="3">Food</option>
+                      <option value="4">Health</option>
+                      <option value="5">Lifestyle</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a category.</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Languages</label>
+                    <div class="card">
+                      <div class="card-body p-3">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="lang_en" name="languages[]" value="1" checked disabled>
+                          <label class="form-check-label" for="lang_en">
+                            English (Original)
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="lang_es" name="languages[]" value="2">
+                          <label class="form-check-label" for="lang_es">
+                            Spanish
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="lang_fr" name="languages[]" value="3">
+                          <label class="form-check-label" for="lang_fr">
+                            French
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="lang_de" name="languages[]" value="4">
+                          <label class="form-check-label" for="lang_de">
+                            German
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="lang_vi" name="languages[]" value="5">
+                          <label class="form-check-label" for="lang_vi">
+                            Vietnamese
+                          </label>
+                        </div>
+                        <div class="small text-muted mt-2">
+                          Select languages for translation. Original content will be saved in English.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="user_id" class="form-label">Author</label>
+                    <select class="form-select" id="user_id" name="user_id" required>
+                      <option value="" selected disabled>Select Author</option>
+                      <option value="1">John Doe</option>
+                      <option value="2">Jane Smith</option>
+                      <option value="3">Mike Johnson</option>
+                      <option value="4">Sarah Williams</option>
+                    </select>
+                    <div class="invalid-feedback">Please select an author.</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" name="status" required>
+                      <option value="draft" selected>Draft</option>
+                      <option value="published">Published</option>
+                      <option value="pending">Pending Review</option>
+                    </select>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label d-block">Featured Image</label>
+                    <div class="input-group mb-3">
+                      <input type="file" class="form-control" id="featured_image" name="featured_image" 
+                             onchange="previewImage(this, 'imagePreview')">
+                      <label class="input-group-text" for="featured_image">Upload</label>
+                    </div>
+                    <img id="imagePreview" class="img-thumbnail mt-2" style="max-height: 200px; display: none;" alt="Preview">
+                  </div>
+                </div>
+
+                <div class="col-12 d-flex justify-content-end gap-2">
+                  <button type="button" class="btn btn-secondary" onclick="window.location.href='/src/pages/posts/index.html'">Cancel</button>
+                  <button type="submit" class="btn btn-primary">Save Draft</button>
+                  <button type="submit" class="btn btn-success" onclick="document.getElementById('status').value='published'">Publish</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div data-inject="/src/components/footer.html"></div>
+</body>
+</html>

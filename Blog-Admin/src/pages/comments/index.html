@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comments - Blog Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <div data-inject="/src/components/header.html"></div>
+
+  <!-- Sidebar -->
+  <div data-inject="/src/components/sidebar.html"></div>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Comments</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+          <li class="breadcrumb-item active">Comments</li>
+        </ol>
+      </nav>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">All Comments</h5>
+              
+              <!-- Filters -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search comments...">
+                    <button class="btn btn-outline-secondary" type="button">
+                      <i class="bi bi-search"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select">
+                    <option selected>All Posts</option>
+                    <option>10 Tips for Better SEO</option>
+                    <option>Getting Started with Bootstrap</option>
+                    <option>Healthy Breakfast Ideas</option>
+                    <option>Top Travel Destinations 2023</option>
+                    <option>Ultimate Guide to Remote Work</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select">
+                    <option selected>All Authors</option>
+                    <option>Lisa Warren</option>
+                    <option>Robert Davis</option>
+                    <option>Emily Johnson</option>
+                    <option>Daniel Brown</option>
+                    <option>Alex Turner</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>
+                        <input type="checkbox" class="form-check-input">
+                      </th>
+                      <th>Author</th>
+                      <th>Comment</th>
+                      <th>In Response To</th>
+                      <th>Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://ui-avatars.com/api/?name=L+W&background=4154f1&color=fff" alt="Lisa Warren" class="rounded-circle me-2" width="32" height="32">
+                          <div>
+                            <div>Lisa Warren</div>
+                            <div class="small text-muted">lisa.warren@example.com</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="comment-excerpt">
+                          This post is exactly what I needed! I've been struggling with Bootstrap for a while, and your clear instructions made it so much easier to understand. Thanks for sharing your knowledge!
+                        </div>
+                      </td>
+                      <td>
+                        <a href="#">Getting Started with Bootstrap</a>
+                      </td>
+                      <td>
+                        <div>30 min ago</div>
+                        <div class="small text-muted">2023-11-06 14:23</div>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/comments/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-success">
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://ui-avatars.com/api/?name=R+D&background=4154f1&color=fff" alt="Robert Davis" class="rounded-circle me-2" width="32" height="32">
+                          <div>
+                            <div>Robert Davis</div>
+                            <div class="small text-muted">robert.davis@example.com</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="comment-excerpt">
+                          Great SEO tips! I implemented #3 and #7 on my own blog and saw immediate improvements in my search rankings. Would you consider doing a follow-up post focused specifically on local SEO strategies?
+                        </div>
+                      </td>
+                      <td>
+                        <a href="#">10 Tips for Better SEO</a>
+                      </td>
+                      <td>
+                        <div>56 min ago</div>
+                        <div class="small text-muted">2023-11-06 13:57</div>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/comments/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-success">
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://ui-avatars.com/api/?name=E+J&background=4154f1&color=fff" alt="Emily Johnson" class="rounded-circle me-2" width="32" height="32">
+                          <div>
+                            <div>Emily Johnson</div>
+                            <div class="small text-muted">emily.johnson@example.com</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="comment-excerpt">
+                          I tried the avocado toast recipe this morning and it was delicious! I added a sprinkle of red pepper flakes for a bit of heat. Looking forward to trying the overnight oats next!
+                        </div>
+                      </td>
+                      <td>
+                        <a href="#">Healthy Breakfast Ideas</a>
+                      </td>
+                      <td>
+                        <div>2 hrs ago</div>
+                        <div class="small text-muted">2023-11-06 12:32</div>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/comments/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-success">
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://ui-avatars.com/api/?name=D+B&background=4154f1&color=fff" alt="Daniel Brown" class="rounded-circle me-2" width="32" height="32">
+                          <div>
+                            <div>Daniel Brown</div>
+                            <div class="small text-muted">daniel.brown@example.com</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="comment-excerpt">
+                          I just returned from Croatia and completely agree with your assessment! The coastal towns are incredible. One place you didn't mention that I'd highly recommend is Rovinj in Istria - absolutely stunning architecture and seafood.
+                        </div>
+                      </td>
+                      <td>
+                        <a href="#">Top Travel Destinations 2023</a>
+                      </td>
+                      <td>
+                        <div>1 day ago</div>
+                        <div class="small text-muted">2023-11-05 09:15</div>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/comments/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-success">
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://ui-avatars.com/api/?name=A+T&background=4154f1&color=fff" alt="Alex Turner" class="rounded-circle me-2" width="32" height="32">
+                          <div>
+                            <div>Alex Turner</div>
+                            <div class="small text-muted">alex.turner@example.com</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="comment-excerpt">
+                          As someone who's been working remotely for 5+ years, I can confirm all these tips are spot on. I'd add that having a dedicated workspace is absolutely crucial - it helps create that mental boundary between "work" and "home" even when they're in the same place.
+                        </div>
+                      </td>
+                      <td>
+                        <a href="#">Ultimate Guide to Remote Work</a>
+                      </td>
+                      <td>
+                        <div>2 days ago</div>
+                        <div class="small text-muted">2023-11-04 16:47</div>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/comments/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-success">
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Pagination -->
+              <nav>
+                <ul class="pagination justify-content-center">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                  </li>
+                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div data-inject="/src/components/footer.html"></div>
+</body>
+</html>

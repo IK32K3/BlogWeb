@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Blog Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <div data-inject="/src/components/header.html"></div>
+
+  <!-- Sidebar -->
+  <div data-inject="/src/components/sidebar.html"></div>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Settings</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+          <li class="breadcrumb-item active">Settings</li>
+        </ol>
+      </nav>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Blog Settings</h5>
+              
+              <!-- Settings Tabs -->
+              <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">
+                    General
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="language-tab" data-bs-toggle="tab" data-bs-target="#language" type="button" role="tab" aria-controls="language" aria-selected="false">
+                    Language
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false">
+                    Comments
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="seo-tab" data-bs-toggle="tab" data-bs-target="#seo" type="button" role="tab" aria-controls="seo" aria-selected="false">
+                    SEO
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">
+                    Security
+                  </button>
+                </li>
+              </ul>
+              
+              <!-- Settings Content -->
+              <div class="tab-content pt-4" id="settingsTabContent">
+                <!-- General Settings -->
+                <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+                  <form class="row g-3">
+                    <div class="col-md-6">
+                      <label for="blogName" class="form-label">Blog Name</label>
+                      <input type="text" class="form-control" id="blogName" value="My Multilingual Blog" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="blogDescription" class="form-label">Blog Description</label>
+                      <input type="text" class="form-control" id="blogDescription" value="A blog about everything in multiple languages">
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <label for="adminEmail" class="form-label">Admin Email</label>
+                      <input type="email" class="form-control" id="adminEmail" value="admin@example.com" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="postsPerPage" class="form-label">Posts Per Page</label>
+                      <input type="number" class="form-control" id="postsPerPage" value="10" min="1" max="50" required>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <label for="dateFormat" class="form-label">Date Format</label>
+                      <select class="form-select" id="dateFormat">
+                        <option value="Y-m-d" selected>2023-11-06 (Y-m-d)</option>
+                        <option value="d/m/Y">06/11/2023 (d/m/Y)</option>
+                        <option value="m/d/Y">11/06/2023 (m/d/Y)</option>
+                        <option value="d.m.Y">06.11.2023 (d.m.Y)</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="timeFormat" class="form-label">Time Format</label>
+                      <select class="form-select" id="timeFormat">
+                        <option value="H:i" selected>14:30 (24-hour)</option>
+                        <option value="h:i A">2:30 PM (12-hour)</option>
+                      </select>
+                    </div>
+                    
+                    <div class="col-12">
+                      <label for="blogLogo" class="form-label">Blog Logo</label>
+                      <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="blogLogo" name="blogLogo" 
+                              onchange="previewImage(this, 'logoPreview')">
+                        <label class="input-group-text" for="blogLogo">Upload</label>
+                      </div>
+                      <div class="d-flex align-items-center mb-2">
+                        <img id="logoPreview" src="/src/assets/img/logo.svg" class="img-thumbnail me-2" style="max-height: 80px;" alt="Logo Preview">
+                        <button type="button" class="btn btn-outline-danger btn-sm">
+                          <i class="bi bi-trash"></i> Remove
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div class="col-12">
+                      <label for="favicon" class="form-label">Favicon</label>
+                      <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="favicon" name="favicon" 
+                              onchange="previewImage(this, 'faviconPreview')">
+                        <label class="input-group-text" for="favicon">Upload</label>
+                      </div>
+                      <div class="d-flex align-items-center mb-2">
+                        <img id="faviconPreview" src="/src/assets/img/logo.svg" class="img-thumbnail me-2" style="max-height: 40px;" alt="Favicon Preview">
+                        <button type="button" class="btn btn-outline-danger btn-sm">
+                          <i class="bi bi-trash"></i> Remove
+                        </button>
+                      </div>
+                      <small class="text-muted">Recommended size: 32x32 pixels</small>
+                    </div>
+                    
+                    <div class="col-12">
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form>
+                </div>
+                
+                <!-- Language Settings -->
+                <div class="tab-pane fade" id="language" role="tabpanel" aria-labelledby="language-tab">
+                  <form class="row g-3">
+                    <div class="col-md-6">
+                      <label for="defaultLanguage" class="form-label">Default Language</label>
+                      <select class="form-select" id="defaultLanguage">
+                        <option value="1" selected>English</option>
+                        <option value="2">Spanish</option>
+                        <option value="3">French</option>
+                        <option value="4">German</option>
+                        <option value="5">Vietnamese</option>
+                      </select>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <label for="showLanguageSwitcher" class="form-label">Language Switcher</label>
+                      <div class="form-check form-switch mt-2">
+                        <input class="form-check-input" type="checkbox" id="showLanguageSwitcher" checked>
+                        <label class="form-check-label" for="showLanguageSwitcher">Show language switcher on frontend</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-12">
+                      <label class="form-label">Available Languages</label>
+                      <div class="table-responsive">
+                        <table class="table table-bordered">
+                          <thead>
+                            <tr>
+                              <th>Language</th>
+                              <th>Locale</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>English</td>
+                              <td>en</td>
+                              <td><span class="badge bg-success">Active</span></td>
+                              <td>
+                                <div class="form-check form-switch">
+                                  <input class="form-check-input" type="checkbox" checked disabled>
+                                  <label class="form-check-label">Default language</label>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Spanish</td>
+                              <td>es</td>
+                              <td><span class="badge bg-success">Active</span></td>
+                              <td>
+                                <div class="form-check form-switch">
+                                  <input class="form-check-input" type="checkbox" checked>
+                                  <label class="form-check-label">Enable</label>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>French</td>
+                              <td>fr</td>
+                              <td><span class="badge bg-success">Active</span></td>
+                              <td>
+                                <div class="form-check form-switch">
+                                  <input class="form-check-input" type="checkbox" checked>
+                                  <label class="form-check-label">Enable</label>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>German</td>
+                              <td>de</td>
+                              <td><span class="badge bg-success">Active</span></td>
+                              <td>
+                                <div class="form-check form-switch">
+                                  <input class="form-check-input" type="checkbox" checked>
+                                  <label class="form-check-label">Enable</label>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Vietnamese</td>
+                              <td>vi</td>
+                              <td><span class="badge bg-success">Active</span></td>
+                              <td>
+                                <div class="form-check form-switch">
+                                  <input class="form-check-input" type="checkbox" checked>
+                                  <label class="form-check-label">Enable</label>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Italian</td>
+                              <td>it</td>
+                              <td><span class="badge bg-danger">Inactive</span></td>
+                              <td>
+                                <div class="form-check form-switch">
+                                  <input class="form-check-input" type="checkbox">
+                                  <label class="form-check-label">Enable</label>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    
+                    <div class="col-12">
+                      <label for="translationBehavior" class="form-label">Translation Behavior</label>
+                      <select class="form-select" id="translationBehavior">
+                        <option value="show_default" selected>Show default language content if translation not available</option>
+                        <option value="hide_content">Hide content when translation not available</option>
+                        <option value="show_notice">Show untranslated notice when translation not available</option>
+                      </select>
+                    </div>
+                    
+                    <div class="col-12">
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form>
+                </div>
+                
+                <!-- Comments Settings -->
+                <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+                  <form class="row g-3">
+                    <div class="col-md-6">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="enableComments" checked>
+                        <label class="form-check-label" for="enableComments">Enable comments on new posts</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="moderateComments" checked>
+                        <label class="form-check-label" for="moderateComments">Comments must be manually approved</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="commentNotification" checked>
+                        <label class="form-check-label" for="commentNotification">Email notification for new comments</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="allowNested" checked>
+                        <label class="form-check-label" for="allowNested">Allow nested comments (replies)</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <label for="closeComments" class="form-label">Automatically close comments</label>
+                      <select class="form-select" id="closeComments">
+                        <option value="never" selected>Never</option>
+                        <option value="30">After 30 days</option>
+                        <option value="60">After 60 days</option>
+                        <option value="90">After 90 days</option>
+                      </select>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <label for="commentOrder" class="form-label">Comment Display Order</label>
+                      <select class="form-select" id="commentOrder">
+                        <option value="newest" selected>Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                      </select>
+                    </div>
+                    
+                    <div class="col-12">
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form>
+                </div>
+                
+                <!-- SEO Settings -->
+                <div class="tab-pane fade" id="seo" role="tabpanel" aria-labelledby="seo-tab">
+                  <form class="row g-3">
+                    <div class="col-md-6">
+                      <label for="metaTitle" class="form-label">Default Meta Title</label>
+                      <input type="text" class="form-control" id="metaTitle" value="My Multilingual Blog - Share Knowledge in Multiple Languages">
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <label for="metaDescription" class="form-label">Default Meta Description</label>
+                      <textarea class="form-control" id="metaDescription" rows="3">A blog about technology, travel, food, health, and lifestyle in multiple languages including English, Spanish, French, German, and Vietnamese.</textarea>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <label for="metaKeywords" class="form-label">Default Meta Keywords</label>
+                      <input type="text" class="form-control" id="metaKeywords" value="blog, multilingual, technology, travel, food, health, lifestyle">
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <label for="robotsTxt" class="form-label">Robots.txt Content</label>
+                      <textarea class="form-control" id="robotsTxt" rows="3">User-agent: *
+Allow: /
+Disallow: /admin/
+Sitemap: https://example.com/sitemap.xml</textarea>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="generateSitemap" checked>
+                        <label class="form-check-label" for="generateSitemap">Automatically generate sitemap</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="canonicalUrls" checked>
+                        <label class="form-check-label" for="canonicalUrls">Add canonical URLs</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-12">
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form>
+                </div>
+                
+                <!-- Security Settings -->
+                <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+                  <form class="row g-3">
+                    <div class="col-md-6">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="enableCaptcha" checked>
+                        <label class="form-check-label" for="enableCaptcha">Enable CAPTCHA on forms</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="loginLimitAttempts" checked>
+                        <label class="form-check-label" for="loginLimitAttempts">Limit login attempts</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <label for="maxLoginAttempts" class="form-label">Max Login Attempts</label>
+                      <input type="number" class="form-control" id="maxLoginAttempts" value="5" min="1" max="20">
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <label for="lockoutTime" class="form-label">Lockout Time (minutes)</label>
+                      <input type="number" class="form-control" id="lockoutTime" value="30" min="1" max="1440">
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="forceHttps" checked>
+                        <label class="form-check-label" for="forceHttps">Force HTTPS</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="enableTwoFactor">
+                        <label class="form-check-label" for="enableTwoFactor">Enable Two-Factor Authentication</label>
+                      </div>
+                    </div>
+                    
+                    <div class="col-12">
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div data-inject="/src/components/footer.html"></div>
+</body>
+</html>
