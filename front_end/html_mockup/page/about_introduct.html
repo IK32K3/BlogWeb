@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/front_end/html_mockup/js/loadComponents.js">
+    <script src="/front_end/html_mockup/js/loadComponents.js" defer></script>
+    <script src="/front_end/html_mockup/js/main.js" defer></script>
 </head>
 <body class="bg-gray-100">
     <!-- Navigation Bar -->
     <nav class="bg-white shadow-md">
         <div class="container mx-auto px-4 py-2 flex justify-between items-center">
             <a href="HomePage.html" class="text-2xl font-bold text-indigo-800">MyBlog</a>
-            <div class="flex space-x-4 ml-auto">
-                <a href="CategoryPage.html" class="text-gray-700 hover:text-gray-900">Blogs</a>
+            <div class="flex space-x-4 ml-auto">   
                 <a href="aboutus.html" class="text-gray-700 hover:text-gray-900">Abouts</a>
-                <a href="contact_us.html" class="text-gray-700 hover:text-gray-900">Contact</a>
-                <a href="login.html" class="text-gray-700 hover:text-gray-900"><i class="fas fa-pen"></i> Write</a>
                 <!-- Profile Icon -->
             <div class="flex space-x-4 items-center ml-4">
                 <!-- Language Switcher -->
@@ -49,7 +49,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
+     <footer class="bg-gray-800 text-white py-8">
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-2xl font-bold mb-4">Get The Best Blog Stories Into Your Inbox!</h2>
             <p class="mb-4">Sign up for free and be the first to get notified about new posts.</p>
@@ -65,22 +65,7 @@
             </div>
             <p class="text-gray-400">&copy; 2023 WebBlog. All rights reserved.</p>
         </div>
-        <button id="back-to-top" class="fixed bottom-4 right-4 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600" onclick="scrollToTop()">&#8679;</button>
-    </footer>
-
-    <script>
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        window.addEventListener('scroll', () => {
-            const backToTopButton = document.getElementById('back-to-top');
-            if (window.scrollY > 200) {
-                backToTopButton.classList.remove('hidden');
-            } else {
-                backToTopButton.classList.add('hidden');
-            }
-        });
-    </script>
+    </footer> 
+    <button id="back-to-top" class="fixed bottom-4 right-4 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 hidden" onclick="scrollToTop()">&#8679;</button>
 </body>
 </html>

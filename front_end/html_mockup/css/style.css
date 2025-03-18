@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+.active-tag {
+    background-color: #1d4ed8 !important; /* Tailwind blue-700 */
+}
+body, html {
+    height: 100%;
+    margin: 0;
+}
+.content {
+    min-height: calc(100vh - 64px); /* Adjust based on header and footer height */
+}
+.hidden {
+    display: none;
+}
+
+#dropdown {
+    z-index: 1000; /* Ensure the dropdown is above other content */
+}
+.relative {
+    position: relative;
+}
+
+/* Add styles for search results */
+#search-results {
+    max-height: 200px; /* Adjust as needed */
+    overflow-y: auto;
+}
