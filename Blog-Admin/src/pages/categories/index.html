@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories - Blog Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <div data-inject="/src/components/header.html"></div>
+
+  <!-- Sidebar -->
+  <div data-inject="/src/components/sidebar.html"></div>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Categories</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+          <li class="breadcrumb-item active">Categories</li>
+        </ol>
+      </nav>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <!-- Categories List -->
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title">All Categories</h5>
+                <a href="/src/pages/categories/add.html" class="btn btn-primary">
+                  <i class="bi bi-plus-circle"></i> Add New Category
+                </a>
+              </div>
+              
+              <!-- Filters -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search categories...">
+                    <button class="btn btn-outline-secondary" type="button">
+                      <i class="bi bi-search"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <select class="form-select">
+                    <option selected>All Languages</option>
+                    <option>English</option>
+                    <option>Spanish</option>
+                    <option>French</option>
+                    <option>German</option>
+                    <option>Vietnamese</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>
+                        <input type="checkbox" class="form-check-input">
+                      </th>
+                      <th>Name</th>
+                      <th>Slug</th>
+                      <th>Translations</th>
+                      <th>Post Count</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Technology</td>
+                      <td>technology</td>
+                      <td>
+                        <span class="badge bg-success">English</span>
+                        <span class="badge bg-primary">French</span>
+                        <span class="badge bg-primary">German</span>
+                      </td>
+                      <td>32</td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/categories/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Travel</td>
+                      <td>travel</td>
+                      <td>
+                        <span class="badge bg-success">English</span>
+                        <span class="badge bg-primary">Spanish</span>
+                      </td>
+                      <td>28</td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/categories/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Food</td>
+                      <td>food</td>
+                      <td>
+                        <span class="badge bg-success">English</span>
+                        <span class="badge bg-primary">Vietnamese</span>
+                      </td>
+                      <td>25</td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/categories/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Health</td>
+                      <td>health</td>
+                      <td>
+                        <span class="badge bg-success">English</span>
+                      </td>
+                      <td>18</td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/categories/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Lifestyle</td>
+                      <td>lifestyle</td>
+                      <td>
+                        <span class="badge bg-success">English</span>
+                        <span class="badge bg-primary">French</span>
+                      </td>
+                      <td>14</td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/categories/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Pagination -->
+              <nav>
+                <ul class="pagination justify-content-center">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                  </li>
+                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Add/Edit Category Quick Form -->
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Quick Add Category</h5>
+              
+              <form class="row g-3" id="quickAddCategoryForm" onsubmit="return validateForm('quickAddCategoryForm')">
+                <div class="col-12">
+                  <label for="name" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="name" name="name" required>
+                  <div class="invalid-feedback">Please enter a category name.</div>
+                </div>
+                
+                <div class="col-12">
+                  <label for="language" class="form-label">Primary Language</label>
+                  <select class="form-select" id="language" name="language_id" required>
+                    <option value="1" selected>English</option>
+                    <option value="2">Spanish</option>
+                    <option value="3">French</option>
+                    <option value="4">German</option>
+                    <option value="5">Vietnamese</option>
+                  </select>
+                </div>
+                
+                <div class="col-12">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                    <label class="form-check-label" for="is_active">Active</label>
+                  </div>
+                </div>
+                
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary w-100">Add Category</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Category Statistics</h5>
+              <div class="d-flex flex-column">
+                <div class="stat-card p-3 mb-2 bg-light rounded">
+                  <div class="stat-card-title">Total Categories</div>
+                  <div class="stat-card-value">12</div>
+                </div>
+                <div class="stat-card p-3 mb-2 bg-light rounded">
+                  <div class="stat-card-title">Categories with Translations</div>
+                  <div class="stat-card-value">8</div>
+                </div>
+                <div class="stat-card p-3 bg-light rounded">
+                  <div class="stat-card-title">Most Used Category</div>
+                  <div class="stat-card-value">Technology (32 posts)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div data-inject="/src/components/footer.html"></div>
+</body>
+</html>

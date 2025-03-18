@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Blog Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <div data-inject="/src/components/header.html"></div>
+
+  <!-- Sidebar -->
+  <div data-inject="/src/components/sidebar.html"></div>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </nav>
+    </div>
+
+    <section class="section dashboard">
+      <div class="row">
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+            <!-- Posts Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card">
+                <div class="card-body">
+                  <h5 class="card-title">Posts</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 class="dashboard-card-count">145</h6>
+                      <span class="text-success small pt-1 fw-bold">12%</span> 
+                      <span class="text-muted small pt-2 ps-1">increase</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comments Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card">
+                <div class="card-body">
+                  <h5 class="card-title">Comments</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-chat-dots"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 class="dashboard-card-count">523</h6>
+                      <span class="text-success small pt-1 fw-bold">8%</span> 
+                      <span class="text-muted small pt-2 ps-1">increase</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Users Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card">
+                <div class="card-body">
+                  <h5 class="card-title">Users</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 class="dashboard-card-count">64</h6>
+                      <span class="text-success small pt-1 fw-bold">5%</span> 
+                      <span class="text-muted small pt-2 ps-1">increase</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Posts -->
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Recent Posts</h5>
+                  <div class="table-responsive">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Title</th>
+                          <th scope="col">Category</th>
+                          <th scope="col">Author</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">1</th>
+                          <td>10 Tips for Better SEO</td>
+                          <td>Technology</td>
+                          <td>John Doe</td>
+                          <td>2023-11-01</td>
+                          <td><span class="badge bg-success">Published</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row">2</th>
+                          <td>Getting Started with Bootstrap</td>
+                          <td>Technology</td>
+                          <td>Jane Smith</td>
+                          <td>2023-10-30</td>
+                          <td><span class="badge bg-success">Published</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row">3</th>
+                          <td>Healthy Breakfast Ideas</td>
+                          <td>Food</td>
+                          <td>Mike Johnson</td>
+                          <td>2023-10-28</td>
+                          <td><span class="badge bg-success">Published</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row">4</th>
+                          <td>Top Travel Destinations 2023</td>
+                          <td>Travel</td>
+                          <td>Sarah Williams</td>
+                          <td>2023-10-25</td>
+                          <td><span class="badge bg-success">Published</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row">5</th>
+                          <td>Ultimate Guide to Remote Work</td>
+                          <td>Lifestyle</td>
+                          <td>John Doe</td>
+                          <td>2023-10-23</td>
+                          <td><span class="badge bg-warning text-dark">Draft</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Comments -->
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Recent Comments</h5>
+                  <div class="activity">
+                    <div class="activity-item d-flex">
+                      <div class="activite-label">32 min</div>
+                      <i class="bi bi-circle-fill activity-badge text-success align-self-start"></i>
+                      <div class="activity-content">
+                        <strong>Lisa Warren</strong> commented on <a href="#" class="fw-bold text-dark">Getting Started with Bootstrap</a>
+                      </div>
+                    </div>
+
+                    <div class="activity-item d-flex">
+                      <div class="activite-label">56 min</div>
+                      <i class="bi bi-circle-fill activity-badge text-success align-self-start"></i>
+                      <div class="activity-content">
+                        <strong>Robert Davis</strong> commented on <a href="#" class="fw-bold text-dark">10 Tips for Better SEO</a>
+                      </div>
+                    </div>
+
+                    <div class="activity-item d-flex">
+                      <div class="activite-label">2 hrs</div>
+                      <i class="bi bi-circle-fill activity-badge text-success align-self-start"></i>
+                      <div class="activity-content">
+                        <strong>Emily Johnson</strong> commented on <a href="#" class="fw-bold text-dark">Healthy Breakfast Ideas</a>
+                      </div>
+                    </div>
+
+                    <div class="activity-item d-flex">
+                      <div class="activite-label">1 day</div>
+                      <i class="bi bi-circle-fill activity-badge text-success align-self-start"></i>
+                      <div class="activity-content">
+                        <strong>Daniel Brown</strong> commented on <a href="#" class="fw-bold text-dark">Top Travel Destinations 2023</a>
+                      </div>
+                    </div>
+
+                    <div class="activity-item d-flex">
+                      <div class="activite-label">2 days</div>
+                      <i class="bi bi-circle-fill activity-badge text-success align-self-start"></i>
+                      <div class="activity-content">
+                        <strong>Alex Turner</strong> commented on <a href="#" class="fw-bold text-dark">Ultimate Guide to Remote Work</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+          <!-- Posts per month Chart -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Posts per Month</h5>
+              <div>
+                <canvas id="postsChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Distribution Chart -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Category Distribution</h5>
+              <div>
+                <canvas id="categoryChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Authors -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Top Authors</h5>
+              <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  John Doe
+                  <span class="badge bg-primary rounded-pill">42</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Jane Smith
+                  <span class="badge bg-primary rounded-pill">34</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Mike Johnson
+                  <span class="badge bg-primary rounded-pill">27</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Sarah Williams
+                  <span class="badge bg-primary rounded-pill">22</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Robert Davis
+                  <span class="badge bg-primary rounded-pill">19</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div data-inject="/src/components/footer.html"></div>
+</body>
+</html>

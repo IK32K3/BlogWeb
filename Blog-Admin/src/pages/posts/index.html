@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posts - Blog Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <div data-inject="/src/components/header.html"></div>
+
+  <!-- Sidebar -->
+  <div data-inject="/src/components/sidebar.html"></div>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Posts</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+          <li class="breadcrumb-item active">Posts</li>
+        </ol>
+      </nav>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title">All Posts</h5>
+                <a href="/src/pages/posts/add.html" class="btn btn-primary">
+                  <i class="bi bi-plus-circle"></i> Add New Post
+                </a>
+              </div>
+              
+              <!-- Filters -->
+              <div class="row mb-3">
+                <div class="col-md-3">
+                  <select class="form-select">
+                    <option selected>All Categories</option>
+                    <option>Technology</option>
+                    <option>Travel</option>
+                    <option>Food</option>
+                    <option>Health</option>
+                    <option>Lifestyle</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select">
+                    <option selected>All Authors</option>
+                    <option>John Doe</option>
+                    <option>Jane Smith</option>
+                    <option>Mike Johnson</option>
+                    <option>Sarah Williams</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select">
+                    <option selected>All Languages</option>
+                    <option>English</option>
+                    <option>Spanish</option>
+                    <option>French</option>
+                    <option>German</option>
+                    <option>Vietnamese</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select">
+                    <option selected>All Statuses</option>
+                    <option>Published</option>
+                    <option>Draft</option>
+                    <option>Pending</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>
+                        <input type="checkbox" class="form-check-input">
+                      </th>
+                      <th>Title</th>
+                      <th>Author</th>
+                      <th>Category</th>
+                      <th>Language</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>10 Tips for Better SEO</td>
+                      <td>John Doe</td>
+                      <td>Technology</td>
+                      <td>English</td>
+                      <td>2023-11-01</td>
+                      <td><span class="badge bg-success">Published</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/posts/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Getting Started with Bootstrap</td>
+                      <td>Jane Smith</td>
+                      <td>Technology</td>
+                      <td>English</td>
+                      <td>2023-10-30</td>
+                      <td><span class="badge bg-success">Published</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/posts/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Healthy Breakfast Ideas</td>
+                      <td>Mike Johnson</td>
+                      <td>Food</td>
+                      <td>English</td>
+                      <td>2023-10-28</td>
+                      <td><span class="badge bg-success">Published</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/posts/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Top Travel Destinations 2023</td>
+                      <td>Sarah Williams</td>
+                      <td>Travel</td>
+                      <td>English</td>
+                      <td>2023-10-25</td>
+                      <td><span class="badge bg-success">Published</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/posts/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Ultimate Guide to Remote Work</td>
+                      <td>John Doe</td>
+                      <td>Lifestyle</td>
+                      <td>English</td>
+                      <td>2023-10-23</td>
+                      <td><span class="badge bg-warning text-dark">Draft</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/posts/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>10 conseils pour un meilleur référencement</td>
+                      <td>John Doe</td>
+                      <td>Technology</td>
+                      <td>French</td>
+                      <td>2023-10-20</td>
+                      <td><span class="badge bg-success">Published</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/posts/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Pagination -->
+              <nav>
+                <ul class="pagination justify-content-center">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                  </li>
+                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div data-inject="/src/components/footer.html"></div>
+</body>
+</html>
+

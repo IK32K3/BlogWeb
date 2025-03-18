@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Languages - Blog Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <div data-inject="/src/components/header.html"></div>
+
+  <!-- Sidebar -->
+  <div data-inject="/src/components/sidebar.html"></div>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Languages</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+          <li class="breadcrumb-item active">Languages</li>
+        </ol>
+      </nav>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <!-- Languages List -->
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title">Supported Languages</h5>
+                <a href="/src/pages/languages/add.html" class="btn btn-primary">
+                  <i class="bi bi-plus-circle"></i> Add New Language
+                </a>
+              </div>
+              
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>
+                        <input type="checkbox" class="form-check-input">
+                      </th>
+                      <th>Name</th>
+                      <th>Locale</th>
+                      <th>Posts</th>
+                      <th>Categories</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>English</td>
+                      <td>en</td>
+                      <td>145</td>
+                      <td>12</td>
+                      <td><span class="badge bg-success">Active</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/languages/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" disabled title="Default language cannot be deleted">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Spanish</td>
+                      <td>es</td>
+                      <td>65</td>
+                      <td>8</td>
+                      <td><span class="badge bg-success">Active</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/languages/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>French</td>
+                      <td>fr</td>
+                      <td>48</td>
+                      <td>6</td>
+                      <td><span class="badge bg-success">Active</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/languages/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>German</td>
+                      <td>de</td>
+                      <td>32</td>
+                      <td>5</td>
+                      <td><span class="badge bg-success">Active</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/languages/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Vietnamese</td>
+                      <td>vi</td>
+                      <td>25</td>
+                      <td>4</td>
+                      <td><span class="badge bg-success">Active</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/languages/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input">
+                      </td>
+                      <td>Italian</td>
+                      <td>it</td>
+                      <td>0</td>
+                      <td>0</td>
+                      <td><span class="badge bg-danger">Inactive</span></td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="/src/pages/languages/edit.html" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(event)">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Pagination -->
+              <nav>
+                <ul class="pagination justify-content-center">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                  </li>
+                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Add Language Quick Form -->
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Quick Add Language</h5>
+              
+              <form class="row g-3" id="quickAddLanguageForm" onsubmit="return validateForm('quickAddLanguageForm')">
+                <div class="col-12">
+                  <label for="name" class="form-label">Language Name</label>
+                  <input type="text" class="form-control" id="name" name="name" required>
+                  <div class="invalid-feedback">Please enter a language name.</div>
+                </div>
+                
+                <div class="col-12">
+                  <label for="locale" class="form-label">Locale Code</label>
+                  <input type="text" class="form-control" id="locale" name="locale" placeholder="e.g. en, es, fr" required>
+                  <div class="invalid-feedback">Please enter a locale code.</div>
+                  <small class="text-muted">Use ISO 639-1 language codes (2 characters)</small>
+                </div>
+                
+                <div class="col-12">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                    <label class="form-check-label" for="is_active">Active</label>
+                  </div>
+                </div>
+                
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary w-100">Add Language</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Language Statistics</h5>
+              <div class="d-flex flex-column">
+                <div class="stat-card p-3 mb-2 bg-light rounded">
+                  <div class="stat-card-title">Total Languages</div>
+                  <div class="stat-card-value">6</div>
+                </div>
+                <div class="stat-card p-3 mb-2 bg-light rounded">
+                  <div class="stat-card-title">Active Languages</div>
+                  <div class="stat-card-value">5</div>
+                </div>
+                <div class="stat-card p-3 bg-light rounded">
+                  <div class="stat-card-title">Most Used Language</div>
+                  <div class="stat-card-value">English (145 posts)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div data-inject="/src/components/footer.html"></div>
+</body>
+</html>
