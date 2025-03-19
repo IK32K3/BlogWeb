@@ -8,64 +8,102 @@
     <link href="style.css" rel="stylesheet">
     <script src="/front_end/html_mockup/js/main.js" defer></script>
 </head>
-<body class="bg-gray-100 flex flex-col h-screen m-0" >
+<body class="bg-gray-100 flex flex-col min-h-screen m-0">
     <!-- Navigation Bar -->
     <nav class="bg-white shadow-md">
         <div class="container mx-auto px-4 py-2 flex justify-between items-center">
-            <a href="/front_end/html_mockup/page/HomePage.html" class="text-2xl font-bold text-indigo-800 ">MyBlog</a>
+            <a href="/front_end/html_mockup/page/HomePage.html" class="text-2xl font-bold text-indigo-800">MyBlog</a>
             <div class="flex space-x-4 ml-auto">
-                <a href="/front_end/html_mockup/page/category/CategoryPage.html" class="text-gray-700 hover:text-gray-900 ">Category</a>
-                <a href="/front_end/html_mockup/page/blog/write-post.html" class="text-gray-700 hover:text-gray-900 "><i class="fas fa-pen"></i> Write</a>
+                <a href="/front_end/html_mockup/page/category/CategoryPage.html" class="text-gray-700 hover:text-gray-900">Category</a>
+                <a href="/front_end/html_mockup/page/blog/write-post.html" class="text-gray-700 hover:text-gray-900"><i class="fas fa-pen"></i> Write</a>
             </div>
             <div class="relative ml-4">
-                <button onclick="toggleDropdown()" class="text-gray-700 hover:text-gray-900 "><i class="fas fa-user"></i> Profile</button>
+                <button onclick="toggleDropdown()" class="text-gray-700 hover:text-gray-900"><i class="fas fa-user"></i> Profile</button>
                 <div id="dropdown" class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg hidden">
-                    <a href="/front_end/html_mockup/page/profile/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Profile</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Library</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Stories</a>
-                    <a href="/front_end/html_mockup/page/blog/contact_us.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Contact Us</a>
+                    <a href="/front_end/html_mockup/page/profile/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Library</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Stories</a>
+                    <a href="/front_end/html_mockup/page/blog/contact_us.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Contact Us</a>
                     <div class="border-t my-2"></div>
                     <a href="/front_end/html_mockup/page/profile/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
                     <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Refine recommendations</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Manage publications</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Help</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Manage publications</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Help</a>
                     <div class="border-t my-2"></div>
-                    <a href="/front_end/html_mockup/page/auth/login.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Log out</a>
+                    <a href="/front_end/html_mockup/page/auth/login.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Log out</a>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Profile Section -->
-    <section class="container mx-auto px-4 py-8 flex content min-h-[calc(100vh-128px)]">
-        <!-- Left Column -->
-        <div class="w-3/4 pr-4">
-            <h1 class="text-3xl font-bold mb-4">Lookingboy</h1>
+    <section class="container mx-auto px-4 py-8 flex-grow flex flex-col-reverse md:flex-row min-h-[calc(100vh-128px)]">
+        <!-- Right Column -->
+        <div class="w-full md:w-3/4 pr-0 md:pr-4 mb-4 md:mb-0">
+            <h1 class="text-3xl font-bold mb-4">Alexander Nguyen</h1>
             <div class="border-b mb-4">
                 <a href="#" class="text-gray-700 hover:text-gray-900 mr-4">Home</a>
                 <a href="#" class="text-gray-700 hover:text-gray-900">About</a>
             </div>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <h2 class="text-xl font-bold mb-2">Reading list</h2>
                 <div id="post-list">
-                    <div class="post-item mb-4">
-                        <p class="text-gray-700">Post content goes here...</p>
-                        <button class="text-red-500 hover:underline" onclick="deletePost(this)">Delete</button>
-                        <button class="text-blue-500 hover:underline" onclick="hidePost(this)">Hide</button>
+                    <div class="post-item mb-4 flex items-center">
+                        <div class="flex-1">
+                            <h2 class="text-xl font-bold mb-2">I'm proud of job hopping between Amazon, Microsoft, and Google</h2>
+                            <p class="text-gray-700">Company loyalty is dead.</p>
+                            <p class="text-gray-500 text-sm">May 28, 2024 &middot; 1.9K &middot; 44</p>
+                        </div>
+                        <img src="https://via.placeholder.com/80x53" alt="Post Image" class="w-20 h-14 rounded-full ml-4">
+                    </div>
+                    <div class="post-item mb-4 flex items-center">
+                        <div class="flex-1">
+                            <h2 class="text-xl font-bold mb-2">Resources that got me into Amazon, Microsoft, and Google</h2>
+                            <p class="text-gray-700">Quick Context</p>
+                            <p class="text-gray-500 text-sm">5d ago</p>
+                        </div>
+                        <img src="https://via.placeholder.com/80x53" alt="Post Image" class="w-20 h-14 rounded-full ml-4">
                     </div>
                     <!-- Repeat for more posts -->
                 </div>
             </div>
         </div>
-        <!-- Right Column -->
-        <div class="w-1/4 pl-4">
+        <!-- Left Column -->
+        <div class="w-full md:w-1/4 pl-0 md:pl-4">
             <div class="bg-white shadow-md rounded-lg p-6 text-center">
                 <img src="images/476875387_1296828408240578_1774457906658125732_n.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full mx-auto mb-4">
-                <h2 class="text-xl font-bold mb-2">Lookingboy</h2>
-                <a href="#" class="text-green-500 hover:underline">Edit profile</a>
+                <h2 class="text-xl font-bold mb-2">Alexander Nguyen</h2>
+                <p class="text-gray-700 mb-4">41K Followers</p>
+                <p class="text-gray-700 mb-4">220,000 Followers on LinkedIn. Sharing ideas about making online content</p>
+                <button class="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600">Follow</button>
+                <div class="mt-4">
+                    <h3 class="text-lg font-bold mb-2">Following</h3>
+                    <ul class="text-left">
+                        <li class="mb-2 flex justify-between items-center">
+                            <a href="#" class="text-gray-700 hover:text-gray-900">MarketWatch, Inc</a>
+                            <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-ellipsis-h"></i></button>
+                        </li>
+                        <li class="mb-2 flex justify-between items-center">
+                            <a href="#" class="text-gray-700 hover:text-gray-900">Change Your Mind Change Your Life</a>
+                            <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-ellipsis-h"></i></button>
+                        </li>
+                        <li class="mb-2 flex justify-between items-center">
+                            <a href="#" class="text-gray-700 hover:text-gray-900">Supportive Software Engineer</a>
+                            <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-ellipsis-h"></i></button>
+                        </li>
+                        <li class="mb-2 flex justify-between items-center">
+                            <a href="#" class="text-gray-700 hover:text-gray-900">Better Programming</a>
+                            <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-ellipsis-h"></i></button>
+                        </li>
+                        <li class="mb-2 flex justify-between items-center">
+                            <a href="#" class="text-gray-700 hover:text-gray-900">Edward Huang</a>
+                            <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-ellipsis-h"></i></button>
+                        </li>
+                        <li><a href="#" class="text-gray-700 hover:text-gray-900">See all (253)</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </section>  
+    </section>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 mt-auto">
@@ -84,7 +122,6 @@
             </div>
             <p class="text-gray-400">&copy; 2023 WebBlog. All rights reserved.</p>
         </div>
-
     </footer>
     <button id="back-to-top" class="fixed bottom-4 right-4 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 hidden" onclick="scrollToTop()">&#8679;</button>
 </body>
