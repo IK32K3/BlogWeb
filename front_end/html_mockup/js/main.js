@@ -131,3 +131,15 @@ document.addEventListener("click", function (event) {
         menu.classList.add("hidden");
     }
 });
+
+function togglePasswordVisibility() {
+    const passwordField = document.getElementById('password');
+    const passwordButton = document.getElementById('toggle-password');
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        passwordButton.innerHTML = '<i class="fas fa-eye-slash"></i>';
+    } else {
+        passwordField.type = 'password';
+        passwordButton.innerHTML = '<i class="fas fa-eye"></i>';
+    }
+}

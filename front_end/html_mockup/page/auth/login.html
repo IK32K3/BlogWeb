@@ -6,47 +6,72 @@
     <title>Login Page</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/front_end/html_mockup/js/loadComponents.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="/front_end/html_mockup/js/loadComponents.js" defer></script>
     <script src="/front_end/html_mockup/js/main.js" defer></script>
 </head>
 <body class="bg-gray-100 flex flex-col items-center justify-center h-screen">
-    
-    <nav class="bg-white shadow-md">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md w-full fixed top-0">
         <div class="container mx-auto px-4 py-2 flex justify-between items-center">
-            <a href="/front_end/html_mockup/page/introduce_page.html" class="text-3xl font-bold text-indigo-800">MyBlog</a>
+            <a href="/front_end/html_mockup/page/introduce_page.html" class="text-2xl font-bold text-black">MyBlog</a>
             <div class="flex space-x-4 ml-auto">
-                <!-- <a href="blogs_introduce.html" class="text-gray-700 hover:text-gray-900">Blogs</a> -->
-                <!-- <a href="aboutus.html" class="text-gray-700 hover:text-gray-900">Abouts</a> -->
-                <!-- <a href="contact_us.html" class="text-gray-700 hover:text-gray-900">Contact</a> -->
-                <!-- <a href="login.html" class="text-gray-700 hover:text-gray-900"><i class="fas fa-pen"></i> Write</a> -->
+                <a href="/front_end/html_mockup/page/about_introduct.html" class="text-gray-700 hover:text-gray-900">About</a>
+                <a href="/front_end/html_mockup/page/auth/login.html" class="text-gray-700 hover:text-gray-900">Login</a>
             </div>
         </div>
     </nav>
-    
-    
-    <div class="bg-white shadow-md rounded-lg p-8 max-w-md w-full mt-8">
-        <h2 class="text-2xl font-bold mb-6 text-center">Login to Your Account</h2>
+
+    <div class="bg-[#f5f5f5] py-8 px-4 sm:px-6 lg:px-8 mt-20">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl font-bold mb-4">Welcome Back</h1>
+            <p class="text-xl text-gray-900">Sign in to access your account.</p>
+        </div>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg p-8 max-w-md w-full ">
         <form>
             <div class="mb-4">
-                <label for="email" class="block text-gray-700 font-bold mb-2">Email Address</label>
-                <input type="email" id="email" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your email address">
+                <label for="name" class="text-lg font-normal block text-gray-800 mb-2">Email or phone</label>
+                <input type="email" id="email" class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700" placeholder="Email or phone">
             </div>
-            <div class="mb-4">
-                <label for="password" class="block text-gray-700 font-bold mb-2">Password</label>
-                <input type="password" id="password" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your password">
+            <div class="mb-4 relative">
+                <label for="name" class="text-lg font-normal block text-gray-800 mb-2">Password</label>
+                <input type="password" id="password" class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700" placeholder="Password">
+                <button type="button" id="toggle-password" class="absolute right-3 top-12 mt-1 text-gray-500 hover:text-gray-700" onclick="togglePasswordVisibility()">
+                    <i class="fas fa-eye"></i>
+                </button>
             </div>
-            <div class="flex items-center justify-between mb-4">
-                <label class="flex items-center">
-                    <input type="checkbox" class="form-checkbox">
-                    <span class="ml-2 text-gray-700">Remember me</span>
-                </label>
-                <a href="/front_end/html_mockup/page/auth/forgot-password.html" class="text-blue-500 hover:underline">Forgot password?</a>
+            <div class="mb-4 flex items-center">
+                <input type="checkbox" id="remember-me" class="form-checkbox">
+                <label for="remember-me" class="ml-2 text-gray-700">Remember me</label>
+            </div>
+            <div class="flex justify-center mb-4">
+                <button type="submit" class="bg-gray-800 h-14 text-white text-center text-lg font-medium px-4 py-2 w-full  rounded-full hover:bg-gray-900">Sign In</button>
+            </div>
+            <div class="text-center mb-4">
+                <a href="/front_end/html_mockup/page/auth/forgot-password.html" class="text-gray-900 ml-64 hover:underline">Forgot Password?</a>
             </div>
             <div class="flex justify-center">
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Login</button>
+                <a href="/front_end/html_mockup/page/auth/register.html">
+                    <button type="button" class=" text-white px-4 py-2 h-14 text-center font-medium w-52 text-lg rounded-full bg-blue-600 hover:bg-blue-900">Create an account</button>
+                </a>
             </div>
         </form>
-        <p class="text-center text-gray-700 mt-4">Don't have an account? <a href="/front_end/html_mockup/page/auth/register.html" class="text-blue-500 hover:underline">Sign up</a></p>
     </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const passwordButton = document.getElementById('toggle-password');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                passwordButton.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            } else {
+                passwordField.type = 'password';
+                passwordButton.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+        }
+    </script>
 </body>
 </html>
