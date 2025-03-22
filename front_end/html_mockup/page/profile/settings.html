@@ -6,6 +6,7 @@
     <title>Settings Page</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="/front_end/html_mockup/js/main.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body, html {
             height: 100%;
@@ -24,26 +25,29 @@
     <nav class="bg-white shadow-md">
         <div class="container mx-auto px-4 py-2 flex justify-between items-center">
             <a href="/front_end/html_mockup/page/HomePage.html" class="text-2xl font-bold text-black ">MyBlog</a>
-            <div class="flex space-x-4 ml-auto">
-                <a href="/front_end/html_mockup/page/category/CategoryPage.html" class="text-gray-700 hover:text-gray-900 ">Category</a>
-                <a href="/front_end/html_mockup/page/blog/write-post.html" class="text-gray-700 hover:text-gray-900 "><i class="fas fa-pen"></i> Write</a>
-            </div>
-            <div class="relative ml-4">
-                <button onclick="toggleDropdown()" class="text-gray-700 hover:text-gray-900 "><i class="fas fa-user"></i> Profile</button>
-                <div id="dropdown" class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg hidden">
+            <div id="menu" class=" hidden lg:flex space-x-4 ml-auto">
+                <a href="/front_end/html_mockup/page/category/CategoryPage.html" class="text-gray-700 hover:text-gray-900 flex mt-1 "><i class="fas fa-list mt-2 mr-2 "></i><p class="hidden lg:block text-xl ">Category</p></a>
+                <a href="/front_end/html_mockup/page/blog/write-post.html" class="text-gray-700 hover:text-gray-900 flex mt-1 "><i class="fas fa-pen mt-2 mr-2"></i> <p class="hidden lg:block text-xl ">Write</p></a>
+            
+            <div class="relative w-10 h-10 bg-gray-400 rounded-full">
+                <button id="dropdownButton" class="text-gray-700 hover:text-gray-900 flex items-center text-xl "><i class="fas fa-user px-3 py-2.5 "></i></button>
+                <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg hidden">
                     <a href="/front_end/html_mockup/page/profile/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Profile</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Library</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Stories</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Category</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Write</a>
                     <a href="/front_end/html_mockup/page/blog/contact_us.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Contact Us</a>
                     <div class="border-t my-2"></div>
                     <a href="/front_end/html_mockup/page/profile/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Refine recommendations</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Manage publications</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">about-us</a>
                     <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Help</a>
                     <div class="border-t my-2"></div>
                     <a href="/front_end/html_mockup/page/auth/login.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Log out</a>
                 </div>
             </div>
+        </div>
+            <button class="lg:hidden text-gray-700 hover:text-gray-900 ml-4" onclick="toggleMenu()" >
+                <i class="fas fa-bars"></i>
+            </button>   
         </div>
     </nav>
 

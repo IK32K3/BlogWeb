@@ -7,33 +7,36 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="/front_end/html_mockup/css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/front_end/html_mockup/js/loadComponents.js" defer></script>
     <script src="/front_end/html_mockup/js/main.js" defer></script>
 </head>
 <body class="bg-gray-200">
     <!-- Navbar -->
-    <nav class="bg-white shadow-md fixed top-0 w-full">
+    <nav class="bg-white shadow-md">
         <div class="container mx-auto px-4 py-2 flex justify-between items-center">
-            <a href="/front_end/html_mockup/page/HomePage.html" class="text-2xl font-bold text-black">MyBlog</a>
-            <div class="flex space-x-4 ml-auto">
-                <a href="/front_end/html_mockup/page/category/CategoryPage.html" class="text-gray-700 hover:text-gray-900">Category</a>
-                <a href="/front_end/html_mockup/page/blog/write-post.html" class="text-gray-700 hover:text-gray-900"><i class="fas fa-pen"></i> Write</a>
-            </div>
-            <div class="relative ml-4">
-                <button onclick="toggleDropdown()" class="text-gray-700 hover:text-gray-900"><i class="fas fa-user"></i> Profile</button>
-                <div id="dropdown" class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg hidden">
-                    <a href="/front_end/html_mockup/page/profile/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Library</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Stories</a>
-                    <a href="/front_end/html_mockup/page/blog/contact_us.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Contact Us</a>
+            <a href="/front_end/html_mockup/page/HomePage.html" class="text-2xl font-bold text-black ">MyBlog</a>
+            <div id="menu" class=" hidden lg:flex space-x-4 ml-auto">
+                <a href="/front_end/html_mockup/page/category/CategoryPage.html" class="text-gray-700 hover:text-gray-900 flex mt-1 "><i class="fas fa-list mt-2 mr-2 "></i><p class="hidden lg:block text-xl ">Category</p></a>
+                <a href="/front_end/html_mockup/page/blog/write-post.html" class="text-gray-700 hover:text-gray-900 flex mt-1 "><i class="fas fa-pen mt-2 mr-2"></i> <p class="hidden lg:block text-xl ">Write</p></a>
+            
+            <div class="relative w-10 h-10 bg-gray-400 rounded-full">
+                <button id="dropdownButton" class="text-gray-700 hover:text-gray-900 flex items-center text-xl "><i class="fas fa-user px-3 py-2.5 "></i></button>
+                <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg hidden">
+                    <a href="/front_end/html_mockup/page/profile/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Profile</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Category</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Write</a>
+                    <a href="/front_end/html_mockup/page/blog/contact_us.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Contact Us</a>
                     <div class="border-t my-2"></div>
                     <a href="/front_end/html_mockup/page/profile/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Refine recommendations</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Manage publications</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Help</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">about-us</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Help</a>
                     <div class="border-t my-2"></div>
-                    <a href="/front_end/html_mockup/page/auth/login.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Log out</a>
+                    <a href="/front_end/html_mockup/page/auth/login.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Log out</a>
                 </div>
-            </div>
+            </div>    
+            <button class="lg:hidden text-gray-700 hover:text-gray-900 ml-4" onclick="toggleMenu()" >
+                <i class="fas fa-bars"></i>
+            </button>   
         </div>
     </nav>
 
@@ -69,44 +72,26 @@
     <!-- User Posts Section -->
     <div class="container mx-auto px-4 py-8">
         <div class="bg-white shadow-md rounded-lg p-6">
-            <h3 class="text-xl font-bold mb-4">User Posts</h3>
+            <h3 class="text-xl font-bold mb-5">User Posts</h3>
             <div class="space-y-4">
-                <div class="bg-gray-100 p-4 rounded-lg">  
-                    <div class="flex justify-between items-center">
+                <div class="bg-gray-200 p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <img src="https://via.placeholder.com/50" alt="Author Image" class="w-12 h-12 rounded-full mr-4">
                         <div>
-                            <h4 class="text-lg font-semibold">Post Title 1</h4>
-                            <p class="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam scelerisque leo nec orci varius, nec tincidunt nunc tincidunt.</p>
+                            <h4 class="text-lg font-semibold">The Future of Web Development: What to Expect in 2025</h4>
+                            <p class="text-gray-600">By James Wilson · May 15, 2025</p>
                         </div>
+                    </div>
+                    <p class="text-gray-700 mb-4">This article resonates deeply with me. The predictions about WebAssembly are spot on. I've been using it in my recent projects and the performance gains are substantial. Great insights about the future of web development!</p>
+                    <div class="flex justify-between items-center text-gray-500 text-sm">
+                        <span>Apr 22, 2025</span>
                         <div class="flex space-x-2">
-                            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Edit</button>
-                            <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
+                            <button class="hover:underline">Edit</button>
+                            <button class="hover:underline">Delete</button>
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-100 p-4 rounded-lg">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h4 class="text-lg font-semibold">Post Title 2</h4>
-                            <p class="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam scelerisque leo nec orci varius, nec tincidunt nunc tincidunt.</p>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Edit</button>
-                            <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-100 p-4 rounded-lg">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h4 class="text-lg font-semibold">Post Title 3</h4>
-                            <p class="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam scelerisque leo nec orci varius, nec tincidunt nunc tincidunt.</p>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Edit</button>
-                            <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
-                        </div>
-                    </div>
-                </div>
+                <!-- Repeat for more posts -->
             </div>
         </div>
     </div>
