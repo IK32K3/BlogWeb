@@ -173,3 +173,33 @@ document.addEventListener("click", (event) => {
         dropdownMenu.classList.add("hidden");
     }
 });
+
+var quill = new Quill('#editor', {
+    theme: 'snow'
+});
+
+// Drag and drop functionality
+const dropArea = document.getElementById('drop-area');
+const fileInput = document.getElementById('featuredImage');
+
+dropArea.addEventListener('click', () => fileInput.click());
+
+dropArea.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    dropArea.classList.add('bg-gray-50');
+});
+
+dropArea.addEventListener('dragleave', () => {
+    dropArea.classList.remove('bg-gray-50');
+});
+
+dropArea.addEventListener('drop', (event) => {
+    event.preventDefault();
+    dropArea.classList.remove('bg-gray-50');
+    const files = event.dataTransfer.files;
+    fileInput.files = files;
+});
+
+fileInput.addEventListener('change', () => {
+    // Handle file input change if needed
+});
