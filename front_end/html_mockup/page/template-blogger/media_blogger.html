@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <!-- Header -->
+    <header class="bg-gray-300 shadow-lg">
+        <div class="max-w-7xl mx-auto px-2   sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <h1 class="text-2xl font-bold ">QuickBlog - Media</h1>
+
+                <!-- User Profile Dropdown -->
+                <div class="relative">
+                    <button id="userDropdownButton" class="flex items-center gap-2" aria-expanded="false">
+                        <img src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Profile" class="w-8 h-8 rounded-full">
+                        <span class="font-medium">bloger</span>
+                        <i class="fas fa-chevron-down text-black text-xs transition-transform"></i>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div id="userDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-100 hidden">
+                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Edit Profile</a>
+                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Settings</a>
+                        <hr class="my-1">
+                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block text-red-600">Log out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="right-sidebar bg-gray-300 border-r border-gray-300 min-h-screen transition-all duration-300 hidden lg:block">
+            <div class="px-4 py-6">
+                <nav class="space-y-2">
+                    <a href="./dashboard.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50  rounded-lg">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="./statistical.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
+                        <i class="fas fa-chart-bar w-5"></i>
+                        <span class="nav-text">statistical</span>
+                    </a>
+                    <a href="./post.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
+                        <i class="fas fa-file-lines w-5"></i>
+                        <span class="nav-text">Posts</span>
+                    </a>
+                    <a href="./media.html" class="flex items-center gap-3 px-4 py-2.5 bg-gray-50 text-blue-700 rounded-lg">
+                        <i class="fas fa-photo-film w-5"></i>
+                        <span class="nav-text">Media</span>
+                    </a>
+                    <a href="./comments.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
+                        <i class="fas fa-comments w-5"></i>
+                        <span class="nav-text">Comments</span>
+                    </a>
+                    <a href="./profile.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
+                        <i class="fas fa-user w-5"></i>
+                        <span class="nav-text">Profile</span>
+                    </a>
+                    <a href="./settings.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
+                        <i class="fas fa-gear w-5"></i>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </nav>
+
+                <div class="mt-6 space-y-3">
+                    <button class="w-full px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg flex items-center gap-2">
+                        <i class="fas fa-plus w-5"></i>
+                        <a href="./newpost.html" class="sidebar-button-text">New Post</a>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Thư viện</h2>
+                <div class="flex gap-2">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Thêm tệp media mới</button>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Import Media</button>
+                </div>
+            </div>
+
+            <p class="mb-4">Bạn đang sử dụng 144,2 KB trong tổng số 1 GB dung lượng cho phép (0%). <a href="#" class="text-blue-600">Nâng cấp</a> kế hoạch của bạn để tăng không gian lưu trữ và cho phép tải lên âm thanh và video.</p>
+
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-2">
+                    <button class="bg-gray-200 p-2 rounded"><i class="fas fa-th-large"></i></button>
+                    <button class="bg-gray-200 p-2 rounded"><i class="fas fa-list"></i></button>
+                    <select class="border border-gray-300 rounded-lg px-4 py-2 bg-white">
+                        <option>Tất cả nội dung đa phương tiện</option>
+                    </select>
+                    <select class="border border-gray-300 rounded-lg px-4 py-2 bg-white">
+                        <option>Tất cả các ngày</option>
+                    </select>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Chọn nhiều</button>
+                </div>
+                <input type="text" placeholder="Tìm kiếm" class="border border-gray-300 rounded-lg px-4 py-2">
+            </div>
+
+            <div class="grid grid-cols-4 gap-4 mb-4">
+                <img src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Media 1" class="w-full h-auto rounded">
+                <img src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Media 2" class="w-full h-auto rounded">
+                <img src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Media 3" class="w-full h-auto rounded">
+                <img src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Media 4" class="w-full h-auto rounded">
+            </div>
+
+            <p class="text-center text-gray-600">Showing 4 of 4 media items</p>
+        </main>
+    </div>
+
+    <script>
+        // Dropdown Toggle
+        const dropdownButton = document.getElementById('userDropdownButton');
+        const dropdown = document.getElementById('userDropdown');
+
+        dropdownButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isExpanded = dropdownButton.getAttribute('aria-expanded') === 'true';
+            dropdown.classList.toggle('hidden', isExpanded);
+            dropdownButton.setAttribute('aria-expanded', !isExpanded);
+        });
+
+        // Close dropdown on outside click
+        document.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+                dropdownButton.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Close on Esc key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                dropdown.classList.add('hidden');
+                dropdownButton.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Action Dropdown Toggle
+        document.querySelectorAll('.action-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('.action-dropdown').forEach(dropdown => {
+                    dropdown.classList.add('hidden');
+                });
+                const dropdown = button.nextElementSibling;
+                dropdown.classList.toggle('hidden');
+            });
+        });
+
+        // Close action dropdown on outside click
+        document.addEventListener('click', (e) => {
+            document.querySelectorAll('.action-dropdown').forEach(dropdown => {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
