@@ -56,6 +56,7 @@ function toggleDropdown() {
     }
 }
 
+
 // Mở menu chính
 function toggleMenu() {
     const menu = document.getElementById('menu');
@@ -173,8 +174,10 @@ document.addEventListener("click", (event) => {
     }
 });
 
-var quill = new Quill('#editor', {
-    theme: 'snow'
+document.addEventListener('DOMContentLoaded', function() {
+    var quill = new Quill('#editor', {
+        theme: 'snow'
+    });
 });
 
 // Drag and drop functionality

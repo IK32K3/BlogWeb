@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post Detail</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="/front_end/html_mockup/js/main.js" defer></script>
+    <script src="/front_end/html_mockup/js/components.js"></script>
+    <script src="/front_end/html_mockup/js/main.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-gray-100">
     <!-- Navigation Bar -->
-    <nav class="bg-white shadow-md">
+    <div id="navbar"> </div>
+    <!-- <nav class="bg-white shadow-md">
         <div class="container mx-auto px-4 py-2 flex justify-between items-center">
             <a href="/front_end/html_mockup/page/HomePage.html" class="text-2xl font-bold text-black ">MyBlog</a>
             <div id="menu" class=" hidden lg:flex space-x-4 ml-auto">
@@ -37,7 +39,7 @@
                 <i class="fas fa-bars"></i>
             </button>   
         </div>
-    </nav>
+    </nav> -->
 
     <!-- Post Content -->
     <section class="container mx-auto px-4 py-8">
@@ -151,23 +153,6 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-2xl font-bold mb-4">Get The Best Blog Stories Into Your Inbox!</h2>
-            <p class="mb-4">Sign up for free and be the first to get notified about new posts.</p>
-            <form class="flex justify-center mb-4">
-                <input type="email" placeholder="Your email address" class="px-4 py-2 rounded-l-lg focus:outline-none">
-                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-r-lg hover:bg-red-600">Subscribe</button>
-            </form>
-            <div class="flex justify-center space-x-4 mb-4">
-                <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
-                <a href="#" class="text-gray-400 hover:text-white">Instagram</a>
-                <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
-                <a href="#" class="text-gray-400 hover:text-white">YouTube</a>
-            </div>
-            <p class="text-gray-400">&copy; 2023 WebBlog. All rights reserved.</p>
-        </div>
-    </footer>
-    <button id="back-to-top" class="fixed bottom-4 right-4 bg-blue-800 text-white p-2 rounded-full shadow-lg hover:bg-blue-900 hidden" onclick="scrollToTop()">&#8679;</button>
+    <div id="footer"></div>
 </body>
 </html>
