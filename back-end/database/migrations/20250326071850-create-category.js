@@ -2,10 +2,10 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Themes', {
-      theme_id: {
+    await queryInterface.createTable('categories', {
+      id: {
         allowNull: false,
-        autoIncrement: false,
+        autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
@@ -13,22 +13,19 @@ module.exports = {
         type: Sequelize.STRING(50),
         allowNull: false
       },
-      css_file: {
-        type: Sequelize.STRING(255)
-      },
-      createdAt: {
+      created_At: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
-      updatedAt: {
+      updated_At: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-      }
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+      },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Themes');
+    await queryInterface.dropTable('categories');
   }
 };

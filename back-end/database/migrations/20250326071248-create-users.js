@@ -23,12 +23,13 @@ module.exports = {
         allowNull: false,
         unique: true
       },
-      role: {
-        type: Sequelize.STRING(255)
-      },
-      language_id: {
+      role_id: {
         type: Sequelize.INTEGER,
         allowNull: false
+      },
+      description: {
+        type: Sequelize.LONGTEXT,
+        allowNull: true
       },
       theme_id: {
         type: Sequelize.INTEGER,
@@ -42,14 +43,13 @@ module.exports = {
       updated_At: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
       },
       is_active: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
       }
-
     });
   },
   async down(queryInterface, Sequelize) {

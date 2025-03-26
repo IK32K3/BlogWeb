@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class postCategory extends Model {
+  class post_translate_langjage extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,12 +13,13 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  postCategory.init({
-    name: DataTypes.STRING,
-    description: DataTypes.STRING
+  post_translate_langjage.init({
+    firstName: DataTypes.STRING,
+    lastName: DataTypes.STRING,
+    email: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'postCategory',
+    modelName: 'post_translate_langjage',
   });
-  return postCategory;
+  return post_translate_langjage;
 };

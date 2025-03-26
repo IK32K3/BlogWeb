@@ -9,42 +9,44 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      title: {
-        type: Sequelize.STRING(300)  
-      },
-      content: {
-        type: Sequelize.TEXT
-      },
       user_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      slug: {
-        type: Sequelize.STRING(150),
         allowNull: false,
       },
       category_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      title: {
+        type: Sequelize.STRING(300),
+        allowNull: false,
+      },
       content: {
         type: Sequelize.LONGTEXT,
         allowNull: false,
       },
+      description: {
+        type: Sequelize.LONGTEXT,
+        allowNull: false,
+      },
+      slug: {
+        type: Sequelize.STRING(150),
+        allowNull: false,
+      },
       id_post_original: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
-      created_At: {
+      createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
-      updated_At: {
+      updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-      }
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+      },
     });
   },
   async down(queryInterface, Sequelize) {

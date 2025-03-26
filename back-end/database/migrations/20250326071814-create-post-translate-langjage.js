@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('postTransLanguages', {
+    await queryInterface.createTable('postTranslateLanguages', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,41 +12,39 @@ module.exports = {
       post_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        // references: {
-        //   model: 'languages',
-        //   key: 'id'},
-        // onUpdate: 'CASCADE',
-        // onDelete: 'CASCADE'
       },
       language_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        // references: {
-        //   model: 'languages',
-        //   key: 'id'},
-        // onUpdate: 'CASCADE',
-        // onDelete: 'CASCADE'
       },
       title: {
-        type: Sequelize.STRING(255),
+        type: Sequelize.STRING(300),
         allowNull: false
       },
       content: {
-        type: Sequelize.TEXT,
+        type: Sequelize.LONGTEXT,
         allowNull: false
       },
-      createdAt: {
+      description: {
+        type: Sequelize.LONGTEXT,
+        allowNull: false
+      },
+      created_At: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
-      updatedAt: {
+      updated_At: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+      },
+      is_original: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
       }
     });
-    await queryInterface.addConstraint('postTransLanguages', {
+    await queryInterface.addConstraint('postTranslateLanguages', {
       fields: ['post_id', 'language_id'],
       type: 'unique',
       name: 'unique_post_language'
