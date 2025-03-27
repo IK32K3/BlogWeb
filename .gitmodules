@@ -1,0 +1,3 @@
+[submodule "NodeJS-Core"]
+	path = NodeJS-Core
+	url = https://github.com/aten040791/NodeJS-Core.git
