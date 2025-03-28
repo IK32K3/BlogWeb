@@ -33,3 +33,10 @@ fetch("/front_end/html_mockup/components/NavBar-introduce.html")
         document.getElementById("navbar-introduce").innerHTML = data;
     })
     .catch(error => console.error("Lỗi tải navbar:", error));
+
+    fetch('/front_end/html_mockup/components/hero-section.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('hero-section').innerHTML = data;
+            })
+            .catch(error => console.error('Lỗi tải hero.html:', error));
