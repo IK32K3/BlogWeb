@@ -10,62 +10,26 @@
     <link href="/front_end/html_mockup/css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 overflow-x-hidden">
     <!-- Navigation Bar -->
-     <div id="navbar-introduce"></div>
-    <!-- <nav class="bg-white shadow-md">
-        <div class="container mx-auto px-4 py-2 flex justify-between items-center">
-            <a href="/front_end/html_mockup/page/introduce_page.html" class="text-2xl font-bold text-black">MyBlog</a>
-            <div class="flex space-x-4 ml-auto">   
-                <a href="aboutus.html" class="text-gray-700 hover:text-gray-900 text-xl"><i class="fa-solid fa-circle-info mr-2"></i>Abouts</a>
-            <div class="flex space-x-4 items-center ml-4">
-                <a href="login.html" class="text-gray-700 hover:text-gray-900 text-xl"><i class="fa-solid fa-right-to-bracket mr-1"></i> Login</a>
-            </div>
-        </div>
-    </nav> -->
-
+    <div id="navbar-introduce"></div>
 
     <!-- Hero Section -->
-    <section class="relative bg-blue-500 text-white py-20">
-        <div class="container mx-auto px-4 text-center">
-            <div class="carousel">
-                <div class="carousel-item active ">
-                    <img src="https://hobiverse.com.vn/cdn/shop/articles/goku-dragon-ball_thumbnail_hobi_82cdb25dc32a4b4ca1ba9cd98097f375.jpg?v=1716179415" alt="Hero Image" class="w-full h-96 object-cover">
-                    <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center">
-                        <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mb-2">Lifestyle</span>
-                        <h1 class="text-4xl font-bold mb-4">What Are Your Tips for Hosting an Easy Birthday Party?</h1>
-                        <div class="flex flex-col md:flex-row items-center space-x-4">
-                            <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Author" class="w-10 h-10 rounded-full">
-                            <div class="text-sm">
-                                <p>David Smith</p>
-                                <p>February 10, 2024</p>
-                            </div>
-                            <p>15 Min Read</p>
-                            <p>2 Comments</p>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-            
-            <button class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white text-blue-500 px-4 py-2 rounded-full" onclick="prevSlide()">&#10094;</button>
-            <button class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white text-blue-500 px-4 py-2 rounded-full" onclick="nextSlide()">&#10095;</button>
-        </div>
-    </section>
+    <div id="hero-section">    </div>
 
     <!-- Posts Section -->   
-<section class="container mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Post Card -->
-            <div class="bg-white shadow-md rounded-lg overflow-hidden ">
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Post Image" class="w-full h-48 object-cover">
                 <div class="p-4">
                     <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mb-2">Lifestyle</span>
-                    <h3 class="text-xl font-bold mb-2">5 Effective Ways I’m Finding Focus in a Busy Season of Life</h3>
-                    <p class="text-gray-700 mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit quam atque ipsa laborum sunt distinctio...</p>
+                    <h3 class="text-lg sm:text-xl font-bold mb-2">5 Effective Ways I’m Finding Focus in a Busy Season of Life</h3>
+                    <p class="text-sm sm:text-base text-gray-700 mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit quam atque ipsa laborum sunt distinctio...</p>
                     <div class="flex items-center space-x-4">
-                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Author" class="w-10 h-10 rounded-full">
-                        <div class="text-sm">
+                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Author" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full">
+                        <div class="text-xs sm:text-sm">
                             <p>David Smith</p>
                             <p>February 10, 2022</p>
                         </div>
@@ -77,11 +41,11 @@
                 <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Post Image" class="w-full h-48 object-cover">
                 <div class="p-4">
                     <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mb-2">Lifestyle</span>
-                    <h3 class="text-xl font-bold mb-2 ">Get the Most Out of Iceland with our 10 Travel Tips</h3>
-                    <p class="text-gray-700 mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit quam atque ipsa laborum sunt distinctio...</p>
+                    <h3 class="text-lg sm:text-xl font-bold mb-2">Get the Most Out of Iceland with our 10 Travel Tips</h3>
+                    <p class="text-sm sm:text-base text-gray-700 mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit quam atque ipsa laborum sunt distinctio...</p>
                     <div class="flex items-center space-x-4">
-                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Author" class="w-10 h-10 rounded-full">
-                        <div class="text-sm">
+                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Author" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full">
+                        <div class="text-xs sm:text-sm">
                             <p>David Smith</p>
                             <p>February 10, 2022</p>
                         </div>
@@ -92,11 +56,11 @@
                 <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Post Image" class="w-full h-48 object-cover">
                 <div class="p-4">
                     <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mb-2">Lifestyle</span>
-                    <h3 class="text-xl font-bold mb-2">7 Holiday Decor Ideas and Exactly What I Love About Each One</h3>
-                    <p class="text-gray-700 mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit quam atque ipsa laborum sunt distinctio...</p>
+                    <h3 class="text-lg sm:text-xl font-bold mb-2">7 Holiday Decor Ideas and Exactly What I Love About Each One</h3>
+                    <p class="text-sm sm:text-base text-gray-700 mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit quam atque ipsa laborum sunt distinctio...</p>
                     <div class="flex items-center space-x-4">
-                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Author" class="w-10 h-10 rounded-full">
-                        <div class="text-sm">
+                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Author" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full">
+                        <div class="text-xs sm:text-sm">
                             <p>David Smith</p>
                             <p>February 10, 2022</p>
                         </div>
@@ -106,25 +70,7 @@
         </div>
     </section>
     <!-- Footer -->
-     <div id="footer"></div>
-    <!-- <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-2xl font-bold mb-4">Get The Best Blog Stories Into Your Inbox!</h2>
-            <p class="mb-4">Sign up for free and be the first to get notified about new posts.</p>
-            <form class="flex justify-center mb-4">
-                <input type="email" placeholder="Your email address" class="px-4 py-2 rounded-l-lg focus:outline-none">
-                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-r-lg hover:bg-red-600">Subscribe</button>
-            </form>
-            <div class="flex justify-center space-x-4 mb-4">
-                <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
-                <a href="#" class="text-gray-400 hover:text-white">Instagram</a>
-                <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
-                <a href="#" class="text-gray-400 hover:text-white">YouTube</a>
-            </div>
-            <p class="text-gray-400">&copy; 2023 WebBlog. All rights reserved.</p>
-        </div>
+    <div id="footer"></div>
     
-    </footer>
-    <button id="back-to-top" class="fixed bottom-4 right-4 bg-blue-800 text-white p-2 rounded-full shadow-lg hover:bg-blue-900 hidden" onclick="scrollToTop()">&#8679;</button> -->
 </body>
 </html>

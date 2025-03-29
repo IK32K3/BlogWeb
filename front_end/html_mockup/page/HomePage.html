@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -7,21 +7,23 @@
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
         <script src="/front_end/html_mockup/js/main.js" defer></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="/front_end/html_mockup/css/style.css">
         <script src="/front_end/html_mockup/js/components.js" defer></script>
-        <script src="/front_end/html_mockup/js/components_hero_section.js" defer></script>
     </head>
-    <body class="bg-gray-100 ">
+    <body class="bg-gray-100 overflow-x-hidden">
         <!-- Navigation Bar -->
         <div id="navbar"> </div>
 
         <!-- Hero Section -->
-        <div id="hero-section"></div>
+         <div id="hero-section"></div> 
+
         
         <!-- Posts Section -->
-        <section class="container mx-auto px-4 py-8 flex flex-col lg:flex-row">
+        <section class="container mx-auto px-4 py-8 flex flex-col lg:flex-row w-full">
             <div class="w-full lg:w-3/4">
                 <h2 class="text-2xl font-bold mb-4">Latest Posts</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Post Card -->
                     <div class="bg-white shadow-md rounded-lg overflow-hidden" >
                         <a href="/front_end/html_mockup/page/blog/PostDetail.html">
@@ -31,7 +33,8 @@
                             <h3 class="text-xl font-bold mb-2">What Are Your Tips for Hosting an Easy Birthday Party?</h3>
                             <p class="text-gray-700 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque nisl eros, pulvinar facilisis justo mollis...</p>
                             <a href="/front_end/html_mockup/page/blog/PostDetail.html" class="text-blue-500 hover:underline">Read More</a>
-                        </div></a>
+                        </div>
+                        </a>
                     </div>
                     <!-- Repeat Post Card for more posts -->
                     <div class="bg-white shadow-md rounded-lg overflow-hidden">
@@ -53,7 +56,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                     <!-- Post Card -->
                     <div class="bg-white shadow-md rounded-lg overflow-hidden" >
                         <a href="/front_end/html_mockup/page/blog/PostDetail.html">
@@ -88,7 +91,7 @@
                 
             </div>
             <!-- Sidebar -->
-            <aside class="w-full lg:w-1/4 lg:pl-8 mt-8 lg:mt-0">
+            <aside class="w-full lg:w-1/4 lg:pl-8 mt-8 lg:mt-0 ">
                 <div class="bg-white shadow-md rounded-lg p-4 mb-6">
                     <h3 class="text-xl font-bold mb-4">Latest Posts</h3>
                     <div class="flex items-center mb-4">
