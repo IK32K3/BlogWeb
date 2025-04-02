@@ -14,69 +14,201 @@
     <!-- Navigation Bar -->
     <div id="navbar"> </div>
     <!-- Profile Section -->
-    <section class="container mx-auto px-4 py-8 flex-grow flex flex-col md:flex-row min-h-[calc(100vh-128px)]">
-        <!-- Left Column -->
-        <div class="w-full md:w-3/4 pr-0 md:pr-4 mb-4 md:mb-0">
-            <h1 class="text-4xl font-bold mb-4">Alexander Nguyen</h1>
-            <div class="border-b mb-4">
-                <a href="#" class="text-gray-700 hover:text-gray-900 mr-4">Home</a>
-                <a href="#" class="text-gray-700 hover:text-gray-900">About</a>
+    <section class="container mx-auto px-4 py-8 flex-grow">
+        <!-- Profile Header -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-32">
+                <img src="https://kenh14cdn.com/2017/powerrangers0828131280jpg-8dd373-1280w-1-1490847186920.jpg" alt="sieu nhan gao">
             </div>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div id="post-list">
-                    <div class="post-item mb-4 flex items-center">
-                        <div class="flex-1 bg-gray-200 p-4 rounded-lg">
-                            <a href="/front_end/html_mockup/page/blog/post-detail.html" class="text-2xl font-bold mb-2 hover:underline">I'm proud of job hopping between Amazon, Microsoft, and Google</a>
-                            <p class="text-gray-700">Company loyalty is dead.</p>
-                            <p class="text-gray-500 text-sm">May 28, 2024 &middot; 1.9K &middot; 44</p>
+            <div class="px-6 pb-6 relative">
+                <div class="flex flex-col md:flex-row items-start md:items-end -mt-16">
+                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" 
+                         alt="Profile Picture" 
+                         class="w-32 h-32 rounded-full border-4 border-white shadow-lg">
+                    <div class="md:ml-6 mt-4 md:mt-0">
+                        <h1 class="text-3xl font-bold text-gray-200">Alexander Nguyen</h1>
+                        <p class="text-gray-200">Tech Content Creator | Ex-Amazon, Microsoft, Google</p>
+                        <div class="flex items-center mt-2">
+                            <span class="text-gray-200 mr-4"><i class="fas fa-users mr-1"></i> 41K Followers</span>
+                            <span class="text-gray-200"><i class="fab fa-linkedin mr-1 text-blue-600"></i> 220K+ on LinkedIn</span>
                         </div>
-                        <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Post Image" class="w-20 h-14 rounded-full ml-4 m-auto">
                     </div>
-                    <div class="post-item mb-4 flex items-center">
-                        <div class="flex-1 bg-gray-200 p-4 rounded-lg">
-                            <a href="/front_end/html_mockup/page/blog/post-detail.html" class="text-2xl font-bold mb-2 hover:underline">Resources that got me into Amazon, Microsoft, and Google</a>
-                            <p class="text-gray-700">Quick Context</p>
-                            <p class="text-gray-500 text-sm">5d ago</p>
-                        </div>
-                        <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Post Image" class="w-20 h-14 rounded-full ml-4">
+                    <div class="ml-auto mt-4 md:mt-0">
+                        <button class="follow-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium shadow-sm">
+                            <i class="fas fa-plus mr-2"></i> Follow
+                        </button>
                     </div>
-                    <!-- Repeat for more posts -->
                 </div>
             </div>
         </div>
-        <!-- Right Column -->
-        <div class="w-full md:w-1/4 pl-0 md:pl-4">
-            <div class="bg-white shadow-md rounded-lg p-6 text-center">
-                <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Profile Picture" class="w-24 h-24 rounded-full mx-auto mb-4">
-                <h2 class="text-xl font-bold mb-2">Alexander Nguyen</h2>
-                <p class="text-gray-700 mb-4">41K Followers</p>
-                <p class="text-gray-700 mb-4">220,000 Followers on LinkedIn. Sharing ideas about making online content</p>
-                <button class="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600">Follow</button>
-                <div class="mt-4">
-                    <h3 class="text-lg font-bold mb-2">Following</h3>
-                    <ul class="text-left">
-                        <li class="mb-2 flex justify-between items-center">
-                            <a href="#" class="text-gray-700 hover:text-gray-900">MarketWatch, Inc</a>
-                            <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-ellipsis-h"></i></button>
-                        </li>
-                        <li class="mb-2 flex justify-between items-center">
-                            <a href="#" class="text-gray-700 hover:text-gray-900">Change Your Mind Change Your Life</a>
-                            <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-ellipsis-h"></i></button>
-                        </li>
-                        <li class="mb-2 flex justify-between items-center">
-                            <a href="#" class="text-gray-700 hover:text-gray-900">Supportive Software Engineer</a>
-                            <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-ellipsis-h"></i></button>
-                        </li>
-                        <li class="mb-2 flex justify-between items-center">
-                            <a href="#" class="text-gray-700 hover:text-gray-900">Better Programming</a>
-                            <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-ellipsis-h"></i></button>
-                        </li>
-                        <li class="mb-2 flex justify-between items-center">
-                            <a href="#" class="text-gray-700 hover:text-gray-900">Edward Huang</a>
-                            <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-ellipsis-h"></i></button>
-                        </li>
-                        <li><a href="#" class="text-gray-700 hover:text-gray-900">See all (253)</a></li>
-                    </ul>
+
+        <div class="flex flex-col md:flex-row gap-6">
+            <!-- Left Column (Posts) -->
+            <div class="w-full md:w-3/4">
+                <!-- Navigation Tabs -->
+                <div class="bg-white rounded-lg shadow-sm mb-6">
+                    <div class="border-b border-gray-200">
+                        <nav class="flex -mb-px">
+                            <a href="#" class="nav-tab active py-4 px-6 text-center border-b-2 font-medium text-sm text-blue-600 border-blue-600">
+                                <i class="fas fa-newspaper mr-2"></i> Posts
+                            </a>
+                            <a href="#" class="nav-tab py-4 px-6 text-center border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 border-transparent hover:border-gray-300">
+                                <i class="fas fa-bookmark mr-2"></i> Saved
+                            </a>
+                            <a href="#" class="nav-tab py-4 px-6 text-center border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 border-transparent hover:border-gray-300">
+                                <i class="fas fa-heart mr-2"></i> Likes
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Posts List -->
+                <div class="space-y-6">
+                    <!-- Post 1 -->
+                    <div class="post-item bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg">
+                        <div class="p-6">
+                            <div class="flex items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-2">
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Career</span>
+                                        <span class="text-gray-500 text-sm ml-4"><i class="far fa-clock mr-1"></i> May 28, 2024</span>
+                                    </div>
+                                    <a href="/front_end/html_mockup/page/blog/post-detail.html" class="text-2xl font-bold text-gray-800 hover:text-blue-600 mb-3 block">I'm proud of job hopping between Amazon, Microsoft, and Google</a>
+                                    <p class="text-gray-600 mb-4">Company loyalty is dead. In today's fast-moving tech landscape, strategic career moves can accelerate your growth more than staying put ever could.</p>
+                                    <div class="flex items-center text-gray-500 text-sm">
+                                        <span class="mr-4"><i class="far fa-eye mr-1"></i> 1.9K views</span>
+                                        <span class="mr-4"><i class="far fa-comment mr-1"></i> 44 comments</span>
+                                        <span><i class="far fa-bookmark mr-1"></i> Save</span>
+                                    </div>
+                                </div>
+                                <img src="https://images.unsplash.com/photo-1521791055366-0d553872125f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                                     alt="Post Image" 
+                                     class="ml-6 w-32 h-24 object-cover rounded-lg hidden md:block">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 2 -->
+                    <div class="post-item bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg">
+                        <div class="p-6">
+                            <div class="flex items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-2">
+                                        <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">Resources</span>
+                                        <span class="text-gray-500 text-sm ml-4"><i class="far fa-clock mr-1"></i> 5 days ago</span>
+                                    </div>
+                                    <a href="/front_end/html_mockup/page/blog/post-detail.html" class="text-2xl font-bold text-gray-800 hover:text-blue-600 mb-3 block">Resources that got me into Amazon, Microsoft, and Google</a>
+                                    <p class="text-gray-600 mb-4">After helping dozens of engineers land jobs at top tech companies, I've compiled the most effective resources and strategies that actually work.</p>
+                                    <div class="flex items-center text-gray-500 text-sm">
+                                        <span class="mr-4"><i class="far fa-eye mr-1"></i> 3.2K views</span>
+                                        <span class="mr-4"><i class="far fa-comment mr-1"></i> 87 comments</span>
+                                        <span><i class="far fa-bookmark mr-1"></i> Save</span>
+                                    </div>
+                                </div>
+                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                                     alt="Post Image" 
+                                     class="ml-6 w-32 h-24 object-cover rounded-lg hidden md:block">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 3 -->
+                    <div class="post-item bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg">
+                        <div class="p-6">
+                            <div class="flex items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-2">
+                                        <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded">Productivity</span>
+                                        <span class="text-gray-500 text-sm ml-4"><i class="far fa-clock mr-1"></i> 2 weeks ago</span>
+                                    </div>
+                                    <a href="/front_end/html_mockup/page/blog/post-detail.html" class="text-2xl font-bold text-gray-800 hover:text-blue-600 mb-3 block">The morning routine that doubled my productivity</a>
+                                    <p class="text-gray-600 mb-4">After years of experimenting with different routines, I've found the perfect combination of habits that help me accomplish more before 9am than most people do all day.</p>
+                                    <div class="flex items-center text-gray-500 text-sm">
+                                        <span class="mr-4"><i class="far fa-eye mr-1"></i> 5.7K views</span>
+                                        <span class="mr-4"><i class="far fa-comment mr-1"></i> 132 comments</span>
+                                        <span><i class="far fa-bookmark mr-1"></i> Save</span>
+                                    </div>
+                                </div>
+                                <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                                     alt="Post Image" 
+                                     class="ml-6 w-32 h-24 object-cover rounded-lg hidden md:block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column (Sidebar) -->
+            <div class="w-full md:w-1/4">
+                <!-- About Section -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">About</h3>
+                        <p class="text-gray-600 mb-4">Sharing ideas about making online content, building in public, and navigating tech careers. Former engineer at FAANG companies.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-blue-400 hover:text-blue-700"><i class="fab fa-twitter fa-lg"></i></a>
+                            <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fab fa-linkedin fa-lg"></i></a>
+                            <a href="#" class="text-gray-800 hover:text-black"><i class="fab fa-github fa-lg"></i></a>
+                            <a href="#" class="text-red-500 hover:text-red-700"><i class="fab fa-youtube fa-lg"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Following Section -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-gray-800">Following</h3>
+                            <a href="#" class="text-sm text-blue-600 hover:underline">See all (253)</a>
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <img src="https://logo.clearbit.com/marketwatch.com" alt="MarketWatch" class="w-8 h-8 rounded-full mr-3">
+                                    <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">MarketWatch, Inc</a>
+                                </div>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </li>
+                            <li class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <img src="https://logo.clearbit.com/medium.com" alt="Change Your Mind" class="w-8 h-8 rounded-full mr-3">
+                                    <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Change Your Mind</a>
+                                </div>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </li>
+                            <li class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <img src="https://logo.clearbit.com/github.com" alt="Supportive SE" class="w-8 h-8 rounded-full mr-3">
+                                    <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Supportive SE</a>
+                                </div>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </li>
+                            <li class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <img src="https://logo.clearbit.com/programming.com" alt="Better Programming" class="w-8 h-8 rounded-full mr-3">
+                                    <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Better Programming</a>
+                                </div>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </li>
+                            <li class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <img src="https://logo.clearbit.com/linkedin.com" alt="Edward Huang" class="w-8 h-8 rounded-full mr-3">
+                                    <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Edward Huang</a>
+                                </div>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

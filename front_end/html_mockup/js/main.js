@@ -33,16 +33,21 @@ window.addEventListener('load', () => {
 });
 
 // Nút quay lại đầu trang
-function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-window.addEventListener('scroll', () => {
+window.onscroll = function() {
     const backToTopButton = document.getElementById('back-to-top');
-    if (backToTopButton) {
-        backToTopButton.classList.toggle('hidden', window.scrollY <= 200);
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        backToTopButton.classList.remove('hidden');
+    } else {
+        backToTopButton.classList.add('hidden');
     }
-});
+};
+
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
 
 // Mở menu dropdown
 function toggleDropdown() {
@@ -205,4 +210,126 @@ dropArea.addEventListener('drop', (event) => {
 fileInput.addEventListener('change', () => {
     // Handle file input change if needed
 }); 
+
+
+    // Danh sách thể loại từ ảnh
+    const categories = [
+       "Đời sống", "Thể thao", "Khoa học", "Công nghệ", " Kinh Doanh", 
+        , "Phiêu Lưu", "Hài Hước", "Học Đường", "Lịch Sử", "Kinh Dị", "Bí Ẩn", "Game", "Viễn Tưởng",
+        "Ngôn Tình", "Nấu Ăn","Phát Triển Bản Thân"
+    ];
+
+    const categoryContainer = document.getElementById('category-container');
+    const categorySearch = document.getElementById('category-search');
+
+    // Hiển thị tất cả thể loại
+    function displayCategories() {
+        categoryContainer.innerHTML = '';
+        
+        const searchTerm = categorySearch.value.toLowerCase();
+        
+        categories.forEach((category, index) => {
+            if (category.toLowerCase().includes(searchTerm)) {
+                const container = document.createElement('div');
+                container.className = 'filter-container';
+                container.innerHTML = `
+                    <input type="checkbox" id="category-${index}" class="custom-checkbox">
+                    <label for="category-${index}" class="filter-label">
+                        <span>${category}</span>
+                    </label>
+                `;
+                categoryContainer.appendChild(container);
+            }
+        });
+    }
+
+    // Hiển thị tất cả thể loại ban đầu
+    displayCategories();
+
+    // Tìm kiếm thể loại khi người dùng nhập
+    categorySearch.addEventListener('input', displayCategories);
+
+// document.addEventListener('DOMContentLoaded', function() {
+//             // Tab switching functionality
+//             const tabs = document.querySelectorAll('[data-tab]');
+//             tabs.forEach(tab => {
+//                 tab.addEventListener('click', function(e) {
+//                     e.preventDefault();
+                    
+//                     // Remove active class from all tabs
+//                     tabs.forEach(t => {
+//                         t.classList.remove('active');
+//                         t.classList.remove('text-blue-600');
+//                         t.classList.add('text-gray-600');
+//                     });
+                    
+//                     // Add active class to clicked tab
+//                     this.classList.add('active', 'text-blue-600');
+//                     this.classList.remove('text-gray-600');
+                    
+//                     // Hide all tab contents
+//                     document.querySelectorAll('.tab-content').forEach(content => {
+//                         content.classList.add('hidden');
+//                         content.classList.remove('active');
+//                     });
+                    
+//                     // Show selected tab content
+//                     const tabId = this.getAttribute('data-tab') + 'Tab';
+//                     document.getElementById(tabId).classList.remove('hidden');
+//                     document.getElementById(tabId).classList.add('active');
+//                 });
+//             });
+
+//             // Like button functionality
+//             document.querySelectorAll('.like-btn').forEach(btn => {
+//                 btn.addEventListener('click', function() {
+//                     const likeCount = this.querySelector('.like-count');
+//                     const currentLikes = parseInt(likeCount.textContent);
+//                     const isLiked = this.classList.contains('text-blue-600');
+                    
+//                     if (isLiked) {
+//                         this.classList.remove('text-blue-600');
+//                         likeCount.textContent = currentLikes - 1;
+//                         this.querySelector('i').classList.replace('fas', 'far');
+//                     } else {
+//                         this.classList.add('text-blue-600');
+//                         likeCount.textContent = currentLikes + 1;
+//                         this.querySelector('i').classList.replace('far', 'fas');
+//                     }
+//                 });
+//             });
+
+//             // Edit profile button
+//             const editProfileBtn = document.getElementById('editProfileBtn');
+//             editProfileBtn.addEventListener('click', function() {
+//                 alert('Edit profile functionality would open a modal or form here.');
+//                 // In a real implementation, this would open a modal or redirect to an edit page
+//             });
+
+//             // Delete post functionality
+//             document.querySelectorAll('.delete-btn').forEach(btn => {
+//                 btn.addEventListener('click', function() {
+//                     if (confirm('Are you sure you want to delete this post?')) {
+//                         const postCard = this.closest('.post-card');
+//                         postCard.style.opacity = '0';
+//                         setTimeout(() => {
+//                             postCard.remove();
+//                         }, 300);
+//                     }
+//                 });
+//             });
+
+//             // Edit post functionality
+//             document.querySelectorAll('.edit-btn').forEach(btn => {
+//                 btn.addEventListener('click', function() {
+//                     const postContent = this.closest('.post-card').querySelector('p.text-gray-700');
+//                     const currentText = postContent.textContent;
+//                     const newText = prompt('Edit your post:', currentText);
+                    
+//                     if (newText !== null && newText !== currentText) {
+//                         postContent.textContent = newText;
+//                     }
+//                 });
+//             });
+//         });
 

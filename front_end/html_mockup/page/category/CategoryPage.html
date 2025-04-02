@@ -13,205 +13,244 @@
 </head>
 <body class="bg-gray-100">  
     <!-- Navigation -->
-     <div id="navbar"></div>
-    <!-- <nav class="bg-white shadow-md">
-        <div class="container mx-auto px-4 py-2 flex justify-between items-center">
-            <a href="/front_end/html_mockup/page/HomePage.html" class="text-2xl font-bold text-black ">MyBlog</a>
-            <div id="menu" class=" hidden lg:flex space-x-4 ml-auto">
-                <a href="/front_end/html_mockup/page/category/CategoryPage.html" class="text-gray-700 hover:text-gray-900 flex mt-1 "><i class="fas fa-list mt-2 mr-2 "></i><p class="hidden lg:block text-xl ">Category</p></a>
-                <a href="/front_end/html_mockup/page/blog/write-post.html" class="text-gray-700 hover:text-gray-900 flex mt-1 "><i class="fas fa-pen mt-2 mr-2"></i> <p class="hidden lg:block text-xl ">Write</p></a>
+    <div id="navbar"></div>
+    
+    <!-- Category Section -->
+    <section class="container mx-auto w-full px-4 py-8">
+        <div class="bg-gray-100 shadow-md rounded-lg p-6">
+            <div class="flex items-center gap-4 mb-6">
+                <input type="text" placeholder="Nhập từ khóa" 
+                class="flex-1 px-4 py-3 rounded-lg bg-white border border-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition-all duration-200 ease-in-out shadow-sm">
+                <button class="search-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-medium transition">
+                    Tìm Kiếm
+                </button>
+            </div>
+            <!-- Trạng thái -->
+            <fieldset class="mb-6">
+                <legend class="text-lg font-semibold">Trạng Thái</legend>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div class="filter-container">
+                        <input type="checkbox" id="status-1" class="custom-checkbox">
+                        <label for="status-1" class="filter-label">
+                            <span>Chưa bắt đầu</span>
+                        </label>
+                    </div>
+                    <div class="filter-container">
+                        <input type="checkbox" id="status-2" class="custom-checkbox">
+                        <label for="status-2" class="filter-label">
+                            <span>Đang tiến hành</span>
+                        </label>
+                    </div>
+                    <div class="filter-container">
+                        <input type="checkbox" id="status-3" class="custom-checkbox">
+                        <label for="status-3" class="filter-label">
+                            <span>Hoàn Thành</span>
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
             
-            <div class="relative w-10 h-10 bg-gray-400 rounded-full">
-                <button id="dropdownButton" class="text-gray-700 hover:text-gray-900 flex items-center text-xl "><i class="fas fa-user px-3 py-2.5 "></i></button>
-                <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg hidden">
-                    <a href="/front_end/html_mockup/page/profile/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Profile</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Category</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Write</a>
-                    <a href="/front_end/html_mockup/page/blog/contact_us.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Contact Us</a>
-                    <div class="border-t my-2"></div>
-                    <a href="/front_end/html_mockup/page/profile/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">about-us</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Help</a>
-                    <div class="border-t my-2"></div>
-                    <a href="/front_end/html_mockup/page/auth/login.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">Log out</a>
+            <!-- Thể loại -->
+            <fieldset class="mb-6">
+                <legend class="text-lg font-semibold">Thể Loại</legend>
+                <div class="flex justify-between items-center mb-3">
+                    <input type="text" placeholder="Tìm thể loại" 
+                           class="px-3 py-1 rounded bg-gray-100 border border-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 hover:border-blue-400 transition" 
+                           id="category-search">
                 </div>
-            </div>
-            <button class="lg:hidden text-gray-700 hover:text-gray-900 ml-4" onclick="toggleMenu()" >
-                <i class="fas fa-bars"></i>
-            </button>   
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" id="category-container">
+                    <!-- Các thể loại sẽ được thêm bằng JavaScript -->
+                </div>
+            </fieldset>
+            
+            <!-- Sắp xếp -->
+            <fieldset>
+                <legend class="text-lg font-semibold">Sắp Xếp</legend>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div class="filter-container">
+                        <input type="checkbox" id="sort-1" class="custom-checkbox">
+                        <label for="sort-1" class="filter-label">
+                            <span>Lượt xem</span>
+                        </label>
+                    </div>
+                    <div class="filter-container">
+                        <input type="checkbox" id="sort-3" class="custom-checkbox">
+                        <label for="sort-3" class="filter-label">
+                            <span>lượt tương tác cao</span>
+                        </label>
+                    </div>
+                    <div class="filter-container">
+                        <input type="checkbox" id="sort-4" class="custom-checkbox">
+                        <label for="sort-4" class="filter-label">
+                            <span>Bài viết mới nhất</span>
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
         </div>
-    </nav> -->
-    <!-- Category Title and Description -->
-    <section class="container mx-auto px-4 py-8 flex flex-col lg:flex-row">
-        <div class="w-full lg:w-3/4">
-            <h1 class="text-3xl font-bold mb-4">Category Title</h1>
-            <p class="text-gray-700 mb-4">Category description goes here...</p>
+        <script>
+            const categories = [
+               "Đời sống", "Thể thao", "Khoa học", "Công nghệ", " Kinh Doanh", 
+                , "Phiêu Lưu", "Hài Hước", "Học Đường", "Lịch Sử", "Kinh Dị", "Bí Ẩn", "Game", "Viễn Tưởng",
+                "Ngôn Tình", "Nấu Ăn","Phát Triển Bản Thân"
+            ];
+        
+            const categoryContainer = document.getElementById('category-container');
+            const categorySearch = document.getElementById('category-search');
+            function displayCategories() {
+                categoryContainer.innerHTML = '';
+                
+                const searchTerm = categorySearch.value.toLowerCase();
+                
+                categories.forEach((category, index) => {
+                    if (category.toLowerCase().includes(searchTerm)) {
+                        const container = document.createElement('div');
+                        container.className = 'filter-container';
+                        container.innerHTML = `
+                            <input type="checkbox" id="category-${index}" class="custom-checkbox">
+                            <label for="category-${index}" class="filter-label">
+                                <span>${category}</span>
+                            </label>
+                        `;
+                        categoryContainer.appendChild(container);
+                    }
+                });
+            }
+            displayCategories();
+            categorySearch.addEventListener('input', displayCategories);
+        </script>
+    </section>
 
-            <!-- Search Bar -->
-            <div class="mb-4 relative">
-                <input type="text" placeholder="Search..." class="w-full h-12 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button href=""><i class="fas fa-search absolute right-3 top-4 text-gray-500"></i></button>
-            </div>
-
-            <!-- Category Suggestions -->
-            <div class="mb-4 flex flex-wrap gap-2">
-                <a href="#" class="inline-block bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded-full category-link">Lifestyle</a>
-                <a href="#" class="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded-full hover:bg-blue-700 category-link">Travel</a>
-                <a href="#" class="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded-full hover:bg-blue-700 category-link">Food</a>
-                <a href="#" class="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded-full hover:bg-blue-700 category-link">Fashion</a>
-                <a href="#" class="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded-full hover:bg-blue-700 category-link">Interior</a>
-                <a href="#" class="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded-full hover:bg-blue-700 category-link">Art & Design</a>
-            </div>
-
-            <!-- Filter / Sort Options -->
-            <div class="mb-4 flex justify-end">
-                <select class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="all">All</option>
-                    <option value="recent">Most Recent</option>
-                    <option value="popular">Most Popular</option>
-                </select>
-            </div>
-
-            <!-- Featured Post -->
-            <section class="container mx-auto px-4 py-8">
-                <h2 class="text-2xl font-bold mb-4">Featured Post</h2>
-                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Bài viết 1" class="w-full h-48 object-cover rounded-lg mb-4">
-                    <a href="" class="w-10 px-3 py-1 rounded-full text-white h-2 bg-blue-500 hover:bg-blue-600" >lifestyle</a>
-                    <h3 class="text-xl font-semibold mt-2"><a href="#" class="text-blue-600 hover:underline">Tiêu đề bài viết 1</a></h3>
-                    <p class="text-gray-600 mt-2">Mô tả ngắn về bài viết...</p>
-                    <span class="text-gray-500 text-sm">Ngày đăng: 20/03/2025</span>
+    <div class="items-title flex items-center m-4 justify-between ">
+        <div class="title-line text-xl font-semibold px-4 ml-9 text-indigo-600">Nội Dung</div>
+        <hr class="flex-grow border-t-2 border-indigo-600 mr-12 mt-2">
+    </div>
+        
+    <!-- Main Content -->
+    <section class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">       
+        <!-- Main Content -->
+        <div class="w-full lg:w-3/4 space-y-6">
+            <!-- Featured Posts -->
+            <div class="space-y-6">
+                <div class="post-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 1" class="w-full h-64 object-cover rounded-lg mb-4">
+                    <a href="#" class="category-tag bg-blue-100 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white">Lifestyle</a>
+                    <h3 class="text-2xl font-bold mt-3 mb-2"><a href="#" class="text-gray-800 hover:text-blue-600 transition">Tiêu đề bài viết hấp dẫn về phong cách sống</a></h3>
+                    <p class="text-gray-600 mb-4">Khám phá những bí quyết giúp bạn có một lối sống lành mạnh và cân bằng giữa công việc và cuộc sống cá nhân...</p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span>Ngày đăng: 20/03/2025</span>
+                        <a href="#" class="text-blue-500 hover:underline">Đọc tiếp →</a>
+                    </div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Bài viết 1" class="w-full h-48 object-cover rounded-lg mb-4">
-                    <a href="" class="w-10 px-3 py-1 rounded-full text-white h-2 bg-blue-500 hover:bg-blue-600" >lifestyle</a>
-                    <h3 class="text-xl font-semibold mt-2"><a href="#" class="text-blue-600 hover:underline">Tiêu đề bài viết 1</a></h3>
-                    <p class="text-gray-600 mt-2">Mô tả ngắn về bài viết...</p>
-                    <span class="text-gray-500 text-sm">Ngày đăng: 20/03/2025</span>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Bài viết 1" class="w-full h-48 mb-4 object-cover rounded-lg">
-                    <a href="" class="w-10 px-3 py-1 rounded-full text-white h-2 bg-blue-500 hover:bg-blue-600" >lifestyle</a>
-                    <h3 class="text-xl font-semibold mt-2"><a href="#" class="text-blue-600 hover:underline">Tiêu đề bài viết 1</a></h3>
-                    <p class="text-gray-600 mt-2">Mô tả ngắn về bài viết...</p>
-                    <span class="text-gray-500 text-sm">Ngày đăng: 20/03/2025</span>
-                </div>
-            </section>
 
-            <!-- Related Categories -->
+                <div class="post-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 2" class="w-full h-64 object-cover rounded-lg mb-4">
+                    <a href="#" class="category-tag bg-green-100 text-green-600 rounded-full hover:bg-green-600 hover:text-white">Du lịch</a>
+                    <h3 class="text-2xl font-bold mt-3 mb-2"><a href="#" class="text-gray-800 hover:text-blue-600 transition">10 điểm đến không thể bỏ qua tại Đà Lạt</a></h3>
+                    <p class="text-gray-600 mb-4">Khám phá những địa điểm tuyệt vời nhất ở thành phố ngàn hoa, từ những đồi thông bạt ngàn đến những quán café độc đáo...</p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span>Ngày đăng: 18/03/2025</span>
+                        <a href="#" class="text-blue-500 hover:underline">Đọc tiếp →</a>
+                    </div>
+                </div>
 
+                <div class="post-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 3" class="w-full h-64 object-cover rounded-lg mb-4">
+                    <a href="#" class="category-tag bg-red-100 text-red-600 rounded-full hover:bg-red-600 hover:text-white">Ẩm thực</a>
+                    <h3 class="text-2xl font-bold mt-3 mb-2"><a href="#" class="text-gray-800 hover:text-blue-600 transition">Cách làm bánh flan caramel hoàn hảo</a></h3>
+                    <p class="text-gray-600 mb-4">Bí quyết để có món bánh flan mềm mịn, thơm ngon với lớp caramel vàng óng đúng chuẩn phong cách Pháp...</p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span>Ngày đăng: 15/03/2025</span>
+                        <a href="#" class="text-blue-500 hover:underline">Đọc tiếp →</a>
+                    </div>
+                </div>
+            </div>
         </div>
+
         <!-- Sidebar -->
-        <aside class="w-full lg:w-1/4 lg:pl-8 mt-8 lg:mt-0">
-            <div class="bg-white shadow-md rounded-lg p-4 mb-6">
-                <h3 class="text-xl font-bold mb-4">Latest Posts</h3>
-                <a href="#" class="flex items-center mb-4">
-                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">1</span>
-                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
-                    <div>
-                        <p class="font-bold">5 Things I Wish I Knew Before Traveling to...</p>
-                        <p class="text-gray-600 text-sm">January 15, 2022</p>
-                    </div>
-                </a>
-                <a href="#" class="flex items-center mb-4">
-                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">2</span>
-                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
-                    <div>
-                        <p class="font-bold">Everything you need to know about visiting...</p>
-                        <p class="text-gray-600 text-sm">January 15, 2022</p>
-                    </div>
-                </a>
-                <a href="#" class="flex items-center mb-4">
-                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">3</span>
-                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
-                    <div>
-                        <p class="font-bold">How to spend interesting vacation...</p>
-                        <p class="text-gray-600 text-sm">January 15, 2022</p>
-                    </div>
-                </a>
-                <a href="#" class="flex items-center mb-4">
-                    <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-2">4</span>
-                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Post Image" class="w-10 h-10 rounded-full mr-4">
-                    <div>
-                        <p class="font-bold">10 Best and Most Beautiful Places to...</p>
-                        <p class="text-gray-600 text-sm">January 15, 2022</p>
-                    </div>
-                </a>
+        <aside class="w-full lg:w-1/4 space-y-6">
+            <!-- Latest Posts -->
+            <div class="sidebar-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-400">Bài viết mới nhất</h3>
+                <div class="space-y-4">
+                    <a href="#" class="flex items-start gap-3 group">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full mt-3">1</span>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition">5 điều tôi ước biết trước khi đi du lịch Nhật Bản</h4>
+                            <p class="text-sm text-gray-500">15/01/2025</p>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-start gap-3 group">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full mt-3">2</span>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition">Tất cả những gì bạn cần biết khi thăm Bali</h4>
+                            <p class="text-sm text-gray-500">12/01/2025</p>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-start gap-3 group">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full mt-3">3</span>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition">Cách có một kỳ nghỉ thú vị với ngân sách hạn chế</h4>
+                            <p class="text-sm text-gray-500">10/01/2025</p>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-start gap-3 group">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full mt-3">4</span>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition">10 địa điểm đẹp nhất để chụp ảnh tại Đà Lạt</h4>
+                            <p class="text-sm text-gray-500">08/01/2025</p>
+                        </div>
+                    </a>
+                </div>
             </div>
-            <div class="bg-white shadow-md rounded-lg p-4 mb-6">
-                <h3 class="text-xl font-bold mb-4">Recommended Topics</h3>
-                <div class="flex flex-wrap gap-2">
-                    <a href="#" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-2 py-1 rounded-full">Programming</a>
-                    <a href="#" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-2 py-1 rounded-full">Relationships</a>
-                    <a href="#" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-2 py-1 rounded-full">Data Science</a>
-                    <a href="#" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-2 py-1 rounded-full">Self Improvement</a>
-                    <a href="#" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-2 py-1 rounded-full">Technology</a>
-                    <a href="#" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-2 py-1 rounded-full">Politics</a>
-                    <a href="#" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-2 py-1 rounded-full">Cryptocurrency</a>
-                </div>
-                <a href="#" class="text-blue-500 hover:underline mt-4 block">See more topics</a>
-            </div>
-            <div class="bg-white shadow-md rounded-lg p-4">
-                <h3 class="text-xl font-bold mb-4">Who to Follow</h3>
-                <div class="flex items-center mb-4">
-                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Profile Image" class="w-10 h-10 rounded-full mr-4">
-                    <div>
-                        <p class="font-bold">letters from rosie</p>
-                        <p class="text-gray-600 text-sm">i love my solitude but i was meant to be a lover. 🌿...</p>
+
+            <!-- Who to Follow -->
+            <div class="sidebar-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-400">Đề xuất theo dõi</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Profile" class="w-10 h-10 rounded-full object-cover">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-semibold text-gray-800 truncate">Letters from Rosie</h4>
+                            <p class="text-sm text-gray-500 truncate">Tôi yêu sự cô độc nhưng tôi sinh ra để yêu thương 🌿...</p>
+                        </div>
+                        <button class="flex-shrink-0 bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded-full text-sm transition">Theo dõi</button>
                     </div>
-                    <button class="ml-auto bg-blue-500 hover:bg-blue-600  text-white px-4 py-2 rounded-full">Follow</button>
-                </div>
-                <div class="flex items-center mb-4">
-                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Profile Image" class="w-10 h-10 rounded-full mr-4">
-                    <div>
-                        <p class="font-bold">Android Developers</p>
-                        <p class="text-gray-600 text-sm">Articles on modern tools and resources to help you build...</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Profile" class="w-10 h-10 rounded-full object-cover">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-semibold text-gray-800 truncate">Android Developers</h4>
+                            <p class="text-sm text-gray-500 truncate">Bài viết về công cụ và tài nguyên hiện đại giúp bạn xây dựng...</p>
+                        </div>
+                        <button class="flex-shrink-0 bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded-full text-sm transition">Theo dõi</button>
                     </div>
-                    <button class="ml-auto bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full">Follow</button>
-                </div>
-                <div class="flex items-center">
-                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Profile Image" class="w-10 h-10 rounded-full mr-4">
-                    <div>
-                        <p class="font-bold">Michal Malewicz</p>
-                        <p class="text-gray-600 text-sm">One design and one lifestyle...</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Profile" class="w-10 h-10 rounded-full object-cover">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-semibold text-gray-800 truncate">Michal Malewicz</h4>
+                            <p class="text-sm text-gray-500 truncate">Một thiết kế và một phong cách sống...</p>
+                        </div>
+                        <button class="flex-shrink-0 bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded-full text-sm transition">Theo dõi</button>
                     </div>
-                    <button class="ml-auto bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full">Follow</button>
                 </div>
             </div>
         </aside>
     </section>
      
                 <!-- Pagination -->
-                <section class="container mx-auto px-4 py-8">
-                    <div class="flex justify-center mt-6 space-x-2">
-                        <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">«</a>
-                        <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">1</a>
-                        <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">2</a>
-                        <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">3</a>
-                        <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">»</a>
-                    </div>
-                </section>
+    <section class="container mx-auto px-4 py-8">
+        <div class="flex justify-center mt-6 space-x-2">
+            <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">«</a>
+            <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">1</a>
+            <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">2</a>
+            <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">3</a>
+            <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">»</a>
+        </div>
+    </section>
 
     <!-- Footer -->
      <div id="footer"></div>
-    <!-- <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-2xl font-bold mb-4">Get The Best Blog Stories Into Your Inbox!</h2>
-            <p class="mb-4">Sign up for free and be the first to get notified about new posts.</p>
-            <form class="flex flex-col sm:flex-row justify-center mb-4">
-                <input type="email" placeholder="Your email address" class="px-4 py-2 rounded-t-lg sm:rounded-l-lg sm:rounded-t-none focus:outline-none">
-                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-b-lg sm:rounded-r-lg sm:rounded-b-none hover:bg-red-600">Subscribe</button>
-            </form>
-            <div class="flex justify-center space-x-4 mb-4">
-                <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
-                <a href="#" class="text-gray-400 hover:text-white">Instagram</a>
-                <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
-                <a href="#" class="text-gray-400 hover:text-white">YouTube</a>
-            </div>
-            <p class="text-gray-400">&copy; 2023 WebBlog. All rights reserved.</p>
-        </div>
-        <button id="back-to-top" class="fixed bottom-4 right-4 bg-blue-800 text-white p-2 rounded-full shadow-lg hover:bg-blue-900 hidden" onclick="scrollToTop()">&#8679;</button>
-    </footer> -->
+    
     
 </body>
 </html>
