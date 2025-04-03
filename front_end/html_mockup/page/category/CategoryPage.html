@@ -6,12 +6,12 @@
     <title>Category Page</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="/front_end/html_mockup/js/components.js" defer></script>
-    <script src="/front_end/html_mockup/js/main.js" defer></script>
+    <script src="/front_end/html_mockup/js/components.js"defer ></script>
+    <script src="/front_end/html_mockup/js/category.js"defer></script>
+    <script src="/front_end/html_mockup/js/main.js" defer ></script>
     <link href="/front_end/html_mockup/css/style.css" rel="stylesheet">
-    
 </head>
-<body class="bg-gray-100">  
+<body class="bg-gray-200">  
     <!-- Navigation -->
     <div id="navbar"></div>
     
@@ -88,37 +88,7 @@
                 </div>
             </fieldset>
         </div>
-        <script>
-            const categories = [
-               "Đời sống", "Thể thao", "Khoa học", "Công nghệ", " Kinh Doanh", 
-                , "Phiêu Lưu", "Hài Hước", "Học Đường", "Lịch Sử", "Kinh Dị", "Bí Ẩn", "Game", "Viễn Tưởng",
-                "Ngôn Tình", "Nấu Ăn","Phát Triển Bản Thân"
-            ];
-        
-            const categoryContainer = document.getElementById('category-container');
-            const categorySearch = document.getElementById('category-search');
-            function displayCategories() {
-                categoryContainer.innerHTML = '';
-                
-                const searchTerm = categorySearch.value.toLowerCase();
-                
-                categories.forEach((category, index) => {
-                    if (category.toLowerCase().includes(searchTerm)) {
-                        const container = document.createElement('div');
-                        container.className = 'filter-container';
-                        container.innerHTML = `
-                            <input type="checkbox" id="category-${index}" class="custom-checkbox">
-                            <label for="category-${index}" class="filter-label">
-                                <span>${category}</span>
-                            </label>
-                        `;
-                        categoryContainer.appendChild(container);
-                    }
-                });
-            }
-            displayCategories();
-            categorySearch.addEventListener('input', displayCategories);
-        </script>
+
     </section>
 
     <div class="items-title flex items-center m-4 justify-between ">
@@ -238,15 +208,15 @@
     </section>
      
                 <!-- Pagination -->
-    <section class="container mx-auto px-4 py-8">
-        <div class="flex justify-center mt-6 space-x-2">
-            <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">«</a>
-            <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">1</a>
-            <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">2</a>
-            <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">3</a>
-            <a href="#" class="px-4 py-2 bg-gray-300 hover:bg-blue-600 rounded">»</a>
-        </div>
-    </section>
+                <section class="container mx-auto px-4 py-8">
+                    <div class="flex justify-center mt-6 space-x-2">
+                        <a href="#" class="px-4 py-2 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded text-white">«</a>
+                        <a href="#" class="px-4 py-2 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded text-white">1</a>
+                        <a href="#" class="px-4 py-2 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded text-white">2</a>
+                        <a href="#" class="px-4 py-2 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded text-white">3</a>
+                        <a href="#" class="px-4 py-2 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded text-white">»</a>
+                    </div>
+                </section>
 
     <!-- Footer -->
      <div id="footer"></div>

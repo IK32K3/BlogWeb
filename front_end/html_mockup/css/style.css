@@ -186,3 +186,60 @@ legend {
 .fa-instagram { color: #E4405F; }
 .fa-twitter { color: #1DA1F2; }
 .fa-youtube { color: #FF0000; }
+/*  */
+
+:root {
+    --primary: #4f46e5;
+    --primary-light: #6366f1;
+}
+
+.title-input {
+    font-family: 'Playfair Display', serif;
+}
+
+.ql-toolbar.ql-snow {
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.ql-container.ql-snow {
+    border: none;
+    font-size: 1.125rem;
+}
+
+.ql-editor.ql-blank::before {
+    font-style: normal;
+    color: #94a3b8;
+    left: 1.5rem;
+    font-size: 1.125rem;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.status-dot {
+    animation: pulse 2s infinite;
+}
+
+.ql-container {
+    min-height: 300px;
+}
+.ql-editor {
+    height: 100%; 
+}
+/* / update-post */
+.editor-container {
+    min-height: 400px;
+}
+.hover-scale {
+    transition: transform 0.2s ease;
+}
+.hover-scale:hover {
+    transform: translateY(-2px);
+}
+.tag-input:focus {
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+}

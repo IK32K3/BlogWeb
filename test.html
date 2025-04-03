@@ -1,401 +1,578 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Write Post | BlogMaster</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/front_end/html_mockup/css/bloger-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-    <style>
-        .ql-toolbar.ql-snow {
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
-            border: 1px solid #e2e8f0;
-        }
-        .ql-container.ql-snow {
-            border-bottom-left-radius: 0.5rem;
-            border-bottom-right-radius: 0.5rem;
-            border: 1px solid #e2e8f0;
-            border-top: none;
-            min-height: 300px;
-            font-family: 'Inter', sans-serif;
-        }
-        #drop-area {
-            transition: all 0.3s ease;
-        }
-        #drop-area.highlight {
-            border-color: #3b82f6;
-            background-color: #f0f7ff;
-        }
-        .tag {
-            transition: all 0.2s ease;
-        }
-        .tag:hover {
-            transform: translateY(-1px);
-        }
-        .tag-remove {
-            transition: all 0.2s ease;
-        }
-        .tag-remove:hover {
-            color: #ef4444;
-            transform: scale(1.1);
-        }
-    </style>
 </head>
+
 <body class="bg-gray-50">
-    <!-- Navigation Bar -->
-    <nav class="bg-white shadow-sm py-4">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-blue-600">BlogMaster</a>
-            <div class="hidden md:flex space-x-8">
-                <a href="#" class="text-gray-700 hover:text-blue-600">Home</a>
-                <a href="#" class="text-gray-700 hover:text-blue-600">My Posts</a>
-                <a href="#" class="text-gray-700 hover:text-blue-600">Analytics</a>
-                <a href="#" class="text-gray-700 hover:text-blue-600">Settings</a>
-            </div>
-            <div class="flex items-center space-x-4">
-                <button class="md:hidden text-gray-700">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" 
-                     alt="User" 
-                     class="w-10 h-10 rounded-full border-2 border-blue-200">
-            </div>
-        </div>
-    </nav>
-    
-    <!-- Write Post Section -->
-    <section class="container mx-auto px-4 py-8 max-w-4xl">
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Create New Post</h1>
-            <div class="flex items-center space-x-2">
-                <span class="text-sm text-gray-500">Auto-saved</span>
-                <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-            </div>
-        </div>
-        
-        <form class="bg-white shadow-lg rounded-xl overflow-hidden">
-            <!-- Post Header -->
-            <div class="p-6 border-b">
-                <div class="flex items-center space-x-4">
-                    <img src="https://randomuser.me/api/portraits/men/32.jpg" 
-                         alt="Author" 
-                         class="w-12 h-12 rounded-full border-2 border-blue-200">
-                    <div>
-                        <p class="font-medium">Nguyễn Văn A</p>
-                        <p class="text-sm text-gray-500">Draft - Last edited just now</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Form Content -->
-            <div class="p-6 space-y-6">
-                <!-- Title -->
-                <div>
-                    <label for="title" class="block text-lg font-semibold text-gray-800 mb-2">Post Title</label>
-                    <input type="text" id="title" 
-                           class="w-full px-4 py-3 text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                           placeholder="Catchy title that grabs attention...">
-                    <p class="mt-1 text-sm text-gray-500">Tip: Keep it under 60 characters for best results</p>
-                </div>
-                
-                <!-- Subtitle -->
-                <div>
-                    <label for="subtitle" class="block text-lg font-semibold text-gray-800 mb-2">Subtitle</label>
-                    <input type="text" id="subtitle" 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                           placeholder="Brief summary of your post...">
-                </div>
-                
-                <!-- Category & Tags -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="category" class="block text-lg font-semibold text-gray-800 mb-2">Category</label>
-                        <select id="category" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="">Select a category</option>
-                            <option value="technology">Technology</option>
-                            <option value="business">Business</option>
-                            <option value="lifestyle">Lifestyle</option>
-                            <option value="education">Education</option>
-                            <option value="health">Health & Wellness</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="tags" class="block text-lg font-semibold text-gray-800 mb-2">Tags</label>
-                        <div class="flex flex-wrap items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
-                            <div id="tag-container" class="flex flex-wrap gap-2">
-                                <!-- Tags will be added here -->
-                            </div>
-                            <input type="text" id="tags-input" 
-                                   class="flex-1 min-w-[100px] outline-none" 
-                                   placeholder="Add tags...">
+    <!-- Header -->
+    <header class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <!-- Left section - Logo and search -->
+                <div class="flex items-center">
+                    <!-- Mobile menu button -->
+                    <button id="mobileMenuButton" class="mr-2 p-2 text-gray-500 hover:text-gray-700 lg:hidden">
+                        <i class="fas fa-bars text-lg"></i>
+                    </button>
+                    
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+                            <i class="fas fa-pen-fancy text-white text-sm"></i>
                         </div>
-                        <p class="mt-1 text-sm text-gray-500">Press Enter or comma to add tags (max 5)</p>
+                        <span class="ml-2 text-3xl font-bold bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text text-transparen hidden sm:block">My<span class="bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent">Blog</span></span>
                     </div>
+                                    
                 </div>
                 
-                <!-- Featured Image -->
-                <div>
-                    <label class="block text-lg font-semibold text-gray-800 mb-2">Featured Image</label>
-                    <div id="drop-area" class="border-dashed border-2 border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
-                        <i class="fas fa-cloud-upload-alt text-blue-400 text-4xl mb-3"></i>
-                        <p class="text-gray-700 font-medium mb-1">Drag & drop your image here</p>
-                        <p class="text-gray-500 text-sm mb-4">or click to browse files</p>
-                        <p class="text-gray-400 text-xs">Recommended size: 1200x630px (PNG, JPG up to 2MB)</p>
-                        <input type="file" id="featuredImage" class="hidden" accept="image/*">
+                <!-- Right section - Navigation and user menu -->
+                <div class="flex items-center gap-3">
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 mt-2">
+                        <i class="fas fa-bell text-xl "></i>
+                        <span class="absolute top-0 right-0 h-3 w-3 rounded-full bg-red-500 notification-badge"></span>
+                    </button>
+                    
+                    <!-- User menu -->
+                    <div class="relative ml-1 mt-1">
+                        <button id="userMenuButton" class="flex  items-center gap-2 group" aria-expanded="false">
+                            <img class="user-avatar h-9 w-9 rounded-full object-cover border-2 border-transparent group-hover:border-indigo-200" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="User avatar">
+                            <span class="hidden lg:inline-flex text-xn font-medium text-gray-700 group-hover:text-indigo-600">Edogawa Conan</span>
+                            <i class="fas fa-chevron-down hidden lg:inline-flex text-xs text-gray-500 group-hover:text-indigo-600 transition-transform"></i>
+                        </button>
+                        
+                        <!-- Dropdown menu -->
+                        <div id="userDropdown" class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden z-10">
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <p class="text-sm font-medium text-gray-900">Signed in as</p>
+                                <p class="text-sm text-gray-500 truncate">conan@detective.com</p>
+                            </div>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-user mr-2 text-gray-400"></i>Your Profile</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-cog mr-2 text-gray-400"></i>Settings</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-chart-line mr-2 text-gray-400"></i>Analytics</a>
+                            <div class="border-t border-gray-100"></div>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-sign-out-alt mr-2 text-gray-400"></i>Sign out</a>
+                        </div>
                     </div>
-                    <div id="image-preview" class="hidden mt-4">
-                        <div class="relative group">
-                            <img id="preview-img" src="" alt="Preview" class="w-full h-64 object-cover rounded-lg">
-                            <button id="remove-image" class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md text-red-500 hover:bg-red-50">
-                                <i class="fas fa-times"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar and main content wrapper -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-20 w-64 -translate-x-full transform overflow-y-auto bg-white border-r border-gray-200 transition duration-200 ease-in-out lg:static lg:translate-x-0">
+            <div class="flex h-full flex-col px-4 py-6">
+                <!-- Sidebar header -->
+                <div class="flex items-center justify-between px-2 mb-8">
+                    <h2 class="text-lg font-semibold text-gray-800">Dashboard</h2>
+                    <button class="p-1 text-gray-500 hover:text-gray-700 lg:hidden" id="closeSidebar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="flex-1 space-y-1">
+                    <a href="#" class="sidebar-item active-sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-indigo-600">
+                        <i class="fas fa-chart-pie w-5 text-center"></i>
+                        <span>Overview</span>
+                    </a>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-newspaper w-5 text-center"></i>
+                        <span>Posts</span>
+                        <span class="ml-auto inline-flex items-center rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-800">12</span>
+                    </a>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-image w-5 text-center"></i>
+                        <span>Media Library</span>
+                    </a>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-comment-dots w-5 text-center"></i>
+                        <span>Comments</span>
+                        <span class="ml-auto inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">3 new</span>
+                    </a>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-users w-5 text-center"></i>
+                        <span>Audience</span>
+                    </a>
+                    
+                    <div class="px-3 pt-5 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Settings</div>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-user-cog w-5 text-center"></i>
+                        <span>Profile</span>
+                    </a>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-sliders-h w-5 text-center"></i>
+                        <span>Settings</span>
+                    </a>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-question-circle w-5 text-center"></i>
+                        <span>Help Center</span>
+                    </a>
+                </nav>
+
+                <!-- User profile mini -->
+                <div class="mt-6 flex items-center gap-3 rounded-lg p-3 hover:bg-gray-50">
+                    <img class="h-9 w-9 rounded-full object-cover" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="User avatar">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">Edogawa Conan</p>
+                        <p class="text-xs text-gray-500 truncate">Admin Bloger</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-ellipsis-vertical"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1 pb-10 lg:ml-2">
+            <div class="px-4 sm:px-6 lg:px-3 py-6">
+                <!-- Welcome banner -->
+                <div class="bg-gradient-to-r from-indigo-500 to-indigo-700 rounded-xl p-6 text-white mb-6 shadow-md">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h1 class="text-2xl font-bold mb-2">Welcome back, Conan!</h1>
+                            <p class="opacity-90 max-w-2xl">Your blog is performing well with 24% more visitors this month. Keep up the great work!</p>
+                        </div>
+                        <button class="bg-white text-indigo-600 hover:bg-gray-100 px-4 py-2 rounded-lg font-medium shadow-sm transition-colors">
+                            View Analytics
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats overview -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <!-- Views card -->
+                    <div class="stat-card bg-white p-5 rounded-xl shadow-sm border border-gray-200 border-l-indigo-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 mb-1">Total Views</p>
+                                <p class="text-2xl font-bold text-gray-800">12,458</p>
+                                <p class="text-xs text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i>24.3% from last month</p>
+                            </div>
+                            <div class="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+                                <i class="fas fa-eye text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-indigo-500" style="width: 75%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">75% of monthly goal</p>
+                        </div>
+                    </div>
+
+                    <!-- Engagement card -->
+                    <div class="stat-card bg-white p-5 rounded-xl shadow-sm border border-gray-200 border-l-green-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 mb-1">Engagement Rate</p>
+                                <p class="text-2xl font-bold text-gray-800">42.6%</p>
+                                <p class="text-xs text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i>8.2% from last month</p>
+                            </div>
+                            <div class="p-2 rounded-lg bg-green-50 text-green-600">
+                                <i class="fas fa-heart text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-green-500" style="width: 42%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Industry avg: 38%</p>
+                        </div>
+                    </div>
+
+                    <!-- Subscribers card -->
+                    <div class="stat-card bg-white p-5 rounded-xl shadow-sm border border-gray-200 border-l-blue-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 mb-1">New Subscribers</p>
+                                <p class="text-2xl font-bold text-gray-800">1,243</p>
+                                <p class="text-xs text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i>15.7% from last month</p>
+                            </div>
+                            <div class="p-2 rounded-lg bg-blue-50 text-blue-600">
+                                <i class="fas fa-users text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-blue-500" style="width: 62%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">62% of monthly goal</p>
+                        </div>
+                    </div>
+
+                    <!-- Revenue card -->
+                    <div class="stat-card bg-white p-5 rounded-xl shadow-sm border border-gray-200 border-l-purple-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 mb-1">Estimated Revenue</p>
+                                <p class="text-2xl font-bold text-gray-800">$3,245</p>
+                                <p class="text-xs text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i>32.1% from last month</p>
+                            </div>
+                            <div class="p-2 rounded-lg bg-purple-50 text-purple-600">
+                                <i class="fas fa-dollar-sign text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-purple-500" style="width: 54%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">54% of monthly goal</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts and recent posts -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <!-- Traffic chart -->                   
+                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Traffic Overview</h3>
+                            <select id="trafficTimeRange" class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option>Last 7 days</option>
+                                <option selected>Last 30 days</option>
+                                <option>Last 90 days</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="trafficChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Top posts -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Performing Posts</h3>
+                        <div class="space-y-4">
+                            <div class="post-card flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <div class="flex-shrink-0 h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800">Getting Started with React Hooks</h4>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-xs text-gray-500"><i class="fas fa-eye mr-1"></i>2,456</span>
+                                        <span class="text-xs text-gray-500"><i class="fas fa-comment mr-1"></i>84</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="post-card flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <div class="flex-shrink-0 h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800">CSS Grid vs Flexbox</h4>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-xs text-gray-500"><i class="fas fa-eye mr-1"></i>1,987</span>
+                                        <span class="text-xs text-gray-500"><i class="fas fa-comment mr-1"></i>56</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="post-card flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <div class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800">JavaScript ES6 Features</h4>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-xs text-gray-500"><i class="fas fa-eye mr-1"></i>1,753</span>
+                                        <span class="text-xs text-gray-500"><i class="fas fa-comment mr-1"></i>42</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="post-card flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <div class="flex-shrink-0 h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800">TypeScript Best Practices</h4>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-xs text-gray-500"><i class="fas fa-eye mr-1"></i>1,542</span>
+                                        <span class="text-xs text-gray-500"><i class="fas fa-comment mr-1"></i>37</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent activity and quick actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Recent activity -->
+                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                                    <i class="fas fa-comment"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">New comment on "React Hooks Guide"</p>
+                                    <p class="text-xs text-gray-500 mt-1">"Great article! Helped me understand useEffect better." - John Doe</p>
+                                    <p class="text-xs text-gray-400 mt-1">2 hours ago</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">25 new subscribers</p>
+                                    <p class="text-xs text-gray-500 mt-1">From your latest newsletter "CSS Tips and Tricks"</p>
+                                    <p class="text-xs text-gray-400 mt-1">5 hours ago</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                    <i class="fas fa-thumbs-up"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">Post liked by 42 users</p>
+                                    <p class="text-xs text-gray-500 mt-1">"JavaScript Performance Optimization" received 42 likes</p>
+                                    <p class="text-xs text-gray-400 mt-1">1 day ago</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                                    <i class="fas fa-share-alt"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">Post shared 18 times</p>
+                                    <p class="text-xs text-gray-500 mt-1">"Getting Started with Next.js" was shared across platforms</p>
+                                    <p class="text-xs text-gray-400 mt-1">2 days ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick actions -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mb-2">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700">New Post</span>
+                            </button>
+                            
+                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="h-10 w-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center mb-2">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700">Add Media</span>
+                            </button>
+                            
+                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-2">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700">Newsletter</span>
+                            </button>
+                            
+                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <div class="h-10 w-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mb-2">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700">Analytics</span>
                             </button>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Content Editor -->
-                <div>
-                    <label class="block text-lg font-semibold text-gray-800 mb-2">Post Content</label>
-                    <div id="editor" class="rounded-lg"></div>
-                    <div class="mt-3 flex items-center space-x-4">
-                        <button type="button" class="text-blue-600 hover:text-blue-800 flex items-center">
-                            <i class="fas fa-image mr-2"></i> Add Image
-                        </button>
-                        <button type="button" class="text-blue-600 hover:text-blue-800 flex items-center">
-                            <i class="fas fa-video mr-2"></i> Add Video
-                        </button>
-                        <button type="button" class="text-blue-600 hover:text-blue-800 flex items-center">
-                            <i class="fas fa-code mr-2"></i> Add Code Block
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- SEO Preview -->
-                <div class="border-t pt-6 mt-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">SEO Preview</h3>
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <div id="seo-preview" class="space-y-2">
-                            <p class="text-blue-600 text-lg font-medium" id="seo-title">Your post title will appear here</p>
-                            <p class="text-green-700 text-sm" id="seo-url">https://blogmaster.com/your-post-url</p>
-                            <p class="text-gray-700" id="seo-description">Your meta description will be generated from your content</p>
-                        </div>
-                        <button type="button" class="mt-4 text-blue-600 hover:text-blue-800 flex items-center text-sm">
-                            <i class="fas fa-edit mr-2"></i> Customize SEO settings
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Form Footer -->
-            <div class="p-6 border-t bg-gray-50 flex justify-between flex-wrap gap-4">
-                <div class="flex items-center space-x-4">
-                    <button type="button" class="text-gray-700 hover:text-blue-600 flex items-center">
-                        <i class="far fa-eye mr-2"></i> Preview
-                    </button>
-                    <button type="button" class="text-gray-700 hover:text-blue-600 flex items-center">
-                        <i class="fas fa-cog mr-2"></i> Settings
-                    </button>
-                </div>
-                <div class="flex space-x-4">
-                    <button type="button" class="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-300 transition flex items-center">
-                        <i class="far fa-save mr-2"></i> Save Draft
-                    </button>
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center">
-                        <i class="fas fa-paper-plane mr-2"></i> Publish Now
-                    </button>
-                    <div class="relative group">
-                        <button type="button" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition">
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Schedule for later</a>
-                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Submit for review</a>
+                        
+                        <div class="mt-6">
+                            <h4 class="text-sm font-medium text-gray-700 mb-3">Blog Performance</h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-500">Content Quality</span>
+                                    <span class="text-xs font-medium text-gray-700">Excellent</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-green-500" style="width: 92%"></div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-500">Engagement</span>
+                                    <span class="text-xs font-medium text-gray-700">Good</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-blue-500" style="width: 78%"></div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-500">Publishing Frequency</span>
+                                    <span class="text-xs font-medium text-gray-700">Average</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-yellow-500" style="width: 65%"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8 mt-12">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <a href="#" class="text-2xl font-bold text-white">BlogMaster</a>
-                    <p class="text-gray-400 mt-1">The platform for professional bloggers</p>
-                </div>
-                <div class="flex space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-github"></i></a>
-                </div>
-            </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
-                <p>© 2025 BlogMaster. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+        </main>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Quill editor
-            const quill = new Quill('#editor', {
-                theme: 'snow',
-                modules: {
-                    toolbar: [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'color': [] }, { 'background': [] }],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        ['link', 'image', 'video'],
-                        ['clean']
-                    ]
-                },
-                placeholder: 'Write your amazing content here...'
-            });
-
-            // Drag and drop for featured image
-            const dropArea = document.getElementById('drop-area');
-            const fileInput = document.getElementById('featuredImage');
-            const imagePreview = document.getElementById('image-preview');
-            const previewImg = document.getElementById('preview-img');
-            const removeImageBtn = document.getElementById('remove-image');
-
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, preventDefaults, false);
-            });
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const sidebar = document.getElementById('sidebar');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+        });
+        
+        closeSidebar.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024 && !sidebar.contains(e.target) && e.target !== mobileMenuButton) {
+                sidebar.classList.add('-translate-x-full');
             }
+        });
 
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropArea.addEventListener(eventName, highlight, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, unhighlight, false);
-            });
-
-            function highlight() {
-                dropArea.classList.add('highlight');
+        // User dropdown toggle
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userDropdown = document.getElementById('userDropdown');
+        
+        userMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isExpanded = userMenuButton.getAttribute('aria-expanded') === 'true';
+            userDropdown.classList.toggle('hidden', isExpanded);
+            userMenuButton.setAttribute('aria-expanded', !isExpanded);
+        });
+        
+        // Close dropdown on outside click
+        document.addEventListener('click', (e) => {
+            if (!userDropdown.contains(e.target) && e.target !== userMenuButton) {
+                userDropdown.classList.add('hidden');
+                userMenuButton.setAttribute('aria-expanded', 'false');
             }
-
-            function unhighlight() {
-                dropArea.classList.remove('highlight');
+        });
+        
+        // Close on Esc key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                userDropdown.classList.add('hidden');
+                userMenuButton.setAttribute('aria-expanded', 'false');
             }
+        });
 
-            dropArea.addEventListener('drop', handleDrop, false);
-            dropArea.addEventListener('click', () => fileInput.click());
-
-            fileInput.addEventListener('change', handleFiles);
-
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                handleFiles({ target: { files } });
-            }
-
-            function handleFiles(e) {
-                const files = e.target.files;
-                if (files.length) {
-                    const file = files[0];
-                    if (file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            previewImg.src = e.target.result;
-                            imagePreview.classList.remove('hidden');
-                            dropArea.classList.add('hidden');
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        alert('Please select an image file (PNG, JPG)');
-                    }
-                }
-            }
-
-            removeImageBtn.addEventListener('click', function() {
-                imagePreview.classList.add('hidden');
-                dropArea.classList.remove('hidden');
-                fileInput.value = '';
-            });
-
-            // Tags functionality
-            const tagInput = document.getElementById('tags-input');
-            const tagContainer = document.getElementById('tag-container');
-            const maxTags = 5;
-            let tags = [];
-
-            tagInput.addEventListener('keydown', function(e) {
-                if ((e.key === 'Enter' || e.key === ',') && tagInput.value.trim() !== '' && tags.length < maxTags) {
-                    e.preventDefault();
-                    const tagText = tagInput.value.trim().replace(',', '');
-                    if (!tags.includes(tagText)) {
-                        tags.push(tagText);
-                        renderTags();
-                    }
-                    tagInput.value = '';
-                }
-            });
-
-            function renderTags() {
-                tagContainer.innerHTML = '';
-                tags.forEach((tag, index) => {
-                    const tagElement = document.createElement('div');
-                    tagElement.className = 'tag bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center';
-                    tagElement.innerHTML = `
-                        ${tag}
-                        <span class="tag-remove ml-2 cursor-pointer" data-index="${index}">
-                            <i class="fas fa-times text-xs"></i>
-                        </span>
-                    `;
-                    tagContainer.appendChild(tagElement);
-                });
-            }
-
-            tagContainer.addEventListener('click', function(e) {
-                if (e.target.closest('.tag-remove')) {
-                    const index = e.target.closest('.tag-remove').dataset.index;
-                    tags.splice(index, 1);
-                    renderTags();
-                }
-            });
-
-            // SEO Preview update
-            const titleInput = document.getElementById('title');
-            const seoTitle = document.getElementById('seo-title');
-            const seoDescription = document.getElementById('seo-description');
-
-            titleInput.addEventListener('input', function() {
-                seoTitle.textContent = titleInput.value || 'Your post title will appear here';
-            });
-
-            quill.on('text-change', function() {
-                const content = quill.getText().substring(0, 160);
-                seoDescription.textContent = content || 'Your meta description will be generated from your content';
-            });
-
-            // Form submission
-            const form = document.querySelector('form');
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                // Here you would normally send the form data to the server
-                alert('Post published successfully!');
-                // Reset form
-                form.reset();
-                tags = [];
-                renderTags();
-                quill.setContents([]);
-                imagePreview.classList.add('hidden');
-                dropArea.classList.remove('hidden');
+        // Animate progress bars on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
             });
         });
+        // Thêm vào phần script cuối trang
+document.addEventListener('DOMContentLoaded', () => {
+    // ... các code hiện có ...
+    
+    // Traffic Chart
+    const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+    const trafficChart = new Chart(trafficCtx, {
+        type: 'line',
+        data: {
+            labels: Array.from({length: 30}, (_, i) => `Day ${i+1}`),
+            datasets: [
+                {
+                    label: 'Page Views',
+                    data: Array.from({length: 30}, () => Math.floor(Math.random() * 1000) + 500),
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    tension: 0.3,
+                    fill: true,
+                    borderWidth: 2
+                },
+                {
+                    label: 'Unique Visitors',
+                    data: Array.from({length: 30}, () => Math.floor(Math.random() * 800) + 300),
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.3,
+                    fill: true,
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        drawBorder: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Update chart when time range changes
+    document.getElementById('trafficTimeRange').addEventListener('change', function() {
+        const days = this.value === 'Last 7 days' ? 7 : this.value === 'Last 90 days' ? 90 : 30;
+        trafficChart.data.labels = Array.from({length: days}, (_, i) => 
+            days === 7 ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i] : 
+            days === 30 ? `Day ${i+1}` : `Week ${i+1}`);
+        
+        trafficChart.data.datasets[0].data = Array.from({length: days}, () => 
+            Math.floor(Math.random() * (days === 7 ? 500 : days === 30 ? 1000 : 3000)) + 
+            (days === 7 ? 300 : days === 30 ? 500 : 1000));
+        
+        trafficChart.data.datasets[1].data = Array.from({length: days}, () => 
+            Math.floor(Math.random() * (days === 7 ? 400 : days === 30 ? 800 : 2500)) + 
+            (days === 7 ? 200 : days === 30 ? 300 : 800));
+        
+        trafficChart.update();
+    });
+});
     </script>
 </body>
 </html>
