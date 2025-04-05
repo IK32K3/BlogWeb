@@ -11,216 +11,373 @@
     <script src="/front_end/html_mockup/js/main.js" defer ></script>
     <link href="/front_end/html_mockup/css/style.css" rel="stylesheet">
 </head>
-<body class="bg-gray-200">  
+<body class="bg-gray-200"> <!-- Thêm font-sans mặc định -->
+
     <!-- Navigation -->
     <div id="navbar"></div>
-    
-    <!-- Category Section -->
-    <section class="container mx-auto w-full px-4 py-8">
-        <div class="bg-gray-100 shadow-md rounded-lg p-6">
-            <div class="flex items-center gap-4 mb-6">
-                <input type="text" placeholder="Nhập từ khóa" 
-                class="flex-1 px-4 py-3 rounded-lg bg-white border border-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition-all duration-200 ease-in-out shadow-sm">
-                <button class="search-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-medium transition">
-                    Tìm Kiếm
-                </button>
-            </div>
-            <!-- Trạng thái -->
-            <fieldset class="mb-6">
-                <legend class="text-lg font-semibold">Trạng Thái</legend>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <div class="filter-container">
-                        <input type="checkbox" id="status-1" class="custom-checkbox">
-                        <label for="status-1" class="filter-label">
-                            <span>Chưa bắt đầu</span>
-                        </label>
-                    </div>
-                    <div class="filter-container">
-                        <input type="checkbox" id="status-2" class="custom-checkbox">
-                        <label for="status-2" class="filter-label">
-                            <span>Đang tiến hành</span>
-                        </label>
-                    </div>
-                    <div class="filter-container">
-                        <input type="checkbox" id="status-3" class="custom-checkbox">
-                        <label for="status-3" class="filter-label">
-                            <span>Hoàn Thành</span>
-                        </label>
-                    </div>
-                </div>
-            </fieldset>
-            
-            <!-- Thể loại -->
-            <fieldset class="mb-6">
-                <legend class="text-lg font-semibold">Thể Loại</legend>
-                <div class="flex justify-between items-center mb-3">
-                    <input type="text" placeholder="Tìm thể loại" 
-                           class="px-3 py-1 rounded bg-gray-100 border border-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 hover:border-blue-400 transition" 
-                           id="category-search">
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" id="category-container">
-                    <!-- Các thể loại sẽ được thêm bằng JavaScript -->
-                </div>
-            </fieldset>
-            
-            <!-- Sắp xếp -->
-            <fieldset>
-                <legend class="text-lg font-semibold">Sắp Xếp</legend>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <div class="filter-container">
-                        <input type="checkbox" id="sort-1" class="custom-checkbox">
-                        <label for="sort-1" class="filter-label">
-                            <span>Lượt xem</span>
-                        </label>
-                    </div>
-                    <div class="filter-container">
-                        <input type="checkbox" id="sort-3" class="custom-checkbox">
-                        <label for="sort-3" class="filter-label">
-                            <span>lượt tương tác cao</span>
-                        </label>
-                    </div>
-                    <div class="filter-container">
-                        <input type="checkbox" id="sort-4" class="custom-checkbox">
-                        <label for="sort-4" class="filter-label">
-                            <span>Bài viết mới nhất</span>
-                        </label>
-                    </div>
-                </div>
-            </fieldset>
+
+    <!-- Search Toggle Button -->
+    <div class="container mx-auto px-4 pt-8">
+        <div class="flex justify-end">
+            <!-- Đã di chuyển nút Tìm kiếm nâng cao vào trong section để dễ quản lý hơn -->
+        </div>
+    </div>
+
+    <!-- Search Section (Hidden by default) -->
+    <section class="container mx-auto w-full px-4">
+         <!-- Nút Toggle đặt ngay trên section nó điều khiển -->
+         <div class="mb-4 text-right"> 
+            <button id="search-toggle" aria-controls="search-section" aria-expanded="false" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-base font-medium transition duration-300 ease-in-out transform hover:-translate-y-0.5 shadow hover:shadow-md inline-flex items-center gap-2">
+                <i class="fas fa-sliders-h"></i> <!-- Icon khác phù hợp hơn -->
+                Tìm Kiếm Nâng Cao
+            </button>
         </div>
 
+        <div id="search-section" class="search-section bg-white shadow-lg rounded-lg p-6 overflow-hidden">
+            <!-- Input tìm kiếm chính -->
+            <div class="flex flex-col md:flex-row items-center gap-4 mb-8 pb-6 border-b border-gray-300">
+                <div class="relative flex-1 w-full">
+                    <input type="text" placeholder="Nhập từ khóa tìm kiếm..."
+                           class="w-full px-4 py-3 pl-11 rounded-lg bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition-all duration-200 ease-in-out shadow-sm text-gray-700">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                <button class="search-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-base font-medium transition duration-300 w-full md:w-auto flex items-center justify-center gap-2 shadow hover:shadow-md transform hover:-translate-y-0.5">
+                    <i class="fas fa-search"></i> Tìm Kiếm
+                </button>
+            </div>
+
+            <!-- Filter Groups -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Trạng thái -->
+                <fieldset class="border border-gray-300 p-5 rounded-lg bg-gray-50/50">
+                    <legend class="text-base font-semibold px-2 text-blue-700 mb-4">Trạng Thái</legend>
+                    <div class="space-y-3">
+                        <!-- Lặp lại cấu trúc này cho mỗi filter item -->
+                        <div class="filter-item">
+                            <input type="checkbox" id="status-1" class="hidden custom-checkbox">
+                            <label for="status-1" class="filter-label">
+                                <span class="checkbox-visual">
+                                    <i class="fas fa-check check-icon"></i>
+                                </span>
+                                <span>Chưa bắt đầu</span>
+                            </label>
+                        </div>
+                        <div class="filter-item">
+                            <input type="checkbox" id="status-2" class="hidden custom-checkbox">
+                            <label for="status-2" class="filter-label">
+                                <span class="checkbox-visual">
+                                    <i class="fas fa-check check-icon"></i>
+                                </span>
+                                <span>Đang tiến hành</span>
+                            </label>
+                        </div>
+                        <div class="filter-item">
+                            <input type="checkbox" id="status-3" class="hidden custom-checkbox">
+                            <label for="status-3" class="filter-label">
+                                <span class="checkbox-visual">
+                                    <i class="fas fa-check check-icon"></i>
+                                </span>
+                                <span>Hoàn Thành</span>
+                            </label>
+                        </div>
+                        <!-- Kết thúc filter item -->
+                    </div>
+                </fieldset>
+
+                <!-- Thể loại -->
+                <fieldset class="border border-gray-300 p-5 rounded-lg bg-gray-50">
+                    <legend class="text-base font-semibold px-2 text-blue-700 mb-4">Thể Loại</legend>
+                    <div class="mb-4">
+                        <div class="relative">
+                            <input type="text" placeholder="Tìm thể loại..."
+                                   class="w-full px-4 py-2 pl-10 rounded-md bg-white border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 hover:border-blue-400 transition text-sm"
+                                   id="category-search">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+                    <div class="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar" id="category-container">
+                        <!-- Categories load here -->
+                        <!-- Ví dụ (sẽ bị ghi đè bởi JS): -->
+                         <div class="filter-item">
+                            <input type="checkbox" id="category-placeholder-1" class="hidden custom-checkbox">
+                            <label for="category-placeholder-1" class="filter-label">
+                                <span class="checkbox-visual">
+                                    <i class="fas fa-check check-icon"></i>
+                                </span>
+                                <span>Đang tải...</span>
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Sắp xếp -->
+                <fieldset class="border border-gray-300 p-5 rounded-lg bg-gray-50/50">
+                    <legend class="text-base font-semibold px-2 text-blue-700 mb-4">Sắp Xếp</legend>
+                    <div class="space-y-3">
+                         <!-- Lặp lại cấu trúc này cho mỗi filter item -->
+                         <div class="filter-item">
+                            <input type="radio" name="sort_option" id="sort-1" class="hidden custom-radio">
+                            <label for="sort-1" class="filter-label">
+                                <span class="radio-visual">
+                                    <span class="radio-dot"></span>
+                                </span>
+                                <span>Lượt xem</span>
+                            </label>
+                        </div>
+                         <div class="filter-item">
+                            <input type="radio" name="sort_option" id="sort-2" class="hidden custom-radio">
+                            <label for="sort-2" class="filter-label">
+                                <span class="radio-visual">
+                                    <span class="radio-dot"></span>
+                                </span>
+                                <span>Lượt tương tác cao</span>
+                            </label>
+                        </div>
+                         <div class="filter-item">
+                            <input type="radio" name="sort_option" id="sort-3" class="hidden custom-radio">
+                            <label for="sort-3" class="filter-label">
+                                <span class="radio-visual">
+                                    <span class="radio-dot"></span>
+                                </span>
+                                <span>Bài viết mới nhất</span>
+                            </label>
+                        </div>
+                        <div class="filter-item">
+                            <input type="radio" name="sort_option" id="sort-4" class="hidden custom-radio">
+                            <label for="sort-4" class="filter-label">
+                                <span class="radio-visual">
+                                    <span class="radio-dot"></span>
+                                </span>
+                                <span>Đánh giá cao</span>
+                            </label>
+                        </div>
+                         <!-- Kết thúc filter item -->
+                    </div>
+                </fieldset>
+            </div>
+        </div>
     </section>
 
-    <div class="items-title flex items-center m-4 justify-between ">
-        <div class="title-line text-xl font-semibold px-4 ml-9 text-indigo-600">Nội Dung</div>
-        <hr class="flex-grow border-t-2 border-indigo-600 mr-12 mt-2">
+    <!-- Content Title -->
+    <div class="items-title container mx-auto px-4"> <!-- Giảm mt một chút -->
+        <div class="flex items-center">
+            <div class="title-line text-xl font-semibold px-4 text-indigo-700 bg-white rounded-md shadow-sm py-2 border-l-4 border-indigo-600">Nội Dung Mới Nhất</div>
+             <!-- Thay đổi style tiêu đề -->
+            <hr class="flex-grow border-t  border-gray-400 ml-4"> <!-- Đường kẻ mảnh hơn -->
+        </div>
     </div>
-        
-    <!-- Main Content -->
-    <section class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">       
-        <!-- Main Content -->
-        <div class="w-full lg:w-3/4 space-y-6">
-            <!-- Featured Posts -->
-            <div class="space-y-6">
-                <div class="post-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 1" class="w-full h-64 object-cover rounded-lg mb-4">
-                    <a href="#" class="category-tag bg-blue-100 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white">Lifestyle</a>
-                    <h3 class="text-2xl font-bold mt-3 mb-2"><a href="#" class="text-gray-800 hover:text-blue-600 transition">Tiêu đề bài viết hấp dẫn về phong cách sống</a></h3>
-                    <p class="text-gray-600 mb-4">Khám phá những bí quyết giúp bạn có một lối sống lành mạnh và cân bằng giữa công việc và cuộc sống cá nhân...</p>
-                    <div class="flex items-center justify-between text-sm text-gray-500">
-                        <span>Ngày đăng: 20/03/2025</span>
-                        <a href="#" class="text-blue-500 hover:underline">Đọc tiếp →</a>
-                    </div>
-                </div>
 
-                <div class="post-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 2" class="w-full h-64 object-cover rounded-lg mb-4">
-                    <a href="#" class="category-tag bg-green-100 text-green-600 rounded-full hover:bg-green-600 hover:text-white">Du lịch</a>
-                    <h3 class="text-2xl font-bold mt-3 mb-2"><a href="#" class="text-gray-800 hover:text-blue-600 transition">10 điểm đến không thể bỏ qua tại Đà Lạt</a></h3>
-                    <p class="text-gray-600 mb-4">Khám phá những địa điểm tuyệt vời nhất ở thành phố ngàn hoa, từ những đồi thông bạt ngàn đến những quán café độc đáo...</p>
-                    <div class="flex items-center justify-between text-sm text-gray-500">
-                        <span>Ngày đăng: 18/03/2025</span>
-                        <a href="#" class="text-blue-500 hover:underline">Đọc tiếp →</a>
-                    </div>
-                </div>
-
-                <div class="post-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 3" class="w-full h-64 object-cover rounded-lg mb-4">
-                    <a href="#" class="category-tag bg-red-100 text-red-600 rounded-full hover:bg-red-600 hover:text-white">Ẩm thực</a>
-                    <h3 class="text-2xl font-bold mt-3 mb-2"><a href="#" class="text-gray-800 hover:text-blue-600 transition">Cách làm bánh flan caramel hoàn hảo</a></h3>
-                    <p class="text-gray-600 mb-4">Bí quyết để có món bánh flan mềm mịn, thơm ngon với lớp caramel vàng óng đúng chuẩn phong cách Pháp...</p>
-                    <div class="flex items-center justify-between text-sm text-gray-500">
-                        <span>Ngày đăng: 15/03/2025</span>
-                        <a href="#" class="text-blue-500 hover:underline">Đọc tiếp →</a>
+    <!-- Main Content Area -->
+    <section class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+        <!-- Main Content Feed -->
+        <div class="w-full lg:w-3/4 space-y-6"> <!-- Giảm space-y một chút -->
+            <!-- Post Card Example (Lặp lại cấu trúc này) -->
+            <div class="post-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg">
+                <div class="flex flex-col md:flex-row">
+                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 1" class="w-full md:w-52 h-48 md:h-auto object-cover flex-shrink-0"> <!-- Kích thước ảnh cố định hơn -->
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <a href="#" class="category-tag bg-blue-100 text-blue-700 rounded-full hover:bg-blue-600 hover:text-white text-xs font-medium">Lifestyle</a>
+                             <!-- Cập nhật style tag -->
+                            <span class="text-xs text-gray-500 ml-auto"><i class="far fa-eye mr-1"></i> 1.2K</span> <!-- Icon far -->
+                            <span class="text-xs text-gray-500"><i class="far fa-comment mr-1"></i> 45</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 leading-tight">
+                            <a href="#" class="text-gray-800 hover:text-blue-600 transition duration-200">Tiêu đề bài viết hấp dẫn về phong cách sống</a>
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-3 flex-grow">Khám phá những bí quyết giúp bạn có một lối sống lành mạnh và cân bằng giữa công việc và cuộc sống cá nhân...</p>
+                        <div class="flex items-center justify-between text-xs mt-auto pt-3 border-t border-gray-100">
+                             <!-- Đường kẻ mảnh phân cách -->
+                            <div class="flex items-center gap-2">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Author" class="w-6 h-6 rounded-full">
+                                <span class="text-gray-700 font-medium">Nguyễn Thị A</span>
+                            </div>
+                            <div class="text-gray-500 flex items-center gap-3">
+                                <span><i class="far fa-calendar-alt mr-1"></i> 20/03/2025</span>
+                                <a href="#" class="text-blue-500 hover:underline flex items-center gap-1 font-medium">
+                                    Đọc tiếp <i class="fas fa-arrow-right text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- Lặp lại các Post Card khác với cấu trúc tương tự -->
+             <div class="post-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg">
+                <div class="flex flex-col md:flex-row">
+                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 2" class="w-full md:w-52 h-48 md:h-auto object-cover flex-shrink-0">
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <a href="#" class="category-tag bg-green-100 text-green-700 rounded-full hover:bg-green-600 hover:text-white text-xs font-medium">Du lịch</a>
+                            <span class="text-xs text-gray-500 ml-auto"><i class="far fa-eye mr-1"></i> 2.4K</span>
+                            <span class="text-xs text-gray-500"><i class="far fa-comment mr-1"></i> 78</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 leading-tight"><a href="#" class="text-gray-800 hover:text-green-600 transition">10 điểm đến không thể bỏ qua tại Đà Lạt</a></h3>
+                        <p class="text-sm text-gray-600 mb-3 flex-grow">Khám phá những địa điểm tuyệt vời nhất ở thành phố ngàn hoa, từ những đồi thông bạt ngàn đến những quán café độc đáo...</p>
+                        <div class="flex items-center justify-between text-xs mt-auto pt-3 border-t border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Author" class="w-6 h-6 rounded-full">
+                                <span class="text-gray-700 font-medium">Trần Văn B</span>
+                            </div>
+                            <div class="text-gray-500 flex items-center gap-3">
+                                <span><i class="far fa-calendar-alt mr-1"></i> 18/03/2025</span>
+                                <a href="#" class="text-blue-500 hover:underline flex items-center gap-1 font-medium">Đọc tiếp <i class="fas fa-arrow-right text-xs"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="post-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg">
+                 <div class="flex flex-col md:flex-row">
+                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 3" class="w-full md:w-52 h-48 md:h-auto object-cover flex-shrink-0">
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <a href="#" class="category-tag bg-red-100 text-red-700 rounded-full hover:bg-red-600 hover:text-white text-xs font-medium">Ẩm thực</a>
+                            <span class="text-xs text-gray-500 ml-auto"><i class="far fa-eye mr-1"></i> 3.1K</span>
+                            <span class="text-xs text-gray-500"><i class="far fa-comment mr-1"></i> 112</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 leading-tight"><a href="#" class="text-gray-800 hover:text-red-600 transition">Cách làm bánh flan caramel hoàn hảo</a></h3>
+                        <p class="text-sm text-gray-600 mb-3 flex-grow">Bí quyết để có món bánh flan mềm mịn, thơm ngon với lớp caramel vàng óng đúng chuẩn phong cách Pháp...</p>
+                        <div class="flex items-center justify-between text-xs mt-auto pt-3 border-t border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Author" class="w-6 h-6 rounded-full">
+                                <span class="text-gray-700 font-medium">Lê Thị C</span>
+                            </div>
+                            <div class="text-gray-500 flex items-center gap-3">
+                                <span><i class="far fa-calendar-alt mr-1"></i> 15/03/2025</span>
+                                <a href="#" class="text-blue-500 hover:underline flex items-center gap-1 font-medium">Đọc tiếp <i class="fas fa-arrow-right text-xs"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Sidebar -->
         <aside class="w-full lg:w-1/4 space-y-6">
             <!-- Latest Posts -->
-            <div class="sidebar-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-400">Bài viết mới nhất</h3>
-                <div class="space-y-4">
-                    <a href="#" class="flex items-start gap-3 group">
-                        <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full mt-3">1</span>
+            <div class="sidebar-card bg-white p-4 rounded-lg shadow-md border border-gray-100">
+                <h3 class="text-lg font-semibold mb-4 pb-3 border-b border-gray-200 flex items-center gap-2 text-gray-800">
+                    <i class="fas fa-newspaper text-green-500"></i> <!-- Đổi màu icon -->
+                    Bài viết mới nhất
+                </h3>
+                <div class="space-y-3">
+                     <!-- Cập nhật style item -->
+                    <a href="#" class="flex items-start gap-3 group text-sm">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 bg-gradient-to-br from-green-400 to-blue-500 text-white text-xs font-bold rounded-full mt-0.5 shadow">1</span>
                         <div>
-                            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition">5 điều tôi ước biết trước khi đi du lịch Nhật Bản</h4>
-                            <p class="text-sm text-gray-500">15/01/2025</p>
+                            <h4 class="font-medium text-gray-700 group-hover:text-blue-600 transition leading-tight">5 điều tôi ước biết trước khi đi du lịch Nhật Bản</h4>
+                            <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                                <i class="far fa-clock text-xs"></i> 15/01/2025
+                            </p>
                         </div>
                     </a>
-                    <a href="#" class="flex items-start gap-3 group">
-                        <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full mt-3">2</span>
+                     <a href="#" class="flex items-start gap-3 group text-sm">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 bg-gradient-to-br from-green-400 to-blue-500 text-white text-xs font-bold rounded-full mt-0.5 shadow">2</span>
                         <div>
-                            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition">Tất cả những gì bạn cần biết khi thăm Bali</h4>
-                            <p class="text-sm text-gray-500">12/01/2025</p>
+                            <h4 class="font-medium text-gray-700 group-hover:text-blue-600 transition leading-tight">Tất cả những gì bạn cần biết khi thăm Bali</h4>
+                            <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                                <i class="far fa-clock text-xs"></i> 12/01/2025
+                            </p>
                         </div>
                     </a>
-                    <a href="#" class="flex items-start gap-3 group">
-                        <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full mt-3">3</span>
+                     <a href="#" class="flex items-start gap-3 group text-sm">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 bg-gradient-to-br from-green-400 to-blue-500 text-white text-xs font-bold rounded-full mt-0.5 shadow">3</span>
                         <div>
-                            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition">Cách có một kỳ nghỉ thú vị với ngân sách hạn chế</h4>
-                            <p class="text-sm text-gray-500">10/01/2025</p>
+                            <h4 class="font-medium text-gray-700 group-hover:text-blue-600 transition leading-tight">Cách có một kỳ nghỉ thú vị với ngân sách hạn chế</h4>
+                            <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                                <i class="far fa-clock text-xs"></i> 10/01/2025
+                            </p>
                         </div>
                     </a>
-                    <a href="#" class="flex items-start gap-3 group">
-                        <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full mt-3">4</span>
+                     <a href="#" class="flex items-start gap-3 group text-sm">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 bg-gradient-to-br from-green-400 to-blue-500 text-white text-xs font-bold rounded-full mt-0.5 shadow">4</span>
                         <div>
-                            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition">10 địa điểm đẹp nhất để chụp ảnh tại Đà Lạt</h4>
-                            <p class="text-sm text-gray-500">08/01/2025</p>
+                            <h4 class="font-medium text-gray-700 group-hover:text-blue-600 transition leading-tight">10 địa điểm đẹp nhất để chụp ảnh tại Đà Lạt</h4>
+                            <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                                <i class="far fa-clock text-xs"></i> 08/01/2025
+                            </p>
                         </div>
                     </a>
+                    <!-- ... -->
                 </div>
             </div>
-
-            <!-- Who to Follow -->
-            <div class="sidebar-card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-400">Đề xuất theo dõi</h3>
+            <!-- Follow Suggestions Widget -->
+            <div class="sidebar-card bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold mb-4 pb-3 border-b border-gray-200 flex items-center gap-2">
+                    <i class="fas fa-user-plus text-purple-500"></i>
+                    Đề xuất theo dõi
+                </h3>
                 <div class="space-y-4">
                     <div class="flex items-center gap-3">
-                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Profile" class="w-10 h-10 rounded-full object-cover">
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-semibold text-gray-800 truncate">Letters from Rosie</h4>
-                            <p class="text-sm text-gray-500 truncate">Tôi yêu sự cô độc nhưng tôi sinh ra để yêu thương 🌿...</p>
+                        <div class="relative">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">
+                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></span>
                         </div>
-                        <button class="flex-shrink-0 bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded-full text-sm transition">Theo dõi</button>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-sm font-medium text-gray-800 truncate">Letters from Rosie</h4>
+                            <p class="text-xs text-gray-500 truncate">Tôi yêu sự cô độc nhưng tôi sinh ra để yêu thương 🌿...</p>
+                        </div>
+                        <button class="flex-shrink-0 bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded-full text-xs font-medium transition">
+                            Theo dõi
+                        </button>
                     </div>
                     <div class="flex items-center gap-3">
-                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Profile" class="w-10 h-10 rounded-full object-cover">
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-semibold text-gray-800 truncate">Android Developers</h4>
-                            <p class="text-sm text-gray-500 truncate">Bài viết về công cụ và tài nguyên hiện đại giúp bạn xây dựng...</p>
+                        <div class="relative">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">
+                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></span>
                         </div>
-                        <button class="flex-shrink-0 bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded-full text-sm transition">Theo dõi</button>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Profile" class="w-10 h-10 rounded-full object-cover">
                         <div class="flex-1 min-w-0">
-                            <h4 class="font-semibold text-gray-800 truncate">Michal Malewicz</h4>
-                            <p class="text-sm text-gray-500 truncate">Một thiết kế và một phong cách sống...</p>
+                            <h4 class="text-sm font-medium text-gray-800 truncate">Android Developers</h4>
+                            <p class="text-xs text-gray-500 truncate">Bài viết về công cụ và tài nguyên hiện đại giúp bạn xây dựng...</p>
                         </div>
-                        <button class="flex-shrink-0 bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded-full text-sm transition">Theo dõi</button>
+                        <button class="flex-shrink-0 bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded-full text-xs font-medium transition">
+                            Theo dõi
+                        </button>
                     </div>
+                </div>
+            </div>
+            <!-- Tags Cloud -->
+            <div class="sidebar-card bg-white p-4 rounded-lg shadow-md border border-gray-100">
+                <h3 class="text-lg font-semibold mb-4 pb-3 border-b border-gray-200 flex items-center gap-2 text-gray-800">
+                    <i class="fas fa-tags text-purple-500"></i> <!-- Đổi màu icon -->
+                     Thẻ phổ biến
+                </h3>
+                <div class="flex flex-wrap gap-1.5"> <!-- Giảm gap -->
+                     <!-- Cập nhật style tag -->
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">du lịch</a>
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">ẩm thực</a>
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">công nghệ</a>
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">sức khỏe</a>
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">thể thao</a>
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">giáo dục</a>
+                    <!-- ... -->
                 </div>
             </div>
         </aside>
     </section>
-     
-                <!-- Pagination -->
-                <section class="container mx-auto px-4 py-8">
-                    <div class="flex justify-center mt-6 space-x-2">
-                        <a href="#" class="px-4 py-2 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded text-white">«</a>
-                        <a href="#" class="px-4 py-2 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded text-white">1</a>
-                        <a href="#" class="px-4 py-2 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded text-white">2</a>
-                        <a href="#" class="px-4 py-2 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded text-white">3</a>
-                        <a href="#" class="px-4 py-2 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded text-white">»</a>
-                    </div>
-                </section>
+
+    <!-- Pagination -->
+    <section class="container mx-auto px-4 pb-12"> <!-- Tăng pb -->
+        <div class="flex justify-center mt-6 space-x-1.5"> <!-- Giảm space -->
+             <!-- Cập nhật style pagination -->
+            <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-sm">
+                <i class="fas fa-angle-double-left"></i>
+            </a>
+             <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 font-medium">1</a>
+            <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-blue-600 border border-blue-600 rounded-md text-white font-medium">2</a> <!-- Ví dụ trang active -->
+             <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 font-medium">3</a>
+            <span class="pagination-link w-9 h-9 flex items-center justify-center text-gray-500">...</span>
+             <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 font-medium">10</a>
+            <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-sm">
+                <i class="fas fa-angle-double-right"></i>
+            </a>
+        </div>
+    </section>
 
     <!-- Footer -->
-     <div id="footer"></div>
-    
-    
+    <div id="footer"></div>
+
 </body>
 </html>

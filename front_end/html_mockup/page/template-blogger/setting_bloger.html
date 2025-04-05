@@ -1,261 +1,639 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>setting | MyBlog</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="/front_end/html_mockup/js/bloger-dashboard.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/front_end/html_mockup/css/bloger-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 text-gray-900">
+
+<body class="bg-gray-50">
     <!-- Header -->
-    <header class="bg-gray-300 shadow-lg">
-        <div class="max-w-full mx-auto px-2 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <h1 class="text-2xl font-bold ">QuickBlog - Dashboard</h1>
-
-                <!-- User Profile Dropdown -->
-                <div class="relative">
-                    <button id="userDropdownButton" class="flex items-center gap-2" aria-expanded="false">
-                        <img src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Profile" class="w-8 h-8 rounded-full">
-                        <span class="font-medium">bloger</span>
-                        <i class="fas fa-chevron-down text-black text-xs transition-transform"></i>
+    <header class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <!-- Left section - Logo and search -->
+                <div class="flex items-center">
+                    <!-- Mobile menu button -->
+                    <button id="mobileMenuButton" class="mr-2 p-2 text-gray-500 hover:text-gray-700 lg:hidden">
+                        <i class="fas fa-bars text-lg"></i>
                     </button>
-
-                    <!-- Dropdown Menu -->
-                    <div id="userDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-100 hidden">
-                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Edit Profile</a>
-                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Settings</a>
-                        <hr class="my-1">
-                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block text-red-600">Log out</a>
+                    
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+                            <i class="fas fa-pen-fancy text-white text-sm"></i>
+                        </div>
+                        <span class="ml-2 text-3xl font-bold bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text text-transparen hidden sm:block">My<span class="bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent">Blog</span></span>
+                    </div>
+                                    
+                </div>
+                
+                <!-- Right section - Navigation and user menu -->
+                <div class="flex items-center gap-3">
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 mt-2">
+                        <i class="fas fa-bell text-xl "></i>
+                        <span class="absolute top-0 right-0 h-3 w-3 rounded-full bg-red-500 notification-badge"></span>
+                    </button>
+                    
+                    <!-- User menu -->
+                    <div class="relative ml-1 mt-1">
+                        <button id="userMenuButton" class="flex  items-center gap-2 group" aria-expanded="false">
+                            <img class="user-avatar h-9 w-9 rounded-full object-cover border-2 border-transparent group-hover:border-indigo-200" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="User avatar">
+                            <span class="hidden lg:inline-flex text-xn font-medium text-gray-700 group-hover:text-indigo-600">Edogawa Conan</span>
+                            <i class="fas fa-chevron-down hidden lg:inline-flex text-xs text-gray-500 group-hover:text-indigo-600 transition-transform"></i>
+                        </button>
+                        
+                        <!-- Dropdown menu -->
+                        <div id="userDropdown" class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden z-10">
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <p class="text-sm font-medium text-gray-900">Signed in as</p>
+                                <p class="text-sm text-gray-500 truncate">conan@detective.com</p>
+                            </div>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-user mr-2 text-gray-400"></i>Your Profile</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-cog mr-2 text-gray-400"></i>Settings</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-chart-line mr-2 text-gray-400"></i>Analytics</a>
+                            <div class="border-t border-gray-100"></div>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-sign-out-alt mr-2 text-gray-400"></i>Sign out</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="flex flex-col lg:flex-row">
+    <!-- Sidebar and main content wrapper -->
+    <div class="flex">
         <!-- Sidebar -->
-        <aside class="right-sidebar bg-gray-300 border-r border-gray-300 min-h-screen transition-all duration-300 hidden lg:block">
-            <div class="px-4 py-6">
-                <nav class="space-y-2">
-                    <a href="./dashboard.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
-                        <i class="fas fa-chart-line w-5"></i>
-                        <span class="nav-text">Dashboard</span>
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-20 w-64 -translate-x-full transform overflow-y-auto bg-white border-r border-gray-200 transition duration-200 ease-in-out lg:static lg:translate-x-0">
+            <div class="flex h-full flex-col px-4 py-6">
+                <!-- Sidebar header -->
+                <div class="flex items-center justify-between px-2 mb-8">
+                    <h2 class="text-lg font-semibold text-gray-800">Dashboard</h2>
+                    <button class="p-1 text-gray-500 hover:text-gray-700 lg:hidden" id="closeSidebar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="flex-1 space-y-1">
+                    <a href="#" class="sidebar-item active-sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm text-gray-600 font-medium ">
+                        <i class="fas fa-chart-pie w-5 text-center"></i>
+                        <span>Overview</span>
                     </a>
-                    <a href="./statistical.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
-                        <i class="fas fa-chart-bar w-5"></i>
-                        <span class="nav-text">statistical</span>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-newspaper w-5 text-center"></i>
+                        <span>Posts</span>
+                        <span class="ml-auto inline-flex items-center rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-800">12</span>
                     </a>
-                    <a href="./post.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
-                        <i class="fas fa-file-lines w-5"></i>
-                        <span class="nav-text">Posts</span>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-image w-5 text-center"></i>
+                        <span>Media Library</span>
                     </a>
-                    <a href="./media.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
-                        <i class="fas fa-photo-film w-5"></i>
-                        <span class="nav-text">Media</span>
+
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-users w-5 text-center"></i>
+                        <span>Audience</span>
                     </a>
-                    <a href="./comments.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
-                        <i class="fas fa-comments w-5"></i>
-                        <span class="nav-text">Comments</span>
+                    
+                    <div class="px-3 pt-5 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Settings</div>
+                                       
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-indigo-600 hover:text-indigo-600">
+                        <i class="fas fa-sliders-h w-5 text-center"></i>
+                        <span>Settings</span>
                     </a>
-                    <a href="./profile.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
-                        <i class="fas fa-user w-5"></i>
-                        <span class="nav-text">Profile</span>
-                    </a>
-                    <a href="./settings.html" class="flex items-center gap-3 px-4 py-2.5 bg-gray-50 text-blue-700 rounded-lg">
-                        <i class="fas fa-gear w-5"></i>
-                        <span class="nav-text">Settings</span>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-question-circle w-5 text-center"></i>
+                        <span>Help Center</span>
                     </a>
                 </nav>
 
-                <div class="mt-6 space-y-3">
-                    <button class="w-full px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg flex items-center gap-2">
-                        <i class="fas fa-plus w-5"></i>
-                        <a href="./newpost.html" class="sidebar-button-text">New Post</a>
+                <!-- User profile mini -->
+                <div class="mt-6 flex items-center gap-3 rounded-lg p-3 hover:bg-gray-50">
+                    <img class="h-9 w-9 rounded-full object-cover" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="User avatar">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">Edogawa Conan</p>
+                        <p class="text-xs text-gray-500 truncate">Admin Bloger</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-ellipsis-vertical"></i>
                     </button>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 p-6">
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-                <h2 class="text-2xl font-bold mb-6">Settings</h2>
-
-                <!-- Account Settings -->
-                <section class="mb-6">
-                    <h3 class="text-xl font-bold mb-4">Account Settings</h3>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Name</label>
-                        <input type="text" value="Dat Dao" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
+        <!-- Main content -->
+        <main class="flex-1 pb-10 lg:ml-2 overflow-y-auto">
+            
+            <div class="px-4 sm:px-6 lg:px-8 py-8 h-full flex flex-col"> <!-- Adjusted padding -->
+                <!-- Settings Header -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800">Settings</h1>
+                    <p class="text-gray-500 mt-1">Manage your account, blog, and preferences</p>
+                </div>
+        
+                <!-- Settings Content Area -->
+                <div class="flex-1">
+                    <!-- Tab Navigation -->
+                    <div class="border-b border-gray-200 mb-6">
+                        <nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
+                            <button id="tab-profile" data-target="panel-profile" class="tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-primary-500 text-primary-600" aria-current="page">
+                                <i class="fas fa-user-circle mr-1.5 text-xs"></i> Profile
+                            </button>
+                            <button id="tab-account" data-target="panel-account" class="tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                               <i class="fas fa-shield-alt mr-1.5 text-xs"></i> Account & Security
+                            </button>
+                            <button id="tab-notifications" data-target="panel-notifications" class="tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                <i class="fas fa-bell mr-1.5 text-xs"></i> Notifications
+                            </button>
+                            <button id="tab-appearance" data-target="panel-appearance" class="tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                               <i class="fas fa-palette mr-1.5 text-xs"></i> Appearance
+                            </button>
+                             <button id="tab-integrations" data-target="panel-integrations" class="tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                               <i class="fas fa-link mr-1.5 text-xs"></i> Integrations
+                            </button>
+                        </nav>
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Email</label>
-                        <input type="email" value="thanhthikalyce@example.com" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
-                        <p class="text-gray-500 mt-1">Contact support to change your email</p>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Phone Number</label>
-                        <input type="tel" value="+1234567890" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Profile Picture</label>
-                        <input type="file" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
-                    </div>
-                </section>
-
-                <!-- Themes -->
-                <section class="mb-6">
-                    <h3 class="text-xl font-bold mb-4">Theme</h3>
-                    <div class="flex gap-4">
-                        <div class="flex items-center p-4 border rounded-lg w-1/2">
-                            <input type="radio" name="theme" id="lightMode" class="mr-2">
-                            <div>
-                                <label for="lightMode" class="font-bold">Light Mode</label>
-                                <p class="text-gray-500">Default theme</p>
+        
+                    <!-- Tab Content Panels -->
+                    <form action="#" method="POST"> <!-- Wrap panels in a form -->
+                        <div class="relative">
+                            <!-- Profile Panel -->
+                            <div id="panel-profile" class="tab-content">
+                                <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                    <div class="px-6 py-4 border-b border-gray-200">
+                                        <h2 class="text-lg font-semibold text-gray-900">Public Profile</h2>
+                                        <p class="mt-1 text-sm text-gray-500">This information may be displayed publicly. Be careful what you share.</p>
+                                    </div>
+                                    <div class="p-6 space-y-6">
+                                        <!-- Profile Photo -->
+                                        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-5">
+                                            <img class="h-20 w-20 rounded-full object-cover mb-4 sm:mb-0" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Current profile photo">
+                                            <div class="flex-1">
+                                                 <label for="profile_picture" class="block text-sm font-medium text-gray-700 mb-1">Update Photo</label>
+                                                 <div class="flex items-center space-x-3">
+                                                    <input type="file" id="profile_picture" name="profile_picture" class="block w-full max-w-sm text-sm text-gray-500 border border-gray-300 rounded-md shadow-sm cursor-pointer
+                                                            file:mr-3 file:py-1.5 file:px-3
+                                                            file:rounded-l-md file:border-0
+                                                            file:text-sm file:font-semibold
+                                                            file:bg-gray-200 border file:text-primary-700
+                                                            hover:file:bg-primary-100 hover:file:text-primary-800">
+                                                    <button type="button" class="text-sm font-medium text-gray-500 hover:text-red-600">Remove</button>
+                                                 </div>
+                                                <p class="text-xs text-gray-400 mt-1">Recommended: Square JPG, PNG, or GIF, 1MB max.</p>
+                                            </div>
+                                        </div>
+        
+                                        <!-- Name -->
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label for="first-name" class="block text-sm font-medium text-gray-700 mb-1">First name</label>
+                                                <input type="text" name="first-name" id="first-name" value="Edogawa" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm">
+                                            </div>
+                                            <div>
+                                                <label for="last-name" class="block text-sm font-medium text-gray-700 mb-1">Last name</label>
+                                                <input type="text" name="last-name" id="last-name" value="Conan" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Bio -->
+                                        <div>
+                                            <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                                            <textarea id="bio" name="bio" rows="3" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" placeholder="Tell the world a little about yourself...">World-renowned detective, currently stuck in a child's body. Seeking clues and justice (and maybe a cure).</textarea>
+                                            <p class="mt-1 text-xs text-gray-500">Appears on your profile page. Markdown supported.</p>
+                                        </div>
+                                        <!-- Email -->
+                                        <div>
+                                            <label for="Email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                            <input type="text" name="Email" id="Email" value="lookingboy2033@gmail.com" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" placeholder="mail@gmail.com">
+                                        </div>
+                                        <!-- Website -->
+                                        <div>
+                                            <label for="website" class="block text-sm font-medium text-gray-700 mb-1">Website URL</label>
+                                            <div class="mt-1 flex rounded-md shadow-sm">
+                                                <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm"> https:// </span>
+                                                <input type="text" name="website" id="website" class="flex-1 block w-full min-w-0 rounded-none rounded-r-md px-3 py-2 border border-gray-300 sm:text-sm" placeholder="www.yourblog.com">
+                                            </div>
+                                        </div>
+        
+                                        <!-- Location -->
+                                        <div>
+                                            <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                                            <input type="text" name="location" id="location" value="Beika City, Japan" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" placeholder="City, Country">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <i class="fas fa-sun ml-auto text-gray-500"></i>
-                        </div>
-                        <div class="flex items-center p-4 border rounded-lg w-1/2">
-                            <input type="radio" name="theme" id="darkMode" class="mr-2">
-                            <div>
-                                <label for="darkMode" class="font-bold">Dark Mode</label>
-                                <p class="text-gray-500">Low-light viewing</p>
+        
+                            <!-- Account & Security Panel -->
+                            <div id="panel-account" class="tab-content hidden">
+                                <div class="space-y-6">
+                                    <!-- Account Info Card -->
+                                    <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                        <div class="px-6 py-4 border-b border-gray-200">
+                                            <h2 class="text-lg font-semibold text-gray-900">Account Information</h2>
+                                            <p class="mt-1 text-sm text-gray-500">Manage your login details.</p>
+                                        </div>
+                                        <div class="p-6 space-y-6">
+                                            <div>
+                                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+                                                <input type="email" name="email" id="email" value="conan@detective.com" readonly disabled class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed sm:text-sm">
+                                                <p class="mt-1 text-xs text-gray-500">Email cannot be changed. Contact support if needed.</p>
+                                            </div>
+                                            <div>
+                                                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                                                <input type="text" name="username" id="username" value="detective_conan" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm">
+                                                <p class="mt-1 text-xs text-gray-500">Changing your username may affect mentions.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+        
+                                    <!-- Change Password Card -->
+                                    <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                        <div class="px-6 py-4 border-b border-gray-200">
+                                            <h2 class="text-lg font-semibold text-gray-900">Change Password</h2>
+                                            <p class="mt-1 text-sm text-gray-500">Update your password regularly for better security.</p>
+                                        </div>
+                                        <div class="p-6 space-y-6">
+                                            <div>
+                                                <label for="current-password" class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                                                <input type="password" name="current-password" id="current-password" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" autocomplete="current-password">
+                                            </div>
+                                            <div>
+                                                <label for="new-password" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                                                <input type="password" name="new-password" id="new-password" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" autocomplete="new-password">
+                                            </div>
+                                            <div>
+                                                <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                                                <input type="password" name="confirm-password" id="confirm-password" required class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" autocomplete="new-password">
+                                            </div>
+                                        </div>
+                                        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+                                            <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                                Update Password
+                                            </button>
+                                        </div>
+                                    </div>
+        
+                                     <!-- Two-Factor Authentication (Example) -->
+                                    <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                        <div class="px-6 py-4 border-b border-gray-200">
+                                            <h2 class="text-lg font-semibold text-gray-900">Two-Factor Authentication (2FA)</h2>
+                                            <p class="mt-1 text-sm text-gray-500">Add an extra layer of security to your account.</p>
+                                        </div>
+                                        <div class="p-6">
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-sm font-medium text-gray-700">Status: <span class="font-normal text-red-600">Disabled</span></p>
+                                                <button type="button" class="inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                                    Enable 2FA
+                                                </button>
+                                            </div>
+                                            <p class="mt-2 text-xs text-gray-500">Protect your account with both your password and your phone.</p>
+                                        </div>
+                                    </div>
+        
+                                    <!-- Danger Zone Card -->
+                                    <div class="bg-white rounded-lg shadow border border-red-200 overflow-hidden">
+                                        <div class="px-6 py-4 border-b border-red-200">
+                                            <h2 class="text-lg font-semibold text-red-800">Danger Zone</h2>
+                                        </div>
+                                        <div class="p-6">
+                                            <h3 class="text-base font-medium text-gray-900">Delete Account</h3>
+                                            <p class="mt-1 text-sm text-gray-500">Permanently remove your MyBlog account and all of its content. This action is irreversible and cannot be undone.</p>
+                                            <button type="button" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                                                <i class="fas fa-exclamation-triangle mr-2"></i> Delete My Account
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <i class="fas fa-moon ml-auto text-gray-500"></i>
+        
+                             <!-- Blog Settings Panel -->
+                            <div id="panel-blog" class="tab-content hidden">
+                                 <div class="space-y-6">
+                                     <!-- General Blog Settings -->
+                                    <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                        <div class="px-6 py-4 border-b border-gray-200">
+                                            <h2 class="text-lg font-semibold text-gray-900">General Blog Settings</h2>
+                                            <p class="mt-1 text-sm text-gray-500">Configure the basic settings for your blog.</p>
+                                        </div>
+                                        <div class="p-6 space-y-6">
+                                            <div>
+                                                <label for="blog-title" class="block text-sm font-medium text-gray-700 mb-1">Blog Title</label>
+                                                <input type="text" name="blog-title" id="blog-title" value="Conan's Case Files" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm">
+                                            </div>
+                                            <div>
+                                                <label for="blog-tagline" class="block text-sm font-medium text-gray-700 mb-1">Tagline / Description</label>
+                                                <input type="text" name="blog-tagline" id="blog-tagline" value="Unraveling mysteries, one post at a time." class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm" placeholder="A short description of your blog">
+                                            </div>
+                                             <div>
+                                                <label for="blog-language" class="block text-sm font-medium text-gray-700 mb-1">Blog Language</label>
+                                                <select id="blog-language" name="blog-language" class="block w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm appearance-none pr-8 bg-white">
+                                                    <option value="en" selected>English</option>
+                                                    <option value="ja">Japanese</option>
+                                                    <option value="vi">Vietnamese</option>
+                                                    <option value="es">Spanish</option>
+                                                </select>
+                                                <p class="mt-1 text-xs text-gray-500">Determines language for theme elements and search engines.</p>
+                                            </div>
+                                            <div>
+                                                <label for="blog-timezone" class="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
+                                                 <select id="blog-timezone" name="blog-timezone" class="block w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm appearance-none pr-8 bg-white">
+                                                    <option value="Asia/Tokyo" selected>Asia/Tokyo (UTC+9)</option>
+                                                    <option value="America/New_York">America/New York (UTC-4)</option>
+                                                    <option value="Europe/London">Europe/London (UTC+1)</option>
+                                                    <option value="UTC">UTC</option>
+                                                    <!-- Add many more timezones -->
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+        
+                                    <!-- Writing Settings -->
+                                    <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                        <div class="px-6 py-4 border-b border-gray-200">
+                                            <h2 class="text-lg font-semibold text-gray-900">Writing Settings</h2>
+                                            <p class="mt-1 text-sm text-gray-500">Customize your content creation experience.</p>
+                                        </div>
+                                        <div class="p-6 space-y-5">
+                                             <div>
+                                                <label for="default-category" class="block text-sm font-medium text-gray-700 mb-1">Default Post Category</label>
+                                                <select id="default-category" name="default-category" class="block w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm appearance-none pr-8 bg-white">
+                                                    <option value="uncategorized">Uncategorized</option>
+                                                    <option value="cases" selected>Solved Cases</option>
+                                                    <option value="thoughts">Thoughts & Theories</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label for="autosave-interval" class="block text-sm font-medium text-gray-700 mb-1">Auto Save Drafts</label>
+                                                <select id="autosave-interval" name="autosave-interval" class="block w-full max-w-xs px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm appearance-none pr-8 bg-white">
+                                                    <option value="1">Every 1 minute</option>
+                                                    <option value="5" selected>Every 5 minutes</option>
+                                                    <option value="10">Every 10 minutes</option>
+                                                     <option value="0">Disable Auto Save</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+        
+                                    <!-- Reading Settings (Comments, Visibility) -->
+                                     <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                        <div class="px-6 py-4 border-b border-gray-200">
+                                            <h2 class="text-lg font-semibold text-gray-900">Reading & Interaction</h2>
+                                            <p class="mt-1 text-sm text-gray-500">Control how visitors interact with your blog.</p>
+                                        </div>
+                                        <div class="divide-y divide-gray-200">
+                                            <div class="p-6 space-y-4">
+                                                 <h3 class="text-base font-medium text-gray-800">Comments</h3>
+                                                <div class="flex items-center">
+                                                    <label class="toggle-switch mr-3">
+                                                        <input type="checkbox" id="allow-comments" name="allow-comments" checked>
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                    <label for="allow-comments" class="text-sm text-gray-700">Allow comments on new posts</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <label class="toggle-switch mr-3">
+                                                        <input type="checkbox" id="moderate-comments" name="moderate-comments" checked>
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                     <label for="moderate-comments" class="text-sm text-gray-700">Comments must be manually approved</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <label class="toggle-switch mr-3">
+                                                        <input type="checkbox" id="require-login-comment" name="require-login-comment">
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                    <label for="require-login-comment" class="text-sm text-gray-700">Users must be registered and logged in to comment</label>
+                                                </div>
+                                            </div>
+        
+                                            <div class="p-6 space-y-4">
+                                                <h3 class="text-base font-medium text-gray-800">Site Visibility</h3>
+                                                <div class="flex items-center">
+                                                    <label class="toggle-switch mr-3">
+                                                        <input type="checkbox" id="discourage-search-engines" name="discourage-search-engines">
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                     <div>
+                                                        <label for="discourage-search-engines" class="text-sm text-gray-700">Discourage search engines from indexing this site</label>
+                                                        <p class="text-xs text-gray-500">Note: It is up to search engines to honor this request.</p>
+                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                 </div>
+                            </div>
+        
+                            <!-- Notifications Panel -->
+                            <div id="panel-notifications" class="tab-content hidden">
+                                <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                    <div class="px-6 py-4 border-b border-gray-200">
+                                        <h2 class="text-lg font-semibold text-gray-900">Notification Settings</h2>
+                                        <p class="mt-1 text-sm text-gray-500">Choose how you want to be notified.</p>
+                                    </div>
+                                    <div class="divide-y divide-gray-200">
+                                        <!-- Email Notifications -->
+                                        <div class="px-6 py-5 space-y-4">
+                                            <h3 class="text-base font-medium text-gray-900">Email Notifications</h3>
+                                            <p class="text-sm text-gray-500">Receive the following notifications via email to <span class="font-medium">conan@detective.com</span>.</p>
+                                            <div class="mt-4 space-y-4">
+                                                <div class="flex items-start">
+                                                     <label class="toggle-switch mt-1 mr-3">
+                                                        <input type="checkbox" id="email-comments" name="email-comments" checked>
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                    <div class="text-sm">
+                                                        <label for="email-comments" class="font-medium text-gray-700">New Comments</label>
+                                                        <p class="text-gray-500">Get notified when someone posts a comment on your article.</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-start">
+                                                     <label class="toggle-switch mt-1 mr-3">
+                                                        <input type="checkbox" id="email-mentions" name="email-mentions" checked>
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                    <div class="text-sm">
+                                                        <label for="email-mentions" class="font-medium text-gray-700">Mentions</label>
+                                                        <p class="text-gray-500">Get notified when another user mentions you.</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-start">
+                                                     <label class="toggle-switch mt-1 mr-3">
+                                                        <input type="checkbox" id="email-newsletter" name="email-newsletter">
+                                                        <span class="toggle-slider"></span>
+                                                    </label>
+                                                    <div class="text-sm">
+                                                        <label for="email-newsletter" class="font-medium text-gray-700">Product Updates & Newsletter</label>
+                                                        <p class="text-gray-500">Receive occasional updates about MyBlog features and news.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+        
+                                        <!-- Push Notifications -->
+                                        <div class="px-6 py-5 space-y-4">
+                                            <h3 class="text-base font-medium text-gray-900">Web Push Notifications</h3>
+                                            <p class="text-sm text-gray-500">Receive notifications directly in your browser, even when MyBlog isn't open.</p>
+                                            <div class="mt-4">
+                                                 <button type="button" class="inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors" disabled>
+                                                     <i class="fas fa-bell-slash mr-2"></i> Enable Browser Notifications
+                                                 </button>
+                                                 <p class="text-xs text-gray-500 mt-1">Requires browser permission.</p>
+                                                <!-- If enabled, show options:
+                                                <fieldset> ... radio buttons for Everything/Mentions only/None ... </fieldset>
+                                                -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+        
+                            <!-- Appearance Panel -->
+                            <div id="panel-appearance" class="tab-content hidden">
+                                <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                     <div class="px-6 py-4 border-b border-gray-200">
+                                        <h2 class="text-lg font-semibold text-gray-900">Appearance</h2>
+                                        <p class="mt-1 text-sm text-gray-500">Customize the look and feel of your dashboard.</p>
+                                    </div>
+                                    <div class="p-6 space-y-6">
+                                        <!-- Theme -->
+                                         <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Dashboard Theme</label>
+                                            <fieldset>
+                                                <legend class="sr-only">Theme selection</legend>
+                                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                                    <div>
+                                                        <input type="radio" name="theme_option" value="light" id="theme-light" class="appearance-radio" checked>
+                                                        <label for="theme-light" class="block p-4 rounded-lg border-2 text-center">
+                                                            <i class="fas fa-sun text-3xl mb-2 text-yellow-500"></i>
+                                                            <span class="font-medium text-gray-800 block">Light</span>
+                                                        </label>
+                                                    </div>
+                                                     <div>
+                                                        <input type="radio" name="theme_option" value="dark" id="theme-dark" class="appearance-radio">
+                                                        <label for="theme-dark" class="block p-4 rounded-lg border-2 text-center">
+                                                             <i class="fas fa-moon text-3xl mb-2 text-indigo-500"></i>
+                                                            <span class="font-medium text-gray-800 block">Dark</span>
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        <input type="radio" name="theme_option" value="system" id="theme-system" class="appearance-radio">
+                                                        <label for="theme-system" class="block p-4 rounded-lg border-2 text-center">
+                                                             <i class="fas fa-desktop text-3xl mb-2 text-gray-500"></i>
+                                                            <span class="font-medium text-gray-800 block">System</span>
+                                                             <p class="text-xs text-gray-400">Match OS</p>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+        
+                                         <!-- Accent Color -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Accent Color</label>
+                                            <div class="flex flex-wrap gap-3">
+                                                <button type="button" class="h-8 w-8 rounded-full bg-indigo-600 ring-2 ring-offset-2 ring-indigo-500 focus:outline-none" aria-label="Indigo" title="Indigo"></button>
+                                                <button type="button" class="h-8 w-8 rounded-full bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" aria-label="Blue" title="Blue"></button>
+                                                <button type="button" class="h-8 w-8 rounded-full bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" aria-label="Purple" title="Purple"></button>
+                                                <button type="button" class="h-8 w-8 rounded-full bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" aria-label="Pink" title="Pink"></button>
+                                                <button type="button" class="h-8 w-8 rounded-full bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" aria-label="Red" title="Red"></button>
+                                                <button type="button" class="h-8 w-8 rounded-full bg-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" aria-label="Orange" title="Orange"></button>
+                                                <button type="button" class="h-8 w-8 rounded-full bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" aria-label="Green" title="Green"></button>
+                                                <button type="button" class="h-8 w-8 rounded-full bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500" aria-label="Teal" title="Teal"></button>
+                                            </div>
+                                            <p class="mt-2 text-xs text-gray-500">Choose the primary highlight color used throughout the dashboard.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+        
+                            <!-- Integrations Panel -->
+                            <div id="panel-integrations" class="tab-content hidden">
+                                <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                    <div class="px-6 py-4 border-b border-gray-200">
+                                        <h2 class="text-lg font-semibold text-gray-900">Integrations & Connected Apps</h2>
+                                        <p class="mt-1 text-sm text-gray-500">Connect MyBlog with other services.</p>
+                                    </div>
+                                    <div class="divide-y divide-gray-200">
+                                        <!-- Example: Google Analytics -->
+                                        <div class="p-6">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-3">
+                                                     <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100">
+                                                        <i class="fab fa-google text-red-600 text-xl"></i>
+                                                    </span>
+                                                    <div>
+                                                        <h3 class="text-base font-medium text-gray-800">Google Analytics</h3>
+                                                        <p class="text-sm text-gray-500">Track your blog's traffic.</p>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                                    Configure
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Example: Twitter -->
+                                        <div class="p-6">
+                                            <div class="flex items-center justify-between">
+                                                 <div class="flex items-center gap-3">
+                                                    <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100">
+                                                        <i class="fab fa-twitter text-sky-500 text-xl"></i>
+                                                    </span>
+                                                    <div>
+                                                        <h3 class="text-base font-medium text-gray-800">Twitter</h3>
+                                                        <p class="text-sm text-gray-500">Automatically share new posts.</p>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="inline-flex items-center px-4 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                                    Connect
+                                                </button>
+                                            </div>
+                                        </div>
+                                          <!-- Example: Slack -->
+                                        <div class="p-6">
+                                            <div class="flex items-center justify-between">
+                                                 <div class="flex items-center gap-3">
+                                                     <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
+                                                        <i class="fab fa-slack text-purple-600 text-xl"></i>
+                                                    </span>
+                                                    <div>
+                                                        <h3 class="text-base font-medium text-gray-800">Slack</h3>
+                                                        <p class="text-sm text-gray-500">Get notifications for comments or posts.</p>
+                                                    </div>
+                                                </div>
+                                                 <button type="button" class="inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                                    Connect
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+        
+                        </div><!-- End Relative container for panels -->
+        
+                        <!-- Save Button Footer -->
+                        <div class="mt-8 pt-5 border-t border-gray-200 flex justify-end sticky bottom-0 bg-gray-50 py-3 px-4 -mx-4 sm:px-6 lg:px-8 lg:-mx-8 z-10"> <!-- Sticky Footer -->
+                             <button type="button" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" class="ml-3 inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                               <i class="fas fa-save mr-2 -ml-1"></i> Save All Settings
+                            </button>
                         </div>
-                    </div>
-                </section>
-
-                <!-- Language -->
-                <section class="mb-6">
-                    <h3 class="text-xl font-bold mb-4">Language</h3>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Choose your preferred language</label>
-                        <select class="border border-gray-300 rounded-lg px-4 py-2 w-full">
-                            <option>English</option>
-                            <option>Vietnamese</option>
-                            <option>Spanish</option>
-                            <option>French</option>
-                        </select>
-                    </div>
-                </section>
-
-                <!-- Notifications -->
-                <section class="mb-6">
-                    <h3 class="text-xl font-bold mb-4">Notifications</h3>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Email Notifications</label>
-                        <input type="checkbox" class="border border-gray-300 rounded-lg px-4 py-2">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Web Notifications</label>
-                        <input type="checkbox" class="border border-gray-300 rounded-lg px-4 py-2">
-                    </div>
-                </section>
-
-                <!-- Post Management -->
-                <section class="mb-6">
-                    <h3 class="text-xl font-bold mb-4">Post Management</h3>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Auto Save Interval</label>
-                        <select class="border border-gray-300 rounded-lg px-4 py-2 w-full">
-                            <option>1 minute</option>
-                            <option>5 minutes</option>
-                            <option>10 minutes</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Comment Moderation</label>
-                        <input type="checkbox" class="border border-gray-300 rounded-lg px-4 py-2">
-                    </div>
-                </section>
-
-                <!-- Security & Privacy -->
-                <section class="mb-6">
-                    <h3 class="text-xl font-bold mb-4">Security & Privacy</h3>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Privacy Settings</label>
-                        <select class="border border-gray-300 rounded-lg px-4 py-2 w-full">
-                            <option>Public</option>
-                            <option>Friends Only</option>
-                            <option>Private</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Delete Account</button>
-                    </div>
-                </section>
-
-                <!-- Social Links -->
-                <!-- <section class="mb-6 flex-1">
-                    <h3 class="text-xl font-bold mb-4">Social Links</h3>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Connect with Facebook</label>
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Connect</button>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Connect with Twitter</label>
-                        <button class="bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded">Connect</button>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Connect with GitHub</label>
-                        <button class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded">Connect</button>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Connect with LinkedIn</label>
-                        <button class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded">Connect</button>
-                    </div>
-                </section> -->
-
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Save Changes</button>
+                     </form> <!-- End Form -->
+                </div>
             </div>
         </main>
     </div>
-
-    <script>
-        // Dropdown Toggle
-        const dropdownButton = document.getElementById('userDropdownButton');
-        const dropdown = document.getElementById('userDropdown');
-
-        dropdownButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isExpanded = dropdownButton.getAttribute('aria-expanded') === 'true';
-            dropdown.classList.toggle('hidden', isExpanded);
-            dropdownButton.setAttribute('aria-expanded', !isExpanded);
-        });
-
-        // Close dropdown on outside click
-        document.addEventListener('click', (e) => {
-            if (!dropdown.contains(e.target)) {
-                dropdown.classList.add('hidden');
-                dropdownButton.setAttribute('aria-expanded', 'false');
-            }
-        });
-
-
-        // Action Dropdown Toggle
-        document.querySelectorAll('.action-button').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.stopPropagation();
-                document.querySelectorAll('.action-dropdown').forEach(dropdown => {
-                    dropdown.classList.add('hidden');
-                });
-                const dropdown = button.nextElementSibling;
-                dropdown.classList.toggle('hidden');
-            });
-        });
-
-        // Close action dropdown on outside click
-        document.addEventListener('click', (e) => {
-            document.querySelectorAll('.action-dropdown').forEach(dropdown => {
-                if (!dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-        });
-    </script>
 </body>
 </html>

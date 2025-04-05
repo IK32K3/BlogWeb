@@ -3,271 +3,466 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts</title>
+    <title>Posts Management | MyBlog</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="/front_end/html_mockup/js/blogger-post.js"></script>
+    <link rel="stylesheet" href="/front_end/html_mockup/css/bloger-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 text-gray-900">
+
+<body class="bg-gray-50">
     <!-- Header -->
-    <header class="bg-gray-300 shadow-lg">
-        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <h1 class="text-2xl font-bold">QuickBlog - Posts</h1>
-
-                <!-- User Profile Dropdown -->
-                <div class="relative">
-                    <button id="userDropdownButton" class="flex items-center gap-2" aria-expanded="false">
-                        <img src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Profile" class="w-8 h-8 rounded-full">
-                        <span class="font-medium">bloger</span>
-                        <i class="fas fa-chevron-down text-black text-xs transition-transform"></i>
+    <header class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <!-- Left section - Logo and search -->
+                <div class="flex items-center">
+                    <!-- Mobile menu button -->
+                    <button id="mobileMenuButton" class="mr-2 p-2 text-gray-500 hover:text-gray-700 lg:hidden">
+                        <i class="fas fa-bars text-lg"></i>
                     </button>
-
-                    <!-- Dropdown Menu -->
-                    <div id="userDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-100 hidden">
-                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Edit Profile</a>
-                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Settings</a>
-                        <hr class="my-1">
-                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block text-red-600">Log out</a>
+                    
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+                            <i class="fas fa-pen-fancy text-white text-sm"></i>
+                        </div>
+                        <span class="ml-2 text-3xl font-bold bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text text-transparen hidden sm:block">My<span class="bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent">Blog</span></span>
+                    </div>
+                </div>
+                
+                <!-- Right section - Navigation and user menu -->
+                <div class="flex items-center gap-3">
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 mt-2">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute top-0 right-0 h-3 w-3 rounded-full bg-red-500 notification-badge"></span>
+                    </button>
+                    
+                    <!-- User menu -->
+                    <div class="relative ml-1 mt-1">
+                        <button id="userMenuButton" class="flex items-center gap-2 group" aria-expanded="false">
+                            <img class="user-avatar h-9 w-9 rounded-full object-cover border-2 border-transparent group-hover:border-indigo-200" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="User avatar">
+                            <span class="hidden lg:inline-flex text-xn font-medium text-gray-700 group-hover:text-indigo-600">Edogawa Conan</span>
+                            <i class="fas fa-chevron-down hidden lg:inline-flex text-xs text-gray-500 group-hover:text-indigo-600 transition-transform"></i>
+                        </button>
+                        
+                        <!-- Dropdown menu -->
+                        <div id="userDropdown" class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden z-10">
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <p class="text-sm font-medium text-gray-900">Signed in as</p>
+                                <p class="text-sm text-gray-500 truncate">conan@detective.com</p>
+                            </div>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-user mr-2 text-gray-400"></i>Your Profile</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-cog mr-2 text-gray-400"></i>Settings</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-chart-line mr-2 text-gray-400"></i>Analytics</a>
+                            <div class="border-t border-gray-100"></div>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-sign-out-alt mr-2 text-gray-400"></i>Sign out</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="flex flex-col lg:flex-row">
+    <!-- Sidebar and main content wrapper -->
+    <div class="flex">
         <!-- Sidebar -->
-        <aside class="right-sidebar bg-gray-300 border-r border-gray-300 min-h-screen transition-all duration-300 hidden lg:block">
-            <div class="px-4 py-6">
-                <nav class="space-y-2">
-                    <a href="./dashboard.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50  rounded-lg">
-                        <i class="fas fa-chart-line w-5"></i>
-                        <span class="nav-text">Dashboard</span>
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-20 w-64 -translate-x-full transform overflow-y-auto bg-white border-r border-gray-200 transition duration-200 ease-in-out lg:static lg:translate-x-0">
+            <div class="flex h-full flex-col px-4 py-6">
+                <!-- Sidebar header -->
+                <div class="flex items-center justify-between px-2 mb-8">
+                    <h2 class="text-lg font-semibold text-gray-800">Dashboard</h2>
+                    <button class="p-1 text-gray-500 hover:text-gray-700 lg:hidden" id="closeSidebar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="flex-1 space-y-1">
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-chart-pie w-5 text-center"></i>
+                        <span>Overview</span>
                     </a>
-                    <a href="./post.html" class="flex items-center gap-3 px-4 py-2.5 bg-gray-50 text-blue-700 rounded-lg">
-                        <i class="fas fa-file-lines w-5"></i>
-                        <span class="nav-text">Posts</span>
+                    
+                    <a href="#" class="sidebar-item active-sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-indigo-600">
+                        <i class="fas fa-newspaper w-5 text-center"></i>
+                        <span>Posts</span>
+                        <span class="ml-auto inline-flex items-center rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-800">12</span>
                     </a>
-                    <a href="./media.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
-                        <i class="fas fa-photo-film w-5"></i>
-                        <span class="nav-text">Media</span>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-image w-5 text-center"></i>
+                        <span>Media Library</span>
                     </a>
-                    <a href="./comments.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
-                        <i class="fas fa-comments w-5"></i>
-                        <span class="nav-text">Comments</span>
+
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-users w-5 text-center"></i>
+                        <span>Audience</span>
                     </a>
-                    <a href="./profile.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
-                        <i class="fas fa-user w-5"></i>
-                        <span class="nav-text">Profile</span>
+                    
+                    <div class="px-3 pt-5 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Settings</div>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-user-cog w-5 text-center"></i>
+                        <span>Profile</span>
                     </a>
-                    <a href="./settings.html" class="flex items-center gap-3 px-4 py-2.5 text-black hover:bg-gray-50 rounded-lg">
-                        <i class="fas fa-gear w-5"></i>
-                        <span class="nav-text">Settings</span>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-sliders-h w-5 text-center"></i>
+                        <span>Settings</span>
+                    </a>
+                    
+                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
+                        <i class="fas fa-question-circle w-5 text-center"></i>
+                        <span>Help Center</span>
                     </a>
                 </nav>
 
-                <div class="mt-6 space-y-3">
-                    <button class="w-full px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg flex items-center gap-2">
-                        <i class="fas fa-plus w-5"></i>
-                        <a href="./newpost.html" class="sidebar-button-text">New Post</a>
+                <!-- User profile mini -->
+                <div class="mt-6 flex items-center gap-3 rounded-lg p-3 hover:bg-gray-50">
+                    <img class="h-9 w-9 rounded-full object-cover" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="User avatar">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">Edogawa Conan</p>
+                        <p class="text-xs text-gray-500 truncate">Admin Bloger</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-ellipsis-vertical"></i>
                     </button>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Bài viết</h2>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Viết bài mới</button>
-            </div>
-
-            <!-- Posts Table -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-                <div class="flex flex-col md:flex-row justify-between items-center mb-4">
-                    <div class="flex items-center gap-2 mb-4 md:mb-0">
-                        <select class="border border-gray-300 rounded-lg px-4 py-2 bg-white">
-                            <option>Tác vụ</option>
-                        </select>
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Áp dụng</button>
-                        <select class="border border-gray-300 rounded-lg px-4 py-2 bg-white">
-                            <option>Tất cả các ngày</option>
-                        </select>
-                        <select class="border border-gray-300 rounded-lg px-4 py-2 bg-white">
-                            <option>Tất cả</option>
-                        </select>
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Lọc</button>
+        <!-- Main content -->
+        <main class="flex-1 pb-10 lg:ml-2">
+            <div class="px-4 sm:px-6 lg:px-3 py-6">
+                <!-- Page header -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Posts Management</h1>
+                        <p class="text-gray-500 mt-1">Create, edit, and manage your blog posts</p>
                     </div>
-                    <input type="text" placeholder="Tìm kiếm bài viết" class="border border-gray-300 rounded-lg px-4 py-2">
+                    <div class="flex gap-3">
+                        <button class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <i class="fas fa-filter mr-2"></i> Filter
+                        </button>
+                        <button class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <i class="fas fa-plus mr-2"></i> New Post
+                        </button>
+                    </div>
                 </div>
-                <table class="w-full bg-white shadow rounded">
-                    <thead>
-                        <tr class="bg-gray-200 text-left">
-                            <th class="p-3"><input type="checkbox"></th>
-                            <th class="p-3">Tiêu đề</th>
-                            <th class="p-3">Tác giả</th>
-                            <th class="p-3">Thống kê</th>
-                            <th class="p-3">Bình luận</th>
-                            <th class="p-3">Ngày</th>
-                            <th class="p-3">Lượt xem</th>
-                            <th class="p-3">Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-b">
-                            <td class="p-3"><input type="checkbox"></td>
-                            <td class="p-3 flex items-center gap-2">
-                                <img src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Post Image" class="w-10 h-10 rounded">
-                                Nghệ thuật Kết nối
-                            </td>
-                            <td class="p-3 text-blue-500">Đào Bá Đạt</td>
-                            <td class="p-3"><i class="fas fa-chart-bar text-blue-500"></i></td>
-                            <td class="p-3">0</td>
-                            <td class="p-3">Đã xuất bản<br>2025/03/12 lúc 17:21</td>
-                            <td class="p-3"><i class="fas fa-eye"></i> 1,245</td>
-                            <td class="p-3">
-                                <div class="relative">
-                                    <button class="text-gray-500 hover:text-gray-700 action-button">
-                                        <i class="fas fa-ellipsis-h"></i>
-                                    </button>
-                                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-100 hidden action-dropdown">
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Edit</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">View</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Copy Link</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block text-red-600">Delete</a>
-                                    </div>
+
+                <!-- Posts Table -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <!-- Filter Bar -->
+                    <div class="px-6 py-3 bg-gray-50 border-b border-gray-200 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center space-x-2">
+                            <div class="relative">
+                                <select class="appearance-none bg-white pl-3 pr-8 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option>All Status</option>
+                                    <option>Published</option>
+                                    <option>Draft</option>
+                                    <option>Scheduled</option>
+                                    <option>Trash</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <i class="fas fa-chevron-down text-xs"></i>
                                 </div>
-                            </td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="p-3"><input type="checkbox"></td>
-                            <td class="p-3 flex items-center gap-2">
-                                <img src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Post Image" class="w-10 h-10 rounded">
-                                Vượt qua Trở ngại
-                            </td>
-                            <td class="p-3 text-blue-500">Đào Bá Đạt</td>
-                            <td class="p-3"><i class="fas fa-chart-bar text-blue-500"></i></td>
-                            <td class="p-3">0</td>
-                            <td class="p-3">Đã xuất bản<br>2025/03/12 lúc 17:21</td>
-                            <td class="p-3"><i class="fas fa-eye"></i> 1,245</td>
-                            <td class="p-3">
-                                <div class="relative">
-                                    <button class="text-gray-500 hover:text-gray-700 action-button">
-                                        <i class="fas fa-ellipsis-h"></i>
-                                    </button>
-                                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-100 hidden action-dropdown">
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Edit</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">View</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Copy Link</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block text-red-600">Delete</a>
-                                    </div>
+                            </div>
+                            
+                            <div class="relative">
+                                <select class="appearance-none bg-white pl-3 pr-8 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option>All Categories</option>
+                                    <option>Technology</option>
+                                    <option>Programming</option>
+                                    <option>Design</option>
+                                    <option>Business</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <i class="fas fa-chevron-down text-xs"></i>
                                 </div>
-                            </td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="p-3"><input type="checkbox"></td>
-                            <td class="p-3 flex items-center gap-2">
-                                <img src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Post Image" class="w-10 h-10 rounded">
-                                Tăng trưởng Mở khóa
-                            </td>
-                            <td class="p-3 text-blue-500">Đào Bá Đạt</td>
-                            <td class="p-3"><i class="fas fa-chart-bar text-blue-500"></i></td>
-                            <td class="p-3">0</td>
-                            <td class="p-3">Đã xuất bản<br>2025/03/12 lúc 17:21</td>
-                            <td class="p-3"><i class="fas fa-eye"></i> 1,245</td>
-                            <td class="p-3">
-                                <div class="relative">
-                                    <button class="text-gray-500 hover:text-gray-700 action-button">
-                                        <i class="fas fa-ellipsis-h"></i>
-                                    </button>
-                                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-100 hidden action-dropdown">
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Edit</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">View</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Copy Link</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block text-red-600">Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="p-3"><input type="checkbox"></td>
-                            <td class="p-3 flex items-center gap-2">
-                                <img src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="Post Image" class="w-10 h-10 rounded">
-                                Phép thuật cộng tác
-                            </td>
-                            <td class="p-3 text-blue-500">Đào Bá Đạt</td>
-                            <td class="p-3"><i class="fas fa-chart-bar text-blue-500"></i></td>
-                            <td class="p-3">0</td>
-                            <td class="p-3">Đã xuất bản<br>2025/03/12 lúc 17:21</td>
-                            <td class="p-3"><i class="fas fa-eye"></i> 1,245</td>
-                            <td class="p-3">
-                                <div class="relative">
-                                    <button class="text-gray-500 hover:text-gray-700 action-button">
-                                        <i class="fas fa-ellipsis-h"></i>
-                                    </button>
-                                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-100 hidden action-dropdown">
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Edit</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">View</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block">Copy Link</a>
-                                        <a href="#" class="px-4 py-2.5 text-sm hover:bg-gray-200 block text-red-600">Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="relative flex-1 max-w-xs">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                            <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Search posts...">
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                            <span class="ml-2">Title</span>
+                                        </div>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Author
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Categories
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Date
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <!-- Published Post -->
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Getting Started with React Hooks</div>
+                                                <div class="text-sm text-gray-500">react, javascript, webdev</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <img class="h-10 w-10 rounded-full" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="">
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Edogawa Conan</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                                            Programming
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Published
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        May 15, 2023
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex justify-end space-x-2">
+                                            <button class="text-indigo-600 hover:text-indigo-900">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="text-yellow-600 hover:text-yellow-900">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Draft Post -->
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">CSS Grid vs Flexbox</div>
+                                                <div class="text-sm text-gray-500">css, webdesign, layout</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <img class="h-10 w-10 rounded-full" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="">
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Edogawa Conan</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            Web Design
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                            Draft
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        May 10, 2023
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex justify-end space-x-2">
+                                            <button class="text-indigo-600 hover:text-indigo-900">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="text-yellow-600 hover:text-yellow-900">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Scheduled Post -->
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">JavaScript ES6 Features</div>
+                                                <div class="text-sm text-gray-500">javascript, es6, programming</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <img class="h-10 w-10 rounded-full" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="">
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Edogawa Conan</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                                            Programming
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                                            Scheduled
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        May 20, 2023
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex justify-end space-x-2">
+                                            <button class="text-indigo-600 hover:text-indigo-900">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="text-yellow-600 hover:text-yellow-900">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Trashed Post -->
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900 line-through">Old jQuery Tutorial</div>
+                                                <div class="text-sm text-gray-500">jquery, javascript</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <img class="h-10 w-10 rounded-full" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="">
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Edogawa Conan</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                                            Programming
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Trash
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        April 5, 2023
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex justify-end space-x-2">
+                                            <button class="text-indigo-600 hover:text-indigo-900">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="text-yellow-600 hover:text-yellow-900">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="bg-white px-6 py-3 flex items-center justify-between border-t border-gray-200">
+                        <div class="flex-1 flex justify-between sm:hidden">
+                            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Previous
+                            </a>
+                            <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Next
+                            </a>
+                        </div>
+                        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                            <div>
+                                <p class="text-sm text-gray-700">
+                                    Showing <span class="font-medium">1</span> to <span class="font-medium">4</span> of <span class="font-medium">12</span> posts
+                                </p>
+                            </div>
+                            <div>
+                                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <span class="sr-only">Previous</span>
+                                        <i class="fas fa-chevron-left h-4 w-4"></i>
+                                    </a>
+                                    <a href="#" aria-current="page" class="z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                        1
+                                    </a>
+                                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                        2
+                                    </a>
+                                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                        3
+                                    </a>
+                                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <span class="sr-only">Next</span>
+                                        <i class="fas fa-chevron-right h-4 w-4"></i>
+                                    </a>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
-    <script>
-        // Dropdown Toggle
-        const dropdownButton = document.getElementById('userDropdownButton');
-        const dropdown = document.getElementById('userDropdown');
-
-        dropdownButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isExpanded = dropdownButton.getAttribute('aria-expanded') === 'true';
-            dropdown.classList.toggle('hidden', isExpanded);
-            dropdownButton.setAttribute('aria-expanded', !isExpanded);
-        });
-
-        // Close dropdown on outside click
-        document.addEventListener('click', (e) => {
-            if (!dropdown.contains(e.target)) {
-                dropdown.classList.add('hidden');
-                dropdownButton.setAttribute('aria-expanded', 'false');
-            }
-        });
-
-        // Close on Esc key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                dropdown.classList.add('hidden');
-                dropdownButton.setAttribute('aria-expanded', 'false');
-            }
-        });
-
-        // Action Dropdown Toggle
-        document.querySelectorAll('.action-button').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.stopPropagation();
-                document.querySelectorAll('.action-dropdown').forEach(dropdown => {
-                    dropdown.classList.add('hidden');
-                });
-                const dropdown = button.nextElementSibling;
-                dropdown.classList.toggle('hidden');
-            });
-        });
-
-        // Close action dropdown on outside click
-        document.addEventListener('click', (e) => {
-            document.querySelectorAll('.action-dropdown').forEach(dropdown => {
-                if (!dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-        });
-    </script>
 </body>
 </html>

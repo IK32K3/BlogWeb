@@ -1,245 +1,417 @@
-@import "tailwindcss";
+/* ==========================================================================
+   Tailwind Imports & Base Styles
+   ========================================================================== */
+
+/* 
+   @import directives for Tailwind CSS. 
+   Ensure your build process (like PostCSS) is configured correctly 
+   to handle these, or replace them with a link to the compiled Tailwind CSS file.
+*/
+@import "tailwindcss/base"; 
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-.fade-enter-active, .fade-leave-active {
-    transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to {
-    opacity: 0;
-}
-
+/* Base body styles */
 body, html {
     height: 100%;
-    margin: 0;
+    margin: 0;/* Ưu tiên font hiện đại hơn */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale; 
 }
+
+/* Basic layout helper */
 .content {
-    min-height: calc(100vh - 64px); /* Adjust based on header and footer height */
+    min-height: calc(100vh - 64px); 
 }
 
-#dropdown {
-    z-index: 1000; /* Ensure the dropdown is above other content */
-}
-.relative {
-    position: relative;
-}
+/* ==========================================================================
+   Forms & Inputs
+   ========================================================================== */
 
-#search-results {
-    max-height: 200px;
-    overflow-y: auto;
-}
-.post-image:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease-in-out;
-}
 fieldset {
-    border: 1px solid #5126c9;
-    border-radius: 1rem;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    /* Sử dụng class Tailwind trong HTML thay thế nếu có thể, ví dụ: */
+    /* border border-gray-300 rounded-lg p-6 mb-6 bg-gray-50 */
+    /* Nếu vẫn muốn giữ style này: */
+     border: 1px solid #e5e7eb; /* gray-200 */
+     border-radius: 0.5rem; /* rounded-lg */
+     padding: 1.25rem; /* p-5 */
+     margin-bottom: 1.5rem; /* mb-6 */
+     background-color: rgba(249, 250, 251, 0.5); /* bg-gray-50/50 */
 }
+
 legend {
     padding: 0 0.5rem;
-    font-weight: 600;
-    color: #3f3cca;
+    font-size: 1rem; /* text-base */
+    font-weight: 600; /* font-semibold */
+    color: #1d4ed8; /* text-blue-700 */
+    margin-bottom: 1rem; /* Consistent spacing */
 }
-.filter-container {
-    position: relative;
+
+/* Styling for custom Checkbox/Radio using hidden input and styled label */
+.filter-item {
+    /* Container for each filter input/label pair */
+    position: relative; /* Needed if absolutely positioning anything inside */
 }
-.custom-checkbox {
+
+.custom-checkbox,
+.custom-radio {
+    /* Hide the actual input */
     position: absolute;
     opacity: 0;
+    width: 0;
+    height: 0;
 }
+
 .filter-label {
     display: flex;
     align-items: center;
-    padding: 10px;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
+    gap: 0.625rem; /* ~gap-2.5 */
+    padding: 0.625rem 0.75rem; /* py-2.5 px-3 */
+    border-radius: 0.375rem; /* rounded-md */
+    border: 1px solid #e5e7eb; /* border-gray-200 */
+    background-color: white;
     cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    font-size: 0.875rem; /* text-sm */
+    color: #4b5563; /* text-gray-600 */
+    width: 100%;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03); /* subtle shadow */
 }
+
 .filter-label:hover {
-    background-color: rgba(25, 97, 212, 0.753);
+    background-color: #f9fafb; /* gray-50 */
+    border-color: #d1d5db; /* gray-300 */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
-.custom-checkbox:checked + .filter-label {
-    background-color: rgba(10, 87, 212, 0.5);
+
+/* Visual representation span (the box/circle) */
+.filter-label > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem; /* w-5 */
+    height: 1.25rem; /* h-5 */
+    border: 1px solid #9ca3af; /* gray-400 */
+    background-color: white;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    flex-shrink: 0;
 }
-.custom-checkbox + .filter-label::before {
-    content: "";
-    display: inline-block;
-    width: 1.25rem;
-    height: 1.25rem;
-    border: 2px solid #3f3cca;
-    border-radius: 0.25rem;
-    margin-right: 0.5rem;
-    transition: all 0.2s ease;
+/* Checkbox visual */
+input.custom-checkbox + .filter-label > span:first-child {
+    border-radius: 0.25rem; /* rounded */
 }
-.custom-checkbox:checked + .filter-label::before {
-    background-color: #3B82F6;
-    border-color: #3B82F6;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
+/* Radio visual */
+input.custom-radio + .filter-label > span:first-child {
+    border-radius: 9999px; /* rounded-full */
 }
-.search-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px -1px rgba(255, 10, 10, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-.category-tag, .topic-tag {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-    transition: all 0.2s ease;
-}
-.topic-tag:hover {
-    background-color: #3b82f6;
+
+/* Check icon inside checkbox visual */
+.filter-label > span:first-child > .fa-check {
+    font-size: 0.7rem; /* Slightly smaller check */
     color: white;
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.15s ease-in-out;
 }
+
+/* Radio dot inside radio visual */
+.filter-label > span:first-child > span { /* Target the inner span for the dot */
+    width: 0.65rem;
+    height: 0.65rem;
+    background-color: white; /* Same as visual background initially */
+    border-radius: 9999px;
+    transform: scale(0); /* Hidden by default */
+    transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+/* --- Checked States --- */
+/* Checkbox */
+.custom-checkbox:checked + .filter-label {
+    background-color: #eff6ff; /* blue-50 */
+    border-color: #60a5fa; /* blue-400 */
+    color: #1d4ed8; /* blue-700 */
+    font-weight: 500; /* medium */
+}
+.custom-checkbox:checked + .filter-label > span:first-child {
+    background-color: #3b82f6; /* blue-500 */
+    border-color: #3b82f6;
+}
+.custom-checkbox:checked + .filter-label > span:first-child > .fa-check {
+    opacity: 1; /* Show check */
+}
+
+/* Radio */
+.custom-radio:checked + .filter-label {
+    background-color: #eff6ff; /* blue-50 */
+    border-color: #60a5fa; /* blue-400 */
+    color: #1d4ed8; /* blue-700 */
+    font-weight: 500; /* medium */
+}
+.custom-radio:checked + .filter-label > span:first-child {
+    border-color: #3b82f6; /* blue-500 */
+}
+.custom-radio:checked + .filter-label > span:first-child > span {
+    background-color: #3b82f6; /* Show dot */
+    transform: scale(1);
+}
+
+
+/* --- Search Button --- */
+.search-btn:hover {
+
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* ==========================================================================
+   Components
+   ========================================================================== */
+
+/* --- Dropdown --- */
+#dropdown {
+    z-index: 1000; /* Ensure the dropdown is above other content */
+}
+
+/* --- Search Results Container --- */
+#search-results {
+    max-height: 200px; /* Consider making this dynamic or larger */
+    overflow-y: auto;
+    /* Add custom scrollbar styles if desired */
+}
+
+/* --- Cards (Post, Sidebar, Team) --- */
 .post-card, .sidebar-card, .post-item, .team-card {
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Already included in Tailwind's shadow-md, consider removing if using shadow-md */
 }
 .post-card:hover, .team-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
 }
 .sidebar-card:hover {
-    transform: translateX(2px);
+     transform: translateY(-3px); /* Subtle lift */
+     /* box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md - redundant if card already has shadow-md */
 }
-.post-item:hover {
+.post-item:hover { /* For smaller list items */
     transform: translateY(-2px);
 }
-.sidebar-item {
-    transition: all 0.2s ease;
+
+/* --- Tags (Category, Topic) --- */
+.category-tag, .topic-tag {
+    display: inline-block; /* Already default for spans/a tags */
+    /* Use Tailwind classes directly in HTML for padding, font-size, etc. */
+    /* e.g., <span class="category-tag py-1 px-2.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition duration-200"> */
+    letter-spacing: 0.5px; /* Consider if needed */
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
-.sidebar-item:hover {
-    background-color: #f8fafc;
+/* Specific hover if not using Tailwind hover classes */
+.topic-tag:hover {
+    background-color: #3b82f6; /* blue-600 */
+    color: white;
 }
+
+
+/* --- Buttons (Follow, Social) --- */
 .follow-btn {
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .follow-btn:hover {
     transform: translateY(-1px);
+     /* Use Tailwind hover utilities: hover:shadow-md */
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
+.social-btn {
+    transition: transform 0.3s ease;
+    display: inline-flex; /* Use Tailwind 'inline-flex' */
+    align-items: center; /* Use Tailwind 'items-center' */
+    justify-content: center; /* Use Tailwind 'justify-center' */
+}
+.social-btn i {
+    margin-right: 8px; /* Use Tailwind 'mr-2' */
+}
+.social-btn:hover {
+    transform: scale(1.1); /* Slightly larger scale on hover */
+}
+
+
+/* --- Navigation / Tabs --- */
 .nav-tab, .tab-item {
     position: relative;
 }
-.nav-tab:after, .tab-item.active:after {
+/* Underline effect for tabs */
+.nav-tab::after, .tab-item.active::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -1px; /* Position slightly below text */
     left: 0;
     height: 2px;
-    background: #3b82f6;
-    transition: width 0.3s;
+    background: #3b82f6; /* blue-600 */
+    transition: width 0.3s ease-in-out;
+    width: 0; /* Hidden by default */
 }
-.nav-tab:after {
-    width: 0;
+.nav-tab:hover::after, .nav-tab.active::after, .tab-item.active::after {
+    width: 100%; /* Expand on hover/active */
 }
-.nav-tab:hover:after, .nav-tab.active:after, .tab-item.active:after {
-    width: 100%;
-}
+
+/* --- Avatar --- */
 .avatar-ring {
-    border: 3px solid #3b82f6;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    /* Use Tailwind: ring-2 ring-blue-500 ring-offset-2 shadow-md */
+    border: 3px solid #3b82f6; /* Redundant if using Tailwind ring */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Redundant if using Tailwind shadow */
 }
-.social-icon {
-    transition: all 0.3s ease;
+
+/* --- Search Section Animation --- */
+.search-section {
+    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out, opacity 0.4s ease-in-out, visibility 0s linear 0.5s; /* Delay visibility change */
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+    overflow: hidden; /* Important */
+    visibility: hidden;
 }
-.social-icon:hover {
-    transform: scale(1.2);
+.search-section.active {
+    max-height: 1000px; /* Adjust as needed */
+    padding-top: 1.5rem; /* Match p-6 */
+    padding-bottom: 1.5rem; /* Match p-6 */
+    opacity: 1;
+    visibility: visible;
+    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out, opacity 0.4s ease-in-out, visibility 0s linear 0s; /* Remove delay */
 }
+
+/* --- Pagination --- */
+.pagination-link {
+    transition: all 0.2s ease;
+    text-align: center;
+}
+.pagination-link:hover {
+    transform: translateY(-2px);
+}
+/* Style for the active pagination link */
+.pagination-link.active {
+     background-color: #3b82f6; /* blue-600 */
+     color: white;
+     border-color: #3b82f6;
+     font-weight: 600; /* semibold */
+}
+
+/* ==========================================================================
+   Typography & Content Styling
+   ========================================================================== */
+
+/* --- Prose (for rendering Markdown/HTML content) --- */
 .prose {
-    max-width: 100%;
-    line-height: 1.6;
+    max-width: 100%; /* Usually handled by container */
+    line-height: 1.7; /* Slightly increased line-height */
+    color: #374151; /* text-gray-700 */
 }
 .prose h2 {
-    margin-top: 1.5em;
-    margin-bottom: 0.75em;
-    color: #1a365d;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    color: #1f2937; /* text-gray-800 */
+    font-weight: 600;
 }
 .prose p {
     margin-bottom: 1.25em;
 }
 .prose img {
-    border-radius: 0.5rem;
-    margin: 1.5em 0;
+    border-radius: 0.5rem; /* rounded-lg */
+    margin: 2em 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
-.hover-scale {
-    transition: transform 0.3s ease;
-}
-.hover-scale:hover {
-    transform: scale(1.02);
-}
-.social-btn {
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-.social-btn i {
-    margin-right: 8px;
-}
-.fa-facebook { color: #1877F2; }
-.fa-instagram { color: #E4405F; }
-.fa-twitter { color: #1DA1F2; }
-.fa-youtube { color: #FF0000; }
-/*  */
+/* Add more prose styles as needed for links, lists, blockquotes etc. */
 
-:root {
-    --primary: #4f46e5;
-    --primary-light: #6366f1;
+/* --- Text Outline/Stroke Effect --- */
+.text-outline-white-shadow {
+    /* Example: Black stroke, black shadow */
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+    /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Softer shadow */
+    text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3); /* Harder shadow offset */
+    paint-order: stroke fill; /* Draw stroke behind fill */
 }
 
-.title-input {
-    font-family: 'Playfair Display', serif;
-}
+
+/* ==========================================================================
+   Third-Party Library Overrides (e.g., Quill Editor)
+   ========================================================================== */
 
 .ql-toolbar.ql-snow {
-    border: none;
-    border-bottom: 1px solid #e2e8f0;
+    border: 1px solid #e2e8f0; /* gray-200 */
+    border-radius: 0.375rem 0.375rem 0 0; /* rounded-t-md */
+    border-bottom: none;
+    background-color: #f9fafb; /* gray-50 */
+    padding: 8px 12px;
 }
 
 .ql-container.ql-snow {
-    border: none;
-    font-size: 1.125rem;
+    border: 1px solid #e2e8f0; /* gray-200 */
+    border-radius: 0 0 0.375rem 0.375rem; /* rounded-b-md */
+    font-size: 1rem; /* text-base */
+    color: #1f2937; /* text-gray-800 */
+    min-height: 300px; /* Ensure minimum editor height */
+    display: flex; /* Allow editor to fill height */
+    flex-direction: column;
+}
+
+.ql-editor {
+    flex-grow: 1; /* Make editor fill container height */
+    padding: 1rem 1.5rem; /* Adjust padding */
+    line-height: 1.6;
+    overflow-y: auto; /* Add scroll if content exceeds height */
 }
 
 .ql-editor.ql-blank::before {
     font-style: normal;
-    color: #94a3b8;
-    left: 1.5rem;
-    font-size: 1.125rem;
+    color: #9ca3af; /* gray-400 */
+    left: 1.5rem; /* Match editor padding */
+    top: 1rem; /* Match editor padding */
+    font-size: 1rem; /* Match editor font-size */
+    pointer-events: none; /* Prevent placeholder interaction */
 }
 
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+
+/* ==========================================================================
+   Utilities & Animations
+   ========================================================================== */
+
+/* --- Fade Transition (Example for Vue/Alpine) --- */
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.3s ease; /* Faster fade */
+}
+.fade-enter-from, .fade-leave-to { /* Use 'from'/'to' for newer syntax */
+    opacity: 0;
 }
 
-.status-dot {
-    animation: pulse 2s infinite;
-}
-
-.ql-container {
-    min-height: 300px;
-}
-.ql-editor {
-    height: 100%; 
-}
-/* / update-post */
-.editor-container {
-    min-height: 400px;
-}
+/* --- Hover Scale Effect --- */
 .hover-scale {
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease-in-out;
 }
 .hover-scale:hover {
-    transform: translateY(-2px);
+    transform: scale(1.03); /* Slightly more noticeable scale */
 }
-.tag-input:focus {
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+
+/* --- Custom Scrollbar (Webkit) --- */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* Slightly wider scrollbar */
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* gray-300 */
+  border-radius: 10px;
+  border: 2px solid #f1f1f1; /* Add track color border */
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af; /* gray-400 */
+}
+
+/* --- Pulse Animation (Example) --- */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+.status-dot { /* Example usage */
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

@@ -1,578 +1,383 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="/front_end/html_mockup/css/bloger-style.css">
+    <title>Category Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/front_end/html_mockup/js/components.js"defer ></script>
+    <script src="/front_end/html_mockup/js/category.js"defer></script>
+    <script src="/front_end/html_mockup/js/main.js" defer ></script>
+    <link href="/front_end/html_mockup/css/style.css" rel="stylesheet">
 </head>
+<body class="bg-gray-200"> <!-- Thêm font-sans mặc định -->
 
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
-        <div class="px-4 sm:px-6 lg:px-8">
-            <div class="flex h-16 items-center justify-between">
-                <!-- Left section - Logo and search -->
-                <div class="flex items-center">
-                    <!-- Mobile menu button -->
-                    <button id="mobileMenuButton" class="mr-2 p-2 text-gray-500 hover:text-gray-700 lg:hidden">
-                        <i class="fas fa-bars text-lg"></i>
-                    </button>
-                    
-                    <!-- Logo -->
-                    <div class="flex items-center">
-                        <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-                            <i class="fas fa-pen-fancy text-white text-sm"></i>
-                        </div>
-                        <span class="ml-2 text-3xl font-bold bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text text-transparen hidden sm:block">My<span class="bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent">Blog</span></span>
-                    </div>
-                                    
+    <!-- Navigation -->
+    <div id="navbar"></div>
+
+    <!-- Search Toggle Button -->
+    <div class="container mx-auto px-4 pt-8">
+        <div class="flex justify-end">
+            <!-- Đã di chuyển nút Tìm kiếm nâng cao vào trong section để dễ quản lý hơn -->
+        </div>
+    </div>
+
+    <!-- Search Section (Hidden by default) -->
+    <section class="container mx-auto w-full px-4">
+         <!-- Nút Toggle đặt ngay trên section nó điều khiển -->
+         <div class="mb-4 text-right"> 
+            <button id="search-toggle" aria-controls="search-section" aria-expanded="false" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-base font-medium transition duration-300 ease-in-out transform hover:-translate-y-0.5 shadow hover:shadow-md inline-flex items-center gap-2">
+                <i class="fas fa-sliders-h"></i> <!-- Icon khác phù hợp hơn -->
+                Tìm Kiếm Nâng Cao
+            </button>
+        </div>
+
+        <div id="search-section" class="search-section bg-white shadow-lg rounded-lg p-6 overflow-hidden">
+            <!-- Input tìm kiếm chính -->
+            <div class="flex flex-col md:flex-row items-center gap-4 mb-8 pb-6 border-b border-gray-300">
+                <div class="relative flex-1 w-full">
+                    <input type="text" placeholder="Nhập từ khóa tìm kiếm..."
+                           class="w-full px-4 py-3 pl-11 rounded-lg bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition-all duration-200 ease-in-out shadow-sm text-gray-700">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 </div>
-                
-                <!-- Right section - Navigation and user menu -->
-                <div class="flex items-center gap-3">
-                    <!-- Notifications -->
-                    <button class="relative p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 mt-2">
-                        <i class="fas fa-bell text-xl "></i>
-                        <span class="absolute top-0 right-0 h-3 w-3 rounded-full bg-red-500 notification-badge"></span>
-                    </button>
-                    
-                    <!-- User menu -->
-                    <div class="relative ml-1 mt-1">
-                        <button id="userMenuButton" class="flex  items-center gap-2 group" aria-expanded="false">
-                            <img class="user-avatar h-9 w-9 rounded-full object-cover border-2 border-transparent group-hover:border-indigo-200" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="User avatar">
-                            <span class="hidden lg:inline-flex text-xn font-medium text-gray-700 group-hover:text-indigo-600">Edogawa Conan</span>
-                            <i class="fas fa-chevron-down hidden lg:inline-flex text-xs text-gray-500 group-hover:text-indigo-600 transition-transform"></i>
-                        </button>
-                        
-                        <!-- Dropdown menu -->
-                        <div id="userDropdown" class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden z-10">
-                            <div class="px-4 py-3 border-b border-gray-100">
-                                <p class="text-sm font-medium text-gray-900">Signed in as</p>
-                                <p class="text-sm text-gray-500 truncate">conan@detective.com</p>
+                <button class="search-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-base font-medium transition duration-300 w-full md:w-auto flex items-center justify-center gap-2 shadow hover:shadow-md transform hover:-translate-y-0.5">
+                    <i class="fas fa-search"></i> Tìm Kiếm
+                </button>
+            </div>
+
+            <!-- Filter Groups -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Trạng thái -->
+                <fieldset class="border border-gray-300 p-5 rounded-lg bg-gray-50/50">
+                    <legend class="text-base font-semibold px-2 text-blue-700 mb-4">Trạng Thái</legend>
+                    <div class="space-y-3">
+                        <!-- Lặp lại cấu trúc này cho mỗi filter item -->
+                        <div class="filter-item">
+                            <input type="checkbox" id="status-1" class="hidden custom-checkbox">
+                            <label for="status-1" class="filter-label">
+                                <span class="checkbox-visual">
+                                    <i class="fas fa-check check-icon"></i>
+                                </span>
+                                <span>Chưa bắt đầu</span>
+                            </label>
+                        </div>
+                        <div class="filter-item">
+                            <input type="checkbox" id="status-2" class="hidden custom-checkbox">
+                            <label for="status-2" class="filter-label">
+                                <span class="checkbox-visual">
+                                    <i class="fas fa-check check-icon"></i>
+                                </span>
+                                <span>Đang tiến hành</span>
+                            </label>
+                        </div>
+                        <div class="filter-item">
+                            <input type="checkbox" id="status-3" class="hidden custom-checkbox">
+                            <label for="status-3" class="filter-label">
+                                <span class="checkbox-visual">
+                                    <i class="fas fa-check check-icon"></i>
+                                </span>
+                                <span>Hoàn Thành</span>
+                            </label>
+                        </div>
+                        <!-- Kết thúc filter item -->
+                    </div>
+                </fieldset>
+
+                <!-- Thể loại -->
+                <fieldset class="border border-gray-300 p-5 rounded-lg bg-gray-50">
+                    <legend class="text-base font-semibold px-2 text-blue-700 mb-4">Thể Loại</legend>
+                    <div class="mb-4">
+                        <div class="relative">
+                            <input type="text" placeholder="Tìm thể loại..."
+                                   class="w-full px-4 py-2 pl-10 rounded-md bg-white border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 hover:border-blue-400 transition text-sm"
+                                   id="category-search">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+                    <div class="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar" id="category-container">
+                        <!-- Categories load here -->
+                        <!-- Ví dụ (sẽ bị ghi đè bởi JS): -->
+                         <div class="filter-item">
+                            <input type="checkbox" id="category-placeholder-1" class="hidden custom-checkbox">
+                            <label for="category-placeholder-1" class="filter-label">
+                                <span class="checkbox-visual">
+                                    <i class="fas fa-check check-icon"></i>
+                                </span>
+                                <span>Đang tải...</span>
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Sắp xếp -->
+                <fieldset class="border border-gray-300 p-5 rounded-lg bg-gray-50/50">
+                    <legend class="text-base font-semibold px-2 text-blue-700 mb-4">Sắp Xếp</legend>
+                    <div class="space-y-3">
+                         <!-- Lặp lại cấu trúc này cho mỗi filter item -->
+                         <div class="filter-item">
+                            <input type="radio" name="sort_option" id="sort-1" class="hidden custom-radio">
+                            <label for="sort-1" class="filter-label">
+                                <span class="radio-visual">
+                                    <span class="radio-dot"></span>
+                                </span>
+                                <span>Lượt xem</span>
+                            </label>
+                        </div>
+                         <div class="filter-item">
+                            <input type="radio" name="sort_option" id="sort-2" class="hidden custom-radio">
+                            <label for="sort-2" class="filter-label">
+                                <span class="radio-visual">
+                                    <span class="radio-dot"></span>
+                                </span>
+                                <span>Lượt tương tác cao</span>
+                            </label>
+                        </div>
+                         <div class="filter-item">
+                            <input type="radio" name="sort_option" id="sort-3" class="hidden custom-radio">
+                            <label for="sort-3" class="filter-label">
+                                <span class="radio-visual">
+                                    <span class="radio-dot"></span>
+                                </span>
+                                <span>Bài viết mới nhất</span>
+                            </label>
+                        </div>
+                        <div class="filter-item">
+                            <input type="radio" name="sort_option" id="sort-4" class="hidden custom-radio">
+                            <label for="sort-4" class="filter-label">
+                                <span class="radio-visual">
+                                    <span class="radio-dot"></span>
+                                </span>
+                                <span>Đánh giá cao</span>
+                            </label>
+                        </div>
+                         <!-- Kết thúc filter item -->
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content Title -->
+    <div class="items-title container mx-auto px-4"> <!-- Giảm mt một chút -->
+        <div class="flex items-center">
+            <div class="title-line text-xl font-semibold px-4 text-indigo-700 bg-white rounded-md shadow-sm py-2 border-l-4 border-indigo-600">Nội Dung Mới Nhất</div>
+             <!-- Thay đổi style tiêu đề -->
+            <hr class="flex-grow border-t  border-gray-400 ml-4"> <!-- Đường kẻ mảnh hơn -->
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <section class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+        <!-- Main Content Feed -->
+        <div class="w-full lg:w-3/4 space-y-6"> <!-- Giảm space-y một chút -->
+            <!-- Post Card Example (Lặp lại cấu trúc này) -->
+            <div class="post-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg">
+                <div class="flex flex-col md:flex-row">
+                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 1" class="w-full md:w-52 h-48 md:h-auto object-cover flex-shrink-0"> <!-- Kích thước ảnh cố định hơn -->
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <a href="#" class="category-tag bg-blue-100 text-blue-700 rounded-full hover:bg-blue-600 hover:text-white text-xs font-medium">Lifestyle</a>
+                             <!-- Cập nhật style tag -->
+                            <span class="text-xs text-gray-500 ml-auto"><i class="far fa-eye mr-1"></i> 1.2K</span> <!-- Icon far -->
+                            <span class="text-xs text-gray-500"><i class="far fa-comment mr-1"></i> 45</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 leading-tight">
+                            <a href="#" class="text-gray-800 hover:text-blue-600 transition duration-200">Tiêu đề bài viết hấp dẫn về phong cách sống</a>
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-3 flex-grow">Khám phá những bí quyết giúp bạn có một lối sống lành mạnh và cân bằng giữa công việc và cuộc sống cá nhân...</p>
+                        <div class="flex items-center justify-between text-xs mt-auto pt-3 border-t border-gray-100">
+                             <!-- Đường kẻ mảnh phân cách -->
+                            <div class="flex items-center gap-2">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Author" class="w-6 h-6 rounded-full">
+                                <span class="text-gray-700 font-medium">Nguyễn Thị A</span>
                             </div>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-user mr-2 text-gray-400"></i>Your Profile</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-cog mr-2 text-gray-400"></i>Settings</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-chart-line mr-2 text-gray-400"></i>Analytics</a>
-                            <div class="border-t border-gray-100"></div>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-sign-out-alt mr-2 text-gray-400"></i>Sign out</a>
+                            <div class="text-gray-500 flex items-center gap-3">
+                                <span><i class="far fa-calendar-alt mr-1"></i> 20/03/2025</span>
+                                <a href="#" class="text-blue-500 hover:underline flex items-center gap-1 font-medium">
+                                    Đọc tiếp <i class="fas fa-arrow-right text-xs"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </header>
-
-    <!-- Sidebar and main content wrapper -->
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-20 w-64 -translate-x-full transform overflow-y-auto bg-white border-r border-gray-200 transition duration-200 ease-in-out lg:static lg:translate-x-0">
-            <div class="flex h-full flex-col px-4 py-6">
-                <!-- Sidebar header -->
-                <div class="flex items-center justify-between px-2 mb-8">
-                    <h2 class="text-lg font-semibold text-gray-800">Dashboard</h2>
-                    <button class="p-1 text-gray-500 hover:text-gray-700 lg:hidden" id="closeSidebar">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <!-- Navigation -->
-                <nav class="flex-1 space-y-1">
-                    <a href="#" class="sidebar-item active-sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-indigo-600">
-                        <i class="fas fa-chart-pie w-5 text-center"></i>
-                        <span>Overview</span>
-                    </a>
-                    
-                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
-                        <i class="fas fa-newspaper w-5 text-center"></i>
-                        <span>Posts</span>
-                        <span class="ml-auto inline-flex items-center rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-800">12</span>
-                    </a>
-                    
-                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
-                        <i class="fas fa-image w-5 text-center"></i>
-                        <span>Media Library</span>
-                    </a>
-                    
-                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
-                        <i class="fas fa-comment-dots w-5 text-center"></i>
-                        <span>Comments</span>
-                        <span class="ml-auto inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">3 new</span>
-                    </a>
-                    
-                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
-                        <i class="fas fa-users w-5 text-center"></i>
-                        <span>Audience</span>
-                    </a>
-                    
-                    <div class="px-3 pt-5 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Settings</div>
-                    
-                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
-                        <i class="fas fa-user-cog w-5 text-center"></i>
-                        <span>Profile</span>
-                    </a>
-                    
-                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
-                        <i class="fas fa-sliders-h w-5 text-center"></i>
-                        <span>Settings</span>
-                    </a>
-                    
-                    <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600">
-                        <i class="fas fa-question-circle w-5 text-center"></i>
-                        <span>Help Center</span>
-                    </a>
-                </nav>
-
-                <!-- User profile mini -->
-                <div class="mt-6 flex items-center gap-3 rounded-lg p-3 hover:bg-gray-50">
-                    <img class="h-9 w-9 rounded-full object-cover" src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg" alt="User avatar">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate">Edogawa Conan</p>
-                        <p class="text-xs text-gray-500 truncate">Admin Bloger</p>
+            <!-- Lặp lại các Post Card khác với cấu trúc tương tự -->
+             <div class="post-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg">
+                <div class="flex flex-col md:flex-row">
+                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 2" class="w-full md:w-52 h-48 md:h-auto object-cover flex-shrink-0">
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <a href="#" class="category-tag bg-green-100 text-green-700 rounded-full hover:bg-green-600 hover:text-white text-xs font-medium">Du lịch</a>
+                            <span class="text-xs text-gray-500 ml-auto"><i class="far fa-eye mr-1"></i> 2.4K</span>
+                            <span class="text-xs text-gray-500"><i class="far fa-comment mr-1"></i> 78</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 leading-tight"><a href="#" class="text-gray-800 hover:text-green-600 transition">10 điểm đến không thể bỏ qua tại Đà Lạt</a></h3>
+                        <p class="text-sm text-gray-600 mb-3 flex-grow">Khám phá những địa điểm tuyệt vời nhất ở thành phố ngàn hoa, từ những đồi thông bạt ngàn đến những quán café độc đáo...</p>
+                        <div class="flex items-center justify-between text-xs mt-auto pt-3 border-t border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Author" class="w-6 h-6 rounded-full">
+                                <span class="text-gray-700 font-medium">Trần Văn B</span>
+                            </div>
+                            <div class="text-gray-500 flex items-center gap-3">
+                                <span><i class="far fa-calendar-alt mr-1"></i> 18/03/2025</span>
+                                <a href="#" class="text-blue-500 hover:underline flex items-center gap-1 font-medium">Đọc tiếp <i class="fas fa-arrow-right text-xs"></i></a>
+                            </div>
+                        </div>
                     </div>
-                    <button class="text-gray-400 hover:text-gray-500">
-                        <i class="fas fa-ellipsis-vertical"></i>
-                    </button>
+                </div>
+            </div>
+             <div class="post-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg">
+                 <div class="flex flex-col md:flex-row">
+                    <img src="https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=EAxUAFcakJsi4GQW0mYsCQ" alt="Bài viết 3" class="w-full md:w-52 h-48 md:h-auto object-cover flex-shrink-0">
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <a href="#" class="category-tag bg-red-100 text-red-700 rounded-full hover:bg-red-600 hover:text-white text-xs font-medium">Ẩm thực</a>
+                            <span class="text-xs text-gray-500 ml-auto"><i class="far fa-eye mr-1"></i> 3.1K</span>
+                            <span class="text-xs text-gray-500"><i class="far fa-comment mr-1"></i> 112</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 leading-tight"><a href="#" class="text-gray-800 hover:text-red-600 transition">Cách làm bánh flan caramel hoàn hảo</a></h3>
+                        <p class="text-sm text-gray-600 mb-3 flex-grow">Bí quyết để có món bánh flan mềm mịn, thơm ngon với lớp caramel vàng óng đúng chuẩn phong cách Pháp...</p>
+                        <div class="flex items-center justify-between text-xs mt-auto pt-3 border-t border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Author" class="w-6 h-6 rounded-full">
+                                <span class="text-gray-700 font-medium">Lê Thị C</span>
+                            </div>
+                            <div class="text-gray-500 flex items-center gap-3">
+                                <span><i class="far fa-calendar-alt mr-1"></i> 15/03/2025</span>
+                                <a href="#" class="text-blue-500 hover:underline flex items-center gap-1 font-medium">Đọc tiếp <i class="fas fa-arrow-right text-xs"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="w-full lg:w-1/4 space-y-6">
+            <!-- Latest Posts -->
+            <div class="sidebar-card bg-white p-4 rounded-lg shadow-md border border-gray-100">
+                <h3 class="text-lg font-semibold mb-4 pb-3 border-b border-gray-200 flex items-center gap-2 text-gray-800">
+                    <i class="fas fa-newspaper text-green-500"></i> <!-- Đổi màu icon -->
+                    Bài viết mới nhất
+                </h3>
+                <div class="space-y-3">
+                     <!-- Cập nhật style item -->
+                    <a href="#" class="flex items-start gap-3 group text-sm">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 bg-gradient-to-br from-green-400 to-blue-500 text-white text-xs font-bold rounded-full mt-0.5 shadow">1</span>
+                        <div>
+                            <h4 class="font-medium text-gray-700 group-hover:text-blue-600 transition leading-tight">5 điều tôi ước biết trước khi đi du lịch Nhật Bản</h4>
+                            <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                                <i class="far fa-clock text-xs"></i> 15/01/2025
+                            </p>
+                        </div>
+                    </a>
+                     <a href="#" class="flex items-start gap-3 group text-sm">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 bg-gradient-to-br from-green-400 to-blue-500 text-white text-xs font-bold rounded-full mt-0.5 shadow">2</span>
+                        <div>
+                            <h4 class="font-medium text-gray-700 group-hover:text-blue-600 transition leading-tight">Tất cả những gì bạn cần biết khi thăm Bali</h4>
+                            <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                                <i class="far fa-clock text-xs"></i> 12/01/2025
+                            </p>
+                        </div>
+                    </a>
+                     <a href="#" class="flex items-start gap-3 group text-sm">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 bg-gradient-to-br from-green-400 to-blue-500 text-white text-xs font-bold rounded-full mt-0.5 shadow">3</span>
+                        <div>
+                            <h4 class="font-medium text-gray-700 group-hover:text-blue-600 transition leading-tight">Cách có một kỳ nghỉ thú vị với ngân sách hạn chế</h4>
+                            <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                                <i class="far fa-clock text-xs"></i> 10/01/2025
+                            </p>
+                        </div>
+                    </a>
+                     <a href="#" class="flex items-start gap-3 group text-sm">
+                        <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 bg-gradient-to-br from-green-400 to-blue-500 text-white text-xs font-bold rounded-full mt-0.5 shadow">4</span>
+                        <div>
+                            <h4 class="font-medium text-gray-700 group-hover:text-blue-600 transition leading-tight">10 địa điểm đẹp nhất để chụp ảnh tại Đà Lạt</h4>
+                            <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                                <i class="far fa-clock text-xs"></i> 08/01/2025
+                            </p>
+                        </div>
+                    </a>
+                    <!-- ... -->
+                </div>
+            </div>
+            <!-- Follow Suggestions Widget -->
+            <div class="sidebar-card bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold mb-4 pb-3 border-b border-gray-200 flex items-center gap-2">
+                    <i class="fas fa-user-plus text-purple-500"></i>
+                    Đề xuất theo dõi
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">
+                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-sm font-medium text-gray-800 truncate">Letters from Rosie</h4>
+                            <p class="text-xs text-gray-500 truncate">Tôi yêu sự cô độc nhưng tôi sinh ra để yêu thương 🌿...</p>
+                        </div>
+                        <button class="flex-shrink-0 bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded-full text-xs font-medium transition">
+                            Theo dõi
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">
+                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-sm font-medium text-gray-800 truncate">Android Developers</h4>
+                            <p class="text-xs text-gray-500 truncate">Bài viết về công cụ và tài nguyên hiện đại giúp bạn xây dựng...</p>
+                        </div>
+                        <button class="flex-shrink-0 bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded-full text-xs font-medium transition">
+                            Theo dõi
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Tags Cloud -->
+            <div class="sidebar-card bg-white p-4 rounded-lg shadow-md border border-gray-100">
+                <h3 class="text-lg font-semibold mb-4 pb-3 border-b border-gray-200 flex items-center gap-2 text-gray-800">
+                    <i class="fas fa-tags text-purple-500"></i> <!-- Đổi màu icon -->
+                     Thẻ phổ biến
+                </h3>
+                <div class="flex flex-wrap gap-1.5"> <!-- Giảm gap -->
+                     <!-- Cập nhật style tag -->
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">du lịch</a>
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">ẩm thực</a>
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">công nghệ</a>
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">sức khỏe</a>
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">thể thao</a>
+                    <a href="#" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">giáo dục</a>
+                    <!-- ... -->
                 </div>
             </div>
         </aside>
+    </section>
 
-        <!-- Main content -->
-        <main class="flex-1 pb-10 lg:ml-2">
-            <div class="px-4 sm:px-6 lg:px-3 py-6">
-                <!-- Welcome banner -->
-                <div class="bg-gradient-to-r from-indigo-500 to-indigo-700 rounded-xl p-6 text-white mb-6 shadow-md">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div>
-                            <h1 class="text-2xl font-bold mb-2">Welcome back, Conan!</h1>
-                            <p class="opacity-90 max-w-2xl">Your blog is performing well with 24% more visitors this month. Keep up the great work!</p>
-                        </div>
-                        <button class="bg-white text-indigo-600 hover:bg-gray-100 px-4 py-2 rounded-lg font-medium shadow-sm transition-colors">
-                            View Analytics
-                        </button>
-                    </div>
-                </div>
+    <!-- Pagination -->
+    <section class="container mx-auto px-4 pb-12"> <!-- Tăng pb -->
+        <div class="flex justify-center mt-6 space-x-1.5"> <!-- Giảm space -->
+             <!-- Cập nhật style pagination -->
+            <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-sm">
+                <i class="fas fa-angle-double-left"></i>
+            </a>
+             <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 font-medium">1</a>
+            <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-blue-600 border border-blue-600 rounded-md text-white font-medium">2</a> <!-- Ví dụ trang active -->
+             <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 font-medium">3</a>
+            <span class="pagination-link w-9 h-9 flex items-center justify-center text-gray-500">...</span>
+             <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 font-medium">10</a>
+            <a href="#" class="pagination-link w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-sm">
+                <i class="fas fa-angle-double-right"></i>
+            </a>
+        </div>
+    </section>
 
-                <!-- Stats overview -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                    <!-- Views card -->
-                    <div class="stat-card bg-white p-5 rounded-xl shadow-sm border border-gray-200 border-l-indigo-500">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500 mb-1">Total Views</p>
-                                <p class="text-2xl font-bold text-gray-800">12,458</p>
-                                <p class="text-xs text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i>24.3% from last month</p>
-                            </div>
-                            <div class="p-2 rounded-lg bg-indigo-50 text-indigo-600">
-                                <i class="fas fa-eye text-lg"></i>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <div class="progress-bar">
-                                <div class="progress-fill bg-indigo-500" style="width: 75%"></div>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">75% of monthly goal</p>
-                        </div>
-                    </div>
+    <!-- Footer -->
+    <div id="footer"></div>
 
-                    <!-- Engagement card -->
-                    <div class="stat-card bg-white p-5 rounded-xl shadow-sm border border-gray-200 border-l-green-500">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500 mb-1">Engagement Rate</p>
-                                <p class="text-2xl font-bold text-gray-800">42.6%</p>
-                                <p class="text-xs text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i>8.2% from last month</p>
-                            </div>
-                            <div class="p-2 rounded-lg bg-green-50 text-green-600">
-                                <i class="fas fa-heart text-lg"></i>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <div class="progress-bar">
-                                <div class="progress-fill bg-green-500" style="width: 42%"></div>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">Industry avg: 38%</p>
-                        </div>
-                    </div>
-
-                    <!-- Subscribers card -->
-                    <div class="stat-card bg-white p-5 rounded-xl shadow-sm border border-gray-200 border-l-blue-500">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500 mb-1">New Subscribers</p>
-                                <p class="text-2xl font-bold text-gray-800">1,243</p>
-                                <p class="text-xs text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i>15.7% from last month</p>
-                            </div>
-                            <div class="p-2 rounded-lg bg-blue-50 text-blue-600">
-                                <i class="fas fa-users text-lg"></i>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <div class="progress-bar">
-                                <div class="progress-fill bg-blue-500" style="width: 62%"></div>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">62% of monthly goal</p>
-                        </div>
-                    </div>
-
-                    <!-- Revenue card -->
-                    <div class="stat-card bg-white p-5 rounded-xl shadow-sm border border-gray-200 border-l-purple-500">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500 mb-1">Estimated Revenue</p>
-                                <p class="text-2xl font-bold text-gray-800">$3,245</p>
-                                <p class="text-xs text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i>32.1% from last month</p>
-                            </div>
-                            <div class="p-2 rounded-lg bg-purple-50 text-purple-600">
-                                <i class="fas fa-dollar-sign text-lg"></i>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <div class="progress-bar">
-                                <div class="progress-fill bg-purple-500" style="width: 54%"></div>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">54% of monthly goal</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts and recent posts -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                    <!-- Traffic chart -->                   
-                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Traffic Overview</h3>
-                            <select id="trafficTimeRange" class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <option>Last 7 days</option>
-                                <option selected>Last 30 days</option>
-                                <option>Last 90 days</option>
-                            </select>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="trafficChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Top posts -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Performing Posts</h3>
-                        <div class="space-y-4">
-                            <div class="post-card flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <div class="flex-shrink-0 h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600">
-                                    <i class="fas fa-file-alt"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium text-gray-800">Getting Started with React Hooks</h4>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <span class="text-xs text-gray-500"><i class="fas fa-eye mr-1"></i>2,456</span>
-                                        <span class="text-xs text-gray-500"><i class="fas fa-comment mr-1"></i>84</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="post-card flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <div class="flex-shrink-0 h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
-                                    <i class="fas fa-file-alt"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium text-gray-800">CSS Grid vs Flexbox</h4>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <span class="text-xs text-gray-500"><i class="fas fa-eye mr-1"></i>1,987</span>
-                                        <span class="text-xs text-gray-500"><i class="fas fa-comment mr-1"></i>56</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="post-card flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <div class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
-                                    <i class="fas fa-file-alt"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium text-gray-800">JavaScript ES6 Features</h4>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <span class="text-xs text-gray-500"><i class="fas fa-eye mr-1"></i>1,753</span>
-                                        <span class="text-xs text-gray-500"><i class="fas fa-comment mr-1"></i>42</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="post-card flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <div class="flex-shrink-0 h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
-                                    <i class="fas fa-file-alt"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium text-gray-800">TypeScript Best Practices</h4>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <span class="text-xs text-gray-500"><i class="fas fa-eye mr-1"></i>1,542</span>
-                                        <span class="text-xs text-gray-500"><i class="fas fa-comment mr-1"></i>37</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent activity and quick actions -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Recent activity -->
-                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-start gap-3">
-                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center">
-                                    <i class="fas fa-comment"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-800">New comment on "React Hooks Guide"</p>
-                                    <p class="text-xs text-gray-500 mt-1">"Great article! Helped me understand useEffect better." - John Doe</p>
-                                    <p class="text-xs text-gray-400 mt-1">2 hours ago</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start gap-3">
-                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
-                                    <i class="fas fa-user-plus"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-800">25 new subscribers</p>
-                                    <p class="text-xs text-gray-500 mt-1">From your latest newsletter "CSS Tips and Tricks"</p>
-                                    <p class="text-xs text-gray-400 mt-1">5 hours ago</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start gap-3">
-                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
-                                    <i class="fas fa-thumbs-up"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-800">Post liked by 42 users</p>
-                                    <p class="text-xs text-gray-500 mt-1">"JavaScript Performance Optimization" received 42 likes</p>
-                                    <p class="text-xs text-gray-400 mt-1">1 day ago</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start gap-3">
-                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
-                                    <i class="fas fa-share-alt"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-800">Post shared 18 times</p>
-                                    <p class="text-xs text-gray-500 mt-1">"Getting Started with Next.js" was shared across platforms</p>
-                                    <p class="text-xs text-gray-400 mt-1">2 days ago</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quick actions -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-                                <div class="h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mb-2">
-                                    <i class="fas fa-plus"></i>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">New Post</span>
-                            </button>
-                            
-                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-                                <div class="h-10 w-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center mb-2">
-                                    <i class="fas fa-image"></i>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">Add Media</span>
-                            </button>
-                            
-                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-                                <div class="h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-2">
-                                    <i class="fas fa-envelope"></i>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">Newsletter</span>
-                            </button>
-                            
-                            <button class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-                                <div class="h-10 w-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mb-2">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">Analytics</span>
-                            </button>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <h4 class="text-sm font-medium text-gray-700 mb-3">Blog Performance</h4>
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-gray-500">Content Quality</span>
-                                    <span class="text-xs font-medium text-gray-700">Excellent</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill bg-green-500" style="width: 92%"></div>
-                                </div>
-                                
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-gray-500">Engagement</span>
-                                    <span class="text-xs font-medium text-gray-700">Good</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill bg-blue-500" style="width: 78%"></div>
-                                </div>
-                                
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-gray-500">Publishing Frequency</span>
-                                    <span class="text-xs font-medium text-gray-700">Average</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill bg-yellow-500" style="width: 65%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobileMenuButton');
-        const closeSidebar = document.getElementById('closeSidebar');
-        const sidebar = document.getElementById('sidebar');
-        
-        mobileMenuButton.addEventListener('click', () => {
-            sidebar.classList.remove('-translate-x-full');
-        });
-        
-        closeSidebar.addEventListener('click', () => {
-            sidebar.classList.add('-translate-x-full');
-        });
-        
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth < 1024 && !sidebar.contains(e.target) && e.target !== mobileMenuButton) {
-                sidebar.classList.add('-translate-x-full');
-            }
-        });
-
-        // User dropdown toggle
-        const userMenuButton = document.getElementById('userMenuButton');
-        const userDropdown = document.getElementById('userDropdown');
-        
-        userMenuButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isExpanded = userMenuButton.getAttribute('aria-expanded') === 'true';
-            userDropdown.classList.toggle('hidden', isExpanded);
-            userMenuButton.setAttribute('aria-expanded', !isExpanded);
-        });
-        
-        // Close dropdown on outside click
-        document.addEventListener('click', (e) => {
-            if (!userDropdown.contains(e.target) && e.target !== userMenuButton) {
-                userDropdown.classList.add('hidden');
-                userMenuButton.setAttribute('aria-expanded', 'false');
-            }
-        });
-        
-        // Close on Esc key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                userDropdown.classList.add('hidden');
-                userMenuButton.setAttribute('aria-expanded', 'false');
-            }
-        });
-
-        // Animate progress bars on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const progressBars = document.querySelectorAll('.progress-fill');
-            progressBars.forEach(bar => {
-                const width = bar.style.width;
-                bar.style.width = '0';
-                setTimeout(() => {
-                    bar.style.width = width;
-                }, 100);
-            });
-        });
-        // Thêm vào phần script cuối trang
-document.addEventListener('DOMContentLoaded', () => {
-    // ... các code hiện có ...
-    
-    // Traffic Chart
-    const trafficCtx = document.getElementById('trafficChart').getContext('2d');
-    const trafficChart = new Chart(trafficCtx, {
-        type: 'line',
-        data: {
-            labels: Array.from({length: 30}, (_, i) => `Day ${i+1}`),
-            datasets: [
-                {
-                    label: 'Page Views',
-                    data: Array.from({length: 30}, () => Math.floor(Math.random() * 1000) + 500),
-                    borderColor: '#6366f1',
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                    tension: 0.3,
-                    fill: true,
-                    borderWidth: 2
-                },
-                {
-                    label: 'Unique Visitors',
-                    data: Array.from({length: 30}, () => Math.floor(Math.random() * 800) + 300),
-                    borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    tension: 0.3,
-                    fill: true,
-                    borderWidth: 2
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20
-                    }
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        drawBorder: false
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
-
-    // Update chart when time range changes
-    document.getElementById('trafficTimeRange').addEventListener('change', function() {
-        const days = this.value === 'Last 7 days' ? 7 : this.value === 'Last 90 days' ? 90 : 30;
-        trafficChart.data.labels = Array.from({length: days}, (_, i) => 
-            days === 7 ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i] : 
-            days === 30 ? `Day ${i+1}` : `Week ${i+1}`);
-        
-        trafficChart.data.datasets[0].data = Array.from({length: days}, () => 
-            Math.floor(Math.random() * (days === 7 ? 500 : days === 30 ? 1000 : 3000)) + 
-            (days === 7 ? 300 : days === 30 ? 500 : 1000));
-        
-        trafficChart.data.datasets[1].data = Array.from({length: days}, () => 
-            Math.floor(Math.random() * (days === 7 ? 400 : days === 30 ? 800 : 2500)) + 
-            (days === 7 ? 200 : days === 30 ? 300 : 800));
-        
-        trafficChart.update();
-    });
-});
-    </script>
 </body>
 </html>
