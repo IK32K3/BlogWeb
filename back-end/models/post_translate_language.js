@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class post_translate_language extends Model {
+  class PostTranslateLanguage extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Define associations here
-      post_translate_language.belongsTo(models.posts, { foreignKey: 'post_id' });
-      post_translate_language.belongsTo(models.language, { foreignKey: 'language_id' });
+      PostTranslateLanguage.belongsTo(models.Post, { foreignKey: 'post_id' , as: 'post' });
+      PostTranslateLanguage.belongsTo(models.Language, { foreignKey: 'language_id' , as: 'language' });
     }
   }
-  post_translate_language.init({
+  PostTranslateLanguage.init({
     post_id: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -52,9 +52,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'post_translate_language',
+    modelName: 'PostTranslateLanguage',
     tableName: 'post_translate_languages',
     timestamps: false // Disable Sequelize's automatic timestamps
   });
-  return post_translate_language;
+  return PostTranslateLanguage;
 };

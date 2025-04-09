@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class post_media extends Model {
+  class PostMedia extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Define associations here
-      post_media.belongsTo(models.posts, { foreignKey: 'post_id' });
-      post_media.belongsTo(models.media, { foreignKey: 'media_id' });
+      PostMedia.belongsTo(models.Post, { foreignKey: 'post_id', as: 'post' });
+      PostMedia.belongsTo(models.Media, { foreignKey: 'media_id' , as: 'media' });
     }
   }
-  post_media.init({
+  PostMedia.init({
     post_id: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -40,9 +40,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'post_media',
+    modelName: 'PostMedia',
     tableName: 'post_media',
     timestamps: false // Disable Sequelize's automatic timestamps
   });
-  return post_media;
+  return PostMedia;
 };

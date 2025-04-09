@@ -11,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Define associations here
-      Post.belongsTo(models.User, { foreignKey: 'user_id' });
-      Post.belongsTo(models.Category, { foreignKey: 'category_id' });
-      Post.hasMany(models.post_translate_language, { foreignKey: 'post_id' });
+      Post.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+      Post.belongsTo(models.Categories, { foreignKey: 'category_id' , as: 'categories' });
+      Post.hasMany(models.PostTranslateLanguage, { foreignKey: 'post_id' , as: 'post_translate_language' });
     }
   }
   Post.init({
@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Post',
-    tableName: 'Posts',
+    tableName: 'posts',
     timestamps: false // Disable Sequelize's automatic timestamps
   });
   return Post;

@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class category_translate_language extends Model {
+  class CategoryTranslateLanguage extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Define associations here
-      // Example: category_translate_language.belongsTo(models.Category, { foreignKey: 'category_id' });
-      // Example: category_translate_language.belongsTo(models.Language, { foreignKey: 'language_id' });
+      CategoryTranslateLanguage.belongsTo(models.Categories, { foreignKey: 'category_id' });
+      CategoryTranslateLanguage.belongsTo(models.Language, { foreignKey: 'language_id' });
     }
   }
-  category_translate_language.init({
+  CategoryTranslateLanguage.init({
     category_id: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -44,9 +44,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'category_translate_language',
+    modelName: 'CategoryTranslateLanguage',
     tableName: 'category_translate_languages',
     timestamps: false // Disable Sequelize's automatic timestamps
   });
-  return category_translate_language;
+  return CategoryTranslateLanguage;
 };

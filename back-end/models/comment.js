@@ -1,21 +1,15 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
-  class comments extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+  class Comment extends Model {
     static associate(models) {
       // Define associations here
-      comments.belongsTo(models.posts, { foreignKey: 'post_id' });
-      comments.belongsTo(models.users, { foreignKey: 'user_id' });
+      Comment.belongsTo(models.Post, { foreignKey: 'post_id', as: 'post' });
+      Comment.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
     }
   }
-  comments.init({
+  Comment.init({
     post_id: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -40,9 +34,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'comments',
+    modelName: 'Comment',
     tableName: 'comments',
-    timestamps: false // Disable Sequelize's automatic timestamps
+    timestamps: false
   });
-  return comments;
+  return Comment;
 };

@@ -4,25 +4,25 @@ const middlewares = require("kernels/middlewares");
 const { validate } = require("kernels/validations");
 
 // Import controllers
-const authController = require("./modules/auth/authController");
-const userController = require("./modules/users/userController");
-const postController = require("./modules/posts/postController");
-const commentController = require("./modules/comments/commentController");
-const categoryController = require("./modules/categories/categoryController");
-const languageController = require("./modules/languages/languageController");
-const mediaController = require("./modules/media/mediaController");
+const authController = require("modules/auth/controller/authController");
+const userController = require("modules/users/controller/userController");
+const postController = require("modules/posts/controller/postController");
+const commentController = require("modules/comments/controller/commentController");
+const categoryController = require("modules/categories/controller/categoryController");
+const languageController = require("modules/languages/controller/languageController");
+const mediaController = require("modules/media/controller/mediaController");
 
 // Import middleware
-const { authenticated, isAdmin, isBlogOwner, isAuthenticated, isResourceOwner } = require("./modules/auth/authMiddleware");
+const { authenticated, isAdmin, isBlogOwner, isAuthenticated, isResourceOwner } = require("modules/auth/middleware/authMiddleware");
 
 // Import validations
-const { registerValidation, loginValidation, forgotPasswordValidation, resetPasswordValidation, refreshTokenValidation } = require("./modules/auth/authValidations");
-const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, deleteUserValidation, updateProfileValidation, saveSettingsValidation } = require("./modules/users/userValidations");
-const { createPostValidation, updatePostValidation, getPostByIdValidation, deletePostValidation, getPostsByCategoryValidation, getAllPostsValidation } = require("./modules/posts/postValidations");
-const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, deleteCommentValidation, getMyCommentsValidation } = require("./modules/comments/commentValidations");
-const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation, deleteCategoryValidation } = require("./modules/categories/categoryValidations");
-const { getAllLanguagesValidation, getLanguageByIdValidation, createLanguageValidation, updateLanguageValidation, deleteLanguageValidation } = require("./modules/languages/languageValidations");
-const { getAllMediaValidation, getMediaByIdValidation, createMediaValidation, updateMediaValidation, deleteMediaValidation } = require("./modules/media/mediaValidations");
+const { registerValidation, loginValidation, forgotPasswordValidation, resetPasswordValidation, refreshTokenValidation } = require("modules/auth/validation/authValidations");
+const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, deleteUserValidation, updateProfileValidation, saveSettingsValidation } = require("modules/users/validation/userValidations");
+const { createPostValidation, updatePostValidation, getPostByIdValidation, deletePostValidation, getPostsByCategoryValidation, getAllPostsValidation } = require("modules/posts/validation/postValidations");
+const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, deleteCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
+const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation, deleteCategoryValidation } = require("modules/categories/validation/categoryValidations");
+const { getAllLanguagesValidation, getLanguageByIdValidation, createLanguageValidation, updateLanguageValidation, deleteLanguageValidation } = require("modules/languages/validation/languageValidations");
+const { getAllMediaValidation, getMediaByIdValidation, createMediaValidation, updateMediaValidation, deleteMediaValidation } = require("modules/media/validation/mediaValidations");
 
 const router = express.Router({ mergeParams: true });
 

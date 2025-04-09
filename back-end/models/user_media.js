@@ -1,9 +1,7 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class user_media extends Model {
+  class UserMedia extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Define associations here
-      user_media.belongsTo(models.User, { foreignKey: 'user_id' });
-      user_media.belongsTo(models.media, { foreignKey: 'media_id' });
+      UserMedia.belongsTo(models.User, { foreignKey: 'user_id' , as: 'user' });
+      UserMedia.belongsTo(models.Media, { foreignKey: 'media_id' , as: 'media' });
     }
   }
-  user_media.init({
+  UserMedia.init({
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -36,9 +34,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'user_media',
+    modelName: 'UserMedia',
     tableName: 'user_media',
     timestamps: false // Disable Sequelize's automatic timestamps
   });
-  return user_media;
+  return UserMedia;
 };

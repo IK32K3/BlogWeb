@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class setting extends Model {
+  class Setting extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,10 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Define associations here
-      setting.belongsTo(models.User, { foreignKey: 'user_id' });
+      Setting.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
     }
   }
-  setting.init({
+  Setting.init({
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -35,9 +35,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'setting',
+    modelName: 'Setting',
     tableName: 'settings',
     timestamps: false // Disable Sequelize's automatic timestamps
   });
-  return setting;
+  return Setting;
 };

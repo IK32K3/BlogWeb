@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class language extends Model {
+  class Language extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       // Example: language.hasMany(models.category_translate_language, { foreignKey: 'language_id' });
     }
   }
-  language.init({
+  Language.init({
     name: {
       type: DataTypes.STRING(50),
       allowNull: false
@@ -40,9 +40,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'language',
+    modelName: 'Language',
     tableName: 'languages',
     timestamps: false // Disable Sequelize's automatic timestamps
   });
-  return language;
+  return Language;
 };
