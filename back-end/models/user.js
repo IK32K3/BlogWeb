@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.init(
     {
+      // Các cột khác giữ nguyên
       username: {
         type: DataTypes.STRING(50),
         allowNull: false,
@@ -37,27 +38,24 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT('long'),
         allowNull: true
       },
-      created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
-      },
       is_active: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: false
-      }
+        // Có thể đặt defaultValue: true nếu bạn muốn user active ngay khi tạo
+        defaultValue: true // Thay đổi từ false thành true nếu muốn
+      },
+      // --- XÓA BỎ ĐỊNH NGHĨA THỦ CÔNG CHO created_at VÀ updated_at ---
+      // created_at: { ... }, <--- Xóa dòng này
+      // updated_at: { ... }, <--- Xóa dòng này
     },
     {
       sequelize,
       modelName: 'User',
-      tableName: 'users', // Ensure table name matches the database
-      timestamps: false // Disable Sequelize's automatic timestamps
+      tableName: 'users', // Đảm bảo tên bảng khớp với database
+      // --- BẬT LẠI QUẢN LÝ TIMESTAMP CỦA SEQUELIZE ---
+      timestamps: true,
+      // --- THÊM underscored ĐỂ KHỚP VỚI TÊN CỘT created_at/updated_at ---
+      underscored: true // Rất quan trọng nếu tên cột DB có dấu gạch dưới
     }
   );
 

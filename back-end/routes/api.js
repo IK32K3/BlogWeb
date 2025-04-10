@@ -3,6 +3,7 @@ const express = require("express");
 const middlewares = require("kernels/middlewares");
 const { validate } = require("kernels/validations");
 
+
 // Import controllers
 const authController = require("modules/auth/controller/authController");
 const userController = require("modules/users/controller/userController");

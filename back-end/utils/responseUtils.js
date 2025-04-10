@@ -1,42 +1,38 @@
+// utils/responseUtils.js
+
 module.exports = {
-  ok: (res, data) => {
-    return res.status(200).send({
-      success: true,
-      data,
-      status: 200,
-      message: "ok"
-    });
+  // Success responses
+  success: (res, data, message = 'Success') => {
+    res.status(200).json({ success: true, message, data });
+  },
+  
+  created: (res, data, message = 'Resource created') => {
+    res.status(201).json({ success: true, message, data });
   },
 
-  notFound: (res) => {
-    return res.status(404).send({
-      success: false,
-      status: 404,
-      message: "Cannot find resouces",
-    });
+  // Error responses
+  badRequest: (res, message = 'Bad request') => {
+    res.status(400).json({ success: false, message });
   },
 
-  error: (res, message) => {
-    return res.status(500).send({
-      success: false,
-      status: 500,
-      message: message || "Internal server error",
-    });
+  unauthorized: (res, message = 'Unauthorized') => {
+    res.status(401).json({ success: false, message });
   },
 
-  unauthorized: (res, message) => {
-    return res.status(401).send({
-      success: false,
-      status: 401,
-      message: message || 'Unauthorized',
-    });
+  forbidden: (res, message = 'Forbidden') => {
+    res.status(403).json({ success: false, message });
   },
 
-  invalidated: (res, errors) => {
-    return res.status(422).send({
-      success: false,
-      status: 422,
-      data: errors
-    })
+  notFound: (res, message = 'Not found') => {
+    res.status(404).json({ success: false, message });
+  },
+
+  conflict: (res, message = 'Conflict') => {
+    res.status(409).json({ success: false, message });
+  },
+
+  serverError: (res, message = 'Internal server error') => {
+    res.status(500).json({ success: false, message });
   }
+  
 };

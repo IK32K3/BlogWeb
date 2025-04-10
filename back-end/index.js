@@ -15,7 +15,7 @@ app.disable("x-powered-by");
 app.use(cors());
 app.use(bodyParser.json());
 app.use(compression());
-
+app.use("/", router);
 app.use(express.json());
 
 app.use("/api-docs", swaggerUIServe, swaggerUISetup);
