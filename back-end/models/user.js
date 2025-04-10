@@ -27,7 +27,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       role_id: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'roles', // Name of the referenced table
+          key: 'id' // Key in the referenced table
+        }
       },
       description: {
         type: DataTypes.TEXT('long'),
