@@ -38,4 +38,11 @@ module.exports = {
       bigNumberStrings: true,
     },
   },
+  jwt: {
+    secret: process.env.JWT_SECRET_KEY,
+    refreshSecret: process.env.JWT_REFRESH_SECRET_KEY,
+    expiresIn: process.env.JWT_EXPIRES_IN || '1h', // Mặc định 1 giờ cho access token
+    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d', // Mặc định 7 ngày cho refresh token
+  }
 };
+

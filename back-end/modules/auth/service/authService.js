@@ -246,27 +246,40 @@ const authService = {
     // --- Verify refresh token ---
     let decoded;
     try {
-      decoded = jwt.verify(refreshToken, config.jwt.refreshSecret);
-      if (!decoded || !decoded.userId) {
-          throw new Error();
-      }
+        if (!config.jwt.refreshSecret) {
+            throw new Error('Refresh secret is not configured'); // Add a safeguard for missing secret
+        }
+        decoded = jwt.verify(refreshToken, config.jwt.refreshSecret); // Ensure refreshSecret is correct
+        if (!decoded || !decoded.userId) {
+            throw new Error();
+        }
     } catch (error) {
-      throw new UnauthorizedError('Invalid or expired refresh token');
+        console.error('Refresh token verification failed:', error.message);
+        throw new UnauthorizedError('Invalid or expired refresh token');
     }
 
     // --- Find user with role ---
     const user = await User.findByPk(decoded.userId, {
-      include: [{
-        model: Role,
-        as: 'role',
-        attributes: ['name']
-      }],
-      attributes: ['id', 'is_active'] // Only fetch necessary fields
+        include: [{
+            model: Role,
+            as: 'role',
+            attributes: ['name']
+        }],
+        attributes: ['id', 'is_active'] // Only fetch necessary fields
     });
 
     // Check if user exists, is active, and role loaded
-    if (!user || !user.is_active || !user.role || !user.role.name) {
-      throw new UnauthorizedError('User not found, inactive, or data incomplete');
+    if (!user) {
+        console.error('User not found for refresh token:', decoded.userId);
+        throw new UnauthorizedError('User not found');
+    }
+    if (!user.is_active) {
+        console.error('Inactive user attempted token refresh:', user.id);
+        throw new UnauthorizedError('User account is inactive');
+    }
+    if (!user.role || !user.role.name) {
+        console.error('Role data missing for user:', user.id);
+        throw new Error('User data configuration error');
     }
 
     // --- Generate new access token ---

@@ -50,9 +50,10 @@ const validate = (validationChains) => { // Renamed for clarity
       }
 
       // Errors found, use your response utility
-      return response.invalidated(res, { // Use your response method
-        errors: errors.array(),
-      });
+      if (collectedErrors && collectedErrors.length > 0) {
+        const firstErrorMsg = collectedErrors[0].msg || 'Validation failed';
+        return responseUtils.badRequest(res, firstErrorMsg, { errors: collectedErrors });
+    }
 
     } catch (error) {
        // Catch errors during validation run or config issues

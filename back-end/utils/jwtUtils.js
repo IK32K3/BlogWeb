@@ -22,7 +22,7 @@ module.exports = {
         userId: userId,
         role: userRole,
       },
-      config.jwt.secret,
+      config.jwt.refreshSecret,
       {
         expiresIn: "1y",
       }
@@ -31,3 +31,4 @@ module.exports = {
     return refresh_token;
   },
 };
+

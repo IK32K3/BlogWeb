@@ -130,19 +130,25 @@ const authController = {
     // Basic request validation
     const { refresh_token } = req.body;
     if (!refresh_token) {
-      return responseUtils.badRequest(res, 'Refresh token is required');
+        return responseUtils.badRequest(res, 'Refresh token is required');
     }
 
     try {
-      const accessToken = await authService.refreshAccessToken(refresh_token);
-      return responseUtils.success(res, { access_token: accessToken });
+        const accessToken = await authService.refreshAccessToken(refresh_token);
+        return responseUtils.success(res, { access_token: accessToken });
 
     } catch (error) {
-      console.error('Refresh Token Controller Error:', error.message);
-      if (error.name === 'UnauthorizedError') {
-        return responseUtils.unauthorized(res, error.message);
-      }
-      return responseUtils.serverError(res, 'Token refresh failed');
+        console.error('Refresh Token Controller Error:', error.message);
+        if (error.name === 'UnauthorizedError') {
+            return responseUtils.unauthorized(res, error.message);
+        }
+        if (error.message === 'Refresh secret not configured') {
+            return responseUtils.serverError(res, 'Refresh secret is not configured');
+        }
+        if (error.message === 'Invalid or expired refresh token') {
+            return responseUtils.unauthorized(res, 'Invalid or expired refresh token');
+        }
+        return responseUtils.serverError(res, 'Token refresh failed');
     }
   },
   
