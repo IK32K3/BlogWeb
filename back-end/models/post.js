@@ -19,11 +19,19 @@ module.exports = (sequelize, DataTypes) => {
   Post.init({
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: { // Optional: Khai báo ràng buộc khóa ngoại ở mức model
+        model: 'users', // Tên bảng users trong database
+        key: 'id'
+      },
     },
     category_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: { // Optional: Khai báo ràng buộc khóa ngoại ở mức model
+        model: 'categories', // Tên bảng categories trong database
+        key: 'id'
+      },
     },
     title: {
       type: DataTypes.STRING(300),
@@ -37,6 +45,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT('long'),
       allowNull: false
     },
+    status: {
+      type: DataTypes.ENUM('draft', 'published', 'archived'), // Có thể thêm các trạng thái khác nếu cần
+      allowNull: false,
+      defaultValue: 'draft'
+    },
     views: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -48,7 +61,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     id_post_original: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      references: { // Optional: Tự trỏ đến chính nó
+        model: 'posts',
+        key: 'id'
+      },
     },
     created_at: {
       type: DataTypes.DATE,
@@ -64,7 +81,15 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Post',
     tableName: 'posts',
-    timestamps: false // Disable Sequelize's automatic timestamps
+    timestamps: false, // Disable Sequelize's automatic timestamps
+    
+    indexes: [
+      { unique: true, fields: ['slug'] },
+      { fields: ['user_id'] },
+      { fields: ['category_id'] },
+      { fields: ['status'] },
+      { fields: ['created_at'] },
+    ]
   });
   return Post;
 };

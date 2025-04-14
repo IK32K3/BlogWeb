@@ -1,11 +1,9 @@
-const slugify = require('slugify');
-const { Op } = require('sequelize');
-const { Post, categories, media, User, post_media, post_translate_language, language } = require('models');
+const postService = require('./postService');
 const responseUtils = require('utils/responseUtils');
 
-const postController = {
-  // Get all posts (with pagination and filters)
-  getAllPosts: async (req, res) => {
+class PostController {
+  // Get all posts
+  async getAllPosts(req, res) {
     try {
       const { 
         page = 1, 
@@ -16,172 +14,65 @@ const postController = {
         sort = 'latest' 
       } = req.query;
       
-      const offset = (page - 1) * limit;
-      
-      // Build where clause
-      const whereClause = {};
-      
-      if (category_id) {
-        whereClause.category_id = category_id;
-      }
-      
-      if (user_id) {
-        whereClause.user_id = user_id;
-      }
-      
-      if (search) {
-        whereClause[Op.or] = [
-          { title: { [Op.like]: `%${search}%` } },
-          { content: { [Op.like]: `%${search}%` } }
-        ];
-      }
-      
-      // Build order clause
-      let orderClause;
-      switch (sort) {
-        case 'oldest':
-          orderClause = [['created_at', 'ASC']];
-          break;
-        case 'most_viewed':
-          orderClause = [['views', 'DESC']];
-          break;
-        case 'title_asc':
-          orderClause = [['title', 'ASC']];
-          break;
-        case 'title_desc':
-          orderClause = [['title', 'DESC']];
-          break;
-        default: // latest
-          orderClause = [['created_at', 'DESC']];
-      }
-      
-      // Fetch posts
-      const { count, rows: posts } = await Post.findAndCountAll({
-        where: whereClause,
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        order: orderClause,
-        include: [
-          { model: User, attributes: ['id', 'username'] },
-          { model: categories, attributes: ['id', 'name'] },
-          { 
-            model: post_media,
-            include: [{ model: media }],
-            where: { is_featured: true },
-            required: false
-          }
-        ]
+      const result = await postService.getAllPosts({
+        page,
+        limit,
+        categoryId: category_id,
+        search,
+        userId: user_id,
+        sort
       });
       
-      const totalPages = Math.ceil(count / limit);
-      
-      return responseUtils.ok(res, {
-        posts,
-        pagination: {
-          total: count,
-          totalPages,
-          currentPage: parseInt(page),
-          limit: parseInt(limit)
-        }
-      });
+      return responseUtils.ok(res, result);
     } catch (error) {
       console.error('Get all posts error:', error);
       return responseUtils.error(res, error.message);
     }
-  },
-  
+  }
+
   // Get post by ID
-  getPostById: async (req, res) => {
+  async getPostById(req, res) {
     try {
       const { id } = req.params;
-      
-      const post = await Post.findByPk(id, {
-        include: [
-          { model: User, attributes: ['id', 'username'] },
-          { model: categories, attributes: ['id', 'name'] },
-          { 
-            model: post_media,
-            include: [{ model: media }]
-          },
-          {
-            model: post_translate_language,
-            include: [{ model: language }]
-          }
-        ]
-      });
+      const post = await postService.getPostById(id);
       
       if (!post) {
         return responseUtils.notFound(res);
       }
-      
-      // Increment view count
-      await post.increment('views');
       
       return responseUtils.ok(res, { post });
     } catch (error) {
       console.error('Get post by ID error:', error);
       return responseUtils.error(res, error.message);
     }
-  },
-  
-  // Create new post
-  createPost: async (req, res) => {
+  }
+
+  // Get post by slug
+  async getPostBySlug(req, res) {
     try {
-      const { 
-        title, 
-        content, 
-        description, 
-        category_id, 
-        media_ids = [],
-        featured_media_id,
-        translations = []
-      } = req.body;
+      const { slug } = req.params;
+      const post = await postService.getPostBySlug(slug);
       
+      if (!post) {
+        return responseUtils.notFound(res);
+      }
+      
+      return responseUtils.ok(res, { post });
+    } catch (error) {
+      console.error('Get post by slug error:', error);
+      return responseUtils.error(res, error.message);
+    }
+  }
+
+  // Create new post
+  async createPost(req, res) {
+    try {
       const user_id = req.user.id;
+      const postData = req.body;
       
-      // Create slug from title
-      const slug = slugify(title, {
-        lower: true,
-        strict: true
-      });
+      const post = await postService.createPost(user_id, postData);
       
-      // Create post
-      const post = await Post.create({
-        title,
-        content,
-        description,
-        user_id,
-        category_id,
-        slug,
-        views: 0
-      });
-      
-      // Attach media to post
-      if (media_ids.length > 0) {
-        const mediaEntries = media_ids.map(media_id => ({
-          post_id: post.id,
-          media_id,
-          is_featured: media_id === featured_media_id
-        }));
-        
-        await post_media.bulkCreate(mediaEntries);
-      }
-      
-      // Add translations if provided
-      if (translations.length > 0) {
-        const translationEntries = translations.map(translation => ({
-          post_id: post.id,
-          language_id: translation.language_id,
-          title: translation.title,
-          content: translation.content,
-          description: translation.description,
-          is_original: translation.is_original || false
-        }));
-        
-        await post_translate_language.bulkCreate(translationEntries);
-      }
-      
-      return responseUtils.ok(res, { 
+      return responseUtils.created(res, { 
         message: 'Post created successfully',
         post: {
           id: post.id,
@@ -193,92 +84,20 @@ const postController = {
       console.error('Create post error:', error);
       return responseUtils.error(res, error.message);
     }
-  },
-  
+  }
+
   // Update post
-  updatePost: async (req, res) => {
+  async updatePost(req, res) {
     try {
       const { id } = req.params;
-      const { 
-        title, 
-        content, 
-        description, 
-        category_id, 
-        media_ids,
-        featured_media_id,
-        translations
-      } = req.body;
+      const user_id = req.user.id;
+      const isAdmin = req.user.role === 'Admin';
+      const updateData = req.body;
       
-      // Find post
-      const post = await Post.findByPk(id);
+      const post = await postService.updatePost(id, user_id, isAdmin, updateData);
       
       if (!post) {
         return responseUtils.notFound(res);
-      }
-      
-      // Check if user is the owner or admin
-      if (post.user_id !== req.user.id && req.user.role !== 'Admin') {
-        return responseUtils.unauthorized(res, 'You are not authorized to update this post');
-      }
-      
-      // Update slug if title changes
-      let slug = post.slug;
-      if (title && title !== post.title) {
-        slug = slugify(title, {
-          lower: true,
-          strict: true
-        });
-      }
-      
-      // Update post
-      await post.update({
-        title: title || post.title,
-        content: content || post.content,
-        description: description || post.description,
-        category_id: category_id || post.category_id,
-        slug
-      });
-      
-      // Update media if provided
-      if (media_ids && media_ids.length > 0) {
-        // Delete existing media associations
-        await post_media.destroy({ where: { post_id: post.id } });
-        
-        // Create new media associations
-        const mediaEntries = media_ids.map(media_id => ({
-          post_id: post.id,
-          media_id,
-          is_featured: media_id === featured_media_id
-        }));
-        
-        await post_media.bulkCreate(mediaEntries);
-      }
-      
-      // Update translations if provided
-      if (translations && translations.length > 0) {
-        for (const translation of translations) {
-          const [transRecord, created] = await post_translate_language.findOrCreate({
-            where: {
-              post_id: post.id,
-              language_id: translation.language_id
-            },
-            defaults: {
-              title: translation.title,
-              content: translation.content,
-              description: translation.description,
-              is_original: translation.is_original || false
-            }
-          });
-          
-          if (!created) {
-            await transRecord.update({
-              title: translation.title,
-              content: translation.content,
-              description: translation.description,
-              is_original: translation.is_original || transRecord.is_original
-            });
-          }
-        }
       }
       
       return responseUtils.ok(res, { 
@@ -291,131 +110,167 @@ const postController = {
       });
     } catch (error) {
       console.error('Update post error:', error);
+      if (error.message === 'Unauthorized to update this post') {
+        return responseUtils.unauthorized(res, error.message);
+      }
       return responseUtils.error(res, error.message);
     }
-  },
+  }
   
   // Delete post
-  deletePost: async (req, res) => {
+  async deletePost(req, res) {
     try {
       const { id } = req.params;
+      const user_id = req.user.id;
+      const isAdmin = req.user.role === 'Admin';
       
-      // Find post
-      const post = await Post.findByPk(id);
+      const success = await postService.deletePost(id, user_id, isAdmin);
       
-      if (!post) {
+      if (!success) {
         return responseUtils.notFound(res);
       }
-      
-      // Check if user is the owner or admin
-      if (post.user_id !== req.user.id && req.user.role !== 'Admin') {
-        return responseUtils.unauthorized(res, 'You are not authorized to delete this post');
-      }
-      
-      // Delete post (cascade will handle related records)
-      await post.destroy();
       
       return responseUtils.ok(res, { message: 'Post deleted successfully' });
     } catch (error) {
       console.error('Delete post error:', error);
+      if (error.message === 'Unauthorized to delete this post') {
+        return responseUtils.unauthorized(res, error.message);
+      }
       return responseUtils.error(res, error.message);
     }
-  },
-  
+  }
+  // search posts
+  async searchPosts(req, res) {
+    try {
+      const { 
+        query,
+        page = 1,
+        limit = 10,
+        category_id,
+        user_id,
+        status,
+        sort,
+        date_from,
+        date_to
+      } = req.query;
+
+      // Only allow status filter for admins
+      const finalStatus = req.user?.role === 'Admin' ? status : undefined;
+
+      const result = await postService.searchPosts({
+        query,
+        page,
+        limit,
+        category_id,
+        user_id,
+        status: finalStatus,
+        sort,
+        date_from,
+        date_to
+      });
+
+      return responseUtils.ok(res, {
+        query,
+        results: result.posts,
+        pagination: result.pagination,
+        filters: {
+          category_id,
+          user_id,
+          status: finalStatus,
+          date_range: { from: date_from, to: date_to }
+        }
+      });
+    } catch (error) {
+      console.error('Search posts error:', error);
+      return responseUtils.error(res, 'Failed to search posts');
+    }
+  }
+  // Get posts by author
+  async getPostsByAuthor(req, res) {
+    try {
+      const { userId } = req.params;
+      const { 
+        page = 1,
+        limit = 10,
+        status,
+        sort
+      } = req.query;
+
+      // Only allow status filter for admins or the author themselves
+      const isAdmin = req.user?.role === 'Admin';
+      const isOwner = req.user?.id === parseInt(userId);
+      const finalStatus = (isAdmin || isOwner) ? status : 'published';
+
+      const result = await postService.getPostsByAuthor({
+        userId,
+        page,
+        limit,
+        status: finalStatus,
+        sort
+      });
+
+      return responseUtils.ok(res, {
+        author_id: userId,
+        posts: result.posts,
+        pagination: result.pagination
+      });
+    } catch (error) {
+      console.error('Get posts by author error:', error);
+      return responseUtils.error(res, 'Failed to get author posts');
+    }
+  }
   // Get posts by category
-  getPostsByCategory: async (req, res) => {
+  async getPostsByCategory(req, res) {
     try {
       const { categoryId } = req.params;
       const { page = 1, limit = 10 } = req.query;
       
-      const offset = (page - 1) * limit;
+      const result = await postService.getPostsByCategory(categoryId, { page, limit });
       
-      // Check if category exists
-      const category = await categories.findByPk(categoryId);
-      
-      if (!category) {
+      if (!result) {
         return responseUtils.notFound(res);
       }
       
-      // Fetch posts
-      const { count, rows: posts } = await Post.findAndCountAll({
-        where: { category_id: categoryId },
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        order: [['created_at', 'DESC']],
-        include: [
-          { model: User, attributes: ['id', 'username'] },
-          { 
-            model: post_media,
-            include: [{ model: media }],
-            where: { is_featured: true },
-            required: false
-          }
-        ]
-      });
-      
-      const totalPages = Math.ceil(count / limit);
-      
-      return responseUtils.ok(res, {
-        category: {
-          id: category.id,
-          name: category.name
-        },
-        posts,
-        pagination: {
-          total: count,
-          totalPages,
-          currentPage: parseInt(page),
-          limit: parseInt(limit)
-        }
-      });
+      return responseUtils.ok(res, result);
     } catch (error) {
       console.error('Get posts by category error:', error);
       return responseUtils.error(res, error.message);
     }
-  },
-  
+  }
+
   // Get user's own posts
-  getMyPosts: async (req, res) => {
+  async getMyPosts(req, res) {
     try {
       const user_id = req.user.id;
       const { page = 1, limit = 10 } = req.query;
       
-      const offset = (page - 1) * limit;
+      const result = await postService.getUserPosts(user_id, { page, limit });
       
-      // Fetch posts
-      const { count, rows: posts } = await Post.findAndCountAll({
-        where: { user_id },
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        order: [['created_at', 'DESC']],
-        include: [
-          { model: categories, attributes: ['id', 'name'] },
-          { 
-            model: post_media,
-            include: [{ model: media }],
-            where: { is_featured: true },
-            required: false
-          }
-        ]
-      });
-      
-      const totalPages = Math.ceil(count / limit);
-      
-      return responseUtils.ok(res, {
-        posts,
-        pagination: {
-          total: count,
-          totalPages,
-          currentPage: parseInt(page),
-          limit: parseInt(limit)
-        }
-      });
+      return responseUtils.ok(res, result);
     } catch (error) {
       console.error('Get my posts error:', error);
       return responseUtils.error(res, error.message);
     }
   }
-};
 
-module.exports = postController;
+  // Get user's drafts
+  async getMyDrafts(req, res) {
+    try {
+      const user_id = req.user.id;
+      const { page = 1, limit = 10 } = req.query;
+      
+      const result = await postService.getUserPosts(user_id, { 
+        page, 
+        limit,
+        includeDrafts: true
+      });
+      
+      return responseUtils.ok(res, result);
+    } catch (error) {
+      console.error('Get my drafts error:', error);
+      return responseUtils.error(res, error.message);
+    }
+  }
+}
+
+module.exports = new PostController();

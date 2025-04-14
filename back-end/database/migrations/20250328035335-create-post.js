@@ -12,10 +12,18 @@ module.exports = {
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'users', // Tên bảng users trong DB
+          key: 'id'
+        },
       },
       category_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'categories', // Tên bảng categories trong DB
+          key: 'id'
+        },
       },
       title: {
         type: Sequelize.STRING(300),
@@ -34,6 +42,11 @@ module.exports = {
         allowNull: false,
         defaultValue: 0
       },
+      status: {
+        type: Sequelize.ENUM('draft', 'published', 'archived'), // Các trạng thái có thể
+        allowNull: false,
+        defaultValue: 'draft'
+      },
       slug: {
         type: Sequelize.STRING(150),
         allowNull: false,
@@ -41,6 +54,10 @@ module.exports = {
       id_post_original: {
         type: Sequelize.INTEGER,
         allowNull: true,
+        references: {
+          model: 'posts', // Trỏ đến chính bảng posts
+          key: 'id'
+        },
       },
       created_at: {
         allowNull: false,
@@ -53,8 +70,16 @@ module.exports = {
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
       },
     });
+    await queryInterface.addIndex('posts', ['user_id']);
+    await queryInterface.addIndex('posts', ['category_id']);
+    await queryInterface.addIndex('posts', ['status']);
+    await queryInterface.addIndex('posts', ['created_at']);
   },
   async down(queryInterface, Sequelize) {
+    await queryInterface.removeIndex('posts', ['user_id']);
+    await queryInterface.removeIndex('posts', ['category_id']);
+    await queryInterface.removeIndex('posts', ['status']);
+    await queryInterface.removeIndex('posts', ['created_at']);
     await queryInterface.dropTable('Posts');
   }
 };
