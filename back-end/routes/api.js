@@ -74,7 +74,7 @@ router.group("/posts", (router) => {
   router.get("/:id", validate(getPostByIdValidation), postController.getPostById);
   router.get("/slug/:slug",validate() , postController.getPostBySlug); // Slug-based lookup
   router.get("/categories/:categoryId", validate(getPostsByCategoryValidation), postController.getPostsByCategory);
-  router.get("/tags/:tag", postController.getPostsByTag); // Filter by tag
+  //router.get("/tags/:tag", postController.getPostsByTag); // Filter by tag
   router.get("/search", validate(searchPostsValidation), postController.searchPosts); // Search functionality
   router.get("/posts/author/:userId", validate(getPostsByAuthorValidation), postController.getPostsByAuthor); // Posts by author
 
@@ -83,13 +83,12 @@ router.group("/posts", (router) => {
     // User's personal post management
     router.get("/my/posts", postController.getMyPosts);
     router.get("/my/drafts", postController.getMyDrafts);
-    router.get("/my/scheduled", postController.getScheduledPosts);
-    router.get("/my/bookmarks", postController.getBookmarkedPosts);
+    // router.get("/my/bookmarks", postController.getBookmarkedPosts);
 
     // Post interactions
-    router.post("/:id/like", postController.likePost);
-    router.post("/:id/bookmark", postController.bookmarkPost);
-    router.post("/:id/share", postController.sharePost);
+    //router.post("/:id/like", postController.likePost);
+    // router.post("/:id/bookmark", postController.bookmarkPost);
+    //router.post("/:id/share", postController.sharePost);
 
     // Post creation
     router.post("/", validate(createPostValidation), postController.createPost);

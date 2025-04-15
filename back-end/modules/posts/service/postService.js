@@ -367,7 +367,7 @@ class PostService {
       await this._attachMediaToPost(postId, mediaIds, featuredMediaId);
     }
   }
-  // Get posts by author
+ / / Get posts by author
   async getPostsByAuthor({
     userId,
     page = 1,

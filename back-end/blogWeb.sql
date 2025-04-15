@@ -1,4 +1,4 @@
- Use blogweb;
+Use blogweb;
 
 CREATE TABLE `Users` (
    `id` INT PRIMARY KEY AUTO_INCREMENT,
@@ -70,7 +70,8 @@ CREATE TABLE `Posts` (
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `Users`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`category_id`) REFERENCES `Categories`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_post_original`) REFERENCES `Posts`(`id`) ON DELETE SET NULL
+  FOREIGN KEY (`id_post_original`) REFERENCES `Posts`(`id`) ON DELETE SET NULL,
+  `status` ENUM('draft', 'published', 'archived') NOT NULL DEFAULT 'draft'
 );
 
 CREATE TABLE `Post_Media` (
@@ -135,12 +136,12 @@ CREATE UNIQUE INDEX `Category_Translate_Language_unique` ON `Category_Translate_
 CREATE UNIQUE INDEX `Post_Translate_Language_unique` ON `Post_Translate_Language` (`post_id`, `language_id`);
 
 
-SELECT * FROM SequelizeMeta;
-SELECT * FROM users;
+SELECT * FROM posts;
+
 
 -- DROP TABLE IF EXISTS SequelizeMeta;
 
--- SHOW INDEX FROM Post_Translate_Language;
+-- SHOW INDEX FROM Post_Translate_Language;-- 
 -- SHOW INDEX FROM setting;
 -- DROP INDEX Setting_index_7 ON setting;
 -- SHOW INDEXES FROM category_translate_language;
