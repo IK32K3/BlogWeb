@@ -5,22 +5,23 @@ const commonRules = {
   title: new BodyWithLocale('title').notEmpty().isLength({ min: 3, max: 300 }),
   content: new BodyWithLocale('content').notEmpty(),
   description: new BodyWithLocale('description').notEmpty().isLength({ min: 10, max: 500 }),
-  categoryId: new BodyWithLocale('category_id').notEmpty().isNumeric(),
-  postId: new ParamWithLocale('id').notEmpty().isNumeric(),
-  mediaId: new BodyWithLocale('media_id').isNumeric(),
-  languageId: new BodyWithLocale('language_id').isNumeric(),
+  categoryId: new BodyWithLocale('category_id').notEmpty().isNumberic(),
+  postId: new ParamWithLocale('id').notEmpty().isNumberic(),
+  mediaId: new BodyWithLocale('media_id').isNumberic(),
+  languageId: new BodyWithLocale('language_id').isNumberic(),
   slug: new ParamWithLocale('slug').notEmpty().isSlug()
 };
+
 // Search posts validation
 const searchPostsValidation = [
   [
     new QueryWithLocale('query').notEmpty().isString().trim().isLength({ min: 2, max: 100 }),
     new QueryWithLocale('page').optional().isInt({ min: 1 }).default(1),
     new QueryWithLocale('limit').optional().isInt({ min: 1, max: 100 }).default(10),
-    new QueryWithLocale('category_id').optional().isNumeric(),
-    new QueryWithLocale('user_id').optional().isNumeric(),
-    new QueryWithLocale('status').optional().isIn(['draft', 'published', 'archived']),
-    new QueryWithLocale('sort').optional().isIn([
+    new QueryWithLocale('category_id').optional().isNumberic(),
+    new QueryWithLocale('user_id').optional().isNumberic(),
+    new QueryWithLocale('status').optional().isInt(['draft', 'published', 'archived']),
+    new QueryWithLocale('sort').optional().isInt([
       'newest', 
       'oldest', 
       'most_viewed'
@@ -29,6 +30,7 @@ const searchPostsValidation = [
     new QueryWithLocale('date_to').optional().isISO8601()
   ]
 ];
+
 // Create post validation
 const createPostValidation = [
   [
@@ -37,9 +39,9 @@ const createPostValidation = [
     commonRules.description.get(),
     commonRules.categoryId.get(),
     new BodyWithLocale('media_ids').optional().isArray(),
-    new BodyWithLocale('featured_media_id').optional().isNumeric(),
+    new BodyWithLocale('featured_media_id').optional().isNumberic(),
     new BodyWithLocale('translations').optional().isArray(),
-    new BodyWithLocale('status').optional().isIn(['draft', 'published', 'scheduled']),
+    new BodyWithLocale('status').optional().isInt(['draft', 'published', 'scheduled']),
     new BodyWithLocale('scheduled_at').optional().isISO8601(),
     new BodyWithLocale('tags').optional().isArray()
   ]
@@ -54,9 +56,9 @@ const updatePostValidation = [
     commonRules.description.optional().get(),
     commonRules.categoryId.optional().get(),
     new BodyWithLocale('media_ids').optional().isArray(),
-    new BodyWithLocale('featured_media_id').optional().isNumeric(),
+    new BodyWithLocale('featured_media_id').optional().isNumberic(),
     new BodyWithLocale('translations').optional().isArray(),
-    new BodyWithLocale('status').optional().isIn(['draft', 'published', 'scheduled', 'archived']),
+    new BodyWithLocale('status').optional().isInt(['draft', 'published', 'scheduled', 'archived']),
     new BodyWithLocale('scheduled_at').optional().isISO8601(),
     new BodyWithLocale('tags').optional().isArray()
   ]
@@ -86,7 +88,7 @@ const deletePostValidation = [
 // Get posts by category validation
 const getPostsByCategoryValidation = [
   [
-    new ParamWithLocale('categoryId').notEmpty().isNumeric(),
+    new ParamWithLocale('categoryId').notEmpty().isNumberic(),
     new QueryWithLocale('page').optional().isInt({ min: 1 }).default(1),
     new QueryWithLocale('limit').optional().isInt({ min: 1, max: 100 }).default(10)
   ]
@@ -97,17 +99,17 @@ const getAllPostsValidation = [
   [
     new QueryWithLocale('page').optional().isInt({ min: 1 }).default(1),
     new QueryWithLocale('limit').optional().isInt({ min: 1, max: 100 }).default(10),
-    new QueryWithLocale('category_id').optional().isNumeric(),
-    new QueryWithLocale('user_id').optional().isNumeric(),
+    new QueryWithLocale('category_id').optional().isNumberic(),
+    new QueryWithLocale('user_id').optional().isNumberic(),
     new QueryWithLocale('search').optional().isString().trim().isLength({ min: 2, max: 50 }),
-    new QueryWithLocale('sort').optional().isIn([
+    new QueryWithLocale('sort').optional().isInt([
       'latest', 
       'oldest', 
       'most_viewed', 
       'title_asc', 
       'title_desc'
     ]).default('latest'),
-    new QueryWithLocale('status').optional().isIn([
+    new QueryWithLocale('status').optional().isInt([
       'all', 
       'published', 
       'draft', 
@@ -115,16 +117,6 @@ const getAllPostsValidation = [
       'archived'
     ]).default('published'),
     new QueryWithLocale('tags').optional()
-  ]
-];
-
-// Get user posts validation
-const getUserPostsValidation = [
-  [
-    new ParamWithLocale('userId').optional().isNumeric(),
-    new QueryWithLocale('page').optional().isInt({ min: 1 }).default(1),
-    new QueryWithLocale('limit').optional().isInt({ min: 1, max: 100 }).default(10),
-    new QueryWithLocale('include_drafts').optional().isBoolean().default(false)
   ]
 ];
 
@@ -136,19 +128,22 @@ const getMyPostsValidation = [
     new QueryWithLocale('include_drafts').optional().isBoolean().default(false)
   ]
 ];
+
+// Get posts by author validation
 const getPostsByAuthorValidation = [
   [
-    new ParamWithLocale('userId').notEmpty().isNumeric(),
+    new ParamWithLocale('userId').notEmpty().isNumberic(),
     new QueryWithLocale('page').optional().isInt({ min: 1 }).default(1),
     new QueryWithLocale('limit').optional().isInt({ min: 1, max: 100 }).default(10),
-    new QueryWithLocale('status').optional().isIn(['draft', 'published', 'archived']),
-    new QueryWithLocale('sort').optional().isIn([
+    new QueryWithLocale('status').optional().isInt(['draft', 'published', 'archived']),
+    new QueryWithLocale('sort').optional().isInt([
       'newest', 
       'oldest', 
       'most_viewed'
     ]).default('newest')
   ]
 ];
+
 module.exports = {
   createPostValidation,
   updatePostValidation,
@@ -157,8 +152,8 @@ module.exports = {
   deletePostValidation,
   getPostsByCategoryValidation,
   getAllPostsValidation,
-  getUserPostsValidation,
   getMyPostsValidation,
   searchPostsValidation,
-  getPostsByAuthorValidation
+  getPostsByAuthorValidation,
+  commonRules
 };

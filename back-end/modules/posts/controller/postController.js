@@ -1,4 +1,4 @@
-const postService = require('./postService');
+const postService = require('../service/postService');
 const responseUtils = require('utils/responseUtils');
 
 class PostController {
@@ -13,10 +13,12 @@ class PostController {
         user_id,
         sort = 'latest' 
       } = req.query;
-      
+      const parsedPage = parseInt(page);
+      const parsedLimit = parseInt(limit);
+
       const result = await postService.getAllPosts({
-        page,
-        limit,
+        page  : parsedPage,
+        limit : parsedLimit,
         categoryId: category_id,
         search,
         userId: user_id,
@@ -154,15 +156,17 @@ class PostController {
         date_to
       } = req.query;
 
+      const parsedPage = parseInt(page);
+      const parsedLimit = parseInt(limit);
       // Only allow status filter for admins
       const finalStatus = req.user?.role === 'Admin' ? status : undefined;
 
       const result = await postService.searchPosts({
         query,
-        page,
-        limit,
+        page : parsedPage,
+        limit: parsedLimit,
         category_id,
-        user_id,
+        user_id ,
         status: finalStatus,
         sort,
         date_from,
@@ -196,6 +200,8 @@ class PostController {
         sort
       } = req.query;
 
+      const parsedPage = parseInt(page);
+      const parsedLimit = parseInt(limit);
       // Only allow status filter for admins or the author themselves
       const isAdmin = req.user?.role === 'Admin';
       const isOwner = req.user?.id === parseInt(userId);
@@ -203,8 +209,8 @@ class PostController {
 
       const result = await postService.getPostsByAuthor({
         userId,
-        page,
-        limit,
+        page : parsedPage,
+        limit : parsedLimit,
         status: finalStatus,
         sort
       });
@@ -225,7 +231,12 @@ class PostController {
       const { categoryId } = req.params;
       const { page = 1, limit = 10 } = req.query;
       
-      const result = await postService.getPostsByCategory(categoryId, { page, limit });
+      const parsedPage = parseInt(page);
+      const parsedLimit = parseInt(limit);
+      const result = await postService.getPostsByCategory({
+        categoryId,  
+        page :parsedPage , 
+        limit:parsedLimit });
       
       if (!result) {
         return responseUtils.notFound(res);
@@ -242,9 +253,18 @@ class PostController {
   async getMyPosts(req, res) {
     try {
       const user_id = req.user.id;
-      const { page = 1, limit = 10 } = req.query;
+      const { 
+        page = 1,
+        limit = 10 
+      } = req.query;
       
-      const result = await postService.getUserPosts(user_id, { page, limit });
+      const parsedPage = parseInt(page);
+      const parsedLimit = parseInt(limit);
+      const result = await postService.getUserPosts({
+        user_id, 
+        page,
+        limit 
+      });
       
       return responseUtils.ok(res, result);
     } catch (error) {

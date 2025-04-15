@@ -71,9 +71,54 @@ class WithLocale
         this.withLocale = this.withLocale.isIn(check, against).withMessage(this.field + " must be in allowable range").bail();
         return this
     }
+    
+    isInt(options) { 
+        this.withLocale = this.withLocale.isInt(options).withMessage(stringUtils.capitalize(this.field) + " must be an integer").bail()
+        return this
+      }
+    isNumeric() {
+        this.withLocale = this.withLocale.isNumeric().withMessage(stringUtils.capitalize(this.field) + " must be a number").bail()
+        return this
+    }
+    isSlug() {
+        this.withLocale = this.withLocale.custom((value) => {
+            if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)) {
+                throw new Error(stringUtils.capitalize(this.field) + " is not in correct format");
+            }
+            return true;
+        }).bail();
+        return this
+    }
 
     get() {
         return this.withLocale
+    }
+    trim() {
+        this.withLocale = this.withLocale.trim().withMessage(stringUtils.capitalize(this.field) + " must be trimmed").bail()
+        return this
+    }
+    optional() {
+        this.withLocale = this.withLocale.optional()
+        return this
+    }
+    isISO8601() {
+        this.withLocale = this.withLocale.isISO8601().withMessage(stringUtils.capitalize(this.field) + " must be in correct format").bail()
+        return this
+    }
+    isArray() {
+        this.withLocale = this.withLocale
+            .custom((value) => {
+                if (!Array.isArray(value)) {
+                    throw new Error(stringUtils.capitalize(this.field) + " must be an array");
+                }
+                return true;
+            })
+            .bail();
+        return this;
+    }
+    isBoolean() {
+        this.withLocale = this.withLocale.isBoolean().withMessage(stringUtils.capitalize(this.field) + " must be a boolean").bail()
+        return this
     }
 
 }

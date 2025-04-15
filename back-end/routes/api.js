@@ -19,20 +19,8 @@ const { authenticated, isAdmin, isBlogOwner, isAuthenticated, isResourceOwner } 
 // Import validations
 const { registerValidation, loginValidation, forgotPasswordValidation, resetPasswordValidation, refreshTokenValidation } = require("modules/auth/validation/authValidations");
 const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, deleteUserValidation, updateProfileValidation, saveSettingsValidation } = require("modules/users/validation/userValidations");
-
-const { createPostValidation,
-  updatePostValidation,
-  getPostByIdValidation,
-  getPostBySlugValidation,
-  deletePostValidation,
-  getPostsByCategoryValidation,
-  getAllPostsValidation,
-  getUserPostsValidation,
-  getMyPostsValidation,
-  searchPostsValidation,
-  getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
-
-  const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, deleteCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
+const { createPostValidation,updatePostValidation,getPostByIdValidation,getPostBySlugValidation,deletePostValidation,getPostsByCategoryValidation,getAllPostsValidation,getMyPostsValidation,searchPostsValidation,getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
+const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, deleteCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
 const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation, deleteCategoryValidation } = require("modules/categories/validation/categoryValidations");
 const { getAllLanguagesValidation, getLanguageByIdValidation, createLanguageValidation, updateLanguageValidation, deleteLanguageValidation } = require("modules/languages/validation/languageValidations");
 const { getAllMediaValidation, getMediaByIdValidation, createMediaValidation, updateMediaValidation, deleteMediaValidation } = require("modules/media/validation/mediaValidations");
@@ -72,7 +60,7 @@ router.group("/posts", (router) => {
   // Public routes (no authentication required)
   router.get("/", validate(getAllPostsValidation), postController.getAllPosts);
   router.get("/:id", validate(getPostByIdValidation), postController.getPostById);
-  router.get("/slug/:slug",validate() , postController.getPostBySlug); // Slug-based lookup
+  router.get("/slug/:slug",validate(getPostBySlugValidation) , postController.getPostBySlug); // Slug-based lookup
   router.get("/categories/:categoryId", validate(getPostsByCategoryValidation), postController.getPostsByCategory);
   //router.get("/tags/:tag", postController.getPostsByTag); // Filter by tag
   router.get("/search", validate(searchPostsValidation), postController.searchPosts); // Search functionality
@@ -81,7 +69,7 @@ router.group("/posts", (router) => {
   // Authenticated routes
   router.group("/", middlewares([authenticated, isAuthenticated]), (router) => {
     // User's personal post management
-    router.get("/my/posts", postController.getMyPosts);
+    router.get("/my/posts", validate(getMyPostsValidation), postController.getMyPosts);
     router.get("/my/drafts", postController.getMyDrafts);
     // router.get("/my/bookmarks", postController.getBookmarkedPosts);
 
@@ -92,18 +80,18 @@ router.group("/posts", (router) => {
 
     // Post creation
     router.post("/", validate(createPostValidation), postController.createPost);
-    router.post("/draft", validate(createPostValidation), postController.saveAsDraft);
+    // router.post("/draft", validate(createPostValidation), postController.saveAsDraft);
 
     // Routes requiring post ownership
     router.group("/:id", middlewares([isResourceOwner(require('models').Post)]), (router) => {
       router.put("/", validate(updatePostValidation), postController.updatePost);
-      router.patch("/", postController.partialUpdatePost);
+      // router.patch("/", postController.partialUpdatePost);
       router.delete("/", validate(deletePostValidation), postController.deletePost);
 
       // Additional post actions
-      router.post("/publish", postController.publishPost);
-      router.post("/schedule", postController.schedulePost);
-      router.post("/feature-image", postController.uploadFeatureImage);
+      // router.post("/publish", postController.publishPost);
+      // router.post("/schedule", postController.schedulePost);
+      // router.post("/feature-image", postController.uploadFeatureImage);
     });
   });
 });
@@ -111,9 +99,9 @@ router.group("/posts", (router) => {
   
   // Admin-only routes
   router.group("/admin", middlewares([authenticated, isAdmin]), (router) => {
-    router.get("/all", postController.getAllPostsAdmin); // Includes drafts, scheduled, etc.
-    router.patch("/:id/status", postController.changePostStatus); // Change post status
-    router.post("/:id/feature", postController.featurePost); // Feature a post
+    //router.get("/all", postController.getAllPostsAdmin); // Includes drafts, scheduled, etc.
+    //router.patch("/:id/status", postController.changePostStatus); // Change post status
+    //router.post("/:id/feature", postController.featurePost); // Feature a post
   });
 
 

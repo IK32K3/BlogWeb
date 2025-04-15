@@ -6,6 +6,7 @@ class BodyWithLocale extends WithLocale
     constructor(field) {
         super(field)
         this.withLocale = body(field)
+        
     }
 }
 
