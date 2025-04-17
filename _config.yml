@@ -1,0 +1,10 @@
+title: My Blog
+theme: jekyll-theme-primer
+markdown: kramdown
+exclude:
+  - node_modules
+  - vendor
+  - back-end
+  - README.md
+  - Gemfile
+  - Gemfile.lock
