@@ -17,7 +17,7 @@ class WithLocale
         this.withLocale = this.withLocale.isEmail().withMessage(stringUtils.capitalize(this.field)+" is not in correct format").bail()
         return this
     }
-
+    
     isLength(options) {
         if (options.min) {
             this.withLocale = this.withLocale.isLength({min: options.min}).withMessage(stringUtils.capitalize(this.field)+" must be at least " + options.min + " characters long").bail()
@@ -72,10 +72,6 @@ class WithLocale
         return this
     }
     
-    isInt(options) { 
-        this.withLocale = this.withLocale.isInt(options).withMessage(stringUtils.capitalize(this.field) + " must be an integer").bail()
-        return this
-      }
     isNumeric() {
         this.withLocale = this.withLocale.isNumeric().withMessage(stringUtils.capitalize(this.field) + " must be a number").bail()
         return this
@@ -120,7 +116,31 @@ class WithLocale
         this.withLocale = this.withLocale.isBoolean().withMessage(stringUtils.capitalize(this.field) + " must be a boolean").bail()
         return this
     }
-
+    isInt(options) {
+        this.withLocale = this.withLocale.isInt(options).withMessage(stringUtils.capitalize(this.field) + " must be an integer").bail()
+        return this
+    }
+    toInt() {
+        this.withLocale = this.withLocale.toInt()
+        return this
+    }
+    toDate() {
+        this.withLocale = this.withLocale.toDate()
+        return this
+    }
+    default(value) {
+        this.withLocale = this.withLocale.default(value)
+        return this
+    }
+    withMessage(message) {
+        this.withLocale = this.withLocale.withMessage(message)
+        return this
+    }
+    toBoolean() {
+        this.withLocale = this.withLocale.toBoolean()
+        return this
+    }
+    
 }
 
 module.exports = WithLocale

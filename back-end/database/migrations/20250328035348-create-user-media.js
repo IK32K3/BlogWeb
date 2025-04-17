@@ -31,5 +31,7 @@ module.exports = {
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('user_media');
+    await queryInterface.removeConstraint('user_media', 'user_media_ibfk_1');
   }
+  
 };

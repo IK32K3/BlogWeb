@@ -30,7 +30,7 @@ module.exports = {
           key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        onDelete: 'RESTRICT'
       },
       description: {
         type: Sequelize.TEXT('long'),
@@ -52,8 +52,24 @@ module.exports = {
         defaultValue: false
       }
     });
+
   },
+  
   async down(queryInterface, Sequelize) {
+    
+    await queryInterface.dropTable('post_translate_languages');
+    await queryInterface.dropTable('post_media');
+    await queryInterface.dropTable('comments');
+    await queryInterface.dropTable('setting');
+    
+    // Xóa các bảng khác có phụ thuộc
+    await queryInterface.dropTable('posts');
+    await queryInterface.dropTable('categories');
+    await queryInterface.dropTable('user_media');
+    
+    // Cuối cùng mới xóa bảng users
     await queryInterface.dropTable('users');
+    
+    
   }
 };

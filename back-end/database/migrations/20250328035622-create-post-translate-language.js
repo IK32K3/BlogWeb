@@ -51,6 +51,7 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
+    await queryInterface.removeConstraint('post_translate_languages', 'unique_post_language');
     await queryInterface.dropTable('post_translate_languages');
   }
 };

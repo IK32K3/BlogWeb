@@ -36,13 +36,15 @@ module.exports = {
         defaultValue: true,
       }
     });
-    await queryInterface.addConstraint('Category_Translate_Languages', {
+
+    await queryInterface.addConstraint('category_translate_languages', {
       fields: ['category_id', 'language_id'],
       type: 'unique',
       name: 'unique_category_language'
     });
   },
   async down(queryInterface, Sequelize) {
+    await queryInterface.removeConstraint('category_translate_languages', 'unique_category_language');
     await queryInterface.dropTable('category_translate_languages');
   }
 };

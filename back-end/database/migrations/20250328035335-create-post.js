@@ -53,7 +53,7 @@ module.exports = {
       },
       id_post_original: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
           model: 'posts', // Trỏ đến chính bảng posts
           key: 'id'
@@ -76,10 +76,13 @@ module.exports = {
     await queryInterface.addIndex('posts', ['created_at']);
   },
   async down(queryInterface, Sequelize) {
+    
+    
     await queryInterface.removeIndex('posts', ['user_id']);
     await queryInterface.removeIndex('posts', ['category_id']);
     await queryInterface.removeIndex('posts', ['status']);
     await queryInterface.removeIndex('posts', ['created_at']);
+    
     await queryInterface.dropTable('Posts');
   }
 };

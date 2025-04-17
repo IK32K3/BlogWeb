@@ -15,6 +15,7 @@ module.exports = {
         unique: true
       },
     });
+    
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('roles');

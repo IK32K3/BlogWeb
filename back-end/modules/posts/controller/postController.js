@@ -1,296 +1,375 @@
 const postService = require('../service/postService');
-const responseUtils = require('utils/responseUtils');
+const responseUtils = require('utils/responseUtils'); // Assuming this provides standardized responses
+
+// Helper to parse integers from query/params with defaults
+const parseIntOrDefault = (value, defaultValue) => {
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? defaultValue : parsed;
+};
 
 class PostController {
-  // Get all posts
-  async getAllPosts(req, res) {
-    try {
-      const { 
-        page = 1, 
-        limit = 10, 
-        category_id, 
-        search, 
-        user_id,
-        sort = 'latest' 
-      } = req.query;
-      const parsedPage = parseInt(page);
-      const parsedLimit = parseInt(limit);
+    // [GET] /posts - Get all posts (public facing, filtered)
+    async getAllPosts(req, res) {
+        try {
+            const {
+                page,
+                limit,
+                category_id, // Keep snake_case if client sends this way
+                search,
+                user_id,     // Keep snake_case if client sends this way
+                sort,
+                status       // Added based on validation rules
+            } = req.query;
 
-      const result = await postService.getAllPosts({
-        page  : parsedPage,
-        limit : parsedLimit,
-        categoryId: category_id,
-        search,
-        userId: user_id,
-        sort
-      });
-      
-      return responseUtils.ok(res, result);
-    } catch (error) {
-      console.error('Get all posts error:', error);
-      return responseUtils.error(res, error.message);
-    }
-  }
+            // Use helper for safe parsing and defaults
+            const parsedPage = parseIntOrDefault(page, 1);
+            const parsedLimit = parseIntOrDefault(limit, 10);
 
-  // Get post by ID
-  async getPostById(req, res) {
-    try {
-      const { id } = req.params;
-      const post = await postService.getPostById(id);
-      
-      if (!post) {
-        return responseUtils.notFound(res);
-      }
-      
-      return responseUtils.ok(res, { post });
-    } catch (error) {
-      console.error('Get post by ID error:', error);
-      return responseUtils.error(res, error.message);
-    }
-  }
+            // Pass validated/parsed data to the service
+            const result = await postService.getAllPosts({
+                page: parsedPage,
+                limit: parsedLimit,
+                categoryId: category_id ? parseIntOrDefault(category_id, null) : null, // Ensure categoryId is number or null
+                search,
+                userId: user_id ? parseIntOrDefault(user_id, null) : null,          // Ensure userId is number or null
+                sort: sort || 'latest', // Use default from service if not provided
+                status: status || 'published' // Default to published for public view unless specified
+            });
 
-  // Get post by slug
-  async getPostBySlug(req, res) {
-    try {
-      const { slug } = req.params;
-      const post = await postService.getPostBySlug(slug);
-      
-      if (!post) {
-        return responseUtils.notFound(res);
-      }
-      
-      return responseUtils.ok(res, { post });
-    } catch (error) {
-      console.error('Get post by slug error:', error);
-      return responseUtils.error(res, error.message);
-    }
-  }
-
-  // Create new post
-  async createPost(req, res) {
-    try {
-      const user_id = req.user.id;
-      const postData = req.body;
-      
-      const post = await postService.createPost(user_id, postData);
-      
-      return responseUtils.created(res, { 
-        message: 'Post created successfully',
-        post: {
-          id: post.id,
-          title: post.title,
-          slug: post.slug
+            return responseUtils.ok(res, result);
+        } catch (error) {
+            console.error('[PostController.getAllPosts] Error:', error);
+            return responseUtils.error(res, 'Failed to retrieve posts'); // Generic error message
         }
-      });
-    } catch (error) {
-      console.error('Create post error:', error);
-      return responseUtils.error(res, error.message);
     }
-  }
 
-  // Update post
-  async updatePost(req, res) {
-    try {
-      const { id } = req.params;
-      const user_id = req.user.id;
-      const isAdmin = req.user.role === 'Admin';
-      const updateData = req.body;
-      
-      const post = await postService.updatePost(id, user_id, isAdmin, updateData);
-      
-      if (!post) {
-        return responseUtils.notFound(res);
-      }
-      
-      return responseUtils.ok(res, { 
-        message: 'Post updated successfully',
-        post: {
-          id: post.id,
-          title: post.title,
-          slug: post.slug
+    // [GET] /posts/search - Search posts with more filters
+    async searchPosts(req, res) {
+        try {
+            const {
+                query: searchQuery, // Renamed to avoid conflict with req.query object
+                page,
+                limit,
+                category_id,
+                user_id,
+                status,
+                sort,
+                date_from,
+                date_to
+            } = req.query;
+
+            const parsedPage = parseIntOrDefault(page, 1);
+            const parsedLimit = parseIntOrDefault(limit, 10);
+
+            // Example: Allow filtering by any status only for Admins
+            // Adjust role checking based on your actual auth implementation
+            const isAdmin = req.user?.role === 'Admin'; // Use optional chaining
+            const finalStatus = isAdmin ? status : (status || 'published'); // Default non-admins to published
+
+            const result = await postService.searchPosts({
+                query: searchQuery,
+                page: parsedPage,
+                limit: parsedLimit,
+                category_id: category_id ? parseIntOrDefault(category_id, null) : null,
+                user_id: user_id ? parseIntOrDefault(user_id, null) : null,
+                status: finalStatus,
+                sort: sort || 'newest', // Default sort for search
+                date_from,
+                date_to
+            });
+
+            // Return a structured response for search
+            return responseUtils.ok(res, {
+                searchQuery,
+                results: result.posts,
+                pagination: result.pagination,
+                // Optionally return applied filters for frontend display
+                filters: {
+                    category_id: category_id ? parseIntOrDefault(category_id, null) : null,
+                    user_id: user_id ? parseIntOrDefault(user_id, null) : null,
+                    status: finalStatus,
+                    sort: sort || 'newest',
+                    date_range: { from: date_from, to: date_to }
+                }
+            });
+        } catch (error) {
+            console.error('[PostController.searchPosts] Error:', error);
+            return responseUtils.error(res, 'Failed to search posts');
         }
-      });
-    } catch (error) {
-      console.error('Update post error:', error);
-      if (error.message === 'Unauthorized to update this post') {
-        return responseUtils.unauthorized(res, error.message);
-      }
-      return responseUtils.error(res, error.message);
     }
-  }
-  
-  // Delete post
-  async deletePost(req, res) {
-    try {
-      const { id } = req.params;
-      const user_id = req.user.id;
-      const isAdmin = req.user.role === 'Admin';
-      
-      const success = await postService.deletePost(id, user_id, isAdmin);
-      
-      if (!success) {
-        return responseUtils.notFound(res);
-      }
-      
-      return responseUtils.ok(res, { message: 'Post deleted successfully' });
-    } catch (error) {
-      console.error('Delete post error:', error);
-      if (error.message === 'Unauthorized to delete this post') {
-        return responseUtils.unauthorized(res, error.message);
-      }
-      return responseUtils.error(res, error.message);
-    }
-  }
-  // search posts
-  async searchPosts(req, res) {
-    try {
-      const { 
-        query,
-        page = 1,
-        limit = 10,
-        category_id,
-        user_id,
-        status,
-        sort,
-        date_from,
-        date_to
-      } = req.query;
 
-      const parsedPage = parseInt(page);
-      const parsedLimit = parseInt(limit);
-      // Only allow status filter for admins
-      const finalStatus = req.user?.role === 'Admin' ? status : undefined;
 
-      const result = await postService.searchPosts({
-        query,
-        page : parsedPage,
-        limit: parsedLimit,
-        category_id,
-        user_id ,
-        status: finalStatus,
-        sort,
-        date_from,
-        date_to
-      });
+    // [GET] /posts/my - Get posts created by the logged-in user
+    async getMyPosts(req, res) {
+        try {
+            const userId = req.user?.id; // Get userId from authenticated user
+            if (!userId) {
+                return responseUtils.unauthorized(res, 'Authentication required');
+            }
 
-      return responseUtils.ok(res, {
-        query,
-        results: result.posts,
-        pagination: result.pagination,
-        filters: {
-          category_id,
-          user_id,
-          status: finalStatus,
-          date_range: { from: date_from, to: date_to }
+            const { page, limit, include_drafts } = req.query; // Allow client to request drafts
+
+            const parsedPage = parseIntOrDefault(page, 1);
+            const parsedLimit = parseIntOrDefault(limit, 10);
+            // Convert include_drafts query param to boolean
+            const shouldIncludeDrafts = include_drafts === 'true' || include_drafts === '1';
+
+            const result = await postService.getUserPosts(userId, { // Pass userId and options object
+                page: parsedPage,
+                limit: parsedLimit,
+                includeDrafts: shouldIncludeDrafts // Pass boolean based on query
+            });
+
+            return responseUtils.ok(res, result);
+        } catch (error) {
+            console.error('[PostController.getMyPosts] Error:', error);
+            return responseUtils.error(res, 'Failed to retrieve your posts');
         }
-      });
-    } catch (error) {
-      console.error('Search posts error:', error);
-      return responseUtils.error(res, 'Failed to search posts');
     }
-  }
-  // Get posts by author
-  async getPostsByAuthor(req, res) {
-    try {
-      const { userId } = req.params;
-      const { 
-        page = 1,
-        limit = 10,
-        status,
-        sort
-      } = req.query;
 
-      const parsedPage = parseInt(page);
-      const parsedLimit = parseInt(limit);
-      // Only allow status filter for admins or the author themselves
-      const isAdmin = req.user?.role === 'Admin';
-      const isOwner = req.user?.id === parseInt(userId);
-      const finalStatus = (isAdmin || isOwner) ? status : 'published';
+    // Note: getMyDrafts might be redundant if getMyPosts accepts an `include_drafts` param
+    // If you want a dedicated endpoint, it's fine:
+    // async getMyDrafts(req, res) { ... call postService.getUserPosts(userId, { ..., includeDrafts: true }); ... }
 
-      const result = await postService.getPostsByAuthor({
-        userId,
-        page : parsedPage,
-        limit : parsedLimit,
-        status: finalStatus,
-        sort
-      });
+    // [GET] /posts/category/:categoryId - Get posts by category ID
+    async getPostsByCategory(req, res) {
+        try {
+            const { categoryId } = req.params;
+            const { page, limit } = req.query;
 
-      return responseUtils.ok(res, {
-        author_id: userId,
-        posts: result.posts,
-        pagination: result.pagination
-      });
-    } catch (error) {
-      console.error('Get posts by author error:', error);
-      return responseUtils.error(res, 'Failed to get author posts');
+            const parsedCategoryId = parseIntOrDefault(categoryId, null);
+            if (parsedCategoryId === null) {
+                 return responseUtils.badRequest(res, 'Invalid Category ID');
+            }
+
+            const parsedPage = parseIntOrDefault(page, 1);
+            const parsedLimit = parseIntOrDefault(limit, 10);
+
+            const result = await postService.getPostsByCategory(parsedCategoryId, { // Pass categoryId and options object
+                 page: parsedPage,
+                 limit: parsedLimit
+            });
+
+            if (!result) {
+                // Service returns null if category itself not found
+                return responseUtils.notFound(res, 'Category not found');
+            }
+
+            return responseUtils.ok(res, result);
+        } catch (error) {
+            console.error('[PostController.getPostsByCategory] Error:', error);
+            return responseUtils.error(res, 'Failed to retrieve posts for this category');
+        }
     }
-  }
-  // Get posts by category
-  async getPostsByCategory(req, res) {
-    try {
-      const { categoryId } = req.params;
-      const { page = 1, limit = 10 } = req.query;
-      
-      const parsedPage = parseInt(page);
-      const parsedLimit = parseInt(limit);
-      const result = await postService.getPostsByCategory({
-        categoryId,  
-        page :parsedPage , 
-        limit:parsedLimit });
-      
-      if (!result) {
-        return responseUtils.notFound(res);
-      }
-      
-      return responseUtils.ok(res, result);
-    } catch (error) {
-      console.error('Get posts by category error:', error);
-      return responseUtils.error(res, error.message);
-    }
-  }
 
-  // Get user's own posts
-  async getMyPosts(req, res) {
-    try {
-      const user_id = req.user.id;
-      const { 
-        page = 1,
-        limit = 10 
-      } = req.query;
-      
-      const parsedPage = parseInt(page);
-      const parsedLimit = parseInt(limit);
-      const result = await postService.getUserPosts({
-        user_id, 
-        page,
-        limit 
-      });
-      
-      return responseUtils.ok(res, result);
-    } catch (error) {
-      console.error('Get my posts error:', error);
-      return responseUtils.error(res, error.message);
-    }
-  }
+    // [GET] /posts/author/:userId - Get posts by a specific author's ID
+    async getPostsByAuthor(req, res) {
+        try {
+            const { userId } = req.params;
+            const { page, limit, status, sort } = req.query;
 
-  // Get user's drafts
-  async getMyDrafts(req, res) {
-    try {
-      const user_id = req.user.id;
-      const { page = 1, limit = 10 } = req.query;
-      
-      const result = await postService.getUserPosts(user_id, { 
-        page, 
-        limit,
-        includeDrafts: true
-      });
-      
-      return responseUtils.ok(res, result);
-    } catch (error) {
-      console.error('Get my drafts error:', error);
-      return responseUtils.error(res, error.message);
+            const parsedUserId = parseIntOrDefault(userId, null);
+            if (parsedUserId === null) {
+                 return responseUtils.badRequest(res, 'Invalid User ID');
+            }
+
+            const parsedPage = parseIntOrDefault(page, 1);
+            const parsedLimit = parseIntOrDefault(limit, 10);
+
+            // Authorization check: Allow viewing non-published only by admin or the author themselves
+            const requesterId = req.user?.id;
+            const isAdmin = req.user?.role === 'Admin';
+            const isOwner = requesterId === parsedUserId;
+
+            // Default to 'published' unless authorized to see other statuses
+            let finalStatus = 'published';
+            if ((isAdmin || isOwner) && status) {
+                finalStatus = status; // Allow authorized user to specify status
+            }
+
+            const result = await postService.getPostsByAuthor({ // Pass options object
+                userId: parsedUserId,
+                page: parsedPage,
+                limit: parsedLimit,
+                status: finalStatus,
+                sort: sort || 'newest'
+            });
+
+            // Consider fetching author details separately if needed for the page
+            // const author = await userService.getUserById(parsedUserId);
+            // if (!author) return responseUtils.notFound(res, 'Author not found');
+
+            return responseUtils.ok(res, {
+                // author: { id: author.id, username: author.username }, // Example
+                ...result // Includes posts and pagination
+            });
+        } catch (error) {
+            console.error('[PostController.getPostsByAuthor] Error:', error);
+            return responseUtils.error(res, 'Failed to get author posts');
+        }
     }
-  }
+
+    // [GET] /posts/slug/:slug - Get a single post by its slug
+    async getPostBySlug(req, res) {
+        try {
+            const { slug } = req.params;
+            // Slug validation should happen in middleware
+            const post = await postService.getPostBySlug(slug); // Increment views handled by service
+
+            if (!post) {
+                return responseUtils.notFound(res);
+            }
+
+            return responseUtils.ok(res, { post }); // Return the full post object
+        } catch (error) {
+            console.error('[PostController.getPostBySlug] Error:', error);
+            return responseUtils.error(res, 'Failed to retrieve post');
+        }
+    }
+
+    // [GET] /posts/:id - Get a single post by its ID
+    async getPostById(req, res) {
+        try {
+            const { id } = req.params;
+            const parsedId = parseIntOrDefault(id, null);
+
+            if (parsedId === null) {
+                 return responseUtils.badRequest(res, 'Invalid Post ID');
+            }
+
+            const post = await postService.getPostById(parsedId); // Increment views handled by service
+
+            if (!post) {
+                return responseUtils.notFound(res);
+            }
+
+            return responseUtils.ok(res, { post }); // Return the full post object
+        } catch (error) {
+            console.error('[PostController.getPostById] Error:', error);
+            return responseUtils.error(res, 'Failed to retrieve post');
+        }
+    }
+
+
+    // [POST] /posts - Create a new post
+    async createPost(req, res) {
+        try {
+            const userId = req.user?.id; // Get userId from authenticated user
+            if (!userId) {
+                return responseUtils.unauthorized(res, 'Authentication required');
+            }
+            const postData = req.body; // Assumes validation middleware has run
+
+            const post = await postService.createPost(userId, postData);
+
+            // Return 201 Created status with essential info
+            return responseUtils.created(res, {
+                message: 'Post created successfully',
+                post: { // Return minimal info, client can fetch full post if needed
+                    id: post.id,
+                    title: post.title,
+                    slug: post.slug,
+                    status: post.status
+                }
+            });
+        } catch (error) {
+            // Handle potential specific errors like slug conflicts if service throws them
+            console.error('[PostController.createPost] Error:', error);
+             // Check for validation errors passed via request object if not using dedicated middleware error handler
+            if (error.name === 'SequelizeValidationError') {
+                 return responseUtils.badRequest(res, error.errors.map(e => e.message).join(', '));
+            }
+            return responseUtils.error(res, 'Failed to create post');
+        }
+    }
+
+    // [PUT] /posts/:id - Update an existing post
+    async updatePost(req, res) {
+        try {
+            const { id } = req.params;
+            const parsedId = parseIntOrDefault(id, null);
+
+             if (parsedId === null) {
+                 return responseUtils.badRequest(res, 'Invalid Post ID');
+            }
+
+            const userId = req.user?.id;
+            const isAdmin = req.user?.role === 'Admin';
+
+            if (!userId) {
+                return responseUtils.unauthorized(res, 'Authentication required');
+            }
+
+            const updateData = req.body; // Assumes validation middleware has run
+
+            // Service method handles authorization check internally
+            const post = await postService.updatePost(parsedId, userId, isAdmin, updateData);
+
+            // Service returns null if post not found initially
+            if (!post) {
+                return responseUtils.notFound(res);
+            }
+
+            return responseUtils.ok(res, {
+                message: 'Post updated successfully',
+                post: { // Return minimal info
+                    id: post.id,
+                    title: post.title,
+                    slug: post.slug,
+                    status: post.status
+                }
+            });
+        } catch (error) {
+            console.error('[PostController.updatePost] Error:', error);
+            // Handle specific errors thrown by the service
+            if (error.message === 'Unauthorized to update this post') {
+                return responseUtils.unauthorized(res, error.message);
+            }
+             if (error.name === 'SequelizeValidationError') {
+                 return responseUtils.badRequest(res, error.errors.map(e => e.message).join(', '));
+            }
+            return responseUtils.error(res, 'Failed to update post');
+        }
+    }
+
+    // [DELETE] /posts/:id - Delete a post
+    async deletePost(req, res) {
+        try {
+            const { id } = req.params;
+             const parsedId = parseIntOrDefault(id, null);
+
+             if (parsedId === null) {
+                 return responseUtils.badRequest(res, 'Invalid Post ID');
+            }
+
+            const userId = req.user?.id;
+            const isAdmin = req.user?.role === 'Admin';
+
+             if (!userId) {
+                return responseUtils.unauthorized(res, 'Authentication required');
+            }
+
+            // Service method handles authorization check internally
+            const success = await postService.deletePost(parsedId, userId, isAdmin);
+
+            if (!success) {
+                // This means the post wasn't found to begin with
+                return responseUtils.notFound(res);
+            }
+
+            // Return 200 OK with a success message (or 204 No Content)
+            return responseUtils.ok(res, { message: 'Post deleted successfully' });
+            // OR: return responseUtils.noContent(res);
+
+        } catch (error) {
+            console.error('[PostController.deletePost] Error:', error);
+             // Handle specific errors thrown by the service
+            if (error.message === 'Unauthorized to delete this post') {
+                return responseUtils.unauthorized(res, error.message);
+            }
+            return responseUtils.error(res, 'Failed to delete post');
+        }
+    }
 }
 
 module.exports = new PostController();
