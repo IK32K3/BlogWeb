@@ -1,4 +1,4 @@
-fetch('/front_end/html_mockup/components/NavBar.html')
+fetch('../components/NavBar.html')
     .then(response => response.text())
     .then(data => {
         document.getElementById('navbar').innerHTML = data;
@@ -20,14 +20,14 @@ fetch('/front_end/html_mockup/components/NavBar.html')
         }
     });
 
-fetch("/front_end/html_mockup/components/Footer.html")
+fetch("../components/Footer.html")
     .then(response => response.text())
     .then(data => {
         document.getElementById("footer").innerHTML = data;
     })
     .catch(error => console.error("Lỗi tải footer:", error));
 
-fetch("/front_end/html_mockup/components/NavBar-introduce.html")
+fetch("../components/NavBar-introduce.html")
     .then(response => response.text())
     .then(data => {
         document.getElementById("navbar-introduce").innerHTML = data;
@@ -37,7 +37,7 @@ fetch("/front_end/html_mockup/components/NavBar-introduce.html")
     })
     .catch(error => console.error("Lỗi tải navbar:", error));
 
-    fetch('/front_end/html_mockup/components/hero-section.html')
+    fetch('../components/hero-section.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('hero-section').innerHTML = data;
