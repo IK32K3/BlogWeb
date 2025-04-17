@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
       // Define associations here
       Post.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
       Post.belongsTo(models.Categories, { foreignKey: 'category_id' , as: 'categories' });
+      Post.hasMany(models.PostMedia, {
+        foreignKey: 'post_id',
+        as: 'postMedia'
+      });
       Post.hasMany(models.PostTranslateLanguage, { foreignKey: 'post_id' , as: 'post_translate_language' });
     }
   }

@@ -74,10 +74,8 @@ router.group("/posts", (router) => {
 
   // --- Authenticated routes ---
   router.group("/", middlewares([authenticated]), (router) => { // Use 'authenticated' instead of 'isAuthenticated' if it's the primary check
-    // User's personal post views/management
     router.get("/my", validate(getMyPostsValidation), postController.getMyPosts); // Combined route for user's posts (can filter by status via query)
-    // router.get("/my/drafts", postController.getMyDrafts); // Might be redundant if /my handles drafts via query param
-
+    
     // Post creation
     router.post("/", validate(createPostValidation), postController.createPost);
 

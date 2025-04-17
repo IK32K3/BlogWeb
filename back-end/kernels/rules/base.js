@@ -1,11 +1,22 @@
-const { body } = require("express-validator");
+const { body , param , query } = require("express-validator");
 const stringUtils = require("utils/stringUtils");
 
 class WithLocale 
 {
-    constructor(field) {
-        this.withLocale = body(field)
+    constructor(field, location = 'body') {
         this.field = field;
+        this.location = location;
+
+        switch (location) {
+            case 'param':
+                this.withLocale = param(field);
+                break;
+            case 'query':
+                this.withLocale = query(field);
+                break;
+            default:
+                this.withLocale = body(field);
+        }
     }
 
     notEmpty() {

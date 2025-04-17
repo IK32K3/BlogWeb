@@ -36,10 +36,10 @@ class PostController {
                 status: status || 'published' // Default to published for public view unless specified
             });
 
-            return responseUtils.ok(res, result);
+            return responseUtils.success(res, result);
         } catch (error) {
             console.error('[PostController.getAllPosts] Error:', error);
-            return responseUtils.error(res, 'Failed to retrieve posts'); // Generic error message
+            return responseUtils.serverError(res, 'Failed to retrieve posts'); // Generic error message
         }
     }
 

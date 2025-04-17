@@ -26,7 +26,6 @@ module.exports = {
   notFound: (res, message = 'Not found') => {
     res.status(404).json({ success: false, message });
   },
-
   conflict: (res, message = 'Conflict') => {
     res.status(409).json({ success: false, message });
   },

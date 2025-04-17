@@ -1,7 +1,7 @@
 const slugify = require('slugify');
 const { Op } = require('sequelize');
 // Ensure you are importing the SINGULAR model names correctly defined in your models/index.js or definitions
-const { Post, Category, Media, User, PostMedia, PostTranslateLanguage, Language } = require('models'); // Assuming models are named singularly
+const { Post, Categories, Media, User, PostMedia, PostTranslateLanguage, Language } = require('models'); // Assuming models are named singularly
 
 class PostService {
   // Get all posts with pagination and filters
@@ -130,8 +130,8 @@ class PostService {
           attributes: ['id', 'username']
         },
         {
-          model: Category, // Corrected: Singular model name
-          as: 'category', // Corrected: Likely singular alias matching association
+          model: Categories, // Corrected: Singular model name
+          as: 'categories', // Corrected: Likely singular alias matching association
           attributes: ['id', 'name']
         }
         // Add other includes only if necessary for the search result display
@@ -419,8 +419,8 @@ class PostService {
       order,
       include: [ // Include necessary details for public author page
         {
-          model: Category,      // Corrected: Singular
-          as: 'category',     // Corrected: Singular alias (verify in model)
+          model: Categories,      // Corrected: Singular
+          as: 'categories',     // Corrected: Singular alias (verify in model)
           attributes: ['id', 'name', 'slug'] // Include slug for linking
         },
         // Include featured media if desired for list display
@@ -480,8 +480,8 @@ class PostService {
         attributes: ['id', 'username'] // Add other needed attributes like avatar
       },
       {
-        model: Category,
-        as: 'category', // Ensure 'category' alias is defined in Post model
+        model: Categories,
+        as: 'categories', // Ensure 'category' alias is defined in Post model
         attributes: ['id', 'name', 'slug'] // Include slug for links
       },
       {
@@ -492,7 +492,7 @@ class PostService {
         include: [{
             model: Media,
             as: 'media', // Use the correct alias defined in PostMedia model associations
-            attributes: ['id', 'url', 'alt_text'] // Get necessary media attributes
+            attributes: ['id', 'url', 'type'] // Get necessary media attributes
         }]
       }
     ];
@@ -507,8 +507,8 @@ class PostService {
         attributes: ['id', 'username'] // Add more user details if needed
       },
       {
-        model: Category,
-        as: 'category', // Ensure 'category' alias is defined in Post model
+        model: categories,
+        as: 'categories', // Ensure 'category' alias is defined in Post model
         attributes: ['id', 'name', 'slug']
       },
       {
@@ -518,7 +518,7 @@ class PostService {
         include: [{
             model: Media,
             as: 'media', // Use the correct alias defined in PostMedia model associations
-            attributes: ['id', 'url', 'alt_text', 'type'] // Get all necessary media attributes
+            attributes: ['id', 'url', 'type', 'type'] // Get all necessary media attributes
         }]
       },
       {
@@ -527,7 +527,7 @@ class PostService {
         include: [{
             model: Language,
             as: 'language', // Ensure 'language' alias is defined in PostTranslateLanguage model
-            attributes: ['id', 'code', 'name'] // Get language details
+            attributes: ['id', 'locale', 'name'] // Get language details
         }]
       }
       // Include Tags if you have a Tag model and PostTag join table
