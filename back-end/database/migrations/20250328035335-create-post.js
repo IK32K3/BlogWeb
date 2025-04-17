@@ -53,7 +53,6 @@ module.exports = {
       },
       id_post_original: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
           model: 'posts', // Trỏ đến chính bảng posts
           key: 'id'
