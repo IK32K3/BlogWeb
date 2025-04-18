@@ -26,12 +26,18 @@ const authenticated = async (req, res, next) => {
     }
     
     // Find user
-    const user = await User.findByPk(decoded.userId, {
+    const userId = Number(decoded.userId);
+      if (isNaN(userId)) {
+      return responseUtils.invalidated(res, { errors: [{ message: 'Invalid user ID' }] });
+      }
+
+    const user = await User.findByPk(userId, {
       include: [{
         model: Role,
         as: 'role'
       }]
     });
+
     
     if (!user) {
       return responseUtils.unauthorized(res, 'User not found');
@@ -74,8 +80,8 @@ const authorize = (allowedRoles) => {
 
 // Middleware to check if user is an admin
 const isAdmin = authorize(['Admin']);
-const isBlogOwner = authorize(['Admin', 'Blog Owner']);
-const isAuthenticated = authorize(['Admin', 'Blog Owner', 'Editor', 'Viewer']);
+const isBlogOwner = authorize(['Admin', 'Blogger']);
+const isAuthenticated = authorize(['Admin', 'Blogger ', 'Viewer']);
 
 // Middleware to check if user is the owner of a resource
 const isResourceOwner = (model) => {

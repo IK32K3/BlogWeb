@@ -48,11 +48,11 @@ const validate = (validationChains) => { // Renamed for clarity
       if (errors.isEmpty()) {
         return next(); // No errors, proceed
       }
-
+      const collectedErrors = errors.array();
       // Errors found, use your response utility
       if (collectedErrors && collectedErrors.length > 0) {
         const firstErrorMsg = collectedErrors[0].msg || 'Validation failed';
-        return responseUtils.badRequest(res, firstErrorMsg, { errors: collectedErrors });
+        return response.badRequest(res, firstErrorMsg, { errors: collectedErrors });
     }
 
     } catch (error) {

@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'post_id',
         as: 'postMedia'
       });
-      Post.hasMany(models.PostTranslateLanguage, { foreignKey: 'post_id' , as: 'post_translate_language' });
+      Post.hasMany(models.PostTranslateLanguage, { foreignKey: 'post_id' , as: 'postTranslateLanguage' });
     }
   }
   Post.init({

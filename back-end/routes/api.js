@@ -65,11 +65,11 @@ router.group("/users", (router) => {
 // ===== Post Routes =====
 router.group("/posts", (router) => {
   // --- Public routes (Read operations) ---
-  router.get("/", validate(getAllPostsValidation), postController.getAllPosts);
-  router.get("/search", validate(searchPostsValidation), postController.searchPosts); // Search functionality
-  router.get("/slug/:slug", validate(getPostBySlugValidation), postController.getPostBySlug); // Get by slug before ID to avoid conflict if slug could be numeric
-  router.get("/categories/:categoryId", validate(getPostsByCategoryValidation), postController.getPostsByCategory); // Posts by category
-  router.get("/author/:userId", validate(getPostsByAuthorValidation), postController.getPostsByAuthor); // Corrected Path: Posts by author
+  router.get("/", validate(getAllPostsValidation), postController.getAllPosts);//done
+  router.get("/search", validate(searchPostsValidation), postController.searchPosts); // Search functionality , done
+  router.get("/slug/:slug", validate(getPostBySlugValidation), postController.getPostBySlug); // Get by slug before ID to avoid conflict if slug could be numeric , done
+  router.get("/categories/:categoryId", validate(getPostsByCategoryValidation), postController.getPostsByCategory); // Posts by category , done
+  router.get("/author/:userId", validate(getPostsByAuthorValidation), postController.getPostsByAuthor); // Corrected Path: Posts by author , dôn
   router.get("/:id", validate(getPostByIdValidation), postController.getPostById); // Get by ID (usually last among GET routes with params)
 
   // --- Authenticated routes ---

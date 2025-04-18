@@ -5,7 +5,7 @@ const { Post, Categories, Media, User, PostMedia, PostTranslateLanguage, Languag
 
 class PostService {
   // Get all posts with pagination and filters
-  async getAllPosts({ page = 1, limit = 10, categoryId, search, userId, sort = 'latest', status = 'published' }) { // Added status filter possibility based on validation
+  async getAllPosts({ page = 1, limit = 10, categoryId, search, userId, sort, status }) { // Added status filter possibility based on validation
     const offset = (page - 1) * limit;
 
     // Build where clause
@@ -323,7 +323,7 @@ class PostService {
     const createdAtColumn = Post.rawAttributes.createdAt ? 'createdAt' : 'created_at';
 
     // Check if category exists first is good practice
-    const category = await Category.findByPk(categoryId, { attributes: ['id', 'name', 'slug'] }); // Fetch needed category details
+    const category = await Categories.findByPk(categoryId, { attributes: ['id', 'name', 'slug'] }); // Fetch needed category details
     if (!category) return null; // Or throw NotFoundError
 
     // Fetch posts
@@ -430,19 +430,17 @@ class PostService {
             required: false,
             where: { is_featured: true },
             include: [{ model: Media, as: 'media' }] // Ensure alias matches model definition
-        }
+        },
         // Don't include translations unless you specifically need language info in the list
-        // {
-        //   model: PostTranslateLanguage,
-        //   as: 'postTranslateLanguage', // VERIFY THIS ALIAS in Post model associations
-        //   attributes: ['language_id'] // Only fetch language ID if needed
-        // }
+         {
+           model: PostTranslateLanguage,
+           as: 'postTranslateLanguage', // VERIFY THIS ALIAS in Post model associations
+           attributes: ['language_id'] // Only fetch language ID if needed
+         }
       ],
       distinct: true
     });
 
-    // Fetch author details separately for the page header usually
-    // const author = await User.findByPk(userId, { attributes: ['id', 'username', 'profile_picture', etc...]});
 
     return {
       // author, // Optionally return author details
@@ -507,7 +505,7 @@ class PostService {
         attributes: ['id', 'username'] // Add more user details if needed
       },
       {
-        model: categories,
+        model: Categories,
         as: 'categories', // Ensure 'category' alias is defined in Post model
         attributes: ['id', 'name', 'slug']
       },
@@ -518,7 +516,7 @@ class PostService {
         include: [{
             model: Media,
             as: 'media', // Use the correct alias defined in PostMedia model associations
-            attributes: ['id', 'url', 'type', 'type'] // Get all necessary media attributes
+            attributes: ['id', 'url', 'type'] // Get all necessary media attributes
         }]
       },
       {

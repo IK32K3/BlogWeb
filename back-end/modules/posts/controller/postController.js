@@ -33,7 +33,7 @@ class PostController {
                 search,
                 userId: user_id ? parseIntOrDefault(user_id, null) : null,          // Ensure userId is number or null
                 sort: sort || 'latest', // Use default from service if not provided
-                status: status || 'published' // Default to published for public view unless specified
+                status: status ?? null // Default to published for public view unless specified
             });
 
             return responseUtils.success(res, result);
@@ -47,7 +47,7 @@ class PostController {
     async searchPosts(req, res) {
         try {
             const {
-                query: searchQuery, // Renamed to avoid conflict with req.query object
+                query: searchQuery = '', // Renamed to avoid conflict with req.query object
                 page,
                 limit,
                 category_id,
@@ -79,7 +79,7 @@ class PostController {
             });
 
             // Return a structured response for search
-            return responseUtils.ok(res, {
+            return responseUtils.success(res, {
                 searchQuery,
                 results: result.posts,
                 pagination: result.pagination,
@@ -94,10 +94,9 @@ class PostController {
             });
         } catch (error) {
             console.error('[PostController.searchPosts] Error:', error);
-            return responseUtils.error(res, 'Failed to search posts');
+            return responseUtils.serverError(res, 'Failed to search posts');
         }
     }
-
 
     // [GET] /posts/my - Get posts created by the logged-in user
     async getMyPosts(req, res) {
@@ -120,10 +119,10 @@ class PostController {
                 includeDrafts: shouldIncludeDrafts // Pass boolean based on query
             });
 
-            return responseUtils.ok(res, result);
+            return responseUtils.success(res, result);
         } catch (error) {
             console.error('[PostController.getMyPosts] Error:', error);
-            return responseUtils.error(res, 'Failed to retrieve your posts');
+            return responseUtils.serverError(res, 'Failed to retrieve your posts');
         }
     }
 
@@ -155,10 +154,10 @@ class PostController {
                 return responseUtils.notFound(res, 'Category not found');
             }
 
-            return responseUtils.ok(res, result);
+            return responseUtils.success(res, result);
         } catch (error) {
             console.error('[PostController.getPostsByCategory] Error:', error);
-            return responseUtils.error(res, 'Failed to retrieve posts for this category');
+            return responseUtils.serverError(res, 'Failed to retrieve posts for this category');
         }
     }
 
@@ -199,13 +198,13 @@ class PostController {
             // const author = await userService.getUserById(parsedUserId);
             // if (!author) return responseUtils.notFound(res, 'Author not found');
 
-            return responseUtils.ok(res, {
+            return responseUtils.success(res, {
                 // author: { id: author.id, username: author.username }, // Example
                 ...result // Includes posts and pagination
             });
         } catch (error) {
             console.error('[PostController.getPostsByAuthor] Error:', error);
-            return responseUtils.error(res, 'Failed to get author posts');
+            return responseUtils.serverError(res, 'Failed to get author posts');
         }
     }
 
@@ -220,10 +219,10 @@ class PostController {
                 return responseUtils.notFound(res);
             }
 
-            return responseUtils.ok(res, { post }); // Return the full post object
+            return responseUtils.success(res, { post }); // Return the full post object
         } catch (error) {
             console.error('[PostController.getPostBySlug] Error:', error);
-            return responseUtils.error(res, 'Failed to retrieve post');
+            return responseUtils.serverError(res, 'Failed to retrieve post');
         }
     }
 
@@ -243,10 +242,10 @@ class PostController {
                 return responseUtils.notFound(res);
             }
 
-            return responseUtils.ok(res, { post }); // Return the full post object
+            return responseUtils.success(res, { post }); // Return the full post object
         } catch (error) {
             console.error('[PostController.getPostById] Error:', error);
-            return responseUtils.error(res, 'Failed to retrieve post');
+            return responseUtils.serverError(res, 'Failed to retrieve post');
         }
     }
 
@@ -279,7 +278,7 @@ class PostController {
             if (error.name === 'SequelizeValidationError') {
                  return responseUtils.badRequest(res, error.errors.map(e => e.message).join(', '));
             }
-            return responseUtils.error(res, 'Failed to create post');
+            return responseUtils.serverError(res, 'Failed to create post');
         }
     }
 
@@ -310,7 +309,7 @@ class PostController {
                 return responseUtils.notFound(res);
             }
 
-            return responseUtils.ok(res, {
+            return responseUtils.success(res, {
                 message: 'Post updated successfully',
                 post: { // Return minimal info
                     id: post.id,
@@ -328,7 +327,7 @@ class PostController {
              if (error.name === 'SequelizeValidationError') {
                  return responseUtils.badRequest(res, error.errors.map(e => e.message).join(', '));
             }
-            return responseUtils.error(res, 'Failed to update post');
+            return responseUtils.serverError(res, 'Failed to update post');
         }
     }
 
@@ -358,7 +357,7 @@ class PostController {
             }
 
             // Return 200 OK with a success message (or 204 No Content)
-            return responseUtils.ok(res, { message: 'Post deleted successfully' });
+            return responseUtils.success(res, { message: 'Post deleted successfully' });
             // OR: return responseUtils.noContent(res);
 
         } catch (error) {
@@ -367,7 +366,7 @@ class PostController {
             if (error.message === 'Unauthorized to delete this post') {
                 return responseUtils.unauthorized(res, error.message);
             }
-            return responseUtils.error(res, 'Failed to delete post');
+            return responseUtils.serverError(res, 'Failed to delete post');
         }
     }
 }

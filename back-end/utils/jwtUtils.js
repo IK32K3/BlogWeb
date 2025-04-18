@@ -5,7 +5,7 @@ module.exports = {
   sign: (userId, userRole) => {
     const access_token = jwt.sign(
       {
-        userId: userId,
+        userId: Number(userId),
         role: userRole,
       },
       config.jwt.secret,
@@ -19,7 +19,7 @@ module.exports = {
   signRefreshToken: (userId, userRole) => {
     const refresh_token = jwt.sign(
       {
-        userId: userId,
+        userId: Number(userId),
         role: userRole,
       },
       config.jwt.refreshSecret,
