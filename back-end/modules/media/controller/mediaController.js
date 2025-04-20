@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { media, user_media } = require('models');
+const { Media, user_media } = require('models');
 const responseUtils = require('utils/responseUtils');
 
 const mediaController = {
@@ -34,7 +34,7 @@ const mediaController = {
       }
       
       // Fetch media
-      const { count, rows: mediaItems } = await media.findAndCountAll({
+      const { count, rows: mediaItems } = await Media.findAndCountAll({
         where: whereClause,
         limit: parseInt(limit),
         offset: parseInt(offset),
@@ -44,7 +44,7 @@ const mediaController = {
       
       const totalPages = Math.ceil(count / limit);
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         media: mediaItems,
         pagination: {
           total: count,
@@ -55,7 +55,7 @@ const mediaController = {
       });
     } catch (error) {
       console.error('Get all media error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -64,16 +64,16 @@ const mediaController = {
     try {
       const { id } = req.params;
       
-      const mediaItem = await media.findByPk(id);
+      const mediaItem = await Media.findByPk(id);
       
       if (!mediaItem) {
         return responseUtils.notFound(res);
       }
       
-      return responseUtils.ok(res, { media: mediaItem });
+      return responseUtils.success(res, { Media: mediaItem });
     } catch (error) {
       console.error('Get media by ID error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -83,7 +83,7 @@ const mediaController = {
       const { name, url, type, user_id } = req.body;
       
       // Create media
-      const mediaItem = await media.create({
+      const mediaItem = await Media.create({
         name,
         url,
         type
@@ -97,13 +97,13 @@ const mediaController = {
         });
       }
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         message: 'Media created successfully',
-        media: mediaItem
+        Media: mediaItem
       });
     } catch (error) {
       console.error('Create media error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -114,7 +114,7 @@ const mediaController = {
       const { name, url, type } = req.body;
       
       // Find media
-      const mediaItem = await media.findByPk(id);
+      const mediaItem = await Media.findByPk(id);
       
       if (!mediaItem) {
         return responseUtils.notFound(res);
@@ -127,13 +127,13 @@ const mediaController = {
         type: type || mediaItem.type
       });
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         message: 'Media updated successfully',
         media: mediaItem
       });
     } catch (error) {
       console.error('Update media error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -142,8 +142,8 @@ const mediaController = {
     try {
       const { id } = req.params;
       
-      // Find media
-      const mediaItem = await media.findByPk(id);
+      // Find Media
+      const mediaItem = await Media.findByPk(id);
       
       if (!mediaItem) {
         return responseUtils.notFound(res);
@@ -152,10 +152,10 @@ const mediaController = {
       // Delete media
       await mediaItem.destroy();
       
-      return responseUtils.ok(res, { message: 'Media deleted successfully' });
+      return responseUtils.success(res, { message: 'Media deleted successfully' });
     } catch (error) {
       console.error('Delete media error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   }
 };

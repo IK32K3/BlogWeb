@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { categories, category_translate_language, language } = require('models');
+const { Categories, CategoryTranslateLanguage, Language } = require('models');
 const responseUtils = require('utils/responseUtils');
 
 const categoryController = {
@@ -18,14 +18,14 @@ const categoryController = {
       }
       
       // Fetch categories
-      const { count, rows: allCategories } = await categories.findAndCountAll({
+      const { count, rows: allCategories } = await Categories.findAndCountAll({
         where: whereClause,
         limit: parseInt(limit),
         offset: parseInt(offset),
         order: [['name', 'ASC']],
         include: language_id ? [
           {
-            model: category_translate_language,
+            model: CategoryTranslateLanguage,
             where: { language_id },
             required: false
           }
@@ -34,7 +34,7 @@ const categoryController = {
       
       const totalPages = Math.ceil(count / limit);
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         categories: allCategories,
         pagination: {
           total: count,
@@ -45,7 +45,7 @@ const categoryController = {
       });
     } catch (error) {
       console.error('Get all categories error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -54,11 +54,11 @@ const categoryController = {
     try {
       const { id } = req.params;
       
-      const category = await categories.findByPk(id, {
+      const category = await Categories.findByPk(id, {
         include: [
           {
-            model: category_translate_language,
-            include: [{ model: language }]
+            model: CategoryTranslateLanguage,
+            include: [{ model: Language }]
           }
         ]
       });
@@ -67,10 +67,10 @@ const categoryController = {
         return responseUtils.notFound(res);
       }
       
-      return responseUtils.ok(res, { category });
+      return responseUtils.success(res, { category });
     } catch (error) {
       console.error('Get category by ID error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -80,7 +80,7 @@ const categoryController = {
       const { name, translations = [] } = req.body;
       
       // Create category
-      const category = await categories.create({
+      const category = await Categories.create({
         name
       });
       
@@ -93,26 +93,26 @@ const categoryController = {
           is_active: translation.is_active || true
         }));
         
-        await category_translate_language.bulkCreate(translationEntries);
+        await CategoryTranslateLanguage.bulkCreate(translationEntries);
       }
       
         // Get the newly created category with translations
-      const newCategory = await categories.findByPk(category.id, {
+      const newCategory = await Categories.findByPk(category.id, {
         include: [
           {
-            model: category_translate_language,
-            include: [{ model: language }]
+            model: CategoryTranslateLanguage,
+            include: [{ model: Language }]
           }
         ]
       });
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         message: 'Category created successfully',
         category: newCategory
       });
     } catch (error) {
       console.error('Create category error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -123,7 +123,7 @@ const categoryController = {
       const { name, translations = [] } = req.body;
       
       // Find category
-      const category = await categories.findByPk(id);
+      const category = await Categories.findByPk(id);
       
       if (!category) {
         return responseUtils.notFound(res);
@@ -137,7 +137,7 @@ const categoryController = {
         // Update translations if provided
       if (translations.length > 0) {
         for (const translation of translations) {
-          const [transRecord, created] = await category_translate_language.findOrCreate({
+          const [transRecord, created] = await CategoryTranslateLanguage.findOrCreate({
             where: {
               category_id: category.id,
               language_id: translation.language_id
@@ -158,22 +158,22 @@ const categoryController = {
       }
       
         // Get the updated category with translations
-      const updatedCategory = await categories.findByPk(id, {
+      const updatedCategory = await Categories.findByPk(id, {
         include: [
           {
-            model: category_translate_language,
-            include: [{ model: language }]
+            model: CategoryTranslateLanguage,
+            include: [{ model: Language }]
           }
         ]
       });
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         message: 'Category updated successfully',
         category: updatedCategory
       });
     } catch (error) {
       console.error('Update category error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -183,7 +183,7 @@ const categoryController = {
       const { id } = req.params;
       
       // Find category
-      const category = await categories.findByPk(id);
+      const category = await Categories.findByPk(id);
       
       if (!category) {
         return responseUtils.notFound(res);
@@ -191,10 +191,10 @@ const categoryController = {
         // Check if category has any posts
       await category.destroy();
       
-      return responseUtils.ok(res, { message: 'Category deleted successfully' });
+      return responseUtils.success(res, { message: 'Category deleted successfully' });
     } catch (error) {
       console.error('Delete category error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   }
 };
