@@ -4,7 +4,7 @@ const { BodyWithLocale, ParamWithLocale, QueryWithLocale } = require('kernels/ru
 const getAllMediaValidation = [
   [
     new QueryWithLocale('page').isNumeric().get(),
-    new QueryWithLocale('limit').isNumbric().get(),
+    new QueryWithLocale('limit').isNumeric().get(),
     new QueryWithLocale('user_id').isNumeric().get()
   ]
 ];

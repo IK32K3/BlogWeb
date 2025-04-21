@@ -20,9 +20,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     slug: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING(255),
       allowNull: false,
-      unique: true
     },
     created_at: {
       type: DataTypes.DATE,

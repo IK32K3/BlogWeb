@@ -268,7 +268,10 @@ class PostController {
                     id: post.id,
                     title: post.title,
                     slug: post.slug,
-                    status: post.status
+                    status: post.status,
+                    content : post.content, // Include content if needed
+                    description: post.description, // Include description if needed
+                    id_post_original: post.id_post_original // Include original post ID if applicable
                 }
             });
         } catch (error) {
@@ -285,52 +288,89 @@ class PostController {
     // [PUT] /posts/:id - Update an existing post
     async updatePost(req, res) {
         try {
+            // Validate and parse ID
             const { id } = req.params;
             const parsedId = parseIntOrDefault(id, null);
-
-             if (parsedId === null) {
-                 return responseUtils.badRequest(res, 'Invalid Post ID');
+            
+            if (parsedId === null || parsedId <= 0) {
+                return responseUtils.badRequest(res, 'Invalid Post ID');
             }
-
+    
+            // Authentication check
             const userId = req.user?.id;
             const isAdmin = req.user?.role === 'Admin';
-
+            
             if (!userId) {
                 return responseUtils.unauthorized(res, 'Authentication required');
             }
-
-            const updateData = req.body; // Assumes validation middleware has run
-
-            // Service method handles authorization check internally
-            const post = await postService.updatePost(parsedId, userId, isAdmin, updateData);
-
-            // Service returns null if post not found initially
-            if (!post) {
-                return responseUtils.notFound(res);
+    
+            // Validate request body exists
+            if (!req.body || Object.keys(req.body).length === 0) {
+                return responseUtils.badRequest(res, 'No update data provided');
             }
-
+    
+            // Service call
+            const updatedPost = await postService.updatePost(
+                parsedId,
+                userId,
+                isAdmin,
+                req.body
+            );
+    
+            if (!updatedPost) {
+                return responseUtils.notFound(res, 'Post not found or not authorized');
+            }
+    
+            // Successful response
             return responseUtils.success(res, {
                 message: 'Post updated successfully',
-                post: { // Return minimal info
-                    id: post.id,
-                    title: post.title,
-                    slug: post.slug,
-                    status: post.status
-                }
+                data: this._formatPostResponse(updatedPost)
             });
+    
         } catch (error) {
-            console.error('[PostController.updatePost] Error:', error);
-            // Handle specific errors thrown by the service
-            if (error.message === 'Unauthorized to update this post') {
-                return responseUtils.unauthorized(res, error.message);
+            console.error('[PostController] Update error:', error);
+            
+            // Enhanced error handling
+            switch (true) {
+                case error.message.includes('Unauthorized'):
+                    return responseUtils.forbidden(res, error.message);
+                    
+                case error.name === 'SequelizeValidationError':
+                    return responseUtils.badRequest(res, this._formatSequelizeErrors(error));
+                    
+                case error.name === 'SequelizeDatabaseError':
+                    return responseUtils.badRequest(res, 'Invalid data format');
+                    
+                default:
+                    return responseUtils.serverError(res, 'Failed to update post');
             }
-             if (error.name === 'SequelizeValidationError') {
-                 return responseUtils.badRequest(res, error.errors.map(e => e.message).join(', '));
-            }
-            return responseUtils.serverError(res, 'Failed to update post');
         }
     }
-
+    
+    // Helper method to format post response
+    _formatPostResponse(post) {
+        return {
+            id: post.id,
+            title: post.title,
+            slug: post.slug,
+            status: post.status,
+            description: post.description,
+            preview: post.content.substring(0, 200), // Return preview instead of full content
+            metadata: {
+                originalPostId: post.id_post_original,
+                createdAt: post.created_at,
+                updatedAt: post.updated_at
+            }
+        };
+    }
+    
+    // Helper method to format Sequelize errors
+    _formatSequelizeErrors(error) {
+        return error.errors.map(err => ({
+            field: err.path,
+            message: err.message
+        }));
+    }
     // [DELETE] /posts/:id - Delete a post
     async deletePost(req, res) {
         try {

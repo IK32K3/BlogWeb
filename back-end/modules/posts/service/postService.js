@@ -1,7 +1,9 @@
 const slugify = require('slugify');
 const { Op } = require('sequelize');
 // Ensure you are importing the SINGULAR model names correctly defined in your models/index.js or definitions
-const { Post, Categories, Media, User, PostMedia, PostTranslateLanguage, Language } = require('models'); // Assuming models are named singularly
+const db = require('models'); // Import your models
+const { Post, Categories, Media, User, PostMedia, PostTranslateLanguage, Language } = db; // Assuming models are named singularly
+
 
 class PostService {
   // Get all posts with pagination and filters
@@ -9,7 +11,7 @@ class PostService {
     const offset = (page - 1) * limit;
 
     // Build where clause
-    const whereClause = {};
+    const whereClause = {}; 
 
     if (categoryId) whereClause.category_id = categoryId;
     if (userId) whereClause.user_id = userId;
@@ -173,6 +175,7 @@ class PostService {
       content,
       description, // Assuming description is a main column
       category_id,
+      id_post_original,
       media_ids = [],
       translations = [],
       status = 'draft',
@@ -202,6 +205,7 @@ class PostService {
       description,
       user_id: userId,
       category_id,
+      id_post_original,
       slug, // Use the generated unique slug
       status,
       scheduled_at: status === 'scheduled' ? scheduled_at : null, // Set scheduled_at only if status is scheduled    }, {
@@ -227,69 +231,81 @@ class PostService {
 
   // Update post
   async updatePost(postId, userId, isAdmin, updateData) {
-    const post = await Post.findByPk(postId);
-    if (!post) return null; // Or throw specific NotFoundError
+    const transaction = await db.sequelize.transaction(); // Start transaction for safety
+    try {
+      // Check if post exists
+      const post = await Post.findByPk(postId);
+      if (!post) {
+        await transaction.rollback();
+        throw new NotFoundError('Post not found');
+      } 
 
-    // Check authorization
-    if (post.user_id !== userId && !isAdmin) {
-        // Consider throwing a specific AuthorizationError
-        throw new Error('Unauthorized to update this post');
+      // Check authorization
+      if (post.user_id !== userId && !isAdmin) {
+          // Consider throwing a specific AuthorizationError
+          await transaction.rollback();
+          throw new Error('Unauthorized to update this post');
+      }
+
+      const { title, media_ids, translations, status, scheduled_at, ...otherUpdateData } = updateData;
+
+      // Prepare data for update
+      const dataToUpdate = { ...otherUpdateData };
+
+      if (title !== undefined && title !== post.title) {
+          dataToUpdate.title = title;
+          // Generate and check unique slug if title changes
+          let baseSlug = slugify(title, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g });
+          let newSlug = baseSlug;
+          let slugExists = true;
+          let counter = 1;
+          while(slugExists) {
+              const existingPost = await Post.findOne({ where: { slug: newSlug, id: { [Op.ne]: postId } }, attributes: ['id'] }); // Check slug excluding current post
+              if (!existingPost) {
+                  slugExists = false;
+              } else {
+                  newSlug = `${baseSlug}-${counter}`;
+                  counter++;
+              }
+          }
+          dataToUpdate.slug = newSlug;
+      }
+
+      if (status !== undefined) {
+          dataToUpdate.status = status;
+          // Handle scheduled_at based on status
+          if (status === 'scheduled' && scheduled_at) {
+              dataToUpdate.scheduled_at = scheduled_at;
+          } else if (status !== 'scheduled') {
+              // Set scheduled_at to null if status is no longer scheduled
+              dataToUpdate.scheduled_at = null;
+          }
+      } else if (scheduled_at !== undefined && post.status === 'scheduled') {
+          // Allow updating scheduled_at if status is already scheduled
+          dataToUpdate.scheduled_at = scheduled_at;
+      }
+      
+      // Update post main fields
+      await post.update(dataToUpdate);
+
+      // Update media (replace all if provided)
+      if (media_ids !== undefined) {
+        await this._updatePostMedia(post.id, media_ids);
+      }
+    
+      // Update translations if provided
+      if (translations !== undefined) {
+        await this._updatePostTranslations(post.id, translations);
+      }
+      await transaction.commit(); // Commit transaction if all updates are successful
+      return this.getPostById(postId, false);
+      // Return the updated post with details if needed immediately
+    } catch (error) {
+      await transaction.rollback(); // Rollback transaction on error
+      console.error("Error updating post:", error);
+      throw error; // Re-throw the error to be handled upstream
     }
-
-    const { title, media_ids, translations, status, scheduled_at, ...otherUpdateData } = updateData;
-
-    // Prepare data for update
-    const dataToUpdate = { ...otherUpdateData };
-
-    if (title !== undefined && title !== post.title) {
-        dataToUpdate.title = title;
-        // Generate and check unique slug if title changes
-        let baseSlug = slugify(title, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g });
-        let newSlug = baseSlug;
-        let slugExists = true;
-        let counter = 1;
-        while(slugExists) {
-            const existingPost = await Post.findOne({ where: { slug: newSlug, id: { [Op.ne]: postId } }, attributes: ['id'] }); // Check slug excluding current post
-            if (!existingPost) {
-                slugExists = false;
-            } else {
-                newSlug = `${baseSlug}-${counter}`;
-                counter++;
-            }
-        }
-        dataToUpdate.slug = newSlug;
-    }
-
-    if (status !== undefined) {
-        dataToUpdate.status = status;
-        // Handle scheduled_at based on status
-        if (status === 'scheduled' && scheduled_at) {
-            dataToUpdate.scheduled_at = scheduled_at;
-        } else if (status !== 'scheduled') {
-             // Set scheduled_at to null if status is no longer scheduled
-            dataToUpdate.scheduled_at = null;
-        }
-    } else if (scheduled_at !== undefined && post.status === 'scheduled') {
-         // Allow updating scheduled_at if status is already scheduled
-        dataToUpdate.scheduled_at = scheduled_at;
-    }
-
-    // Update post main fields
-    await post.update(dataToUpdate);
-
-    // Update media (replace all if provided)
-    if (media_ids !== undefined) {
-      await this._updatePostMedia(post.id, media_ids);
-    }
-  
-    // Update translations if provided
-    if (translations !== undefined) {
-      await this._updatePostTranslations(post.id, translations);
-    }
-  
-    return this.getPostById(postId, false);
   }
-
   // Delete post
   async deletePost(postId, userId, isAdmin) {
     const post = await Post.findByPk(postId);
