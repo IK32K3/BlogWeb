@@ -1,4 +1,4 @@
-const { comments, Post, User } = require('models');
+const { Comment, Post, User } = require('models');
 const responseUtils = require('utils/responseUtils');
 
 const commentController = {
@@ -18,7 +18,7 @@ const commentController = {
       }
       
       // Fetch comments
-      const { count, rows: postComments } = await comments.findAndCountAll({
+      const { count, rows: postComments } = await Comment.findAndCountAll({
         where: { post_id: postId },
         limit: parseInt(limit),
         offset: parseInt(offset),
@@ -33,7 +33,7 @@ const commentController = {
       
       const totalPages = Math.ceil(count / limit);
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         comments: postComments,
         pagination: {
           total: count,
@@ -44,7 +44,7 @@ const commentController = {
       });
     } catch (error) {
       console.error('Get comments by post error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -63,14 +63,14 @@ const commentController = {
       }
       
       // Create comment
-      const comment = await comments.create({
+      const comment = await Comment.create({
         post_id: postId,
         user_id,
         content
       });
       
       // Fetch the created comment with user info
-      const newComment = await comments.findByPk(comment.id, {
+      const newComment = await Comment.findByPk(comment.id, {
         include: [
           { 
             model: User, 
@@ -79,13 +79,13 @@ const commentController = {
         ]
       });
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         message: 'Comment added successfully',
         comment: newComment
       });
     } catch (error) {
       console.error('Add comment error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -96,7 +96,7 @@ const commentController = {
       const { content } = req.body;
       
       // Find comment
-      const comment = await comments.findByPk(commentId);
+      const comment = await Comment.findByPk(commentId);
       
       if (!comment) {
         return responseUtils.notFound(res);
@@ -111,7 +111,7 @@ const commentController = {
       await comment.update({ content });
       
       // Fetch the updated comment with user info
-      const updatedComment = await comments.findByPk(commentId, {
+      const updatedComment = await Comment.findByPk(commentId, {
         include: [
           { 
             model: User, 
@@ -120,13 +120,13 @@ const commentController = {
         ]
       });
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         message: 'Comment updated successfully',
         comment: updatedComment
       });
     } catch (error) {
       console.error('Update comment error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -136,7 +136,7 @@ const commentController = {
       const { commentId } = req.params;
       
       // Find comment
-      const comment = await comments.findByPk(commentId);
+      const comment = await Comment.findByPk(commentId);
       
       if (!comment) {
         return responseUtils.notFound(res);
@@ -154,10 +154,10 @@ const commentController = {
       // Delete comment
       await comment.destroy();
       
-      return responseUtils.ok(res, { message: 'Comment deleted successfully' });
+      return responseUtils.success(res, { message: 'Comment deleted successfully' });
     } catch (error) {
       console.error('Delete comment error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   },
   
@@ -185,7 +185,7 @@ const commentController = {
       
       const totalPages = Math.ceil(count / limit);
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         comments: userComments,
         pagination: {
           total: count,
@@ -196,7 +196,7 @@ const commentController = {
       });
     } catch (error) {
       console.error('Get my comments error:', error);
-      return responseUtils.error(res, error.message);
+      return responseUtils.serverError(res, error.message);
     }
   }
 };

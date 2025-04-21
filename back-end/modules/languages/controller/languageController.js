@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { language } = require('models');
+const { Language } = require('models');
 const responseUtils = require('utils/responseUtils');
 
 const languageController = {
@@ -25,7 +25,7 @@ const languageController = {
       }
       
       // Fetch languages
-      const { count, rows: languages } = await language.findAndCountAll({
+      const { count, rows: Languages } = await Language.findAndCountAll({
         where: whereClause,
         limit: parseInt(limit),
         offset: parseInt(offset),
@@ -34,8 +34,8 @@ const languageController = {
       
       const totalPages = Math.ceil(count / limit);
       
-      return responseUtils.ok(res, {
-        languages,
+      return responseUtils.success(res, {
+        Languages,
         pagination: {
           total: count,
           totalPages,
@@ -45,7 +45,7 @@ const languageController = {
       });
     } catch (error) {
       console.error('Get all languages error:', error);
-      return responseUtils.error(res, error.message);
+      return  responseUtils.serverError(res, error.message);
     }
   },
   
@@ -54,16 +54,16 @@ const languageController = {
     try {
       const { id } = req.params;
       
-      const lang = await language.findByPk(id);
+      const lang = await Language.findByPk(id);
       
       if (!lang) {
         return responseUtils.notFound(res);
       }
       
-      return responseUtils.ok(res, { language: lang });
+      return responseUtils.success(res, { Language: lang });
     } catch (error) {
       console.error('Get language by ID error:', error);
-      return responseUtils.error(res, error.message);
+      return  responseUtils.serverError(res, error.message);
     }
   },
   
@@ -73,7 +73,7 @@ const languageController = {
       const { name, locale, is_active = true } = req.body;
       
       // Check if language already exists
-      const existingLanguage = await language.findOne({
+      const existingLanguage = await Language.findOne({
         where: {
           [Op.or]: [{ name }, { locale }]
         }
@@ -88,19 +88,19 @@ const languageController = {
       }
       
       // Create language
-      const newLanguage = await language.create({
+      const newLanguage = await Language.create({
         name,
         locale,
         is_active
       });
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         message: 'Language created successfully',
-        language: newLanguage
+        Language: newLanguage
       });
     } catch (error) {
       console.error('Create language error:', error);
-      return responseUtils.error(res, error.message);
+      return  responseUtils.serverError(res, error.message);
     }
   },
   
@@ -111,7 +111,7 @@ const languageController = {
       const { name, locale, is_active } = req.body;
       
       // Find language
-      const lang = await language.findByPk(id);
+      const lang = await Language.findByPk(id);
       
       if (!lang) {
         return responseUtils.notFound(res);
@@ -119,7 +119,7 @@ const languageController = {
       
       // Check if name or locale already exists
       if (name && name !== lang.name) {
-        const existingName = await language.findOne({
+        const existingName = await Language.findOne({
           where: { name }
         });
         
@@ -131,7 +131,7 @@ const languageController = {
       }
       
       if (locale && locale !== lang.locale) {
-        const existingLocale = await language.findOne({
+        const existingLocale = await Language.findOne({
           where: { locale }
         });
         
@@ -149,13 +149,13 @@ const languageController = {
         is_active: is_active !== undefined ? is_active : lang.is_active
       });
       
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         message: 'Language updated successfully',
-        language: lang
+        Language: lang
       });
     } catch (error) {
       console.error('Update language error:', error);
-      return responseUtils.error(res, error.message);
+      return  responseUtils.serverError(res, error.message);
     }
   },
   
@@ -165,7 +165,7 @@ const languageController = {
       const { id } = req.params;
       
       // Find language
-      const lang = await language.findByPk(id);
+      const lang = await Language.findByPk(id);
       
       if (!lang) {
         return responseUtils.notFound(res);
@@ -174,10 +174,10 @@ const languageController = {
       // Delete language
       await lang.destroy();
       
-      return responseUtils.ok(res, { message: 'Language deleted successfully' });
+      return responseUtils.success(res, { message: 'Language deleted successfully' });
     } catch (error) {
       console.error('Delete language error:', error);
-      return responseUtils.error(res, error.message);
+      return  responseUtils.serverError(res, error.message);
     }
   }
 };
