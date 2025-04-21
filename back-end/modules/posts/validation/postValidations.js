@@ -64,7 +64,6 @@ const createPostValidation = [
 
 // [PUT] /posts/:id
 const updatePostValidation = [
-  new ParamWithLocale('id').notEmpty().isNumeric().toInt().get(),
   new BodyWithLocale('title').notEmpty().isLength({ min: 3, max: 300 }).withMessage('Title must be between 3 and 300 characters long').get(),
   new BodyWithLocale('content').notEmpty().isLength({ min: 10, max: 10000 }).withMessage('Content must be between 10 and 10000 characters long').get(),
   // Content
@@ -96,12 +95,6 @@ const getPostByIdValidation = [
 const getPostBySlugValidation = [
   // commonRules.slug()
   new ParamWithLocale('slug').notEmpty().isSlug().get(),
-];
-
-// [DELETE] /posts/:id
-const deletePostValidation = [
-  // commonRules.postId()
-  new ParamWithLocale('id').notEmpty().isNumeric().toInt().get(),
 ];
 
 // [GET] /posts/category/:categoryId
@@ -144,7 +137,6 @@ module.exports = {
   updatePostValidation,
   getPostByIdValidation,
   getPostBySlugValidation,
-  deletePostValidation,
   getPostsByCategoryValidation,
   getAllPostsValidation,
   getMyPostsValidation,

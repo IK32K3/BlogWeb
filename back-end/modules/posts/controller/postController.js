@@ -3,10 +3,26 @@ const responseUtils = require('utils/responseUtils'); // Assuming this provides 
 
 // Helper to parse integers from query/params with defaults
 const parseIntOrDefault = (value, defaultValue) => {
+    // Nếu value là undefined/null -> trả về giá trị mặc định
+    if (value === undefined || value === null) return defaultValue;
+    
+    // Chuyển đổi sang số nguyên (base 10)
     const parsed = parseInt(value, 10);
+    
+    // Nếu kết quả không phải số (NaN) -> trả về giá trị mặc định
     return isNaN(parsed) ? defaultValue : parsed;
-};
+  };
+const parsePositiveInt = (value) => {
+    // If value is undefined or null, it's not valid
+    if (value === undefined || value === null) return null;
 
+    // Try to parse as integer (base 10)
+    const parsed = parseInt(value, 10);
+
+    // Check if it's a valid number AND strictly positive
+    // isNaN checks for non-numeric strings. <= 0 checks for zero and negatives.
+    return isNaN(parsed) || parsed <= 0 ? null : parsed;
+    };
 class PostController {
     // [GET] /posts - Get all posts (public facing, filtered)
     async getAllPosts(req, res) {
@@ -29,9 +45,9 @@ class PostController {
             const result = await postService.getAllPosts({
                 page: parsedPage,
                 limit: parsedLimit,
-                categoryId: category_id ? parseIntOrDefault(category_id, null) : null, // Ensure categoryId is number or null
+                categoryId: category_id ? parsePositiveInt (category_id) : null, // Ensure categoryId is number or null
                 search,
-                userId: user_id ? parseIntOrDefault(user_id, null) : null,          // Ensure userId is number or null
+                userId: user_id ? parsePositiveInt (user_id) : null,          // Ensure userId is number or null
                 sort: sort || 'latest', // Use default from service if not provided
                 status: status ?? null // Default to published for public view unless specified
             });
@@ -70,8 +86,8 @@ class PostController {
                 query: searchQuery,
                 page: parsedPage,
                 limit: parsedLimit,
-                category_id: category_id ? parseIntOrDefault(category_id, null) : null,
-                user_id: user_id ? parseIntOrDefault(user_id, null) : null,
+                category_id: category_id ? parsePositiveInt (category_id) : null,
+                user_id: user_id ? parsePositiveInt (user_id) : null,
                 status: finalStatus,
                 sort: sort || 'newest', // Default sort for search
                 date_from,
@@ -85,8 +101,8 @@ class PostController {
                 pagination: result.pagination,
                 // Optionally return applied filters for frontend display
                 filters: {
-                    category_id: category_id ? parseIntOrDefault(category_id, null) : null,
-                    user_id: user_id ? parseIntOrDefault(user_id, null) : null,
+                    category_id: category_id ? parsePositiveInt (category_id) : null,
+                    user_id: user_id ? parsePositiveInt (user_id) : null,
                     status: finalStatus,
                     sort: sort || 'newest',
                     date_range: { from: date_from, to: date_to }
@@ -136,7 +152,7 @@ class PostController {
             const { categoryId } = req.params;
             const { page, limit } = req.query;
 
-            const parsedCategoryId = parseIntOrDefault(categoryId, null);
+            const parsedCategoryId = parsePositiveInt (categoryId);
             if (parsedCategoryId === null) {
                  return responseUtils.badRequest(res, 'Invalid Category ID');
             }
@@ -167,7 +183,7 @@ class PostController {
             const { userId } = req.params;
             const { page, limit, status, sort } = req.query;
 
-            const parsedUserId = parseIntOrDefault(userId, null);
+            const parsedUserId = parsePositiveInt (userId);
             if (parsedUserId === null) {
                  return responseUtils.badRequest(res, 'Invalid User ID');
             }
@@ -230,7 +246,7 @@ class PostController {
     async getPostById(req, res) {
         try {
             const { id } = req.params;
-            const parsedId = parseIntOrDefault(id, null);
+            const parsedId = parsePositiveInt (id);
 
             if (parsedId === null) {
                  return responseUtils.badRequest(res, 'Invalid Post ID');
@@ -288,28 +304,24 @@ class PostController {
     // [PUT] /posts/:id - Update an existing post
     async updatePost(req, res) {
         try {
-            // Validate and parse ID
             const { id } = req.params;
-            const parsedId = parseIntOrDefault(id, null);
-            
+            const parsedId = parsePositiveInt(id);
+    
             if (parsedId === null || parsedId <= 0) {
                 return responseUtils.badRequest(res, 'Invalid Post ID');
             }
     
-            // Authentication check
             const userId = req.user?.id;
             const isAdmin = req.user?.role === 'Admin';
-            
+    
             if (!userId) {
                 return responseUtils.unauthorized(res, 'Authentication required');
             }
     
-            // Validate request body exists
             if (!req.body || Object.keys(req.body).length === 0) {
                 return responseUtils.badRequest(res, 'No update data provided');
             }
     
-            // Service call
             const updatedPost = await postService.updatePost(
                 parsedId,
                 userId,
@@ -321,61 +333,48 @@ class PostController {
                 return responseUtils.notFound(res, 'Post not found or not authorized');
             }
     
-            // Successful response
             return responseUtils.success(res, {
                 message: 'Post updated successfully',
-                data: this._formatPostResponse(updatedPost)
+                data: {
+                    id: updatedPost.id,
+                    title: updatedPost.title,
+                    slug: updatedPost.slug,
+                    status: updatedPost.status,
+                    description: updatedPost.description,
+                    preview: updatedPost.content?.substring(0, 200) || '',
+                    metadata: {
+                        originalPostId: updatedPost.id_post_original,
+                        createdAt: updatedPost.created_at,
+                        updatedAt: updatedPost.updated_at
+                    }
+                }
             });
     
         } catch (error) {
             console.error('[PostController] Update error:', error);
-            
-            // Enhanced error handling
+    
             switch (true) {
                 case error.message.includes('Unauthorized'):
                     return responseUtils.forbidden(res, error.message);
-                    
+    
                 case error.name === 'SequelizeValidationError':
-                    return responseUtils.badRequest(res, this._formatSequelizeErrors(error));
-                    
+                    const firstError = error.errors?.[0]?.message || 'Validation error';
+                    return responseUtils.badRequest(res, firstError);
+    
                 case error.name === 'SequelizeDatabaseError':
                     return responseUtils.badRequest(res, 'Invalid data format');
-                    
+    
                 default:
                     return responseUtils.serverError(res, 'Failed to update post');
             }
         }
     }
-    
-    // Helper method to format post response
-    _formatPostResponse(post) {
-        return {
-            id: post.id,
-            title: post.title,
-            slug: post.slug,
-            status: post.status,
-            description: post.description,
-            preview: post.content.substring(0, 200), // Return preview instead of full content
-            metadata: {
-                originalPostId: post.id_post_original,
-                createdAt: post.created_at,
-                updatedAt: post.updated_at
-            }
-        };
-    }
-    
-    // Helper method to format Sequelize errors
-    _formatSequelizeErrors(error) {
-        return error.errors.map(err => ({
-            field: err.path,
-            message: err.message
-        }));
-    }
+      
     // [DELETE] /posts/:id - Delete a post
     async deletePost(req, res) {
         try {
             const { id } = req.params;
-             const parsedId = parseIntOrDefault(id, null);
+             const parsedId = parsePositiveInt(id);
 
              if (parsedId === null) {
                  return responseUtils.badRequest(res, 'Invalid Post ID');

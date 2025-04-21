@@ -18,12 +18,12 @@ const mediaController = require("modules/media/controller/mediaController");
 // Import Middleware
 // Ensure 'isResourceOwner' correctly handles model lookup and owner check (req.user.id vs resource.user_id)
 // and potentially allows admins.
-const { authenticated, isAdmin, isAuthenticated, isResourceOwner } = require("modules/auth/middleware/authMiddleware");
+const { authenticated , isAdmin, isAuthenticatedUserWithRole ,isBlogOwnerRole, isResourceOwner } = require("kernels/middlewares/authMiddleware");
 
 // Import Validations (ensure these match exports)
 const { registerValidation, loginValidation, forgotPasswordValidation, resetPasswordValidation, refreshTokenValidation } = require("modules/auth/validation/authValidations");
 const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, deleteUserValidation, updateProfileValidation, saveSettingsValidation } = require("modules/users/validation/userValidations");
-const { createPostValidation, updatePostValidation, getPostByIdValidation, getPostBySlugValidation, deletePostValidation, getPostsByCategoryValidation, getAllPostsValidation, getMyPostsValidation, searchPostsValidation, getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
+const { createPostValidation, updatePostValidation, getPostByIdValidation, getPostBySlugValidation, getPostsByCategoryValidation, getAllPostsValidation, getMyPostsValidation, searchPostsValidation, getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
 const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, deleteCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
 const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation, deleteCategoryValidation } = require("modules/categories/validation/categoryValidations");
 const { getAllLanguagesValidation, getLanguageByIdValidation, createLanguageValidation, updateLanguageValidation, deleteLanguageValidation } = require("modules/languages/validation/languageValidations");
@@ -54,7 +54,7 @@ router.group("/users", (router) => {
   });
 
   // Authenticated user routes for their own profile
-  router.group("/profile", middlewares([authenticated]), (router) => { // isAuthenticated might be redundant if authenticated covers it
+  router.group("/profile", middlewares([authenticated,isBlogOwnerRole]), (router) => { // isAuthenticated might be redundant if authenticated covers it
     router.get("/", userController.getProfile); // Get own profile
     router.put("/", validate(updateProfileValidation), userController.updateProfile); // Update own profile
     // Settings might be part of profile PUT or separate if complex
@@ -75,22 +75,10 @@ router.group("/posts", (router) => {
   // --- Authenticated routes ---
   router.group("/", middlewares([authenticated]), (router) => { // Use 'authenticated' instead of 'isAuthenticated' if it's the primary check
     router.get("/my", validate(getMyPostsValidation), postController.getMyPosts); // Combined route for user's posts (can filter by status via query)
-    
     // Post creation
-    router.post("/", validate(createPostValidation), postController.createPost);
-
-    // --- Routes requiring specific post access (Owner or Admin) ---
-    // Use :postId or :id consistently. Let's use :id as per convention above.
-    router.group("/:id", middlewares([isResourceOwner(Post)]), (router) => {
-       // isResourceOwner should check ownership OR admin status
-       router.put("/", validate(updatePostValidation), postController.updatePost);
-       router.delete("/", validate(deletePostValidation), postController.deletePost);
-
-       // --- Potential Action Routes (Alternative to overloading PUT) ---
-       // Example: Define specific actions on a post
-       // router.post("/publish", postController.publishPost); // Needs isAdmin or owner check
-       // router.post("/feature", middlewares([isAdmin]), postController.featurePost); // Example: Admin only action
-    });
+    router.post("/", middlewares([isBlogOwnerRole]),validate(createPostValidation), postController.createPost);  
+    router.put("/:id", middlewares([isResourceOwner(Post)]), validate(updatePostValidation), postController.updatePost);
+    router.delete("/:id", middlewares([isResourceOwner(Post)]), postController.deletePost);
   });
 });
 
