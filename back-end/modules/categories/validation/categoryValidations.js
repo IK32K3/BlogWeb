@@ -23,7 +23,7 @@ const createCategoryValidation = [
 
 // Update category validation
 const updateCategoryValidation = [
-  [
+  
     new ParamWithLocale('id').notEmpty().isNumberic().get(),
     new BodyWithLocale('name').isLength({ min: 2, max: 50 }).get()
 ];
