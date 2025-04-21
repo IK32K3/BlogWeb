@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Role',
     tableName: 'roles',
-    timestamps: false // Disable Sequelize's automatic timestamps
+    timestamps: true,
+    underscored: true // Disable Sequelize's automatic timestamps
   });
   return Role;
 };

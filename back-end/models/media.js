@@ -26,21 +26,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(50),
       allowNull: false
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
-    }
+    
   }, {
     sequelize,
     modelName: 'Media',
     tableName: 'media',
-    timestamps: false // Disable Sequelize's automatic timestamps
+    timestamps: true,
+    underscored: true // Disable Sequelize's automatic timestamps
   });
   return Media;
 };

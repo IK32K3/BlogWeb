@@ -3,59 +3,52 @@ const { User } = require('models');
 
 // Get all users validation
 const getAllUsersValidation = [
-  [
-    new QueryWithLocale('page').isNumeric().get(),
-    new QueryWithLocale('limit').isNumeric().get(),
-    new QueryWithLocale('role_id').isNumeric().get()
-  ]
+  new QueryWithLocale('page').optional().isNumeric().withMessage('Page must be a number').get(),
+  new QueryWithLocale('limit').optional().isNumeric().withMessage('Limit must be a number').get(),
+  new QueryWithLocale('role_id').optional().isNumeric().get()  // Đặt optional để tránh lỗi khi không truyền
 ];
 
 // Get user by ID validation
 const getUserByIdValidation = [
-  [
-    new ParamWithLocale('id').notEmpty().isNumeric().get()
-  ]
+  new ParamWithLocale('id').notEmpty().isNumeric().get()
 ];
 
 // Create user validation
 const createUserValidation = [
-    new BodyWithLocale('username').notEmpty().isLength({ min: 3, max: 50 })
-      .unique(User, 'username').get(),
-    new BodyWithLocale('email').notEmpty().isEmail()
-      .unique(User, 'email').get(),
-    new BodyWithLocale('password').notEmpty().isLength({ min: 6, max: 100 }).get(),
-    new BodyWithLocale('role_id').notEmpty().isNumeric().get(),
-    new BodyWithLocale('description').get()
+  new BodyWithLocale('username').notEmpty().isLength({ min: 3, max: 50 }).unique(User, 'username').get(),
+  new BodyWithLocale('email').notEmpty().isEmail().unique(User, 'email').get(),
+  new BodyWithLocale('password').notEmpty().isLength({ min: 6, max: 100 }).get(),
+  new BodyWithLocale('role_id').notEmpty().isNumeric().get(),
+  new BodyWithLocale('description').get()
 ];
 
 // Update user validation
 const updateUserValidation = [
-  [
-    new ParamWithLocale('id').notEmpty().isNumeric().get(),
-    new BodyWithLocale('username').isLength({ min: 3, max: 50 }).get(),
-    new BodyWithLocale('email').isEmail().get(),
-    new BodyWithLocale('role_id').isNumeric().get()
-  ]
-];
-
-// Delete user validation
-const deleteUserValidation = [
-  [
-    new ParamWithLocale('id').notEmpty().isNumeric().get()
-  ]
+  new ParamWithLocale('id').notEmpty().isNumeric().get(),
+  new BodyWithLocale('username').optional().isLength({ min: 3, max: 50 }).get(),
+  new BodyWithLocale('email').optional().isEmail().get(),
+  new BodyWithLocale('role_id').optional().isNumeric().get()
 ];
 
 // Update profile validation
 const updateProfileValidation = [
-    new BodyWithLocale('username').isLength({ min: 3, max: 50 }).get(),
-    new BodyWithLocale('email').isEmail().get(),
-    new BodyWithLocale('password').isLength({ min: 6, max: 100 }).get(),
-    new BodyWithLocale('current_password').get()
+  new BodyWithLocale('username').optional().isLength({ min: 3, max: 50 }).get(),
+  new BodyWithLocale('email').optional().isEmail().get(),
+  new BodyWithLocale('password').optional().isLength({ min: 6, max: 100 }).get(),
+  new BodyWithLocale('current_password').optional().get()
 ];
 
 // Save settings validation
 const saveSettingsValidation = [
-    new BodyWithLocale('settings').notEmpty().get()
+  new BodyWithLocale('settings').notEmpty().get()
+];
+changePasswordValidation = [
+  new BodyWithLocale('current_password').notEmpty().get(),
+  new BodyWithLocale('new_password').notEmpty().isLength({ min: 6, max: 100 }).get()
+];
+loginUserValidation = [
+  new BodyWithLocale('email').notEmpty().isEmail().get(),
+  new BodyWithLocale('password').notEmpty().isLength({ min: 6, max: 100 }).get()
 ];
 
 module.exports = {
@@ -63,7 +56,8 @@ module.exports = {
   getUserByIdValidation,
   createUserValidation,
   updateUserValidation,
-  deleteUserValidation,
   updateProfileValidation,
-  saveSettingsValidation
+  saveSettingsValidation,
+  changePasswordValidation,
+  loginUserValidation,
 };

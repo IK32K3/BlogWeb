@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
-const { User, Role, Setting, UserMedia, Media } = require('models');
+const db = require('models');
+const { User, Role, Setting, UserMedia, Media } = db;
 const { config } = require('configs');
 
 const userService = {
@@ -24,8 +25,8 @@ const userService = {
     
     if (search) {
       whereClause[Op.or] = [
-        { username: { [Op.like]: `%${search}%` } },
-        { email: { [Op.like]: `%${search}%` } }
+        { username: { [Op.iLike]: `%${search}%` } }, // Case-insensitive search
+        { email: { [Op.iLike]: `%${search}%` } }
       ];
     }
     
@@ -44,13 +45,11 @@ const userService = {
       attributes: { exclude: ['password'] }
     });
     
-    const totalPages = Math.ceil(count / limit);
-    
     return {
       users,
       pagination: {
         total: count,
-        totalPages,
+        totalPages: Math.ceil(count / limit),
         currentPage: parseInt(page),
         limit: parseInt(limit)
       }
@@ -60,9 +59,15 @@ const userService = {
   /**
    * Get user by ID with related data
    * @param {number} id - User ID
+   * @param {boolean} [includeSensitive=false] - Include sensitive data
    * @returns {Promise<Object>} - User object
    */
-  getUserById: async (id) => {
+  getUserById: async (id, includeSensitive = false) => {
+    const attributes = { exclude: ['password'] };
+    if (includeSensitive) {
+      delete attributes.exclude;
+    }
+    
     const user = await User.findByPk(id, {
       include: [
         { 
@@ -71,14 +76,21 @@ const userService = {
           attributes: ['id', 'name'] 
         },
         {
-          model: UserMedia,
-          include: [{ model: Media }]
+          model: Setting,
+          as: 'settings',
+          attributes: ['id', 'settings']
         },
         {
-          model: Setting
+          model: UserMedia,
+          as: 'userMedia',
+          include: [{
+            model: Media,
+            as: 'media',
+            attributes: ['id', 'name', 'url', 'type']
+          }]
         }
       ],
-      attributes: { exclude: ['password'] }
+      attributes
     });
     
     if (!user) {
@@ -89,235 +101,197 @@ const userService = {
   },
 
   /**
-   * Create a new user
+   * Create a new user with optional media
    * @param {Object} userData - User data
-   * @param {string} userData.username - Username
-   * @param {string} userData.email - Email
-   * @param {string} userData.password - Password
-   * @param {number} userData.role_id - Role ID
-   * @param {string} [userData.description] - Description
-   * @param {boolean} [userData.is_active] - Active status
+   * @param {Array<number>} [mediaIds] - Array of media IDs
    * @returns {Promise<Object>} - Created user
    */
-  createUser: async ({ username, email, password, role_id, description = '', is_active = true }) => {
-    const existingUser = await User.findOne({
-      where: {
-        [Op.or]: [{ username }, { email }]
+  createUser: async (userData) => {
+    const transaction = await db.sequelize.transaction();
+  
+    try {
+      const { username, email, password, role_id , description} = userData;
+  
+      // Kiểm tra xem email và username có tồn tại trong hệ thống không
+      const existingUser = await User.findOne({
+        where: {
+          [Op.or]: [
+            { username },
+            { email }
+          ]
+        },
+        transaction
+      });
+  
+      if (existingUser) {
+        // Nếu email hoặc username đã tồn tại, ném lỗi và rollback giao dịch
+        await transaction.rollback(); // Đảm bảo rollback nếu có lỗi
+        throw new Error(existingUser.email === email ? 'Email must be unique' : 'Username must be unique');
       }
-    });
-    
-    if (existingUser) {
-      throw new Error(existingUser.username === username ? 'Username already exists' : 'Email already exists');
+  
+      // Mã hóa password
+      const hashedPassword = await bcrypt.hash(password, config.hashing.bcrypt.rounds);
+  
+      // Tạo người dùng mới
+      const newUser = await User.create({
+        username,
+        email,
+        password: hashedPassword,
+        role_id,
+        description,
+        is_active: true // Mặc định là true
+      }, { transaction });
+  
+      // Commit giao dịch nếu tất cả các thao tác đều thành công
+      await transaction.commit();
+      
+      return newUser;
+    } catch (error) {
+      // Nếu có lỗi xảy ra, rollback giao dịch nếu chưa commit
+      if (transaction.finished !== 'commit') {
+        await transaction.rollback();
+      }
+      throw error; // Ném lại lỗi để controller xử lý
     }
-    
-    const hashedPassword = await bcrypt.hash(password, config.hashing.bcrypt.rounds);
-    
-    const user = await User.create({
-      username,
-      email,
-      password: hashedPassword,
-      role_id,
-      description,
-      is_active
-    });
-    
-    return await User.findByPk(user.id, {
-      include: [
-        { 
-          model: Role, 
-          as: 'role',
-          attributes: ['id', 'name'] 
-        }
-      ],
-      attributes: { exclude: ['password'] }
-    });
   },
-
+  
   /**
-   * Update user
+   * Update user with transaction support
    * @param {number} id - User ID
    * @param {Object} updateData - Data to update
-   * @param {string} [updateData.username] - New username
-   * @param {string} [updateData.email] - New email
-   * @param {string} [updateData.password] - New password
-   * @param {number} [updateData.role_id] - New role ID
-   * @param {string} [updateData.description] - New description
-   * @param {boolean} [updateData.is_active] - New active status
+   * @param {Array<number>} [mediaIds] - New media IDs
    * @returns {Promise<Object>} - Updated user
    */
-  updateUser: async (id, { username, email, password, role_id, description, is_active }) => {
-    const user = await User.findByPk(id);
+  updateUser: async (id, updateData, mediaIds) => {
+    const transaction = await sequelize.transaction();
     
-    if (!user) {
-      throw new Error('User not found');
-    }
-    
-    if (username && username !== user.username) {
-      const existingUsername = await User.findOne({ where: { username } });
-      if (existingUsername) {
-        throw new Error('Username already exists');
+    try {
+      const user = await User.findByPk(id, { transaction });
+      
+      if (!user) {
+        throw new Error('User not found');
       }
-    }
-    
-    if (email && email !== user.email) {
-      const existingEmail = await User.findOne({ where: { email } });
-      if (existingEmail) {
-        throw new Error('Email already exists');
+      
+      // Validate username/email uniqueness
+      if (updateData.username && updateData.username !== user.username) {
+        const existing = await User.findOne({ 
+          where: { username: updateData.username },
+          transaction
+        });
+        if (existing) throw new Error('Username already exists');
       }
-    }
-    
-    const updateData = {};
-    
-    if (username) updateData.username = username;
-    if (email) updateData.email = email;
-    if (description !== undefined) updateData.description = description;
-    if (role_id) updateData.role_id = role_id;
-    if (is_active !== undefined) updateData.is_active = is_active;
-    
-    if (password) {
-      updateData.password = await bcrypt.hash(password, config.hashing.bcrypt.rounds);
-    }
-    
-    await user.update(updateData);
-    
-    return await User.findByPk(id, {
-      include: [
-        { 
-          model: Role, 
-          as: 'role',
-          attributes: ['id', 'name'] 
+      
+      if (updateData.email && updateData.email !== user.email) {
+        const existing = await User.findOne({ 
+          where: { email: updateData.email },
+          transaction
+        });
+        if (existing) throw new Error('Email already exists');
+      }
+      
+      // Hash new password if provided
+      if (updateData.password) {
+        updateData.password = await bcrypt.hash(
+          updateData.password,
+          config.hashing.bcrypt.rounds
+        );
+      }
+      
+      // Update user
+      await user.update(updateData, { transaction });
+      
+      // Update media if provided
+      if (Array.isArray(mediaIds)) {
+        // Remove existing media
+        await UserMedia.destroy({ 
+          where: { user_id: id },
+          transaction
+        });
+        
+        // Add new media
+        if (mediaIds.length > 0) {
+          await UserMedia.bulkCreate(
+            mediaIds.map(mediaId => ({
+              user_id: id,
+              media_id: mediaId
+            })),
+            { transaction }
+          );
         }
-      ],
-      attributes: { exclude: ['password'] }
-    });
+      }
+      
+      await transaction.commit();
+      return await userService.getUserById(id);
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   },
 
   /**
-   * Delete user
+   * Delete user and related data
    * @param {number} id - User ID
-   * @returns {Promise<boolean>} - True if deleted successfully
+   * @returns {Promise<boolean>} - True if successful
    */
   deleteUser: async (id) => {
-    const user = await User.findByPk(id);
+    const transaction = await sequelize.transaction();
     
-    if (!user) {
-      throw new Error('User not found');
+    try {
+      // Delete related data first
+      await Setting.destroy({ where: { user_id: id }, transaction });
+      await UserMedia.destroy({ where: { user_id: id }, transaction });
+      
+      // Delete user
+      const deleted = await User.destroy({ 
+        where: { id },
+        transaction
+      });
+      
+      if (!deleted) {
+        throw new Error('User not found');
+      }
+      
+      await transaction.commit();
+      return true;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
     }
-    
-    await user.destroy();
-    return true;
   },
 
   /**
-   * Get user profile with related data
+   * Update user profile with password verification
    * @param {number} id - User ID
-   * @returns {Promise<Object>} - User profile
-   */
-  getProfile: async (id) => {
-    const user = await User.findByPk(id, {
-      include: [
-        { 
-          model: Role, 
-          as: 'role',
-          attributes: ['id', 'name'] 
-        },
-        {
-          model: UserMedia,
-          include: [{ model: Media }]
-        },
-        {
-          model: Setting
-        }
-      ],
-      attributes: { exclude: ['password'] }
-    });
-    
-    if (!user) {
-      throw new Error('User not found');
-    }
-    
-    return user;
-  },
-
-  /**
-   * Update user profile
-   * @param {number} id - User ID
-   * @param {Object} updateData - Data to update
-   * @param {string} [updateData.username] - New username
-   * @param {string} [updateData.email] - New email
-   * @param {string} [updateData.password] - New password
-   * @param {string} [updateData.description] - New description
-   * @param {string} [updateData.current_password] - Current password for verification
+   * @param {Object} updateData - Profile data
+   * @param {string} currentPassword - For sensitive changes
    * @returns {Promise<Object>} - Updated user
    */
-  updateProfile: async (id, { username, email, password, description, current_password }) => {
+  updateProfile: async (id, updateData, currentPassword = null) => {
     const user = await User.findByPk(id);
+    if (!user) throw new Error('User not found');
     
-    if (!user) {
-      throw new Error('User not found');
+    // Verify current password for sensitive changes
+    if (currentPassword && (updateData.email || updateData.password)) {
+      const valid = await bcrypt.compare(currentPassword, user.password);
+      if (!valid) throw new Error('Current password is incorrect');
     }
     
-    if ((username !== user.username || email !== user.email || password) && current_password) {
-      const isPasswordValid = await bcrypt.compare(current_password, user.password);
-      if (!isPasswordValid) {
-        throw new Error('Current password is incorrect');
-      }
-    }
-    
-    if (username && username !== user.username) {
-      const existingUsername = await User.findOne({ where: { username } });
-      if (existingUsername) {
-        throw new Error('Username already exists');
-      }
-    }
-    
-    if (email && email !== user.email) {
-      const existingEmail = await User.findOne({ where: { email } });
-      if (existingEmail) {
-        throw new Error('Email already exists');
-      }
-    }
-    
-    const updateData = {};
-    
-    if (username) updateData.username = username;
-    if (email) updateData.email = email;
-    if (description !== undefined) updateData.description = description;
-    
-    if (password) {
-      updateData.password = await bcrypt.hash(password, config.hashing.bcrypt.rounds);
-    }
-    
-    await user.update(updateData);
-    
-    return await User.findByPk(id, {
-      include: [
-        { 
-          model: Role, 
-          as: 'role',
-          attributes: ['id', 'name'] 
-        }
-      ],
-      attributes: { exclude: ['password'] }
-    });
+    return await userService.updateUser(id, updateData);
   },
 
   /**
    * Save user settings
-   * @param {number} user_id - User ID
-   * @param {Object} settings - Settings object
-   * @returns {Promise<Object>} - Saved settings
+   * @param {number} userId - User ID
+   * @param {Object} settings - Settings data
+   * @returns {Promise<Object>} - Updated settings
    */
-  saveSettings: async (user_id, settings) => {
-    const [userSettings, created] = await Setting.findOrCreate({
-      where: { user_id },
-      defaults: {
-        user_id,
-        settings
-      }
+  saveSettings: async (userId, settings) => {
+    const [userSettings] = await Setting.findOrCreate({
+      where: { user_id: userId },
+      defaults: { user_id: userId, settings }
     });
     
-    if (!created) {
+    if (!userSettings.isNewRecord) {
       await userSettings.update({ settings });
     }
     
@@ -328,7 +302,7 @@ const userService = {
    * Verify user credentials
    * @param {string} usernameOrEmail - Username or email
    * @param {string} password - Password
-   * @returns {Promise<Object>} - User object without password if valid
+   * @returns {Promise<Object>} - User without password if valid
    */
   verifyCredentials: async (usernameOrEmail, password) => {
     const user = await User.findOne({
@@ -336,7 +310,8 @@ const userService = {
         [Op.or]: [
           { username: usernameOrEmail },
           { email: usernameOrEmail }
-        ]
+        ],
+        is_active: true
       },
       include: [
         { 
@@ -347,18 +322,37 @@ const userService = {
       ]
     });
     
-    if (!user) {
-      throw new Error('User not found');
-    }
+    if (!user) throw new Error('Invalid credentials');
     
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new Error('Invalid password');
-    }
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) throw new Error('Invalid credentials');
     
     const userJson = user.toJSON();
     delete userJson.password;
     return userJson;
+  },
+
+  /**
+   * Change user password
+   * @param {number} userId - User ID
+   * @param {string} currentPassword - Current password
+   * @param {string} newPassword - New password
+   * @returns {Promise<boolean>} - True if successful
+   */
+  changePassword: async (userId, currentPassword, newPassword) => {
+    const user = await User.findByPk(userId);
+    if (!user) throw new Error('User not found');
+    
+    const valid = await bcrypt.compare(currentPassword, user.password);
+    if (!valid) throw new Error('Current password is incorrect');
+    
+    user.password = await bcrypt.hash(
+      newPassword,
+      config.hashing.bcrypt.rounds
+    );
+    
+    await user.save();
+    return true;
   }
 };
 

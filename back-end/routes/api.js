@@ -22,7 +22,7 @@ const { authenticated , isAdmin, isAuthenticatedUserWithRole ,isBlogOwnerRole, i
 
 // Import Validations (ensure these match exports)
 const { registerValidation, loginValidation, forgotPasswordValidation, resetPasswordValidation, refreshTokenValidation } = require("modules/auth/validation/authValidations");
-const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, deleteUserValidation, updateProfileValidation, saveSettingsValidation } = require("modules/users/validation/userValidations");
+const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, updateProfileValidation, saveSettingsValidation, loginUserValidation, changePasswordValidation } = require("modules/users/validation/userValidations");
 const { createPostValidation, updatePostValidation, getPostByIdValidation, getPostBySlugValidation, getPostsByCategoryValidation, getAllPostsValidation, getMyPostsValidation, searchPostsValidation, getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
 const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
 const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation, deleteCategoryValidation } = require("modules/categories/validation/categoryValidations");
@@ -45,22 +45,25 @@ router.group("/auth", (router) => {
 
 // ===== User Routes =====
 router.group("/users", (router) => {
-  // Admin only routes for managing all users
+  // ─────────────── Admin Routes ─────────────── //
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
     router.get("/", validate(getAllUsersValidation), userController.getAllUsers);
     router.post("/", validate(createUserValidation), userController.createUser);
-    router.get("/:id", validate(getUserByIdValidation), userController.getUserById); // Admin gets any user
-    router.put("/:id", validate(updateUserValidation), userController.updateUser); // Admin updates any user
-    router.delete("/:id", validate(deleteUserValidation), userController.deleteUser); // Admin deletes any user
+    router.get("/:id", validate(getUserByIdValidation), userController.getUserById);
+    router.put("/:id", validate(updateUserValidation), userController.updateUser);
+    router.delete("/:id", userController.deleteUser);
   });
 
-  // Authenticated user routes for their own profile
-  router.group("/profile", middlewares([authenticated,isBlogOwnerRole]), (router) => { // isAuthenticated might be redundant if authenticated covers it
-    router.get("/", userController.getProfile); // Get own profile
-    router.put("/", validate(updateProfileValidation), userController.updateProfile); // Update own profile
-    // Settings might be part of profile PUT or separate if complex
-    // router.post("/settings", validate(saveSettingsValidation), userController.saveSettings);
+  // ─────────── Authenticated User Routes ─────────── //
+  router.group("/me", middlewares([authenticated]), (router) => {
+    router.get("/", userController.getProfile);
+    router.put("/", validate(updateProfileValidation), userController.updateProfile);
+    router.post("/settings", validate(saveSettingsValidation), userController.saveSettings);
+    router.put("/change-password", validate(changePasswordValidation), userController.changePassword);
   });
+
+  // ─────────────── Login Route ─────────────── //
+  router.post("/login", validate(loginUserValidation), userController.login);
 });
 
 // ===== Post Routes =====

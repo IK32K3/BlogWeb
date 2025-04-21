@@ -2,78 +2,67 @@ const responseUtils = require('utils/responseUtils');
 const userService = require('../service/userService');
 
 const userController = {
-  /**
-   * @desc Get all users with pagination
-   * @route GET /api/users
-   * @access Admin
-   */
+  // GET /api/users
   getAllUsers: async (req, res) => {
     try {
-      const { page = 1, limit = 10, search, role_id } = req.query;
-      const result = await userService.getAllUsers({ 
-        page: parseInt(page), 
-        limit: parseInt(limit), 
-        search, 
-        role_id 
+      const { page = 1, limit = 10, search = '', role_id } = req.query;
+      const result = await userService.getAllUsers({
+        page: Number(page),
+        limit: Number(limit),
+        search,
+        role_id
       });
-      return responseUtils.ok(res, result);
+      return responseUtils.success(res, result);
     } catch (error) {
       console.error('Get all users error:', error);
       return responseUtils.serverError(res, error.message);
     }
   },
 
-  /**
-   * @desc Get user by ID
-   * @route GET /api/users/:id
-   * @access Public/Admin
-   */
+  // GET /api/users/:id
   getUserById: async (req, res) => {
     try {
       const { id } = req.params;
       const user = await userService.getUserById(id);
-      return responseUtils.ok(res, { user });
+      return responseUtils.success(res, { user });
     } catch (error) {
       console.error('Get user by ID error:', error);
-      if (error.message === 'User not found') {
-        return responseUtils.notFound(res, 'User not found');
-      }
-      return responseUtils.serverError(res, error.message);
+      return error.message === 'User not found'
+        ? responseUtils.notFound(res, 'User not found')
+        : responseUtils.serverError(res, error.message);
     }
   },
 
-  /**
-   * @desc Create new user
-   * @route POST /api/users
-   * @access Admin
-   */
+  // POST /api/users
   createUser: async (req, res) => {
     try {
-      const userData = req.body;
-      const newUser = await userService.createUser(userData);
+      // Tạo người dùng mới
+      const newUser = await userService.createUser(req.body);
+  
+      // Trả về phản hồi thành công với thông tin người dùng mới
       return responseUtils.created(res, {
         message: 'User created successfully',
         user: newUser
       });
     } catch (error) {
       console.error('Create user error:', error);
+  
+      // Kiểm tra xem lỗi có phải là do người dùng đã tồn tại (username hoặc email)
       if (error.message.includes('already exists')) {
-        return responseUtils.conflict(res, error.message);
+        return responseUtils.conflict(res, error.message); // Trả về mã lỗi 409 Conflict
       }
+  
+      // Nếu có lỗi khác, trả về mã lỗi 500 Server Error
       return responseUtils.serverError(res, error.message);
     }
   },
+  
 
-  /**
-   * @desc Update user
-   * @route PUT /api/users/:id
-   * @access Admin
-   */
+  // PUT /api/users/:id
   updateUser: async (req, res) => {
     try {
       const { id } = req.params;
-      const updateData = req.body;
-      const updatedUser = await userService.updateUser(id, updateData);
+      const updatedUser = await userService.updateUser(id, req.body);
       return responseUtils.ok(res, {
         message: 'User updated successfully',
         user: updatedUser
@@ -90,11 +79,7 @@ const userController = {
     }
   },
 
-  /**
-   * @desc Delete user
-   * @route DELETE /api/users/:id
-   * @access Admin
-   */
+  // DELETE /api/users/:id
   deleteUser: async (req, res) => {
     try {
       const { id } = req.params;
@@ -102,18 +87,13 @@ const userController = {
       return responseUtils.ok(res, { message: 'User deleted successfully' });
     } catch (error) {
       console.error('Delete user error:', error);
-      if (error.message === 'User not found') {
-        return responseUtils.notFound(res, 'User not found');
-      }
-      return responseUtils.serverError(res, error.message);
+      return error.message === 'User not found'
+        ? responseUtils.notFound(res, 'User not found')
+        : responseUtils.serverError(res, error.message);
     }
   },
 
-  /**
-   * @desc Get current user profile
-   * @route GET /api/users/me
-   * @access Private
-   */
+  // GET /api/users/me
   getProfile: async (req, res) => {
     try {
       const id = req.user.id;
@@ -121,23 +101,17 @@ const userController = {
       return responseUtils.ok(res, { user });
     } catch (error) {
       console.error('Get profile error:', error);
-      if (error.message === 'User not found') {
-        return responseUtils.notFound(res, 'User not found');
-      }
-      return responseUtils.serverError(res, error.message);
+      return error.message === 'User not found'
+        ? responseUtils.notFound(res, 'User not found')
+        : responseUtils.serverError(res, error.message);
     }
   },
 
-  /**
-   * @desc Update current user profile
-   * @route PUT /api/users/me
-   * @access Private
-   */
+  // PUT /api/users/me
   updateProfile: async (req, res) => {
     try {
       const id = req.user.id;
-      const updateData = req.body;
-      const updatedUser = await userService.updateProfile(id, updateData);
+      const updatedUser = await userService.updateProfile(id, req.body);
       return responseUtils.ok(res, {
         message: 'Profile updated successfully',
         user: updatedUser
@@ -148,7 +122,7 @@ const userController = {
         return responseUtils.notFound(res, 'User not found');
       }
       if (error.message === 'Current password is incorrect') {
-        return responseUtils.unauthorized(res, 'Current password is incorrect');
+        return responseUtils.unauthorized(res, error.message);
       }
       if (error.message.includes('already exists')) {
         return responseUtils.conflict(res, error.message);
@@ -156,20 +130,39 @@ const userController = {
       return responseUtils.serverError(res, error.message);
     }
   },
-
   /**
-   * @desc Save user settings
-   * @route POST /api/users/me/settings
-   * @access Private
-   */
+ * @desc Change current user's password
+ * @route PUT /api/users/me/change-password
+ * @access Private
+ */
+changePassword: async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { currentPassword, newPassword } = req.body;
+
+    await userService.changePassword(userId, currentPassword, newPassword);
+
+    return responseUtils.ok(res, { message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Change password error:', error);
+    if (error.message === 'User not found') {
+      return responseUtils.notFound(res, 'User not found');
+    }
+    if (error.message === 'Current password is incorrect') {
+      return responseUtils.unauthorized(res, 'Current password is incorrect');
+    }
+    return responseUtils.serverError(res, error.message);
+  }
+},
+  // POST /api/users/me/settings
   saveSettings: async (req, res) => {
     try {
       const user_id = req.user.id;
       const { settings } = req.body;
-      const userSettings = await userService.saveSettings(user_id, settings);
+      const savedSettings = await userService.saveSettings(user_id, settings);
       return responseUtils.ok(res, {
         message: 'Settings saved successfully',
-        settings: userSettings
+        settings: savedSettings
       });
     } catch (error) {
       console.error('Save settings error:', error);
@@ -177,11 +170,7 @@ const userController = {
     }
   },
 
-  /**
-   * @desc Authenticate user
-   * @route POST /api/users/login
-   * @access Public
-   */
+  // POST /api/users/login
   login: async (req, res) => {
     try {
       const { usernameOrEmail, password } = req.body;
@@ -192,7 +181,10 @@ const userController = {
       });
     } catch (error) {
       console.error('Login error:', error);
-      if (error.message === 'User not found' || error.message === 'Invalid password') {
+      if (
+        error.message === 'User not found' ||
+        error.message === 'Invalid password'
+      ) {
         return responseUtils.unauthorized(res, 'Invalid credentials');
       }
       return responseUtils.serverError(res, error.message);
