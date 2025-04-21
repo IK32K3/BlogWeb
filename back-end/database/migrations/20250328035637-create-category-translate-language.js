@@ -17,6 +17,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false
       },
+      slug: {
+        type: Sequelize.STRING(255),
+        allowNull: false
+      },
       name: {
         type: Sequelize.STRING(50),
         allowNull: false

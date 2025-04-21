@@ -1,204 +1,89 @@
-const { Comment, Post, User } = require('models');
+const commentService = require('../service/commentService');
 const responseUtils = require('utils/responseUtils');
 
-const commentController = {
-  // Get comments for a post
+module.exports = {
   getCommentsByPost: async (req, res) => {
     try {
       const { postId } = req.params;
-      const { page = 1, limit = 20 } = req.query;
-      
-      const offset = (page - 1) * limit;
-      
-      // Check if post exists
-      const post = await Post.findByPk(postId);
-      
-      if (!post) {
+      const result = await commentService.getCommentsByPost(postId, req.query);
+      return responseUtils.success(res, result);
+    } catch (error) {
+      console.error('Get comments error:', error);
+      if (error.message === 'Post not found') {
         return responseUtils.notFound(res);
       }
-      
-      // Fetch comments
-      const { count, rows: postComments } = await Comment.findAndCountAll({
-        where: { post_id: postId },
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        order: [['created_at', 'DESC']],
-        include: [
-          { 
-            model: User, 
-            attributes: ['id', 'username'] 
-          }
-        ]
-      });
-      
-      const totalPages = Math.ceil(count / limit);
-      
-      return responseUtils.success(res, {
-        comments: postComments,
-        pagination: {
-          total: count,
-          totalPages,
-          currentPage: parseInt(page),
-          limit: parseInt(limit)
-        }
-      });
-    } catch (error) {
-      console.error('Get comments by post error:', error);
       return responseUtils.serverError(res, error.message);
     }
   },
-  
-  // Add a comment to a post
+
   addComment: async (req, res) => {
     try {
       const { postId } = req.params;
       const { content } = req.body;
-      const user_id = req.user.id;
-      
-      // Check if post exists
-      const post = await Post.findByPk(postId);
-      
-      if (!post) {
-        return responseUtils.notFound(res);
-      }
-      
-      // Create comment
-      const comment = await Comment.create({
-        post_id: postId,
-        user_id,
-        content
-      });
-      
-      // Fetch the created comment with user info
-      const newComment = await Comment.findByPk(comment.id, {
-        include: [
-          { 
-            model: User, 
-            attributes: ['id', 'username'] 
-          }
-        ]
-      });
-      
+      const comment = await commentService.addComment(postId, req.user.id, content);
       return responseUtils.success(res, {
         message: 'Comment added successfully',
-        comment: newComment
+        comment
       });
     } catch (error) {
       console.error('Add comment error:', error);
+      if (error.message === 'Post not found') {
+        return responseUtils.notFound(res);
+      }
       return responseUtils.serverError(res, error.message);
     }
   },
-  
-  // Update a comment
+
   updateComment: async (req, res) => {
     try {
       const { commentId } = req.params;
       const { content } = req.body;
-      
-      // Find comment
-      const comment = await Comment.findByPk(commentId);
-      
-      if (!comment) {
-        return responseUtils.notFound(res);
-      }
-      
-      // Check if user is the owner or admin
-      if (comment.user_id !== req.user.id && req.user.role !== 'Admin') {
-        return responseUtils.unauthorized(res, 'You are not authorized to update this comment');
-      }
-      
-      // Update comment
-      await comment.update({ content });
-      
-      // Fetch the updated comment with user info
-      const updatedComment = await Comment.findByPk(commentId, {
-        include: [
-          { 
-            model: User, 
-            attributes: ['id', 'username'] 
-          }
-        ]
-      });
-      
+      const comment = await commentService.updateComment(
+        commentId, 
+        req.user.id, 
+        req.user.role,
+        content
+      );
       return responseUtils.success(res, {
         message: 'Comment updated successfully',
-        comment: updatedComment
+        comment
       });
     } catch (error) {
       console.error('Update comment error:', error);
+      if (error.message === 'Comment not found') {
+        return responseUtils.notFound(res);
+      }
+      if (error.message.includes('Unauthorized')) {
+        return responseUtils.forbidden(res, error.message);
+      }
       return responseUtils.serverError(res, error.message);
     }
   },
-  
-  // Delete a comment
+
   deleteComment: async (req, res) => {
     try {
       const { commentId } = req.params;
-      
-      // Find comment
-      const comment = await Comment.findByPk(commentId);
-      
-      if (!comment) {
-        return responseUtils.notFound(res);
-      }
-      
-      // Check if user is the owner, post owner, or admin
-      if (comment.user_id !== req.user.id && req.user.role !== 'Admin') {
-        // Check if user is the post owner
-        const post = await Post.findByPk(comment.post_id);
-        if (!post || post.user_id !== req.user.id) {
-          return responseUtils.unauthorized(res, 'You are not authorized to delete this comment');
-        }
-      }
-      
-      // Delete comment
-      await comment.destroy();
-      
+      await commentService.deleteComment(commentId, req.user.id, req.user.role);
       return responseUtils.success(res, { message: 'Comment deleted successfully' });
     } catch (error) {
       console.error('Delete comment error:', error);
+      if (error.message === 'Comment not found') {
+        return responseUtils.notFound(res);
+      }
+      if (error.message.includes('Unauthorized')) {
+        return responseUtils.forbidden(res, error.message);
+      }
       return responseUtils.serverError(res, error.message);
     }
   },
-  
-  // Get user's own comments
+
   getMyComments: async (req, res) => {
     try {
-      const user_id = req.user.id;
-      const { page = 1, limit = 20 } = req.query;
-      
-      const offset = (page - 1) * limit;
-      
-      // Fetch comments
-      const { count, rows: userComments } = await comments.findAndCountAll({
-        where: { user_id },
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        order: [['created_at', 'DESC']],
-        include: [
-          { 
-            model: Post, 
-            attributes: ['id', 'title', 'slug']
-          }
-        ]
-      });
-      
-      const totalPages = Math.ceil(count / limit);
-      
-      return responseUtils.success(res, {
-        comments: userComments,
-        pagination: {
-          total: count,
-          totalPages,
-          currentPage: parseInt(page),
-          limit: parseInt(limit)
-        }
-      });
+      const result = await commentService.getMyComments(req.user.id, req.query);
+      return responseUtils.success(res, result);
     } catch (error) {
       console.error('Get my comments error:', error);
       return responseUtils.serverError(res, error.message);
     }
   }
 };
-
-module.exports = commentController;

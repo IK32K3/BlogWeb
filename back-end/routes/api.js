@@ -24,10 +24,11 @@ const { authenticated , isAdmin, isAuthenticatedUserWithRole ,isBlogOwnerRole, i
 const { registerValidation, loginValidation, forgotPasswordValidation, resetPasswordValidation, refreshTokenValidation } = require("modules/auth/validation/authValidations");
 const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, deleteUserValidation, updateProfileValidation, saveSettingsValidation } = require("modules/users/validation/userValidations");
 const { createPostValidation, updatePostValidation, getPostByIdValidation, getPostBySlugValidation, getPostsByCategoryValidation, getAllPostsValidation, getMyPostsValidation, searchPostsValidation, getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
-const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, deleteCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
+const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
 const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation, deleteCategoryValidation } = require("modules/categories/validation/categoryValidations");
 const { getAllLanguagesValidation, getLanguageByIdValidation, createLanguageValidation, updateLanguageValidation, deleteLanguageValidation } = require("modules/languages/validation/languageValidations");
 const { getAllMediaValidation, getMediaByIdValidation, createMediaValidation, updateMediaValidation, deleteMediaValidation } = require("modules/media/validation/mediaValidations");
+const comment = require("models/comment");
 
 const router = express.Router({ mergeParams: true });
 
@@ -95,11 +96,8 @@ router.group("/comments", (router) => {
 
     // Actions on a specific comment (Owner or Admin)
     // Use :commentId consistently
-    router.group("/:commentId", middlewares([isResourceOwner(Comment)]), (router) => { // Corrected Model Name
-        // isResourceOwner should check ownership OR admin status
-        router.put("/", validate(updateCommentValidation), commentController.updateComment);
-        router.delete("/", validate(deleteCommentValidation), commentController.deleteComment);
-    });
+        router.put("/:commentId", middlewares([isResourceOwner(comment)]),validate(updateCommentValidation), commentController.updateComment);
+        router.delete("/:commentId",middlewares([isResourceOwner(comment)]), commentController.deleteComment);
   });
 });
 
