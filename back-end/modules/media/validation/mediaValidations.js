@@ -3,16 +3,16 @@ const { BodyWithLocale, ParamWithLocale, QueryWithLocale } = require('kernels/ru
 // Get all media validation
 const getAllMediaValidation = [
   [
-    new QueryWithLocale('page').isNumberic().get(),
-    new QueryWithLocale('limit').isNumberic().get(),
-    new QueryWithLocale('user_id').isNumberic().get()
+    new QueryWithLocale('page').isNumeric().get(),
+    new QueryWithLocale('limit').isNumeric().get(),
+    new QueryWithLocale('user_id').isNumeric().get()
   ]
 ];
 
 // Get media by ID validation
 const getMediaByIdValidation = [
   [
-    new ParamWithLocale('id').notEmpty().isNumberic().get()
+    new ParamWithLocale('id').notEmpty().isNumeric().get()
   ]
 ];
 
@@ -22,14 +22,14 @@ const createMediaValidation = [
     new BodyWithLocale('name').notEmpty().isLength({ min: 1, max: 100 }).get(),
     new BodyWithLocale('url').notEmpty().isLength({ min: 5, max: 500 }).get(),
     new BodyWithLocale('type').notEmpty().isLength({ min: 3, max: 50 }).get(),
-    new BodyWithLocale('user_id').isNumberic().get()
+    new BodyWithLocale('user_id').isNumeric().get()
   ]
 ];
 
 // Update media validation
 const updateMediaValidation = [
   [
-    new ParamWithLocale('id').notEmpty().isNumberic().get(),
+    new ParamWithLocale('id').notEmpty().isNumeric().get(),
     new BodyWithLocale('name').isLength({ min: 1, max: 100 }).get(),
     new BodyWithLocale('url').isLength({ min: 5, max: 500 }).get(),
     new BodyWithLocale('type').isLength({ min: 3, max: 50 }).get()
@@ -39,7 +39,7 @@ const updateMediaValidation = [
 // Delete media validation
 const deleteMediaValidation = [
   [
-    new ParamWithLocale('id').notEmpty().isNumberic().get()
+    new ParamWithLocale('id').notEmpty().isNumeric().get()
   ]
 ];
 

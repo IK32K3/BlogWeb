@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('post_translate_languages', {
+    await queryInterface.createTable('post_translate_language', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -44,14 +44,14 @@ module.exports = {
         defaultValue: false,
       }
     });
-    await queryInterface.addConstraint('post_translate_languages', {
+    await queryInterface.addConstraint('post_translate_language', {
       fields: ['post_id', 'language_id'],
       type: 'unique',
       name: 'unique_post_language'
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeConstraint('post_translate_languages', 'unique_post_language');
-    await queryInterface.dropTable('post_translate_languages');
+    await queryInterface.removeConstraint('post_translate_language', 'unique_post_language');
+    await queryInterface.dropTable('post_translate_language');
   }
 };

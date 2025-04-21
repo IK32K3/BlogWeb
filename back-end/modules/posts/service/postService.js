@@ -174,7 +174,6 @@ class PostService {
       description, // Assuming description is a main column
       category_id,
       media_ids = [],
-      featured_media_id,
       translations = [],
       status = 'draft',
       scheduled_at // Added from validation
@@ -205,15 +204,15 @@ class PostService {
       category_id,
       slug, // Use the generated unique slug
       status,
-      scheduled_at: status === 'scheduled' ? scheduled_at : null, // Set scheduled_at only if status is scheduled
-      views: 0
+      scheduled_at: status === 'scheduled' ? scheduled_at : null, // Set scheduled_at only if status is scheduled    }, {
+      fields: ['title', 'content', 'description', 'user_id', 'category_id', 'slug', 'status', 'scheduled_at',]
+
     });
 
     // Attach media to post
     if (media_ids.length > 0) {
       // Ensure featured_media_id is part of media_ids if provided
-      const actualFeaturedId = media_ids.includes(featured_media_id) ? featured_media_id : (media_ids.length > 0 ? media_ids[0] : null);
-      await this._attachMediaToPost(post.id, media_ids, actualFeaturedId);
+      await this._attachMediaToPost(post.id, media_ids);
     }
 
     // Add translations if provided
@@ -237,7 +236,7 @@ class PostService {
         throw new Error('Unauthorized to update this post');
     }
 
-    const { title, media_ids, featured_media_id, translations, status, scheduled_at, ...otherUpdateData } = updateData;
+    const { title, media_ids, translations, status, scheduled_at, ...otherUpdateData } = updateData;
 
     // Prepare data for update
     const dataToUpdate = { ...otherUpdateData };
@@ -278,25 +277,17 @@ class PostService {
     // Update post main fields
     await post.update(dataToUpdate);
 
-    // Update media if provided (media_ids could be an empty array to remove all)
+    // Update media (replace all if provided)
     if (media_ids !== undefined) {
-      // Ensure featured_media_id is part of media_ids if provided
-      const actualFeaturedId = media_ids.includes(featured_media_id) ? featured_media_id : (media_ids.length > 0 ? media_ids[0] : null);
-      await this._updatePostMedia(post.id, media_ids, actualFeaturedId);
-    } else if (featured_media_id !== undefined) {
-        // Handle updating only the featured media ID if media_ids array is not passed
-        await PostMedia.update({ is_featured: false }, { where: { post_id: postId, is_featured: true } });
-        await PostMedia.update({ is_featured: true }, { where: { post_id: postId, media_id: featured_media_id } });
+      await this._updatePostMedia(post.id, media_ids);
     }
-
-
+  
     // Update translations if provided
     if (translations !== undefined) {
       await this._updatePostTranslations(post.id, translations);
     }
-
-    // Return the updated post with details
-    return this.getPostById(postId, false); // Re-fetch with includes
+  
+    return this.getPostById(postId, false);
   }
 
   // Delete post
@@ -533,7 +524,7 @@ class PostService {
     ];
   }
 
-  async _attachMediaToPost(postId, mediaIds, featuredMediaId) {
+  async _attachMediaToPost(postId, mediaIds) {
     // Ensure mediaIds are unique
     const uniqueMediaIds = [...new Set(mediaIds)];
 
@@ -541,7 +532,6 @@ class PostService {
       post_id: postId,
       media_id: parseInt(media_id, 10), // Ensure IDs are numbers
       // Set featured flag correctly, ensuring only one can be true
-      is_featured: parseInt(media_id, 10) === parseInt(featuredMediaId, 10)
     }));
 
     if (mediaEntries.length > 0) {
@@ -589,30 +579,10 @@ class PostService {
       const mediaEntries = mediaToAdd.map(media_id => ({
         post_id: postId,
         media_id,
-        is_featured: media_id === numericFeaturedMediaId
       }));
-      await PostMedia.bulkCreate(mediaEntries, { ignoreDuplicates: true });
+      await PostMedia.bulkCreate(mediaEntries);
     }
 
-     // 5. Update the featured status (ensure only the correct one is featured)
-     // Unset existing featured media (if it's not the new featured one or if new list is empty)
-    await PostMedia.update(
-        { is_featured: false },
-        { where: {
-            post_id: postId,
-            is_featured: true,
-            // Only un-feature if it's not the intended featured media ID
-            ...(numericFeaturedMediaId && { media_id: { [Op.ne]: numericFeaturedMediaId } })
-          }
-        }
-    );
-    // Set the new featured media
-    if (numericFeaturedMediaId && numericMediaIds.includes(numericFeaturedMediaId)) {
-        await PostMedia.update(
-            { is_featured: true },
-            { where: { post_id: postId, media_id: numericFeaturedMediaId } }
-        );
-    }
   }
 
   async _updatePostTranslations(postId, translations) {

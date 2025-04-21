@@ -3,15 +3,15 @@ const { BodyWithLocale, ParamWithLocale, QueryWithLocale } = require('kernels/ru
 // Get all languages validation
 const getAllLanguagesValidation = [
   [
-    new QueryWithLocale('page').isNumberic().get(),
-    new QueryWithLocale('limit').isNumberic().get()
+    new QueryWithLocale('page').isNumeric().get(),
+    new QueryWithLocale('limit').isNumeric().get()
   ]
 ];
 
 // Get language by ID validation
 const getLanguageByIdValidation = [
   [
-    new ParamWithLocale('id').notEmpty().isNumberic().get()
+    new ParamWithLocale('id').notEmpty().isNumeric().get()
   ]
 ];
 
@@ -26,7 +26,7 @@ const createLanguageValidation = [
 // Update language validation
 const updateLanguageValidation = [
   [
-    new ParamWithLocale('id').notEmpty().isNumberic().get(),
+    new ParamWithLocale('id').notEmpty().isNumeric().get(),
     new BodyWithLocale('name').isLength({ min: 2, max: 50 }).get(),
     new BodyWithLocale('locale').isLength({ min: 2, max: 10 }).get()
   ]
@@ -35,7 +35,7 @@ const updateLanguageValidation = [
 // Delete language validation
 const deleteLanguageValidation = [
   [
-    new ParamWithLocale('id').notEmpty().isNumberic().get()
+    new ParamWithLocale('id').notEmpty().isNumeric().get()
   ]
 ];
 

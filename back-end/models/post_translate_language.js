@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'PostTranslateLanguage',
-    tableName: 'post_translate_languages',
+    tableName: 'post_translate_language',
     timestamps: false // Disable Sequelize's automatic timestamps
   });
   return PostTranslateLanguage;

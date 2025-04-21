@@ -28,21 +28,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
-    }
+
   }, {
     sequelize,
     modelName: 'PostMedia',
     tableName: 'post_media',
-    timestamps: false // Disable Sequelize's automatic timestamps
+    timestamps: true ,// Disable Sequelize's automatic timestamps
+    underscored: true
   });
   return PostMedia;
 };

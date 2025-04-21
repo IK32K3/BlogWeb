@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('post_translate_languages', [
+    await queryInterface.bulkInsert('post_translate_language', [
       {
         post_id: 1,
         language_id: 1, // English
@@ -38,6 +38,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('post_translate_languages', null, {});
+    await queryInterface.bulkDelete('post_translate_language', null, {});
   }
 };

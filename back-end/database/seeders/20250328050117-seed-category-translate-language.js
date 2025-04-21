@@ -56,6 +56,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('category_translate_languages', null, {});
+    await queryInterface.bulkDelete('category_translate_language', null, {});
   }
 };

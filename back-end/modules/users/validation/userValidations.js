@@ -4,16 +4,16 @@ const { User } = require('models');
 // Get all users validation
 const getAllUsersValidation = [
   [
-    new QueryWithLocale('page').isNumberic().get(),
-    new QueryWithLocale('limit').isNumberic().get(),
-    new QueryWithLocale('role_id').isNumberic().get()
+    new QueryWithLocale('page').isNumeric().get(),
+    new QueryWithLocale('limit').isNumeric().get(),
+    new QueryWithLocale('role_id').isNumeric().get()
   ]
 ];
 
 // Get user by ID validation
 const getUserByIdValidation = [
   [
-    new ParamWithLocale('id').notEmpty().isNumberic().get()
+    new ParamWithLocale('id').notEmpty().isNumeric().get()
   ]
 ];
 
@@ -25,7 +25,7 @@ const createUserValidation = [
     new BodyWithLocale('email').notEmpty().isEmail()
       .unique(User, 'email').get(),
     new BodyWithLocale('password').notEmpty().isLength({ min: 6, max: 100 }).get(),
-    new BodyWithLocale('role_id').notEmpty().isNumberic().get(),
+    new BodyWithLocale('role_id').notEmpty().isNumeric().get(),
     new BodyWithLocale('description').get()
   ]
 ];
@@ -33,17 +33,17 @@ const createUserValidation = [
 // Update user validation
 const updateUserValidation = [
   [
-    new ParamWithLocale('id').notEmpty().isNumberic().get(),
+    new ParamWithLocale('id').notEmpty().isNumeric().get(),
     new BodyWithLocale('username').isLength({ min: 3, max: 50 }).get(),
     new BodyWithLocale('email').isEmail().get(),
-    new BodyWithLocale('role_id').isNumberic().get()
+    new BodyWithLocale('role_id').isNumeric().get()
   ]
 ];
 
 // Delete user validation
 const deleteUserValidation = [
   [
-    new ParamWithLocale('id').notEmpty().isNumberic().get()
+    new ParamWithLocale('id').notEmpty().isNumeric().get()
   ]
 ];
 

@@ -1,19 +1,19 @@
 const { BodyWithLocale, ParamWithLocale, QueryWithLocale } = require('kernels/rules');
 
 // Common validation rules reusable across different validation sets
-const commonRules = {
-  title: () => new BodyWithLocale('title').notEmpty().isLength({ min: 3, max: 300 }).get(),
-  content: () => new BodyWithLocale('content').notEmpty().get(),
-  description: () => new BodyWithLocale('description').notEmpty().isLength({ min: 10, max: 500 }).get(),
-  categoryId: () => new BodyWithLocale('category_id').notEmpty().isNumeric().get(),
-  postId: () => new ParamWithLocale('id').notEmpty().isNumeric().get(),
-  mediaId: () => new BodyWithLocale('media_id').optional().isNumeric().get(),
-  languageId: () => new BodyWithLocale('language_id').optional().isNumeric().get(),
-  slug: () => new ParamWithLocale('slug').notEmpty().isSlug().get(),
-  status: () => new BodyWithLocale('status').optional().isIn(['draft', 'published', 'scheduled', 'archived']).get(),
-  is_original_post: () => new BodyWithLocale('is_original_post').optional().isBoolean().toBoolean().get(),
-  is_featured: () => new BodyWithLocale('is_featured').optional().isBoolean().toBoolean().get(),
-};
+// const commonRules = {
+//   title: () => new BodyWithLocale('title').notEmpty().isLength({ min: 3, max: 300 }).get(),
+//   content: () => new BodyWithLocale('content').notEmpty().isLength({ min: 10, max: 10000 }).get(),
+//   description: () => new BodyWithLocale('description').notEmpty().isLength({ min: 10, max: 500 }).get(),
+//   categoryId: () => new BodyWithLocale('category_id').notEmpty().isNumeric().get(),
+//   postId: () => new ParamWithLocale('id').notEmpty().isNumeric().get(),
+//   mediaId: () => new BodyWithLocale('media_id').optional().isNumeric().get(),
+//   languageId: () => new BodyWithLocale('language_id').optional().isNumeric().get(),
+//   slug: () => new ParamWithLocale('slug').notEmpty().isSlug().get(),
+//   status: () => new BodyWithLocale('status').optional().isIn(['draft', 'published', 'scheduled', 'archived']).get(),
+//   is_original_post: () => new BodyWithLocale('is_original_post').optional().isBoolean().toBoolean().get(),
+//   is_featured: () => new BodyWithLocale('is_featured').optional().isBoolean().toBoolean().get(),
+// };
 
 // --- Validation Sets for Different Routes ---
 
@@ -35,60 +35,73 @@ const searchPostsValidation = [
 
 // [POST] /posts
 const createPostValidation = [
-  commonRules.title(),
-  commonRules.content(),
-  commonRules.description(),
-  commonRules.categoryId(),
-  commonRules.mediaId(),
-  commonRules.languageId(),
-  commonRules.status(),
-  commonRules.is_original_post(),
-  new BodyWithLocale('translations').optional().isArray().withMessage('Translations must be an array'),
-  new BodyWithLocale('featured_media_id').optional({ nullable: true, checkFalsy: true }).isNumeric().toInt(),
+  new BodyWithLocale('user_id').notEmpty().isNumeric().toInt().withMessage('User ID must be a number').get(),
+  // User ID
+  new BodyWithLocale('title').notEmpty().isLength({ min: 3, max: 300 }).withMessage('Title must be between 3 and 300 characters long').get(),
+  new BodyWithLocale('content').notEmpty().isLength({ min: 10, max: 10000 }).withMessage('Content must be between 10 and 10000 characters long').get(),
+  // Content
+  new BodyWithLocale('description').notEmpty().isLength({ min: 10, max: 500 }).withMessage('Description must be between 10 and 500 characters long').get(),
+  // Description
+  new BodyWithLocale('category_id').notEmpty().isNumeric().toInt().withMessage('Category ID must be a number').get(),
+  // Category ID
+  new BodyWithLocale('media_id').optional().isNumeric().toInt().withMessage('Media ID must be a number').get(),
+  // Media ID
+  new BodyWithLocale('language_id').optional().isNumeric().toInt().withMessage('Language ID must be a number').get(),
+  // Language ID
+  new BodyWithLocale('status').optional().isIn(['draft', 'published', 'scheduled', 'archived']).default('draft').withMessage('Status must be one of the following: draft, published, scheduled, archived').get(),
+  // Post status
+  new BodyWithLocale('is_original_post').optional().isBoolean().toBoolean().withMessage('Is original post must be a boolean').get(),
+  // Is original post
+  new BodyWithLocale('translations').optional().isArray().withMessage('Translations must be an array').get(),
+  // Translations
+  new BodyWithLocale('featured_media_id').optional({ nullable: true, checkFalsy: true }).isNumeric().toInt().get(),
   // Featured media ID
-  new BodyWithLocale('tags').optional().isArray().withMessage('Tags must be an array'),
+  new BodyWithLocale('tags').optional().isArray().withMessage('Tags must be an array').get(),
   // Tags
-  new BodyWithLocale('media_ids').optional().isArray().withMessage('Media IDs must be an array'),
+  new BodyWithLocale('media_ids').optional().isArray().withMessage('Media IDs must be an array').get(),
   // Media IDs
-  new BodyWithLocale('remove_media_ids').optional().isArray().withMessage('Remove media IDs must be an array'),
-  // Remove media IDs
-  
 ];
 
 // [PUT] /posts/:id
 const updatePostValidation = [
-  commonRules.postId(),
-  commonRules.title(),
-  commonRules.content(),
-  commonRules.description(),
-  commonRules.categoryId(),
-  commonRules.mediaId(),
-  commonRules.languageId(),
-  commonRules.status(),
-  commonRules.is_original_post(),
-  new BodyWithLocale('translations').optional().isArray().withMessage('Translations must be an array'),
-  new BodyWithLocale('featured_media_id').optional({ nullable: true, checkFalsy: true }).isNumeric().toInt(),
+  new ParamWithLocale('id').notEmpty().isNumeric().toInt().get(),
+  new BodyWithLocale('title').notEmpty().isLength({ min: 3, max: 300 }).withMessage('Title must be between 3 and 300 characters long').get(),
+  new BodyWithLocale('content').notEmpty().isLength({ min: 10, max: 10000 }).withMessage('Content must be between 10 and 10000 characters long').get(),
+  // Content
+  new BodyWithLocale('description').notEmpty().isLength({ min: 10, max: 500 }).withMessage('Description must be between 10 and 500 characters long').get(),
+  // Description
+  new BodyWithLocale('category_id').notEmpty().isNumeric().toInt().withMessage('Category ID must be a number').get(),
+  // Category ID
+  new BodyWithLocale('media_id').optional().isNumeric().toInt().withMessage('Media ID must be a number').get(),
+  // Media ID
+  new BodyWithLocale('language_id').optional().isNumeric().toInt().withMessage('Language ID must be a number').get(),
+  new BodyWithLocale('status').optional().isIn(['draft', 'published', 'scheduled', 'archived']).default('draft').withMessage('Status must be one of the following: draft, published, scheduled, archived').get(),
+  // Post status
+  new BodyWithLocale('is_original_post').optional().isBoolean().toBoolean().withMessage('Is original post must be a boolean').get(),
+  // Is original post
+  new BodyWithLocale('translations').optional().isArray().withMessage('Translations must be an array').get(),
   // Featured media ID
-  new BodyWithLocale('tags').optional().isArray().withMessage('Tags must be an array'),
+  new BodyWithLocale('tags').optional().isArray().withMessage('Tags must be an array').get(),
   // Tags
-  new BodyWithLocale('media_ids').optional().isArray().withMessage('Media IDs must be an array'),
-  // Media IDs
-  new BodyWithLocale('remove_media_ids').optional().isArray().withMessage('Remove media IDs must be an array'),
+  new BodyWithLocale('remove_media_ids').optional().isArray().withMessage('Remove media IDs must be an array').get(),
 ];
 
 // [GET] /posts/:id
 const getPostByIdValidation = [
-  commonRules.postId(),
+  // commonRules.postId(),
+  new ParamWithLocale('id').notEmpty().isNumeric().toInt().get(),
 ];
 
 // [GET] /posts/slug/:slug
 const getPostBySlugValidation = [
-  commonRules.slug()
+  // commonRules.slug()
+  new ParamWithLocale('slug').notEmpty().isSlug().get(),
 ];
 
 // [DELETE] /posts/:id
 const deletePostValidation = [
-  commonRules.postId()
+  // commonRules.postId()
+  new ParamWithLocale('id').notEmpty().isNumeric().toInt().get(),
 ];
 
 // [GET] /posts/category/:categoryId
