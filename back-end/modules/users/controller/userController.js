@@ -63,7 +63,7 @@ const userController = {
     try {
       const { id } = req.params;
       const updatedUser = await userService.updateUser(id, req.body);
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         message: 'User updated successfully',
         user: updatedUser
       });
@@ -84,7 +84,7 @@ const userController = {
     try {
       const { id } = req.params;
       await userService.deleteUser(id);
-      return responseUtils.ok(res, { message: 'User deleted successfully' });
+      return responseUtils.success(res, { message: 'User deleted successfully' });
     } catch (error) {
       console.error('Delete user error:', error);
       return error.message === 'User not found'
@@ -96,14 +96,24 @@ const userController = {
   // GET /api/users/me
   getProfile: async (req, res) => {
     try {
-      const id = req.user.id;
-      const user = await userService.getProfile(id);
-      return responseUtils.ok(res, { user });
+      const userId = Number(req.user.id);
+  
+      if (isNaN(userId)) {
+        return responseUtils.badRequest(res, 'Id must be a number');
+      }
+  
+      const user = await userService.getProfile(userId);
+  
+      return responseUtils.success(res, { user });
+      
     } catch (error) {
       console.error('Get profile error:', error);
-      return error.message === 'User not found'
-        ? responseUtils.notFound(res, 'User not found')
-        : responseUtils.serverError(res, error.message);
+  
+      if (error.message === 'User not found') {
+        return responseUtils.notFound(res, 'User not found');
+      }
+  
+      return responseUtils.serverError(res, error.message);
     }
   },
 
@@ -169,6 +179,7 @@ changePassword: async (req, res) => {
       return responseUtils.serverError(res, error.message);
     }
   },
+  
 
   // POST /api/users/login
   login: async (req, res) => {

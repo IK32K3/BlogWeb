@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // Define associations here
       UserMedia.belongsTo(models.User, { foreignKey: 'user_id' , as: 'user' });
       UserMedia.belongsTo(models.Media, { foreignKey: 'media_id' , as: 'media' });
+      
     }
   }
   UserMedia.init({

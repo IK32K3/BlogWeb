@@ -163,7 +163,7 @@ const userService = {
    * @returns {Promise<Object>} - Updated user
    */
   updateUser: async (id, updateData, mediaIds) => {
-    const transaction = await sequelize.transaction();
+    const transaction = await db.sequelize.transaction();
     
     try {
       const user = await User.findByPk(id, { transaction });
@@ -234,7 +234,7 @@ const userService = {
    * @returns {Promise<boolean>} - True if successful
    */
   deleteUser: async (id) => {
-    const transaction = await sequelize.transaction();
+    const transaction = await db.sequelize.transaction();
     
     try {
       // Delete related data first
@@ -258,6 +258,44 @@ const userService = {
       throw error;
     }
   },
+    /**
+   * Get profile of currently authenticated user
+   * @param {number} userId - ID of the user (from token)
+   * @returns {Promise<Object>} - User profile
+   */
+    getProfile: async (userId) => {
+      const user = await User.findByPk(userId, {
+        include: [
+          { 
+            model: Role, 
+            as: 'role',
+            attributes: ['id', 'name'] 
+          },
+          {
+            model: Setting,
+            as: 'settings',
+            attributes: ['id', 'settings']
+          },
+          {
+            model: UserMedia,
+            as: 'userMedia',
+            include: [{
+              model: Media,
+              as: 'media',
+              attributes: ['id', 'name', 'url', 'type']
+            }]
+          }
+        ],
+        attributes: { exclude: ['password'] }
+      });
+  
+      if (!user) {
+        throw new Error('User not found');
+      }
+  
+      return user;
+    },
+  
 
   /**
    * Update user profile with password verification
