@@ -2,18 +2,14 @@ const { BodyWithLocale, ParamWithLocale, QueryWithLocale } = require('kernels/ru
 
 // Get all categories validation
 const getAllCategoriesValidation = [
-  [
-    new QueryWithLocale('page').isNumeric().get(),
-    new QueryWithLocale('limit').isNumeric().get(),
-    new QueryWithLocale('language_id').isNumeric().get()
-  ]
+    new QueryWithLocale('page').optional().isNumeric().get(),
+    new QueryWithLocale('limit').optional().isNumeric().get(),
+    new QueryWithLocale('language_id').optional().isNumeric().get()
 ];
 
 // Get category by ID validation
 const getCategoryByIdValidation = [
-  [
     new ParamWithLocale('id').notEmpty().isNumeric().get()
-  ]
 ];
 
 // Create category validation
