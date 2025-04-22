@@ -1,6 +1,11 @@
 const responseUtils = require('utils/responseUtils');
 const userService = require('../service/userService');
 
+const parsePositiveInt = (value) => {
+  const num = Number(value);
+  return Number.isInteger(num) && num > 0 ? num : null;
+};
+
 const userController = {
   // GET /api/users
   getAllUsers: async (req, res) => {
@@ -96,12 +101,12 @@ const userController = {
   // GET /api/users/me
   getProfile: async (req, res) => {
     try {
-      const userId = Number(req.user.id);
-  
-      if (isNaN(userId)) {
+      const rawId = req.params.id || (req.user && req.user.id);
+      const parsedUserId = parsePositiveInt(rawId) // Lấy userId từ params hoặc từ token
+      if (parsedUserId === null) {
         return responseUtils.badRequest(res, 'Id must be a number');
       }
-  
+      
       const user = await userService.getProfile(userId);
   
       return responseUtils.success(res, { user });
@@ -115,6 +120,7 @@ const userController = {
   
       return responseUtils.serverError(res, error.message);
     }
+    
   },
 
   // PUT /api/users/me
@@ -122,7 +128,7 @@ const userController = {
     try {
       const id = req.user.id;
       const updatedUser = await userService.updateProfile(id, req.body);
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         message: 'Profile updated successfully',
         user: updatedUser
       });

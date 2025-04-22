@@ -60,7 +60,7 @@ router.group("/users", (router) => {
     router.put("/", validate(updateProfileValidation), userController.updateProfile);
     router.post("/settings", validate(saveSettingsValidation), userController.saveSettings);
     router.put("/change-password", validate(changePasswordValidation), userController.changePassword);
-  });
+  }); 
 
   // ─────────────── Login Route ─────────────── //
   router.post("/login", validate(loginUserValidation), userController.login);
