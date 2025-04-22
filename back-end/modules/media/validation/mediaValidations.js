@@ -2,18 +2,14 @@ const { BodyWithLocale, ParamWithLocale, QueryWithLocale } = require('kernels/ru
 
 // Get all media validation
 const getAllMediaValidation = [
-  [
-    new QueryWithLocale('page').isNumeric().get(),
-    new QueryWithLocale('limit').isNumeric().get(),
-    new QueryWithLocale('user_id').isNumeric().get()
-  ]
+    new QueryWithLocale('page').optional().isNumeric().get(),
+    new QueryWithLocale('limit').optional().isNumeric().get(),
+    new QueryWithLocale('user_id').optional().isNumeric().get()
 ];
 
 // Get media by ID validation
 const getMediaByIdValidation = [
-  [
     new ParamWithLocale('id').notEmpty().isNumeric().get()
-  ]
 ];
 
 // Create media validation
