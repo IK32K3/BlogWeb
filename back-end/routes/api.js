@@ -22,7 +22,7 @@ const { authenticated , isAdmin, isAuthenticatedUserWithRole ,isBlogOwnerRole, i
 
 // Import Validations (ensure these match exports)
 const { registerValidation, loginValidation, forgotPasswordValidation, resetPasswordValidation, refreshTokenValidation } = require("modules/auth/validation/authValidations");
-const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, updateProfileValidation, saveSettingsValidation, loginUserValidation, changePasswordValidation } = require("modules/users/validation/userValidations");
+const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, updateProfileValidation, saveSettingsValidation, changePasswordValidation } = require("modules/users/validation/userValidations");
 const { createPostValidation, updatePostValidation, getPostByIdValidation, getPostBySlugValidation, getPostsByCategoryValidation, getAllPostsValidation, getMyPostsValidation, searchPostsValidation, getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
 const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
 const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation, deleteCategoryValidation } = require("modules/categories/validation/categoryValidations");
@@ -47,23 +47,19 @@ router.group("/auth", (router) => {
 router.group("/users", (router) => {
   // ─────────────── Admin Routes ─────────────── //
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
-    router.get("/", validate(getAllUsersValidation), userController.getAllUsers);
-    router.post("/", validate(createUserValidation), userController.createUser);
+    router.get("/admin", validate(getAllUsersValidation), userController.getAllUsers);
+    router.post("/admin", validate(createUserValidation), userController.createUser);
     router.get("/:id", validate(getUserByIdValidation), userController.getUserById);
     router.put("/:id", validate(updateUserValidation), userController.updateUser);
     router.delete("/:id", userController.deleteUser);
   });
-
+  router.get("/", middlewares([authenticated]), userController.getProfile);
   // ─────────── Authenticated User Routes ─────────── //
   router.group("/me", middlewares([authenticated]), (router) => {
-    router.get("/", userController.getProfile);
     router.put("/", validate(updateProfileValidation), userController.updateProfile);
-    router.post("/settings", validate(saveSettingsValidation), userController.saveSettings);
+    router.put("/settings", validate(saveSettingsValidation), userController.saveSettings);
     router.put("/change-password", validate(changePasswordValidation), userController.changePassword);
   }); 
-
-  // ─────────────── Login Route ─────────────── //
-  router.post("/login", validate(loginUserValidation), userController.login);
 });
 
 // ===== Post Routes =====

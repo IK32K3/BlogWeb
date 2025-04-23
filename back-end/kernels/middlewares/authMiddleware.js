@@ -63,7 +63,7 @@ const authenticated = async (req, res, next) => {
     if (!roleName) {
         console.error(`User ${user.id} does not have a valid role assigned.`);
         // Use 500 Internal Server Error as this indicates a data integrity issue
-        return responseUtils.serverError(res, 'User role configuration error.');
+        return responseUtils.forbidden(res, 'User role configuration error.');
     }
 
     req.user = {
