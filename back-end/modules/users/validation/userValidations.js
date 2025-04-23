@@ -46,10 +46,7 @@ changePasswordValidation = [
   new BodyWithLocale('current_password').notEmpty().get(),
   new BodyWithLocale('new_password').notEmpty().isLength({ min: 6, max: 100 }).get()
 ];
-loginUserValidation = [
-  new BodyWithLocale('email').notEmpty().isEmail().get(),
-  new BodyWithLocale('password').notEmpty().isLength({ min: 6, max: 100 }).get()
-];
+
 
 module.exports = {
   getAllUsersValidation,
@@ -59,5 +56,5 @@ module.exports = {
   updateProfileValidation,
   saveSettingsValidation,
   changePasswordValidation,
-  loginUserValidation,
+  
 };
