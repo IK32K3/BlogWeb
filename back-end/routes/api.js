@@ -45,6 +45,15 @@ router.group("/auth", (router) => {
 
 // ===== User Routes =====
 router.group("/users", (router) => {
+  // ─────────── Authenticated User Routes ─────────── //
+  // Move this BEFORE the admin routes with parameters
+  router.group("/me", middlewares([authenticated]), (router) => {
+    router.get("/", userController.getProfile);
+    router.put("/", validate(updateProfileValidation), userController.updateProfile);
+    router.post("/settings", validate(saveSettingsValidation), userController.saveSettings);
+    router.put("/change-password", validate(changePasswordValidation), userController.changePassword);
+  }); 
+
   // ─────────────── Admin Routes ─────────────── //
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
     router.get("/admin", validate(getAllUsersValidation), userController.getAllUsers);
@@ -53,13 +62,17 @@ router.group("/users", (router) => {
     router.put("/:id", validate(updateUserValidation), userController.updateUser);
     router.delete("/:id", userController.deleteUser);
   });
-  router.get("/", middlewares([authenticated]), userController.getProfile);
+
   // ─────────── Authenticated User Routes ─────────── //
   router.group("/me", middlewares([authenticated]), (router) => {
+    router.get("/", userController.getProfile);
     router.put("/", validate(updateProfileValidation), userController.updateProfile);
-    router.put("/settings", validate(saveSettingsValidation), userController.saveSettings);
+    router.post("/settings", validate(saveSettingsValidation), userController.saveSettings);
     router.put("/change-password", validate(changePasswordValidation), userController.changePassword);
   }); 
+
+  // ─────────────── Login Route ─────────────── //
+  router.post("/login", validate(loginUserValidation), userController.login);
 });
 
 // ===== Post Routes =====

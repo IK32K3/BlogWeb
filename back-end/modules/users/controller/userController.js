@@ -97,15 +97,21 @@ const userController = {
   // GET /api/users/me
   getProfile: async (req, res) => {
     try {
-      // Chỉ lấy id từ user trong token (không dùng params)
-      const userId = req.user.id;
+      const rawId = req.params.id || (req.user && req.user.id);
+      const parsedUserId = parsePositiveInt(rawId) // Lấy userId từ params hoặc từ token
+      if (parsedUserId === null) {
+        return responseUtils.badRequest(res, 'Id must be a number');
+      }
+      
       const user = await userService.getProfile(userId);
       return responseUtils.success(res, { user });
     } catch (error) {
       console.error('Get profile error:', error);
+  
       if (error.message === 'User not found') {
         return responseUtils.notFound(res, 'User not found');
       }
+  
       return responseUtils.serverError(res, error.message);
     }
   },
