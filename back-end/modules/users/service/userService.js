@@ -337,40 +337,6 @@ const userService = {
   },
 
   /**
-   * Verify user credentials
-   * @param {string} usernameOrEmail - Username or email
-   * @param {string} password - Password
-   * @returns {Promise<Object>} - User without password if valid
-   */
-  verifyCredentials: async (usernameOrEmail, password) => {
-    const user = await User.findOne({
-      where: {
-        [Op.or]: [
-          { username: usernameOrEmail },
-          { email: usernameOrEmail }
-        ],
-        is_active: true
-      },
-      include: [
-        { 
-          model: Role, 
-          as: 'role',
-          attributes: ['id', 'name'] 
-        }
-      ]
-    });
-    
-    if (!user) throw new Error('Invalid credentials');
-    
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) throw new Error('Invalid credentials');
-    
-    const userJson = user.toJSON();
-    delete userJson.password;
-    return userJson;
-  },
-
-  /**
    * Change user password
    * @param {number} userId - User ID
    * @param {string} currentPassword - Current password

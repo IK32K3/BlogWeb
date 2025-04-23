@@ -51,7 +51,7 @@ router.group("/users", (router) => {
     router.get("/", userController.getProfile);
     router.put("/", validate(updateProfileValidation), userController.updateProfile);
     router.post("/settings", validate(saveSettingsValidation), userController.saveSettings);
-    router.put("/change-password", validate(changePasswordValidation), userController.changePassword);
+    router.put("/changePassword", validate(changePasswordValidation), userController.changePassword);
   }); 
 
   // ─────────────── Admin Routes ─────────────── //
@@ -63,20 +63,18 @@ router.group("/users", (router) => {
     router.delete("/:id", userController.deleteUser);
   });
 
-  // ─────────── Authenticated User Routes ─────────── //
-  router.group("/me", middlewares([authenticated]), (router) => {
-    router.get("/", userController.getProfile);
-    router.put("/", validate(updateProfileValidation), userController.updateProfile);
-    router.post("/settings", validate(saveSettingsValidation), userController.saveSettings);
-    router.put("/change-password", validate(changePasswordValidation), userController.changePassword);
-  }); 
-
-  // ─────────────── Login Route ─────────────── //
-  router.post("/login", validate(loginUserValidation), userController.login);
 });
 
 // ===== Post Routes =====
 router.group("/posts", (router) => {
+   // --- Authenticated routes ---
+   router.group("/", middlewares([authenticated]), (router) => { // Use 'authenticated' instead of 'isAuthenticated' if it's the primary check
+    router.get("/my", validate(getMyPostsValidation), postController.getMyPosts); // Combined route for user's posts (can filter by status via query)
+    // Post creation
+    router.post("/", middlewares([isBlogOwnerRole]),validate(createPostValidation), postController.createPost);  
+    router.put("/:id", middlewares([isResourceOwner(Post)]), validate(updatePostValidation), postController.updatePost);
+    router.delete("/:id", middlewares([isResourceOwner(Post)]), postController.deletePost);
+  });
   // --- Public routes (Read operations) ---
   router.get("/", validate(getAllPostsValidation), postController.getAllPosts);//done
   router.get("/search", validate(searchPostsValidation), postController.searchPosts); // Search functionality , done
@@ -85,14 +83,6 @@ router.group("/posts", (router) => {
   router.get("/author/:userId", validate(getPostsByAuthorValidation), postController.getPostsByAuthor); // Corrected Path: Posts by author , dôn
   router.get("/:id", validate(getPostByIdValidation), postController.getPostById); // Get by ID (usually last among GET routes with params)
 
-  // --- Authenticated routes ---
-  router.group("/", middlewares([authenticated]), (router) => { // Use 'authenticated' instead of 'isAuthenticated' if it's the primary check
-    router.get("/my", validate(getMyPostsValidation), postController.getMyPosts); // Combined route for user's posts (can filter by status via query)
-    // Post creation
-    router.post("/", middlewares([isBlogOwnerRole]),validate(createPostValidation), postController.createPost);  
-    router.put("/:id", middlewares([isResourceOwner(Post)]), validate(updatePostValidation), postController.updatePost);
-    router.delete("/:id", middlewares([isResourceOwner(Post)]), postController.deletePost);
-  });
 });
 
 

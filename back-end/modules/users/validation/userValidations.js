@@ -43,8 +43,8 @@ const saveSettingsValidation = [
   new BodyWithLocale('settings').notEmpty().get()
 ];
 changePasswordValidation = [
-  new BodyWithLocale('current_password').notEmpty().get(),
-  new BodyWithLocale('new_password').notEmpty().isLength({ min: 6, max: 100 }).get()
+  new BodyWithLocale('current_password').optional().notEmpty().get(),
+  new BodyWithLocale('new_password').optional().notEmpty().isLength({ min: 6, max: 100 }).get()
 ];
 
 

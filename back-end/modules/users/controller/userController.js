@@ -97,21 +97,18 @@ const userController = {
   // GET /api/users/me
   getProfile: async (req, res) => {
     try {
-      const rawId = req.params.id || (req.user && req.user.id);
-      const parsedUserId = parsePositiveInt(rawId) // Lấy userId từ params hoặc từ token
-      if (parsedUserId === null) {
-        return responseUtils.badRequest(res, 'Id must be a number');
-      }
+      const userId = req.user.id;
       
       const user = await userService.getProfile(userId);
       return responseUtils.success(res, { user });
+      
     } catch (error) {
       console.error('Get profile error:', error);
-  
+      
       if (error.message === 'User not found') {
         return responseUtils.notFound(res, 'User not found');
       }
-  
+      
       return responseUtils.serverError(res, error.message);
     }
   },
@@ -151,7 +148,7 @@ changePassword: async (req, res) => {
 
     await userService.changePassword(userId, currentPassword, newPassword);
 
-    return responseUtils.ok(res, { message: 'Password changed successfully' });
+    return responseUtils.success(res, { message: 'Password changed successfully' });
   } catch (error) {
     console.error('Change password error:', error);
     if (error.message === 'User not found') {
@@ -169,7 +166,7 @@ changePassword: async (req, res) => {
       const user_id = req.user.id;
       const { settings } = req.body;
       const savedSettings = await userService.saveSettings(user_id, settings);
-      return responseUtils.ok(res, {
+      return responseUtils.success(res, {
         message: 'Settings saved successfully',
         settings: savedSettings
       });
