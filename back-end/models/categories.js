@@ -12,6 +12,16 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       // Example: categories.hasMany(models.Posts, { foreignKey: 'category_id' });
+      Categories.hasMany(models.CategoryTranslateLanguage, {
+        foreignKey: 'category_id',
+        as: 'translations'
+      });
+      Categories.belongsToMany(models.Language, {
+        through: models.CategoryTranslateLanguage,
+        foreignKey: 'category_id',
+        otherKey: 'language_id',
+        as: 'languages'
+      });
     }
   }
   Categories.init({

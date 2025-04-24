@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // Define associations here
       CategoryTranslateLanguage.belongsTo(models.Categories, { foreignKey: 'category_id' });
-      CategoryTranslateLanguage.belongsTo(models.Language, { foreignKey: 'language_id' });
+      CategoryTranslateLanguage.belongsTo(models.Language, { as: 'language', foreignKey: 'language_id' });
     }
   }
   CategoryTranslateLanguage.init({

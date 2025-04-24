@@ -1,4 +1,5 @@
 const { Op } = require('sequelize');
+const slugify = require('slugify');
 const { Categories, CategoryTranslateLanguage, Language } = require('models');
 
 const categoryService = {
@@ -26,6 +27,8 @@ const categoryService = {
       include: language_id ? [
         {
           model: CategoryTranslateLanguage,
+          as: 'translations',
+          include: [{ model: Language, as: 'language' }],
           where: { language_id },
           required: false
         }
@@ -55,7 +58,12 @@ const categoryService = {
       include: [
         {
           model: CategoryTranslateLanguage,
-          include: [{ model: Language }]
+          as: 'translations',
+          include: [{ 
+            model: Language ,
+             as: 'language',
+             attributes: ['id', 'name']
+            }]
         }
       ]
     });
@@ -73,11 +81,11 @@ const categoryService = {
    * @returns {Promise<Object>} Created category with translations
    */
   createCategory: async (categoryData) => {
-    const { name, translations = [] } = categoryData;
+    const { name, slug , translations = [] } = categoryData;
     
     // Create category
     const category = await Categories.create({
-      name
+      name,slug
     });
     
     // Create translations if provided
@@ -86,6 +94,7 @@ const categoryService = {
         category_id: category.id,
         language_id: translation.language_id,
         name: translation.name,
+        slug: translation.slug || slugify(translation.name, { lower: true, strict: true }),
         is_active: translation.is_active || true
       }));
       
@@ -97,7 +106,13 @@ const categoryService = {
       include: [
         {
           model: CategoryTranslateLanguage,
-          include: [{ model: Language }]
+          as: 'translations',
+          include: [{ 
+            model: Language , 
+            as: 'language',
+            attributes: ['id', 'name']        
+           }]
+
         }
       ]
     });
@@ -112,7 +127,7 @@ const categoryService = {
    * @returns {Promise<Object>} Updated category with translations
    */
   updateCategory: async (id, categoryData) => {
-    const { name, translations = [] } = categoryData;
+    const { name, slug ,translations= [] } = categoryData;
     
     // Find category
     const category = await Categories.findByPk(id);
@@ -123,7 +138,8 @@ const categoryService = {
     
     // Update category
     await category.update({
-      name: name || category.name
+      name: name || category.name,
+      slug: slug || category.slug
     });
     
     // Update translations if provided
@@ -136,6 +152,7 @@ const categoryService = {
           },
           defaults: {
             name: translation.name,
+            slug: translation.slug || slugify(translation.name, { lower: true, strict: true }),
             is_active: translation.is_active || true
           }
         });
@@ -143,6 +160,7 @@ const categoryService = {
         if (!created) {
           await transRecord.update({
             name: translation.name,
+            slug: translation.slug || slugify(translation.name, { lower: true, strict: true }),
             is_active: translation.is_active !== undefined 
               ? translation.is_active 
               : transRecord.is_active
@@ -156,7 +174,9 @@ const categoryService = {
       include: [
         {
           model: CategoryTranslateLanguage,
-          include: [{ model: Language }]
+          as: 'translations',
+          required: false,
+          include: [{ model: Language , as: 'language' }]
         }
       ]
     });

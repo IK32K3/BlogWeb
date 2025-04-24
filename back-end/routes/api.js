@@ -25,7 +25,7 @@ const { registerValidation, loginValidation, forgotPasswordValidation, resetPass
 const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, updateProfileValidation, saveSettingsValidation, changePasswordValidation } = require("modules/users/validation/userValidations");
 const { createPostValidation, updatePostValidation, getPostByIdValidation, getPostBySlugValidation, getPostsByCategoryValidation, getAllPostsValidation, getMyPostsValidation, searchPostsValidation, getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
 const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
-const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation, deleteCategoryValidation } = require("modules/categories/validation/categoryValidations");
+const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation } = require("modules/categories/validation/categoryValidations");
 const { getAllLanguagesValidation, getLanguageByIdValidation, createLanguageValidation, updateLanguageValidation, deleteLanguageValidation } = require("modules/languages/validation/languageValidations");
 const { getAllMediaValidation, getMediaByIdValidation, createMediaValidation, updateMediaValidation, deleteMediaValidation } = require("modules/media/validation/mediaValidations");
 const comment = require("models/comment");
@@ -113,7 +113,7 @@ router.group("/categories", (router) => {
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
     router.post("/", validate(createCategoryValidation), categoryController.createCategory);
     router.put("/:id", validate(updateCategoryValidation), categoryController.updateCategory);
-    router.delete("/:id", validate(deleteCategoryValidation), categoryController.deleteCategory);
+    router.delete("/:id",categoryController.deleteCategory);
   });
 });
 

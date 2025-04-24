@@ -24,17 +24,10 @@ const updateCategoryValidation = [
     new BodyWithLocale('name').isLength({ min: 2, max: 50 }).get()
 ];
 
-// Delete category validation
-const deleteCategoryValidation = [
-  [
-    new ParamWithLocale('id').notEmpty().isNumeric().get()
-  ]
-];
 
 module.exports = {
   getAllCategoriesValidation,
   getCategoryByIdValidation,
   createCategoryValidation,
   updateCategoryValidation,
-  deleteCategoryValidation
 };
