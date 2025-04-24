@@ -30,17 +30,10 @@ const updateMediaValidation = [
     new BodyWithLocale('type').isLength({ min: 3, max: 50 }).get()
 ];
 
-// Delete media validation
-const deleteMediaValidation = [
-  [
-    new ParamWithLocale('id').notEmpty().isNumeric().get()
-  ]
-];
 
 module.exports = {
   getAllMediaValidation,
   getMediaByIdValidation,
   createMediaValidation,
   updateMediaValidation,
-  deleteMediaValidation
 };

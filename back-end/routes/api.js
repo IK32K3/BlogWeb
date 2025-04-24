@@ -26,8 +26,8 @@ const { getAllUsersValidation, getUserByIdValidation, createUserValidation, upda
 const { createPostValidation, updatePostValidation, getPostByIdValidation, getPostBySlugValidation, getPostsByCategoryValidation, getAllPostsValidation, getMyPostsValidation, searchPostsValidation, getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
 const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
 const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation } = require("modules/categories/validation/categoryValidations");
-const { getAllLanguagesValidation, getLanguageByIdValidation, createLanguageValidation, updateLanguageValidation, deleteLanguageValidation } = require("modules/languages/validation/languageValidations");
-const { getAllMediaValidation, getMediaByIdValidation, createMediaValidation, updateMediaValidation, deleteMediaValidation } = require("modules/media/validation/mediaValidations");
+const { getAllLanguagesValidation, getLanguageByIdValidation, createLanguageValidation, updateLanguageValidation } = require("modules/languages/validation/languageValidations");
+const { getAllMediaValidation, getMediaByIdValidation, createMediaValidation, updateMediaValidation } = require("modules/media/validation/mediaValidations");
 const comment = require("models/comment");
 
 const router = express.Router({ mergeParams: true });
@@ -127,7 +127,7 @@ router.group("/languages", (router) => {
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
     router.post("/", validate(createLanguageValidation), languageController.createLanguage);
     router.put("/:id", validate(updateLanguageValidation), languageController.updateLanguage);
-    router.delete("/:id", validate(deleteLanguageValidation), languageController.deleteLanguage);
+    router.delete("/:id",  languageController.deleteLanguage);
   });
 });
 
@@ -146,7 +146,7 @@ router.group("/media", (router) => {
     router.group("/:id", middlewares([isResourceOwner(Media)]), (router) => { // Added Ownership Check
        // isResourceOwner should check ownership OR admin status
        router.put("/", validate(updateMediaValidation), mediaController.updateMedia); // Update media metadata (e.g., alt text)
-       router.delete("/", validate(deleteMediaValidation), mediaController.deleteMedia); // Delete media file and record
+       router.delete("/", mediaController.deleteMedia); // Delete media file and record
     });
   });
 });

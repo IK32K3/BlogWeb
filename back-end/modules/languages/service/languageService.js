@@ -71,7 +71,7 @@ const languageService = {
     // Check if language already exists
     const existingLanguage = await Language.findOne({
       where: {
-        [Op.or]: [{ name }, { locale }]
+        [Op.or]: [{ name }, { locale }] 
       }
     });
     

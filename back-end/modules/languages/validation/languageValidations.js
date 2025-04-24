@@ -25,17 +25,12 @@ const updateLanguageValidation = [
     new BodyWithLocale('locale').isLength({ min: 2, max: 10 }).get()
 ];
 
-// Delete language validation
-const deleteLanguageValidation = [
-  [
-    new ParamWithLocale('id').notEmpty().isNumeric().get()
-  ]
-];
+
 
 module.exports = {
   getAllLanguagesValidation,
   getLanguageByIdValidation,
   createLanguageValidation,
   updateLanguageValidation,
-  deleteLanguageValidation
+
 };
