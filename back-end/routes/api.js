@@ -127,7 +127,7 @@ router.group("/languages", (router) => {
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
     router.post("/", validate(createLanguageValidation), languageController.createLanguage);
     router.put("/:id", validate(updateLanguageValidation), languageController.updateLanguage);
-    router.delete("/:id",  languageController.deleteLanguage);
+    router.delete("/:id", languageController.deleteLanguage);
   });
 });
 
@@ -143,11 +143,8 @@ router.group("/media", (router) => {
 
     // --- Routes requiring specific media access (Owner or Admin) ---
     // Use :mediaId or :id consistently. Let's use :id.
-    router.group("/:id", middlewares([isResourceOwner(Media)]), (router) => { // Added Ownership Check
-       // isResourceOwner should check ownership OR admin status
-       router.put("/", validate(updateMediaValidation), mediaController.updateMedia); // Update media metadata (e.g., alt text)
-       router.delete("/", mediaController.deleteMedia); // Delete media file and record
-    });
+    router.put("/:id", middlewares([isResourceOwner(Media)]), validate(updateMediaValidation), mediaController.updateMedia); // Update media details
+    router.delete("/:id", middlewares([isResourceOwner(Media)]), mediaController.deleteMedia); // Delete media
   });
 });
 
