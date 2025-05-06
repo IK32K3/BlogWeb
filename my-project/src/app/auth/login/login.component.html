@@ -1,0 +1,73 @@
+<!-- <p>login works!</p> -->
+<body class="bg-gray-100 flex flex-col items-center justify-center h-screen">
+    
+
+    <div class="py-8 px-4 sm:px-6 lg:px-8 mt-20">
+        <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-4">Welcome Back</h1>
+        <p class="text-xl text-gray-900">Sign in to access your account.</p>
+        </div>
+    </div>
+  
+    <div class="bg-white shadow-md rounded-lg p-8 max-w-md w-full mx-auto">
+        <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+        <div class="mb-4">
+            <label for="email" class="text-lg font-normal block text-gray-800 mb-2">Email or Username</label>
+            <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            required
+            class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700"
+            placeholder="Email or Username"
+            />
+        </div>
+        <div class="mb-4 relative">
+            <label for="password" class="text-lg font-normal block text-gray-800 mb-2">Password</label>
+            <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            required
+            class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-700"
+            placeholder="Password"
+            />
+            <button
+            type="button"
+            class="absolute right-3 top-12 mt-1 text-gray-500 hover:text-gray-700"
+            (click)="togglePasswordVisibility()"
+            >
+            <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+        </div>
+        <div class="mb-4 flex items-center">
+            <input type="checkbox" id="remember-me" name="rememberMe" [(ngModel)]="rememberMe" class="form-checkbox" />
+            <label for="remember-me" class="ml-2 text-gray-700">Remember me</label>
+        </div>
+        <div class="flex justify-center mb-4">
+            <button
+            type="submit"
+            class="bg-gray-800 h-14 text-white text-center text-lg font-medium px-4 py-2 w-full rounded-full bg-gradient-to-br from-gray-600 to-gray-900 hover:from-gray-700 hover:to-gray-900"
+            >
+            Sign In
+            </button>
+        </div>
+        <div class="text-center mb-4">
+            <a routerLink="/auth/forgot-password" class="text-gray-900 hover:underline ml-64">Forgot Password?</a>
+        </div>
+        <div class="flex justify-center">
+            <a routerLink="/auth/register">
+            <button
+                type="button"
+                class="text-white px-4 py-2 h-14 text-center font-medium w-52 text-lg rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+            >
+                Create an account
+            </button>
+            </a>
+        </div>
+        </form>
+    </div>
+</body>  
+<router-outlet></router-outlet>
