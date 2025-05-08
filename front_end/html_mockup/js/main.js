@@ -153,6 +153,7 @@ function togglePasswordVisibility() {
     const passwordField = document.getElementById('password');
     const passwordButton = document.getElementById('toggle-password');
     
+    
     if (passwordField && passwordButton) {
         const isPassword = passwordField.type === 'password';
         passwordField.type = isPassword ? 'text' : 'password';

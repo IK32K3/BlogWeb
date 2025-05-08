@@ -1,1 +1,100 @@
-<p>footer works!</p>
+<!-- <p>footer works!</p> -->
+<footer class="bg-gray-900 text-white py-12">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <!-- Newsletter Section -->
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          Nhận bài viết mới qua email
+        </h2>
+        <p class="text-lg text-gray-300 mb-6 max-w-2xl mx-auto">
+          Đăng ký để nhận những bài viết chất lượng nhất trực tiếp đến hộp thư của bạn
+        </p>
+        <form
+          class="flex flex-col sm:flex-row justify-center items-center gap-2 max-w-md mx-auto"
+          (submit)="subscribe()"
+        >
+          <input
+            [(ngModel)]="email"
+            name="email"
+            type="email"
+            placeholder="Email của bạn"
+            class="flex-1 w-full px-5 py-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 transition"
+          />
+          <button
+            type="submit"
+            class="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg flex items-center"
+          >
+            <i class="fas fa-paper-plane mr-2"></i> Đăng ký ngay
+          </button>
+        </form>
+      </div>
+  
+      <!-- Social Links & Navigation -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div>
+          <h3 class="text-xl font-bold mb-4 text-blue-400">WebBlog</h3>
+          <p class="text-gray-400">
+            Nơi chia sẻ kiến thức và kinh nghiệm về công nghệ, du lịch và lối sống hiện đại.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-4 border-b border-gray-700 pb-2">Liên kết</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-blue-400 transition">Trang chủ</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-blue-400 transition">Bài viết</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-blue-400 transition">Về chúng tôi</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-blue-400 transition">Liên hệ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-4 border-b border-gray-700 pb-2">Thể loại</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-blue-400 transition">Công nghệ</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-blue-400 transition">Du lịch</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-blue-400 transition">Lifestyle</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-blue-400 transition">Ẩm thực</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-4 border-b border-gray-700 pb-2">Kết nối</h4>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-blue-400 text-2xl transition mr-0" aria-label="Facebook">
+              <i class="fab fa-facebook"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-pink-500 text-2xl transition " aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-blue-300 text-2xl transition" aria-label="Twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-red-500 text-2xl transition" aria-label="YouTube">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+          <div class="mt-4">
+            <p class="text-gray-400 mb-2">Email: contact&#64;weblog.com</p>
+            <p class="text-gray-400">Hotline: 0123 456 789</p>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Copyright -->
+      <div class="pt-6 border-t border-gray-800 text-center">
+        <p class="text-gray-500 text-sm">
+          &copy; 2025 <span class="text-blue-400">WebBlog</span>. All rights reserved.
+          <a href="#" class="text-gray-500 hover:text-blue-400 transition">Privacy Policy</a> |
+          <a href="#" class="text-gray-500 hover:text-blue-400 transition">Terms of Service</a>
+        </p>
+      </div>
+    </div>
+    <button
+        id="back-to-top"
+        class="fixed bottom-6 right-6 w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-full shadow-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300 hidden flex items-center justify-center"
+        (click)="scrollToTop()"
+        aria-label="Back to top"
+        >
+        <i class="fas fa-arrow-up text-lg"></i>
+    </button>
+
+  </footer>
+  

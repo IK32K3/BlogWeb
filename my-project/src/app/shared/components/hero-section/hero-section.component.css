@@ -1,0 +1,11 @@
+#back-to-top {
+    display: none; /* Mặc định ẩn */
+  }
+  
+  #back-to-top.hidden {
+    display: none; /* Ẩn khi không cần */
+  }
+  
+  #back-to-top:not(.hidden) {
+    display: flex; /* Hiển thị khi cần */
+  }

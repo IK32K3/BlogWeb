@@ -1,1 +1,26 @@
-<p>introduce-page works!</p>
+<navbar-introduce></navbar-introduce> 
+<app-hero-section ></app-hero-section > 
+<div class="bg-gray-200 overflow-x-hidden">
+    <!-- Posts Section -->
+    <app-post-card></app-post-card>
+      <section class="bg-gray-100 py-16">
+        <div class="container mx-auto px-4">
+          <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+              <img src="" alt="About Us" class="rounded-lg shadow-md w-full" />
+            </div>
+            <div class="md:w-1/2">
+              <h2 class="text-3xl font-bold mb-4">About Our Blog</h2>
+              <p class="text-gray-600 mb-4">Welcome to BlogHub...</p>
+              <p class="text-gray-600 mb-6">Founded in 2020...</p>
+              <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
+                Learn More About Us
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>      
+</div>
+<!-- Footer -->
+<app-footer></app-footer>
+<router-outlet></router-outlet>

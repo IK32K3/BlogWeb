@@ -1,4 +1,3 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -7,8 +6,12 @@ export const routes: Routes = [
     loadChildren: () => import('./auth/auth.routes').then(m => m.routes)
   },
   {
+    path: 'home',
+    loadChildren: () => import('./home/home.routes').then(m => m.routes)
+  },
+  {
     path: '',
-    redirectTo: 'auth/login',
+    redirectTo: 'home/introduce-page',
     pathMatch: 'full'
   }
 ];

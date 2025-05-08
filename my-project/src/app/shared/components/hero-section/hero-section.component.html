@@ -1,1 +1,33 @@
-<p>hero-section works!</p>
+<section class="relative w-full h-full text-white">
+    <div class="overflow-hidden relative w-screen h-screen">
+      <div class="flex transition-transform duration-500 ease-in-out h-full" [style.transform]="getTransform()" #carousel>
+        <ng-container *ngFor="let slide of slides; index as i">
+          <div class="carousel-item min-w-full h-screen relative">
+            <img [src]="slide.image" alt="Slide" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-center px-4">
+              <span class="inline-block bg-red-500 text-white text-xs px-2 py-1 rounded-full mb-2">Lifestyle</span>
+              <h1 class="text-2xl md:text-4xl font-bold mb-4">{{ slide.title }}</h1>
+              <div class="flex items-center space-x-4">
+                <img [src]="slide.authorImage" alt="Author" class="w-8 h-8 md:w-10 md:h-10 rounded-full">
+                <div class="text-sm">
+                  <p>{{ slide.author }}</p>
+                  <p>{{ slide.date }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  
+    <button (click)="prevSlide()" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white text-blue-500 px-3 py-1 md:px-4 md:py-2 rounded-full shadow">❮</button>
+    <button (click)="nextSlide()" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white text-blue-500 px-3 py-1 md:px-4 md:py-2 rounded-full shadow">❯</button>
+  
+    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+      <span *ngFor="let dot of slides; index as i" (click)="setSlide(i)"
+        class="dot w-2 h-2 md:w-3 md:h-3 rounded-full cursor-pointer"
+        [ngClass]="{ 'bg-blue-500': currentIndex === i, 'bg-gray-400': currentIndex !== i }">
+      </span>
+    </div>
+  </section>
+  

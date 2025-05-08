@@ -1,1 +1,59 @@
-<p>register works!</p>
+<!-- register.component.html -->
+<navbar-introduce></navbar-introduce>
+<div class="bg-gray-200 flex flex-col items-center justify-center min-h-screen">
+    <div id="navbar-introduce" class="w-full fixed top-0"></div>
+  
+    <div class="py-8 px-4 sm:px-6 text-center lg:px-8">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold text-center mb-4">Join MyBlog</h1>
+        <p class="text-xl text-gray-900 text-center">Create an account to start sharing your blog.</p>
+      </div>
+    </div>
+  
+    <div class="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
+      <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
+        <div class="mb-4">
+          <label for="name" class="block text-gray-800 text-lg mb-2">Name</label>
+          <input type="text" id="name" name="name" ngModel required class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Enter your name">
+        </div>
+        <div class="mb-4">
+          <label for="email" class="block text-gray-800 text-lg mb-2">Email Address</label>
+          <input type="email" id="email" name="email" ngModel required class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Enter your email address">
+        </div>
+        <div class="mb-4 relative">
+          <label for="password" class="block text-gray-800 text-lg mb-2">Password</label>
+          <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" ngModel required class="w-full px-4 py-2 h-14 text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Enter your password">
+          <button type="button" class="absolute right-3 top-12 mt-1 text-gray-500 hover:text-gray-700" (click)="togglePasswordVisibility()">
+            <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
+        </div>
+        <div class="mb-4">
+          <label for="confirm-password" class="block text-gray-800 text-lg mb-2">Confirm Password</label>
+          <input type="password" id="confirm-password" name="confirmPassword"  ngModel required class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Confirm your password">
+        </div>
+        <div class="mb-4">
+          <input type="checkbox" id="terms" name="terms" ngModel class="mr-2">
+          <label for="terms" class="text-gray-800">
+            I agree to Medium's
+            <a href="#" class="text-blue-500 hover:underline">Terms of Service</a> and
+            <a href="#" class="text-blue-500 hover:underline">Privacy Policy</a>
+          </label>
+        </div>
+        <div class="mb-4">
+          <input type="checkbox" id="updates" name="updates" ngModel class="mr-2">
+          <label for="updates" class="text-gray-800">
+            Send me emails with Medium updates, stories from authors I follow, and more
+          </label>
+        </div>
+        <div class="flex justify-center">
+          <button type="submit" class="bg-gray-800 text-white px-4 py-2 h-14 w-full text-center font-medium text-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-900 hover:from-gray-700 hover:to-gray-900">
+            Register
+          </button>
+        </div>
+      </form>
+      <p class="text-center text-gray-700 mt-4">Already have an account?
+        <a routerLink="/login" class="text-blue-500 hover:underline">Sign In</a>
+      </p>
+    </div>
+  </div>
+<router-outlet></router-outlet>

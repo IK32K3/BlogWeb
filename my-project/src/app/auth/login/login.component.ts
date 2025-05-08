@@ -3,20 +3,17 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, RouterLink } from '@angular/router'; 
+import { NavbarIntroduceComponent } from '../../shared/components/navbar-introduce/navbar-introduce.component';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule, // <-- Make sure FormsModule is imported for ngModel
-    RouterLink,  // <-- Import RouterLink if using routerLink
-    RouterOutlet // <-- ADD RouterOutlet HERE
-  ], // tự import luôn các module cần
+  imports: [CommonModule,FormsModule,RouterLink,RouterOutlet,NavbarIntroduceComponent ], 
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrl: './login.component.css'
 })
 export class LoginComponent {
   // ... your component logic (email, password, showPassword, etc.)
+  username = '';
   email = '';
   password = '';
   showPassword = false;
@@ -26,8 +23,14 @@ export class LoginComponent {
     this.showPassword = !this.showPassword;
   }
 
-  onSubmit() {
-    console.log('Login attempt:', this.email, this.password, this.rememberMe);
-    // Add your actual login logic here
+  onSubmit(): void {
+    if (!this.email || !this.username || !this.password) {
+      alert('Vui lòng nhập đầy đủ email và mật khẩu');
+      return;
+    }
+  
+    // Giả lập đăng nhập
+    console.log('Login attempt:', this.email ,this.username, this.rememberMe);
+    // this.authService.login(this.email, this.password).subscribe(...)
   }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component ,AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
@@ -6,6 +6,21 @@ import { Component } from '@angular/core';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
-export class NavbarComponent {
+export class NavBarComponent implements AfterViewInit {
+  ngAfterViewInit(): void {
+    const dropdownButton = document.getElementById('dropdownButton');
+    const dropdownMenu = document.getElementById('dropdownMenu');
 
+    if (dropdownButton && dropdownMenu) {
+      dropdownButton.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('hidden');
+      });
+
+      window.addEventListener('click', (event) => {
+        if (!dropdownButton.contains(event.target as Node) && !dropdownMenu.contains(event.target as Node)) {
+          dropdownMenu.classList.add('hidden');
+        }
+      });
+    }
+  }
 }
