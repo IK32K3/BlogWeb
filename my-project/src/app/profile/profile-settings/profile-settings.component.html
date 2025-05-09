@@ -1,1 +1,153 @@
-<p>profile-settings works!</p>
+<app-navbar></app-navbar> 
+<div class="bg-gray-200 flex flex-col min-h-screen m-0">
+    <section class="container mx-auto px-4 py-8 flex-grow">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-32">
+                <img src="https://kenh14cdn.com/2017/powerrangers0828131280jpg-8dd373-1280w-1-1490847186920.jpg" alt="sieu nhan gao">
+            </div>
+            <div class="px-6 pb-6 relative">
+                <div class="flex flex-col md:flex-row items-start md:items-end -mt-16">
+                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" 
+                         alt="Profile Picture" 
+                         class="w-32 h-32 rounded-full border-4 border-white shadow-lg">
+                    <div class="md:ml-6 mt-4 md:mt-0">
+                        <h1 class="text-3xl font-bold text-outline-white-shadow text-white">Alexander Nguyen</h1>
+                        <p class="text-white text-outline-white-shadow">Tech Content Creator | Ex-Amazon, Microsoft, Google</p>
+                        <div class="flex items-center mt-2">
+                            <span class="text-gray-200 mr-4 text-outline-white-shadow"><i class="fas fa-users mr-1"></i> 41K Followers</span>
+                            <span class="text-gray-200 text-outline-white-shadow"><i class="fab fa-linkedin mr-1 text-blue-600"></i> 220K+ on LinkedIn</span>
+                        </div>
+                    </div>
+                    <div class="ml-auto mt-4 md:mt-0">
+                        <button class="follow-btn bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-700 hover:to-blue-900 text-white px-6 py-2 rounded-full font-medium shadow-sm">
+                            <i class="fas fa-plus mr-2"></i> Follow
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col md:flex-row gap-6">
+            <!-- Left Column (Posts) -->
+            <div class="w-full md:w-3/4">
+                <!-- Navigation Tabs -->
+                <div class="container mx-auto py-4 mb-2">
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                        <nav class="flex overflow-x-auto">
+                            <a 
+                                href="#" 
+                                *ngFor="let tab of tabs" 
+                                (click)="selectTab(tab.key, $event)"
+                                [ngClass]="{
+                                    'text-blue-600 active': selectedTab === tab.key,
+                                    'text-gray-600 hover:text-blue-600': selectedTab !== tab.key
+                                }"
+                                class="tab-item px-6 py-4 font-medium whitespace-nowrap"
+                            >
+                                <i [class]="tab.icon + ' mr-2'"></i> {{ tab.label }}
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+                <!-- Posts List -->
+                <div class="space-y-6" *ngIf="selectedTab === 'posts'">
+                    <div *ngFor="let post of posts" class="post-item bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg">
+                        <div class="p-6">
+                        <div class="flex items-start">
+                            <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <span [ngClass]="'bg-' + post.categoryColor + '-100 text-' + post.categoryColor + '-800'" class="text-xs font-semibold px-2.5 py-0.5 rounded">
+                                {{ post.category }}
+                                </span>
+                                <span class="text-gray-500 text-sm ml-4">
+                                <i class="far fa-clock mr-1"></i> {{ post.date }}
+                                </span>
+                            </div>
+                            <a href="/front_end/html_mockup/page/blog/post-detail.html" class="text-2xl font-bold text-gray-800 hover:text-blue-600 mb-3 block">
+                                {{ post.title }}
+                            </a>
+                            <p class="text-gray-600 mb-4">{{ post.description }}</p>
+                            <div class="flex items-center text-gray-500 text-sm">
+                                <span class="mr-4"><i class="far fa-eye mr-1"></i> {{ post.views }} views</span>
+                                <span class="mr-4"><i class="far fa-comment mr-1"></i> {{ post.comments }} comments</span>
+                                <span><i class="far fa-bookmark mr-1"></i> Save</span>
+                            </div>
+                            </div>
+                            <img [src]="post.imageUrl"
+                                alt="Post Image"
+                                class="ml-6 w-32 h-24 object-cover rounded-lg hidden md:block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- save List -->
+                 <div class="space-y-6" *ngIf="selectedTab === 'saved'">
+                    <div *ngFor="let post of savedPosts" class="post-item bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg">
+                        <div class="p-6">
+                            <div class="flex items-start">
+                                <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                    {{ post.category }}
+                                    </span>
+                                    <span class="text-gray-500 text-sm ml-4">
+                                    <i class="far fa-clock mr-1"></i> {{ post.date }}
+                                    </span>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-800 hover:text-blue-600 mb-3 block">
+                                    {{ post.title }}
+                                </h2>
+                                <p class="text-gray-600 mb-4">{{ post.description }}</p>
+                                <div class="flex items-center text-gray-500 text-sm">
+                                    <span class="mr-4"><i class="far fa-eye mr-1"></i> {{ post.views }} views</span>
+                                    <span class="mr-4"><i class="far fa-comment mr-1"></i> {{ post.comments }} comments</span>
+                                    <span><i class="far fa-bookmark mr-1"></i> Saved</span>
+                                </div>
+                                </div>
+                                <img [src]="post.imageUrl" alt="Post Image" class="ml-6 w-32 h-24 object-cover rounded-lg hidden md:block" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <!-- Right Column (Profile Info) -->
+            <div class="w-full md:w-1/4 py-4">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">About</h3>
+                        <p class="text-gray-600 mb-4">
+                        Sharing ideas about making online content, building in public, and navigating tech careers. Former engineer at FAANG companies.
+                        </p>
+                        <div class="flex space-x-4">
+                        <a class="mr-0" *ngFor="let link of socialLinks" [href]="link.href" [ngClass]="link.colorClass" [class]="link.hoverClass">
+                            <i [class]="link.iconClass"></i>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-gray-800">Following</h3>
+                            <a href="#" class="text-sm text-blue-600 hover:underline">See all (253)</a>
+                        </div>
+                        <ul class="space-y-3">
+                        <li *ngFor="let follow of followingList" class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <img [src]="follow.logoUrl" alt="{{ follow.name }}" class="w-8 h-8 rounded-full mr-3">
+                                <a [href]="follow.link" class="text-gray-700 hover:text-blue-600 font-medium">{{ follow.name }}</a>
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+</div>
+<app-footer></app-footer>
+<router-outlet></router-outlet>

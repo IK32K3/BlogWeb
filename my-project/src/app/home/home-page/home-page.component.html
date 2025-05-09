@@ -1,1 +1,82 @@
-<p>home-page works!</p>
+<app-navbar></app-navbar> 
+<app-hero-section ></app-hero-section >
+<div class="bg-gray-200">
+<section class="container mx-auto px-4 py-12">
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Main Content -->
+    <main class="w-full lg:w-3/4">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-bold text-gray-800">Latest Articles</h2>
+        <div class="flex space-x-2">
+          <button class="px-3 py-1 bg-blue-200 hover:bg-blue-300 text-blue-800 rounded-full text-sm">All</button>
+          <button class="px-3 py-1 bg-gray-100 hover:bg-blue-300 text-gray-600  rounded-full text-sm">Popular</button>
+          <button class="px-3 py-1 bg-gray-100 hover:bg-blue-300 text-gray-600 rounded-full text-sm">Recent</button>
+        </div>
+      </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Post Cards -->
+            <div *ngFor="let post of posts" class="post-card bg-white rounded-lg overflow-hidden">
+                <a [href]="post.link">
+                    <img [src]="post.imageUrl" alt="Post Image" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <span class="category-tag inline-block bg-red-100 text-red-600 hover:bg-red-600 hover:text-white text-xs font-semibold px-3 py-1 rounded-full mb-3"  [ngClass]="'category-' + post.category">{{ post.category }}</span>
+                        <h3 class="text-xl font-bold mb-3 text-gray-800">{{ post.title }}</h3>
+                        <p class="text-gray-600 mb-4">{{ post.description }}</p>
+                        <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-500 items-end">{{ post.date }}</span>
+                        <a [href]="post.link" class="text-blue-600 hover:underline font-medium">Read More-></a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="w-full lg:w-1/4 space-y-6">
+      <!-- About Me -->
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">About The Blog</h3>
+        <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="Author" class="w-20 h-20 rounded-full mx-auto mb-4">
+        <p class="text-gray-600 mb-4">Welcome to BlogHub, where we share insights on technology, lifestyle, travel, and more.</p>
+        <button class="w-full bg-blue-600 hover:bg-blue-800 text-white py-2 rounded-lg">Learn More ></button>
+      </div>
+
+      <!-- Popular Posts -->
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">Popular Posts</h3>
+        <div class="space-y-4">
+          <div *ngFor="let post of popularPosts" class="sidebar-item flex items-start p-2 rounded-lg">
+            <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded-full text-xs font-bold mr-3 mt-3">{{ post.rank }}</span>
+            <div>
+              <h4 class="font-semibold text-gray-800">{{ post.title }}</h4>
+              <p class="text-sm text-gray-500">{{ post.date }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">Categories</h3>
+        <div class="flex flex-wrap gap-2">
+          <a *ngFor="let category of categories" [href]="category.link" class="topic-tag inline-block bg-gray-100 text-gray-800 text-sm px-3 py-1 rounded-full hover:shadow "[ngClass]="'category-' + category.name">{{ category.name }}</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+    <section class="container mx-auto px-4 py-8">
+            <div class="flex justify-center mt-6 space-x-2">
+                <a href="#" class="px-4 py-2 text-white bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded">«</a>
+                <a href="#" class="px-4 py-2 text-white bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded">1</a>
+                <a href="#" class="px-4 py-2 text-white bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded">2</a>
+                <a href="#" class="px-4 py-2 text-white bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded">3</a>
+                <a href="#" class="px-4 py-2 text-white bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded">»</a>
+            </div>
+    </section>
+
+</section>
+</div>
+<app-footer></app-footer>
+<router-outlet></router-outlet>

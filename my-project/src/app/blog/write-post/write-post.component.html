@@ -1,1 +1,106 @@
-<p>write-post works!</p>
+<app-navbar></app-navbar> 
+<div class="bg-gray-200">
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-6 border-b border-gray-100">
+                <input type="text" [(ngModel)]="post.title" class="title-input w-full border-none outline-none text-4xl font-bold mb-4 placeholder:text-gray-400 placeholder:opacity-70"
+                    placeholder="Your amazing post title...">
+
+                <div class="flex flex-col md:flex-row gap-6 mt-4">
+                    <div class="flex-1 min-w-[200px]">
+                        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <div class="relative">
+                            <input type="text" [(ngModel)]="post.category" id="category-search" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
+                                placeholder="Search or select a category" (focus)="showCategoryOptions()" (input)="filterCategoryOptions($event)">
+                            <ul *ngIf="categoryOptionsVisible" id="category-options" class="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto">
+                                <li *ngFor="let option of filteredCategories" class="px-4 py-2 hover:bg-indigo-100 cursor-pointer" (click)="selectCategory(option)">
+                                    {{ option }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 min-w-[200px]">
+                        <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                        <div class="flex flex-wrap items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent">
+                            <div id="tag-container" class="flex flex-wrap gap-2">
+                                <div *ngFor="let tag of post.tags" class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full flex items-center gap-2">
+                                    {{ tag }}
+                                    <span class="text-indigo-400 hover:text-indigo-600 cursor-pointer" (click)="removeTag(tag)">
+                                        <i class="fas fa-times text-xs"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <input type="text" [(ngModel)]="newTag" class="flex-1 min-w-[100px] outline-none" placeholder="Add tags (press Enter)" (keydown.enter)="addTag()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div
+                    class="my-6 border-2 border-dashed border-gray-200 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-300 hover:bg-gray-50 transition-colors"
+                    (click)="triggerFileInput()"
+                    >
+                    <ng-container *ngIf="!imageSelected">
+                        <i class="fas fa-cloud-upload-alt text-indigo-400 text-4xl mb-3"></i>
+                        <p class="text-gray-600 font-medium">
+                        Drag & drop your featured image here or click to browse
+                        </p>
+                        <p class="text-gray-400 text-sm mt-1">
+                        Recommended size: 1200x630px (JPG, PNG up to 5MB)
+                        </p>
+                    </ng-container>
+
+                    <ng-container *ngIf="imageSelected">
+                        <img
+                        [src]="imagePreview"
+                        alt="Preview"
+                        class="mx-auto max-h-94 w-full object-contain mb-4"
+                        />
+                        <button
+                        class="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                        (click)="resetImage($event)"
+                        >
+                        Remove Image
+                        </button>
+                    </ng-container>
+
+                    <input
+                        type="file"
+                        accept="image/*"
+                        #fileInput
+                        class="hidden"
+                        (change)="handleFileInput($event)"
+                    />
+                </div>
+
+                <app-quill-editor></app-quill-editor>
+            </div>
+
+            <div class="p-6 border-t border-gray-100 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 status-dot"></span>
+                    <span class="text-sm text-gray-500">Auto-saved</span>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                    <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-trash"></i>
+                        <span>Discard</span>
+                    </button>
+                    <button class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-save"></i>
+                        <span>Save Draft</span>
+                    </button>
+                    <button (click)="publishPost()" class="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Publish</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<app-footer></app-footer>
+<router-outlet></router-outlet>

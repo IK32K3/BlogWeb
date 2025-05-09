@@ -1,0 +1,14 @@
+<!-- editor.component.html -->
+<quill-editor
+  [(ngModel)]="editorContent"
+  [modules]="editorModules"
+  [placeholder]="'Write your story here...'"
+  theme="snow"
+  class="text-lg"
+></quill-editor>
+
+<!-- Optional: Display the content
+<div class="mt-4">
+  <h3>Preview:</h3>
+  <div [innerHTML]="editorContent"></div>
+</div> -->

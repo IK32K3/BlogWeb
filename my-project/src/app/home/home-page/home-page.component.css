@@ -1,0 +1,72 @@
+.category-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.category-Technology {
+  background-color: #cdc5fc; /* light orange */
+  color: #2e07db;
+}
+
+.category-Technology:hover {
+  background-color: #2901bd;
+  color: #fff;
+}
+
+.category-Health {
+  background-color: #fab5b5; /* light orange */
+  color: #ff0000;
+}
+
+.category-Health:hover {
+  background-color: #d40c0c;
+  color: #fff;
+}
+
+.category-Food {
+  background-color: #fdcbf7; /* light orange */
+  color: #d906a4;
+}
+
+.category-Food:hover {
+  background-color: #c90470;
+  color: #fff;
+}
+
+.category-Lifestyle {
+  background-color: #fef3c7; /* light orange */
+  color: #d97706;
+}
+
+.category-Lifestyle:hover {
+  background-color: #d97706;
+  color: #fff;
+}
+
+.category-Travel {
+  background-color: #d1fae5; /* light green */
+  color: #059669;
+}
+
+
+.category-Travel:hover {
+  background-color: #059669;
+  color: #fff;
+}
+
+.category-Home {
+  background-color: #ede9fe; /* light purple */
+  color: #7c3aed;
+}
+
+.category-Home:hover {
+  background-color: #7c3aed;
+  color: #fff;
+}
+
+/* Thêm các category khác tương tự */

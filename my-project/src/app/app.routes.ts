@@ -14,6 +14,10 @@ export const routes: Routes = [
     loadChildren: () => import('./blog/blog.routes').then(m => m.routes)
   },
   {
+    path: 'profile',
+    loadChildren: () => import('./profile/profile.routes').then(m => m.routes)
+  },
+  {
     path: '',
     redirectTo: 'home/introduce-page',
     pathMatch: 'full'

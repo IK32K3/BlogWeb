@@ -8,6 +8,8 @@ import { FooterComponent } from './components/footer/footer.component';
 import { HeroSectionComponent } from './components/hero-section/hero-section.component';
 import { PostCardComponent } from './components/post-card/post-card.component';
 import { NavBarComponent } from './components/navbar/navbar.component';
+import { QuillModule } from 'ngx-quill'; // Import QuillModule if you are using it in your shared module
+import { QuillEditorComponent } from './components/quill-editor/quill-editor.component'; // Import your QuillEditorComponent if you have it
 
 
 @NgModule({
@@ -17,6 +19,7 @@ import { NavBarComponent } from './components/navbar/navbar.component';
     HeroSectionComponent,
     PostCardComponent,
     NavBarComponent,
+    QuillEditorComponent, 
   ],
   exports: [
     NavbarIntroduceComponent,
@@ -24,6 +27,7 @@ import { NavBarComponent } from './components/navbar/navbar.component';
     HeroSectionComponent,
     PostCardComponent,
     NavBarComponent,
+    QuillEditorComponent, // Export your QuillEditorComponent if you want to use it in other modules
   ],
   imports: [
     CommonModule,
@@ -35,6 +39,8 @@ import { NavBarComponent } from './components/navbar/navbar.component';
     HeroSectionComponent,
     PostCardComponent,
     NavBarComponent,
+    QuillModule,
+    QuillEditorComponent 
   ]
 })
 export class SharedModule { }

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, RouterLink } from '@angular/router'; 
 import { NavbarIntroduceComponent } from '../../shared/components/navbar-introduce/navbar-introduce.component';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -32,5 +33,6 @@ export class LoginComponent {
     // Giả lập đăng nhập
     console.log('Login attempt:', this.email ,this.username, this.rememberMe);
     // this.authService.login(this.email, this.password).subscribe(...)
+    
   }
 }

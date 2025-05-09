@@ -1,1 +1,162 @@
-<p>profile-user works!</p>
+<app-navbar></app-navbar> 
+<div class="bg-gray-200 py-4 px-4">
+    <div class="px-4 mt-6">
+            <div class="container mx-auto ">
+                <div class="relative rounded-lg shadow-sm  bg-gray-100">
+                    <!-- Cover Photo -->
+                    <div class="h-60 bg-gradient-to-r rounded-t-lg overflow-hidden mb-12">
+                        <img src="https://kenh14cdn.com/2017/powerrangers0828131280jpg-8dd373-1280w-1-1490847186920.jpg" 
+                            alt="Cover Photo" 
+                            class="w-full h-60 object-cover">
+                    </div>
+                    
+                    <!-- Profile Info -->
+                    <div class="flex flex-col md:flex-row items-center md:items-end px-6 pb-6 -mt-16">
+                        <div class="relative">
+                            <img class="w-32 h-32 rounded-full avatar-ring mx-auto md:mx-0" 
+                                src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" 
+                                alt="Profile Picture">
+                        </div>
+                        
+                        <div class="text-center md:text-left mt-4 md:mt-0 md:ml-8">
+                            <h2 class="text-3xl font-bold text-gray-800">John Doe</h2>
+                            <p class="text-gray-600 mt-1">Senior Software Engineer &#64; TechCorp</p>
+                            
+                            <div class="flex flex-wrap justify-center md:justify-start gap-x-4 gap-y-2 mt-3 text-gray-600">
+                                <span class="flex items-center">
+                                    <i class="fas fa-map-marker-alt mr-1.5"></i> San Francisco, CA
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-envelope mr-1.5"></i> johndoe&#64;example.com
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-calendar-alt mr-1.5"></i> Joined June 2020
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 md:mt-0 md:ml-auto">
+                            <button id="editProfileBtn" class="bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-700 hover:to-blue-900 text-white px-6 py-2 rounded-full font-medium shadow-md transition-colors">
+                                <i class="fas fa-pen mr-2"></i> Edit Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <!-- Tabs -->
+  <div class="container bg-gray-100 mx-auto px-4 mt-6">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <nav class="flex overflow-x-auto">
+            <a href="#" 
+            *ngFor="let tab of tabs" 
+            (click)="selectTab(tab.key, $event)"
+            [ngClass]="{
+                'text-blue-600 active': selectedTab === tab.key,
+                'text-gray-600 hover:text-blue-600': selectedTab !== tab.key
+            }"
+            class="tab-item px-6 py-4 font-medium whitespace-nowrap">
+            <i [class]="tab.icon + ' mr-2'"></i> {{ tab.label }}
+            </a>
+        </nav>
+        </div>
+
+    <!-- Tab Contents -->
+        <div class="container mx-auto px-4 py-8">
+            <div *ngIf="selectedTab === 'comments'">
+                <div id="commentsTab" class="space-y-6 tab-content active">
+                    <div *ngFor="let comment of comments"  class="post-card bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-start">
+                        <img [src]="comment.avatar" alt="Author" class="w-12 h-12 rounded-full mr-4" />
+
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <div>
+                                <h4 class="font-semibold text-gray-800">{{ comment.author }}</h4>
+                                <p class="text-gray-500 text-sm">
+                                Commented on <span class="text-blue-600">{{ comment.postTitle }}</span>
+                                </p>
+                            </div>
+                            <span class="text-sm text-gray-500">{{ comment.date }}</span>
+                            </div>
+                            <p class="text-gray-700 mt-3 mb-4">{{ comment.content }}</p>
+                            <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                                <div class="flex space-x-4 text-gray-500 text-sm">
+                                    <button class="like-btn flex items-center hover:text-blue-600" (click)="likeComment(comment)">
+                                    <i class="far fa-thumbs-up mr-1"></i>
+                                    <span class="like-count">{{ comment.likes }}</span>
+                                    </button>
+                                    <button class="flex items-center hover:text-blue-600">
+                                    <i class="far fa-comment mr-1"></i> Reply
+                                    </button>
+                                </div>
+
+                                <div class="flex space-x-3">
+                                    <button class="edit-btn text-gray-400 hover:text-blue-600" (click)="editComment(comments)">
+                                    <i class="far fa-edit"></i>
+                                    </button>
+                                    <button class="delete-btn text-gray-400 hover:text-red-600" (click)="deleteComment(comments)">
+                                    <i class="far fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div> 
+            </div>
+
+            <div *ngIf="selectedTab === 'lists'">
+                <div id="listsTab" class="space-y-6 tab-content" *ngIf="selectedTab === 'lists'">
+                    <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                        <i class="fas fa-list-ul text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-700">No lists yet</h3>
+                        <p class="text-gray-500 mt-2">When you create lists, they'll appear here.</p>
+                    </div>
+                </div>
+            </div>
+
+                <div *ngIf="selectedTab === 'stories'" class="space-y-6 tab-content">
+                    <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                        <i class="fas fa-book-open text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-700">No stories yet</h3>
+                        <p class="text-gray-500 mt-2">When you publish stories, they'll appear here.</p>
+                    </div>
+                </div>
+
+            <div *ngIf="selectedTab === 'about'">
+                <div id="aboutTab" class="space-y-6 tab-content" *ngIf="selectedTab === 'about'">
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">About John Doe</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Bio</h4>
+                                <p class="text-gray-600">
+                                Senior Software Engineer with 8+ years of experience building scalable web applications.
+                                Passionate about React, Node.js, and cloud technologies.
+                                </p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-2">Skills</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-full text-sm">JavaScript</span>
+                                    <span class="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-full text-sm">React</span>
+                                    <span class="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-full text-sm">Node.js</span>
+                                    <span class="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-full text-sm">AWS</span>
+                                    <span class="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-full text-sm">TypeScript</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<app-footer></app-footer>
+<router-outlet></router-outlet>
