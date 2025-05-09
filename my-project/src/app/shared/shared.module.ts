@@ -7,6 +7,7 @@ import { RouterOutlet } from '@angular/router'; // Import RouterOutlet if you ne
 import { FooterComponent } from './components/footer/footer.component';
 import { HeroSectionComponent } from './components/hero-section/hero-section.component';
 import { PostCardComponent } from './components/post-card/post-card.component';
+import { NavBarComponent } from './components/navbar/navbar.component';
 
 
 @NgModule({
@@ -15,12 +16,14 @@ import { PostCardComponent } from './components/post-card/post-card.component';
     FooterComponent,
     HeroSectionComponent,
     PostCardComponent,
+    NavBarComponent,
   ],
   exports: [
     NavbarIntroduceComponent,
     FooterComponent,
     HeroSectionComponent,
     PostCardComponent,
+    NavBarComponent,
   ],
   imports: [
     CommonModule,
@@ -29,6 +32,9 @@ import { PostCardComponent } from './components/post-card/post-card.component';
     RouterModule,
     RouterOutlet ,
     FooterComponent,
+    HeroSectionComponent,
+    PostCardComponent,
+    NavBarComponent,
   ]
 })
 export class SharedModule { }

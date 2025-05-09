@@ -16,25 +16,25 @@ export class HeroSectionComponent implements OnInit {
 
   slides = [
     {
-      image: 'https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg',
+      image: 'https://cdn2.tuoitre.vn/zoom/700_700/471584752817336320/2024/6/3/doraemon-3-17173722166781704981911-30-9-657-1207-crop-1717372336444425413969.jpeg',
       title: 'Tips for Hosting an Easy Birthday Party',
       author: 'David Smith',
       date: 'February 10, 2024',
-      authorImage: 'https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg'
+      authorImage: 'https://cdn2.tuoitre.vn/zoom/700_700/471584752817336320/2024/6/3/doraemon-3-17173722166781704981911-30-9-657-1207-crop-1717372336444425413969.jpeg'
     },
     {
-      image: 'https://upload.wikimedia.org/wikipedia/en/1/17/Doraemon_character.png',
+      image: 'https://cdn2.tuoitre.vn/zoom/700_700/471584752817336320/2024/6/3/doraemon-3-17173722166781704981911-30-9-657-1207-crop-1717372336444425413969.jpeg',
       title: 'Tips for Hosting an Easy Birthday Party',
       author: 'David Smith',
       date: 'February 10, 2024',
-      authorImage: 'https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg'
+      authorImage: 'https://cdn2.tuoitre.vn/zoom/700_700/471584752817336320/2024/6/3/doraemon-3-17173722166781704981911-30-9-657-1207-crop-1717372336444425413969.jpeg'
     },
     {
-      image: 'https://cdn.tuoitre.vn/thumb_w/730/471584752817336320/2023/5/18/photo-3-16844085569911047870668.jpg',
+      image: 'https://cdn2.tuoitre.vn/zoom/700_700/471584752817336320/2024/6/3/doraemon-3-17173722166781704981911-30-9-657-1207-crop-1717372336444425413969.jpeg',
       title: 'Tips for Hosting an Easy Birthday Party',
       author: 'David Smith',
       date: 'February 10, 2024',
-      authorImage: 'https://vcdn1-giaitri.vnecdn.net/2023/04/28/doraemon4-1682675790-8961-1682675801.jpg'
+      authorImage: 'https://cdn2.tuoitre.vn/zoom/700_700/471584752817336320/2024/6/3/doraemon-3-17173722166781704981911-30-9-657-1207-crop-1717372336444425413969.jpeg'
     }
   ];
 

@@ -1,16 +1,63 @@
-<!-- <p>navbar works!</p> -->
-<nav class="bg-white shadow-md w-full">
-    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-        <a href="/front_end/html_mockup/page/introduce_page.html" class="flex items-center">       
-            <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-                <i class="fas fa-pen-fancy text-white text-sm"></i>
-            </div>
-            <span class="ml-2 text-3xl font-bold bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text text-transparen hidden sm:block">My<span class="bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent">Blog</span></span>
+<nav class="bg-white shadow-md relative top-0 z-20">
+  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <!-- Logo -->
+    <a routerLink="/home" class="flex items-center">
+      <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+        <i class="fas fa-pen-fancy text-white text-sm"></i>
+      </div>
+      <span
+        class="ml-2 text-3xl font-bold bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text text-transparent hidden sm:block"
+      >
+        My
+        <span class="bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent">Blog</span>
+      </span>
     </a>
-        <div class="flex space-x-4 ml-auto">   
-            <a href="/front_end/html_mockup/page/about_introduct.html" class="text-gray-700 hover:text-indigo-900 text-xl font-light mt-2"><i class="fa-solid fa-circle-info mr-2"></i>Abouts</a>
-        <div class="flex space-x-4 items-center ml-4">
-            <a href="/front_end/html_mockup/page/auth/login.html" class="text-white rounded-md px-2 py-2 hover:text-white-700 bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700  text-xl font-light"><i class="fa-solid fa-right-to-bracket mr-2"></i>Sign in</a>
+
+    <!-- Menu -->
+    <div class="hidden lg:flex items-center space-x-6 ml-auto" id="menu">
+      <a routerLink="/category" class="text-gray-700 hover:text-indigo-700 flex items-center mr-0">
+        <i class="fas fa-list mr-2"></i>
+        <span class="hidden lg:block text-xl font-light">Category</span>
+      </a>
+      <a routerLink="/write-post" class="text-gray-700 hover:text-indigo-700 flex items-center">
+        <i class="fas fa-pen mr-2"></i>
+        <span class="hidden lg:block text-xl font-light">Write</span>
+      </a>
+
+      <!-- Dropdown -->
+      <div class="relative">
+        <button
+          (click)="toggleDropdown()"
+          class="text-gray-700 hover:text-gray-900 flex items-center w-10 h-10 bg-gray-400 rounded-full justify-center"
+        >
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuPIJYQ5PcZ4rBME_C7s0ZckXvp9WLD9US9Q&s"
+            alt="gao đỏ"
+            class="rounded-full w-full h-full"
+          />
+        </button>
+
+        <div
+          *ngIf="dropdownOpen"
+          class="absolute z-10 right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg"
+        >
+          <a routerLink="/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+          <a routerLink="/category" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Category</a>
+          <a routerLink="/write-post" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Write</a>
+          <a routerLink="/contact-us" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Contact Us</a>
+          <div class="border-t my-2"></div>
+          <a routerLink="/settings" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
+          <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">About Us</a>
+          <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Help</a>
+          <div class="border-t my-2"></div>
+          <a routerLink="/login" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Log out</a>
         </div>
+      </div>
     </div>
+
+    <!-- Mobile menu toggle -->
+    <button class="lg:hidden text-gray-700 hover:text-gray-900 ml-4" (click)="toggleMenu()">
+      <i class="fas fa-bars text-2xl"></i>
+    </button>
+  </div>
 </nav>
