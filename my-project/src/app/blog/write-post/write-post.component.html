@@ -2,7 +2,7 @@
 <div class="bg-gray-200">
     <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <div class="p-6 border-b border-gray-100">
+            <div class="px-6 py-3 border-gray-100">
                 <input type="text" [(ngModel)]="post.title" class="title-input w-full border-none outline-none text-4xl font-bold mb-4 placeholder:text-gray-400 placeholder:opacity-70"
                     placeholder="Your amazing post title...">
 
@@ -37,7 +37,7 @@
                 </div>
             </div>
 
-            <div class="p-6">
+            <div class="px-6  max-w-6xl mx-auto">
                 <div
                     class="my-6 border-2 border-dashed border-gray-200 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-300 hover:bg-gray-50 transition-colors"
                     (click)="triggerFileInput()"
@@ -74,10 +74,13 @@
                         (change)="handleFileInput($event)"
                     />
                 </div>
-
-                <app-quill-editor
+                <div class="pt-3">
+                <app-quill-editor 
+                    [style.width.%]="100"
+                    [style.minHeight.px]="300"
                     (contentChange)="postContent = $event"
                 ></app-quill-editor>
+                </div>
             </div>
 
             <div class="p-6 border-t border-gray-100 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">

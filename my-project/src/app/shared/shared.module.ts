@@ -11,7 +11,8 @@ import { NavBarComponent } from './components/navbar/navbar.component';
 import { QuillModule } from 'ngx-quill'; // Import QuillModule if you are using it in your shared module
 import { QuillEditorComponent } from './components/quill-editor/quill-editor.component'; // Import your QuillEditorComponent if you have it
 import { FilterMovieComponent } from './components/filter-movie/filter-movie.component'; // Import your FilterMovieComponent if you have it
-
+import { SidebarDashboardComponent } from './components/sidebar-dashboard/sidebar-dashboard.component';
+import { HeaderDashboardComponent } from './components/header-dashboard/header-dashboard.component';
 @NgModule({
   declarations: [
     NavbarIntroduceComponent,
@@ -20,7 +21,9 @@ import { FilterMovieComponent } from './components/filter-movie/filter-movie.com
     PostCardComponent,
     NavBarComponent,
     QuillEditorComponent, 
-    FilterMovieComponent
+    FilterMovieComponent,
+    HeaderDashboardComponent,
+    SidebarDashboardComponent,
   ],
   exports: [
     NavbarIntroduceComponent,
@@ -29,7 +32,9 @@ import { FilterMovieComponent } from './components/filter-movie/filter-movie.com
     PostCardComponent,
     NavBarComponent,
     QuillEditorComponent, // Export your QuillEditorComponent if you want to use it in other modules
-    FilterMovieComponent // Export your FilterMovieComponent if you want to use it in other modules
+    FilterMovieComponent,
+    HeaderDashboardComponent,
+    SidebarDashboardComponent,
   ],
   imports: [
     CommonModule,
@@ -43,7 +48,9 @@ import { FilterMovieComponent } from './components/filter-movie/filter-movie.com
     NavBarComponent,
     QuillModule,
     QuillEditorComponent ,
-    FilterMovieComponent // Import your FilterMovieComponent if you want to use it in this module
+    FilterMovieComponent, // Import your FilterMovieComponent if you want to use it in this module,
+    HeaderDashboardComponent,
+    SidebarDashboardComponent,
   ]
 })
 export class SharedModule { }

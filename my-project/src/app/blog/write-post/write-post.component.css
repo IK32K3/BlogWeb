@@ -1,0 +1,9 @@
+::ng-deep app-quill-editor,
+::ng-deep app-quill-editor .ql-container {
+  width: 100% !important;
+}
+
+::ng-deep .ql-editor {
+  min-height: 300px; /* tùy chọn chiều cao */
+  padding: 1rem;
+}

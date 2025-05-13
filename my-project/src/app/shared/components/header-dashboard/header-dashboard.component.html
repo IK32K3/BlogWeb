@@ -1,0 +1,84 @@
+<header class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between">
+      <!-- Left: Logo & Menu -->
+      <div class="flex items-center">
+        <button
+          (click)="toggleMobileMenu()"
+          class="mr-2 p-2 text-gray-500 hover:text-gray-700 lg:hidden"
+        >
+          <i class="fas fa-bars text-lg"></i>
+        </button>
+
+        <div class="flex items-center">
+          <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <i class="fas fa-pen-fancy text-white text-sm"></i>
+          </div>
+            <span class="ml-2 text-3xl font-bold bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text text-transparen hidden sm:block mr-0">My
+                <span class="bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent mr-2">Blog</span>
+            </span>
+        </div>
+      </div>
+
+      <!-- Right: Notifications & User -->
+      <div class="flex items-center gap-3">
+        <!-- Bell Icon -->
+        <button
+          class="relative p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 ml-1 mt-2"
+        >
+          <i class="fas fa-bell text-xl"></i>
+          <span
+            class="absolute top-0 right-0 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"
+          ></span>
+        </button>
+
+        <!-- User Dropdown -->
+        <div class="relative ml-1 mt-1">
+          <button
+            (click)="toggleDropdown()"
+            class="flex items-center gap-2 group"
+            [attr.aria-expanded]="dropdownOpen"
+          >
+            <img
+              class="h-9 w-9 rounded-full object-cover border-2 border-transparent group-hover:border-indigo-200"
+              src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg"
+              alt="User avatar"
+            />
+            <span
+              class="hidden lg:inline-flex text-xn font-medium text-gray-700 group-hover:text-indigo-600"
+            >
+              Edogawa Conan
+            </span>
+            <i
+              class="fas fa-chevron-down hidden lg:inline-flex text-xs text-gray-500 group-hover:text-indigo-600 transition-transform"
+            ></i>
+          </button>
+
+          <!-- Dropdown content -->
+          <div
+            *ngIf="dropdownOpen"
+            class="absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-10"
+          >
+            <div class="px-4 py-3 border-b border-gray-100">
+              <p class="text-sm font-medium text-gray-900">Signed in as</p>
+              <p class="text-sm text-gray-500 truncate">conan&#64;detective.com</p>
+            </div>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              <i class="fas fa-user mr-2 text-gray-400"></i>Your Profile
+            </a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              <i class="fas fa-cog mr-2 text-gray-400"></i>Settings
+            </a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              <i class="fas fa-chart-line mr-2 text-gray-400"></i>Analytics
+            </a>
+            <div class="border-t border-gray-100"></div>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              <i class="fas fa-sign-out-alt mr-2 text-gray-400"></i>Sign out
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
