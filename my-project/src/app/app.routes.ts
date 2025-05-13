@@ -18,6 +18,10 @@ export const routes: Routes = [
     loadChildren: () => import('./profile/profile.routes').then(m => m.routes)
   },
   {
+    path: 'category',
+    loadChildren: () => import('./category/category.routes').then(m => m.routes)
+  },
+  {
     path: '',
     redirectTo: 'home/introduce-page',
     pathMatch: 'full'

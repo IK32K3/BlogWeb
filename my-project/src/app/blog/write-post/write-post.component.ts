@@ -14,6 +14,7 @@ import { QuillEditorComponent } from '../../shared/components/quill-editor/quill
   styleUrl: './write-post.component.css'
 })
 export class WritePostComponent {
+  postContent = '';
   post = {
     title: '',
     category: '',

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Movies</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .trigger-button-item.active {
+            background-color: #e5e7eb; /* Tailwind gray-200 */
+            /* color: #1f2937; Tailwind gray-800, already default text-black */
+        }
+        .filter-item.active-filter {
+            background-color: #3b82f6; /* Tailwind blue-500 */
+            color: white;
+        }
+        .condition-filter { /* For #filter-movie-content */
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-in-out, padding 0.35s ease-in-out;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .condition-filter.expanded {
+            /* max-height will be set by JS based on content, or a large enough value */
+            /* padding-top: 1rem; /* p-4 equivalent - now controlled by inner sections */
+            /* padding-bottom: 1rem; /* p-4 equivalent - now controlled by inner sections */
+        }
+        .filter-section {
+            transition: opacity 0.3s ease-out;
+            /* display: none; and opacity: 0; will be managed by JS */
+        }
+    </style>
+</head>
+<body class="p-10 bg-gray-50"> <!-- Changed body bg for better contrast -->
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Trigger Buttons Header - Light Theme -->
+        <!-- Initially rounded-lg, JS will manage rounded-b-lg based on content state -->
+        <div id="filter-movie-tabs" class="trigger-buttons flex text-black bg-gray-100 rounded-lg shadow-sm">
+            <div class="trigger-button-item flex-1 py-3 px-3 font-medium flex items-center justify-center cursor-pointer transition-colors">
+                Thể loại
+                <i class="fas fa-chevron-down text-sm ml-1"></i>
+            </div>
+            <div class="trigger-button-item flex-1 py-3 px-4 font-medium flex items-center justify-center cursor-pointer transition-colors">
+                Năm
+                <i class="fas fa-chevron-down text-sm ml-1"></i>
+            </div>
+            <div class="trigger-button-item flex-1 py-3 px-4 font-medium flex items-center justify-center cursor-pointer transition-colors">
+                Số tập
+                <i class="fas fa-chevron-down text-sm ml-1"></i>
+            </div>
+            <div class="trigger-button-item flex-1 py-3 px-4 font-medium flex items-center justify-center cursor-pointer transition-colors">
+                Trạng thái
+                <i class="fas fa-chevron-down text-sm ml-1"></i>
+            </div>
+        </div>
+
+        <!-- Condition Filter Sections - LIGHT Themed Content Area (initially collapsed) -->
+        <!-- px-4 is on this container, individual sections get py-4 or pb-4/pt-4 -->
+        <div id="filter-movie-content" class="condition-filter bg-gray-100 px-4 text-gray-700 rounded-b-lg shadow-sm">
+            <!-- Thể loại Section (Dynamically Populated) -->
+            <div class="filter-section pb-4 border-b border-gray-300" style="display: none; opacity: 0;">
+                <div class="font-semibold mb-3 text-gray-800 pt-4">Thể loại</div> <!-- Added pt-4 for first section -->
+                <div id="genre-options-container" class="flex flex-wrap gap-2">
+                    <!-- Genre items will be injected here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Năm phát hành Section (Dynamically Populated) -->
+            <div class="filter-section py-4 border-b border-gray-300" style="display: none; opacity: 0;">
+                <div class="font-semibold mb-3 text-gray-800">Năm phát hành</div>
+                <div id="year-options-container" class="flex flex-wrap gap-2">
+                    <!-- Year items will be injected here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Số tập Section (Static) -->
+            <div class="filter-section py-4 border-b border-gray-300" style="display: none; opacity: 0;">
+                <div class="font-semibold mb-3 text-gray-800">Số tập ít nhất</div>
+                <div class="flex flex-wrap gap-2">
+                    <div filter-value="9999" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Full</div>
+                    <div filter-value="300" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">300</div>
+                    <div filter-value="200" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">200</div>
+                    <div filter-value="100" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">100</div>
+                    <div filter-value="50" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">50</div>
+                    <div filter-value="20" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">20</div>
+                    <div filter-value="10" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">10</div>
+                </div>
+            </div>
+
+            <!-- Trạng thái Section (Static) -->
+            <div class="filter-section pt-4" style="display: none; opacity: 0;"> <!-- No bottom border, pb-4 if it's not the absolute last content -->
+                <div class="font-semibold mb-3 text-gray-800">Trạng thái</div>
+                <div class="flex flex-wrap gap-2 pb-4"> <!-- Added pb-4 for spacing if last visible section -->
+                     <div filter-value="0" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Đang tiến hành</div>
+                    <div filter-value="1" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Hoàn thành</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

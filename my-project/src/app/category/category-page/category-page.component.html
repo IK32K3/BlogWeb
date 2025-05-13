@@ -1,1 +1,132 @@
-<p>category-page works!</p>
+<app-navbar></app-navbar>
+<div class="bg-gray-200">
+    <div class="items-title container mx-auto px-4 py-4"> <!-- Giảm mt một chút -->
+        <div class="flex items-center">
+            <div class="title-line text-xl font-semibold px-4 text-indigo-700 bg-white rounded-md shadow-sm py-2 border-l-4 border-indigo-600 ">Bảng lọc Post</div>
+             <!-- Thay đổi style tiêu đề -->
+            <hr class="flex-grow border-t  border-gray-500 ml-4"> <!-- Đường kẻ mảnh hơn -->
+        </div>
+        <app-filter-movie ></app-filter-movie>
+    </div>
+    <section class="container mx-auto px-4 py-1 flex flex-col lg:flex-row gap-8">
+        <div class="w-full lg:w-3/4 space-y-5">
+            <div *ngFor="let post of posts" class="post-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg">
+                <div class="flex flex-col md:flex-row">
+                    <img [src]="post.image" alt="Ảnh bài viết" class="w-full md:w-52 h-48 md:h-auto object-cover flex-shrink-0" />
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                        <a href="#" [ngClass]="'category-tag bg-' + post.categoryColor + '-100 text-' + post.categoryColor + '-700 hover:bg-' + post.categoryColor + '-600 hover:text-white'" class="rounded-full text-xs font-medium">
+                        {{ post.category }}
+                        </a>
+                        <span class="text-xs text-gray-500 ml-auto"><i class="far fa-eye mr-1"></i> {{ post.views }}</span>
+                        <span class="text-xs text-gray-500"><i class="far fa-comment mr-1"></i> {{ post.comments }}</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 leading-tight">
+                        <a href="#" class="text-gray-800 hover:text-{{ post.categoryColor }}-600 transition duration-200">{{ post.title }}</a>
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-3 flex-grow">{{ post.description }}</p>
+                        <div class="flex items-center justify-between text-xs mt-auto pt-3 border-t border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <img [src]="post.avatar" alt="Tác giả" class="w-6 h-6 rounded-full" />
+                                <span class="text-gray-700 font-medium">{{ post.author }}</span>
+                            </div>
+                            <div class="text-gray-500 flex items-center gap-3">
+                                <span><i class="far fa-calendar-alt mr-1"></i> {{ post.date }}</span>
+                                <a href="#" class="text-blue-500 hover:underline flex items-center gap-1 font-medium">
+                                Đọc tiếp <i class="fas fa-arrow-right text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <aside class="w-full lg:w-1/4 space-y-6">
+        <!-- Latest Posts -->
+        <div class="sidebar-card bg-white p-4 rounded-lg shadow-md border border-gray-100">
+            <h3 class="text-lg font-semibold mb-4 pb-3 border-b border-gray-200 flex items-center gap-2 text-gray-800">
+            <i class="fas fa-newspaper text-green-500"></i>
+            Bài viết mới nhất
+            </h3>
+            <div class="space-y-3">
+            <a *ngFor="let post of newposts; let i = index" 
+                [href]="post.url" 
+                class="flex items-start gap-3 group text-sm">
+                <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 bg-gradient-to-br from-green-400 to-blue-500 text-white text-xs font-bold rounded-full mt-0.5 shadow">
+                {{ i + 1 }}
+                </span>
+                <div>
+                <h4 class="font-medium text-gray-700 group-hover:text-blue-600 transition leading-tight">{{ post.title }}</h4>
+                <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                    <i class="far fa-clock text-xs"></i> {{ post.date }}
+                </p>
+                </div>
+            </a>
+            </div>
+        </div>
+
+        <!-- Follow Suggestions Widget -->
+        <div class="sidebar-card bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+            <h3 class="text-lg font-semibold mb-4 pb-3 border-b border-gray-200 flex items-center gap-2">
+            <i class="fas fa-user-plus text-purple-500"></i>
+            Đề xuất theo dõi
+            </h3>
+            <div class="space-y-4">
+            <div *ngFor="let suggestion of followSuggestions" class="flex items-center gap-3">
+                <div class="relative">
+                <img [src]="suggestion.profileImg" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">
+                <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></span>
+                </div>
+                <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-medium text-gray-800 truncate">{{ suggestion.name }}</h4>
+                <p class="text-xs text-gray-500 truncate">{{ suggestion.bio }}</p>
+                </div>
+                <button class="flex-shrink-0 bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded-full text-xs font-medium transition">
+                Theo dõi
+                </button>
+            </div>
+            </div>
+        </div>
+
+        <!-- Tags Cloud -->
+        <div class="sidebar-card bg-white p-4 rounded-lg shadow-md border border-gray-100">
+            <h3 class="text-lg font-semibold mb-4 pb-3 border-b border-gray-200 flex items-center gap-2 text-gray-800">
+            <i class="fas fa-tags text-purple-500"></i> Thẻ phổ biến
+            </h3>
+            <div class="flex flex-wrap gap-1.5">
+            <a *ngFor="let tag of tags" 
+                [href]="tag.url" 
+                class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-blue-600 hover:text-white transition duration-200">
+                {{ tag.name }}
+            </a>
+            </div>
+        </div>
+        </aside>
+
+    </section>
+    <section class="container mx-auto px-4 pb-12"> <!-- Tăng pb -->
+    <div class="flex justify-center mt-6 space-x-1.5"> <!-- Giảm space -->
+        <!-- Cập nhật style pagination -->
+        <a href="#" (click)="previousPage()" class="pagination-link w-9 h-9 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-sm">
+        <i class="fas fa-angle-double-left"></i>
+        </a>
+
+        <a *ngFor="let page of pages" 
+        href="#" 
+        (click)="onPageChange(page)" 
+        [ngClass]="{'bg-blue-600 text-white': page === currentPage, 'bg-white text-gray-700': page !== currentPage}"
+        class="pagination-link w-9 h-9 flex items-center justify-center border border-gray-300 rounded-md font-medium hover:bg-blue-600 hover:text-white hover:border-blue-600">
+        {{ page }}
+        </a>
+
+        <span *ngIf="currentPage < totalPages - 1" class="pagination-link w-9 h-9 flex items-center justify-center text-gray-500">...</span>
+
+        <a href="#" (click)="nextPage()" class="pagination-link w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-sm">
+        <i class="fas fa-angle-double-right"></i>
+        </a>
+    </div>
+    </section>
+
+</div>
+<app-footer></app-footer>
+<router-outlet></router-outlet>

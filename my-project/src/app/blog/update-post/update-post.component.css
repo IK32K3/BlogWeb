@@ -1,0 +1,15 @@
+.ql-editor {
+    flex-grow: 1; /* Make editor fill container height */
+    padding: 1rem 1.5rem; /* Adjust padding */
+    line-height: 1.6;
+    overflow-y: auto; /* Add scroll if content exceeds height */
+}
+
+.ql-editor.ql-blank::before {
+    font-style: normal;
+    color: #9ca3af; /* gray-400 */
+    left: 1.5rem; /* Match editor padding */
+    top: 1rem; /* Match editor padding */
+    font-size: 1rem; /* Match editor font-size */
+    pointer-events: none; /* Prevent placeholder interaction */
+}

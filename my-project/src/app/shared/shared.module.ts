@@ -10,7 +10,7 @@ import { PostCardComponent } from './components/post-card/post-card.component';
 import { NavBarComponent } from './components/navbar/navbar.component';
 import { QuillModule } from 'ngx-quill'; // Import QuillModule if you are using it in your shared module
 import { QuillEditorComponent } from './components/quill-editor/quill-editor.component'; // Import your QuillEditorComponent if you have it
-
+import { FilterMovieComponent } from './components/filter-movie/filter-movie.component'; // Import your FilterMovieComponent if you have it
 
 @NgModule({
   declarations: [
@@ -20,6 +20,7 @@ import { QuillEditorComponent } from './components/quill-editor/quill-editor.com
     PostCardComponent,
     NavBarComponent,
     QuillEditorComponent, 
+    FilterMovieComponent
   ],
   exports: [
     NavbarIntroduceComponent,
@@ -28,6 +29,7 @@ import { QuillEditorComponent } from './components/quill-editor/quill-editor.com
     PostCardComponent,
     NavBarComponent,
     QuillEditorComponent, // Export your QuillEditorComponent if you want to use it in other modules
+    FilterMovieComponent // Export your FilterMovieComponent if you want to use it in other modules
   ],
   imports: [
     CommonModule,
@@ -40,7 +42,8 @@ import { QuillEditorComponent } from './components/quill-editor/quill-editor.com
     PostCardComponent,
     NavBarComponent,
     QuillModule,
-    QuillEditorComponent 
+    QuillEditorComponent ,
+    FilterMovieComponent // Import your FilterMovieComponent if you want to use it in this module
   ]
 })
 export class SharedModule { }

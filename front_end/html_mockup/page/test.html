@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/front_end/html_mockup/js/components.js"defer ></script>
+    <script src="/front_end/html_mockup/js/category.js"defer></script>
+    <script src="/front_end/html_mockup/js/main.js" defer ></script>
+    <link href="/front_end/html_mockup/css/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        body {
+            background-color: #E5E7EB; /* Tailwind's gray-200 */
+            min-height: 100vh;
+        }
+        .condition-filter.collapsed {
+            display: none;
+        }
+        #filter-movie .trigger-buttons > .trigger-button-item:not(:first-child) {
+            border-left-width: 1px;
+            border-color: #e5e7eb; /* Tailwind's gray-200 for a subtle border */
+        }
+         /* Style for selected filter items in the light theme */
+        #filter-movie .condition-filter .filter-item.selected {
+            background-color: #9CA3AF; /* Tailwind's gray-400 */
+            color: #374151; /* Tailwind's gray-700 */
+        }
+        /* Default style for unselected filter items in light theme */
+        #filter-movie .condition-filter .filter-item {
+            color: #6B7280; /* Tailwind's gray-500 for unselected text */
+            background-color: #F9FAFB; /* Tailwind's gray-50 for very light bg, or transparent */
+        }
+        #filter-movie .condition-filter .filter-item:hover {
+            background-color: #F3F4F6; /* Tailwind's gray-100 on hover */
+        }
+    </style>
+</head>
+<body class="bg-gray-200">
+
+    <div id="navbar"></div>
+
+    <!-- Overall container for the filter UI, likely white as per screenshot context -->
+    <div id="filter-movie-wrapper" class="w-full container mx-auto px-4 py-4 bg-white shadow-md rounded-lg mt-4">
+        <!-- Main Search Input for #filter-movie (if it's part of this component) -->
+         <div class="flex flex-col md:flex-row items-center px-0  gap-4 mb-3"> <!-- Adjusted px for overall container -->
+                <div class="relative flex-1 w-full">
+                    <input type="text" placeholder="Nhập từ khóa tìm kiếm..."
+                           class="w-full px-4 py-3 pl-11 rounded-lg bg-gray-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition-all duration-200 ease-in-out shadow-sm text-gray-700">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                <button class="search-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-base font-medium transition duration-300 w-full md:w-auto flex items-center justify-center gap-2 shadow hover:shadow-md transform hover:-translate-y-0.5">
+                    <i class="fas fa-search"></i> Tìm Kiếm
+                </button>
+            </div>
+        <!-- Trigger Buttons Header - Light Theme -->
+        <div id="filter-movie-tabs" class="trigger-buttons flex text-black bg-gray-100 rounded-lg shadow-sm"> <!-- Removed px-4, shadow-md -->
+            <div class="trigger-button-item flex-1 py-3 px-3 font-medium flex items-center justify-center cursor-pointer transition-colors">
+                Thể loại
+                <span class="material-icons-round text-xl ml-1">expand_more</span>
+            </div>
+            <div class="trigger-button-item flex-1 py-3 px-4 font-medium flex items-center justify-center cursor-pointer transition-colors">
+                Năm
+                <span class="material-icons-round text-xl ml-1">expand_more</span>
+            </div>
+            <div class="trigger-button-item flex-1 py-3 px-4 font-medium flex items-center justify-center cursor-pointer transition-colors">
+                Số tập
+                <span class="material-icons-round text-xl ml-1">expand_more</span>
+            </div>
+            <div class="trigger-button-item flex-1 py-3 px-4 font-medium flex items-center justify-center cursor-pointer transition-colors">
+                Trạng thái
+                <span class="material-icons-round text-xl ml-1">expand_more</span>
+            </div>
+        </div>
+
+        <!-- Condition Filter Sections - LIGHT Themed Content Area (initially collapsed) -->
+        <div id="filter-movie-content" class="condition-filter bg-gray-100 p-4 text-gray-700 collapsed rounded-b-lg shadow-sm"> 
+            <!-- Thể loại Section -->
+            <div class="filter-section pb-4 border-b border-gray-500" style="display: none;">
+                <div class="font-semibold mb-3 text-gray-800">Thể loại</div>
+                <div class="flex flex-wrap gap-2">
+                    <div filter-value="1" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Anime</div>
+                    <div filter-value="2" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Hành động</div>
+                    <div filter-value="3" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Hài hước</div>
+                    <div filter-value="4" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Tình cảm</div>
+                    <div filter-value="5" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Harem</div>
+                    <div filter-value="6" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Bí ẩn</div>
+                    <div filter-value="7" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Bi kịch</div>
+                    <div filter-value="8" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Giả tưởng</div>
+                    <div filter-value="9" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Học đường</div>
+                    <div filter-value="10" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Đời thường</div>
+                    <div filter-value="11" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Võ thuật</div>
+                    <div filter-value="12" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Trò chơi</div>
+                    <div filter-value="13" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Thám tử</div>
+                    <div filter-value="14" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Lịch sử</div>
+                    <div filter-value="15" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Siêu năng lực</div>
+                    <div filter-value="16" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Shounen</div>
+                    <div filter-value="17" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Shounen AI</div>
+                    <div filter-value="18" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Shoujo</div>
+                    <div filter-value="19" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Shoujo AI</div>
+                    <div filter-value="20" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Thể thao</div>
+                    <div filter-value="21" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Âm nhạc</div>
+                    <div filter-value="22" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Psychological</div>
+                    <div filter-value="23" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Mecha</div>
+                    <div filter-value="24" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Quân đội</div>
+                    <div filter-value="25" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Drama</div>
+                    <div filter-value="26" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Seinen</div>
+                    <div filter-value="27" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Siêu nhiên</div>
+                    <div filter-value="28" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Phiêu lưu</div>
+                    <div filter-value="29" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Kinh dị</div>
+                    <div filter-value="30" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Ma cà rồng</div>
+                    <div filter-value="31" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Tokusatsu</div>
+                    <div filter-value="32" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Samurai</div>
+                    <div filter-value="33" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Viễn tưởng</div>
+                    <div filter-value="34" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">CN Animation</div>
+                    <div filter-value="35" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Tiên hiệp</div>
+                    <div filter-value="36" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Kiếm hiệp</div>
+                    <div filter-value="37" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Xuyên không</div>
+                    <div filter-value="38" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Trùng sinh</div>
+                    <div filter-value="39" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Huyền ảo</div>
+                    <div filter-value="40" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">[CNA] Ngôn tình</div>
+                    <div filter-value="41" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Dị giới</div>
+                    <div filter-value="42" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">[CNA] Hài hước</div>
+                    <div filter-value="43" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Đam mỹ</div>
+                    <div filter-value="44" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Võ hiệp</div>
+                    <div filter-value="45" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Ecchi</div>
+                    <div filter-value="46" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Demon</div>
+                    <div filter-value="47" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Live Action</div>
+                    <div filter-value="48" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Thriller</div>
+                    <div filter-value="49" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Khoa huyễn</div>
+                </div>
+            </div>
+
+            <div class="filter-section py-4 border-b border-gray-500" style="display: none;">
+                <div class="font-semibold mb-3 text-gray-800">Năm phát hành</div>
+                <div class="flex flex-wrap gap-2">
+                     <div filter-value="2025" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">2025</div>
+                    <div filter-value="2024" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">2024</div>
+                    <div filter-value="2023" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">2023</div>
+                    <div filter-value="2022" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">2022</div>
+                    <div filter-value="2021" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">2021</div>
+                    <div filter-value="2020" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">2020</div>
+                    <div filter-value="2019" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">2019</div>
+                    <div filter-value="2018" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">2018</div>
+                    <div filter-value="1111" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Trước 2014</div>
+                </div>
+            </div>
+
+            <div class="filter-section py-4 border-b border-gray-500" style="display: none;">
+                <div class="font-semibold mb-3 text-gray-800">Số tập ít nhất</div>
+                <div class="flex flex-wrap gap-2">
+                    <div filter-value="9999" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Full</div>
+                    <div filter-value="300" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">300</div>
+                    <div filter-value="200" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">200</div>
+                    <div filter-value="100" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">100</div>
+                    <div filter-value="50" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">50</div>
+                    <div filter-value="20" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">20</div>
+                    <div filter-value="10" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">10</div>
+                </div>
+            </div>
+
+            <div class="filter-section pt-4" style="display: none;"> <!-- No bottom border for the last section -->
+                <div class="font-semibold mb-3 text-gray-800">Trạng thái</div>
+                <div class="flex flex-wrap gap-2">
+                     <div filter-value="0" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Đang tiến hành</div>
+                    <div filter-value="1" class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition-colors">Hoàn thành</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content Area (example) -->
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+<script>
+// SCRIPT FOR THE MOVIE FILTER COMPONENT (#filter-movie-wrapper)
+document.addEventListener('DOMContentLoaded', function () {
+    const filterMovieWrapper = document.getElementById('filter-movie-wrapper');
+    if (!filterMovieWrapper) return; 
+
+    const triggerButtons = filterMovieWrapper.querySelectorAll('#filter-movie-tabs .trigger-button-item');
+    const filterSections = filterMovieWrapper.querySelectorAll('#filter-movie-content .filter-section');
+    const conditionFilterArea = filterMovieWrapper.querySelector('#filter-movie-content');
+    const filterSubmitWrapper = filterMovieWrapper.querySelector('#filter-submit-wrapper');
+
+    const openSections = new Set();
+
+    // Tab Styling for LIGHT THEME as per new screenshot
+    const activeTabBg = 'bg-blue-300';      // Light gray for active tab (e.g., Tailwind gray-200)
+    const activeTabTextColor = 'text-blue-600'; // Blue text for active tab
+    
+    const inactiveTabBg = 'bg-white';       // Default white for inactive tabs
+    const inactiveTabTextColor = 'text-black'; 
+    const inactiveTabHoverBg = 'hover:bg-gray-100'; // Light gray hover for inactive tabs
+    const inactiveTabHoverTextColor = 'hover:text-blue-500'; // Blue text on hover for inactive
+
+    function setTabAppearance(btn, isActive) {
+        const iconElement = btn.querySelector('span.material-icons-round');
+        
+        btn.classList.remove(
+            activeTabBg, activeTabTextColor, 
+            inactiveTabBg, inactiveTabTextColor, 
+            inactiveTabHoverBg, inactiveTabHoverTextColor, 'active'
+        );
+        // Clear other themes
+        btn.classList.remove('bg-sky-600', 'text-white', 'bg-sky-700', 'text-sky-100', 'hover:bg-sky-600', 'bg-neutral-700', 'text-neutral-100', 'bg-neutral-800', 'text-neutral-400', 'hover:bg-neutral-700', 'hover:text-neutral-100');
+
+        if (isActive) {
+            btn.classList.add(activeTabBg, activeTabTextColor, 'active');
+            if (iconElement) iconElement.textContent = 'expand_less';
+        } else {
+            btn.classList.add(inactiveTabBg, inactiveTabTextColor, inactiveTabHoverBg, inactiveTabHoverTextColor);
+            if (iconElement) iconElement.textContent = 'expand_more';
+        }
+    }
+
+    function toggleFilterSection(index) {
+        const section = filterSections[index];
+        const button = triggerButtons[index];
+        const isCurrentlyOpen = openSections.has(index);
+
+        if (isCurrentlyOpen) {
+            section.style.display = 'none';
+            setTabAppearance(button, false);
+            openSections.delete(index);
+        } else {
+            section.style.display = 'block';
+            setTabAppearance(button, true);
+            openSections.add(index);
+        }
+
+        if (openSections.size > 0) {
+            if(conditionFilterArea) conditionFilterArea.classList.remove('collapsed');
+            if (filterSubmitWrapper) filterSubmitWrapper.style.display = 'flex';
+        } else {
+            if(conditionFilterArea) conditionFilterArea.classList.add('collapsed');
+            if (filterSubmitWrapper) filterSubmitWrapper.style.display = 'none';
+        }
+    }
+    
+    triggerButtons.forEach((btn, i) => {
+        setTabAppearance(btn, false); 
+        const iconElement = btn.querySelector('span.material-icons-round');
+        if(iconElement) iconElement.textContent = 'expand_more';
+        if (filterSections[i]) filterSections[i].style.display = 'none';
+    });
+
+    if (conditionFilterArea) conditionFilterArea.classList.add('collapsed');
+    if (filterSubmitWrapper) filterSubmitWrapper.style.display = 'none';
+
+    triggerButtons.forEach((button, index) => {
+        button.addEventListener('click', function() {
+            toggleFilterSection(index);
+        });
+    });
+
+    // Filter item selection logic for the light themed content area
+    const movieFilterItems = filterMovieWrapper.querySelectorAll('#filter-movie-content .filter-item');
+    movieFilterItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const isSelected = this.classList.contains('selected'); // Check for our custom 'selected' class
+            const parentSection = this.closest('.filter-section');
+            const sectionTitleElement = parentSection.querySelector('.font-semibold');
+            let sectionTitle = "";
+            if (sectionTitleElement) {
+                 sectionTitle = sectionTitleElement.textContent;
+            }
+            
+            const singleSelectSections = ['Năm phát hành', 'Số tập ít nhất', 'Trạng thái'];
+
+            if (singleSelectSections.includes(sectionTitle)) {
+                const siblings = parentSection.querySelectorAll('.filter-item');
+                siblings.forEach(sibling => {
+                    if (sibling !== this) {
+                        sibling.classList.remove('selected');
+                         // Ensure default styling is re-applied if you change it
+                        sibling.classList.add('bg-gray-50', 'text-gray-500'); // Example default
+                        sibling.classList.remove('bg-gray-400', 'text-gray-700');
+                    }
+                });
+                if (isSelected) { 
+                    this.classList.remove('selected');
+                    this.classList.add('bg-gray-50', 'text-gray-500');
+                    this.classList.remove('bg-gray-400', 'text-gray-700');
+                } else { 
+                    this.classList.add('selected');
+                    this.classList.remove('bg-gray-50', 'text-gray-500');
+                    this.classList.add('bg-gray-400', 'text-gray-700'); // Tailwind gray-400 & gray-700
+                }
+            } else { // For multi-select sections like "Thể loại"
+                if (isSelected) {
+                    this.classList.remove('selected');
+                    this.classList.add('bg-gray-50', 'text-gray-500');
+                    this.classList.remove('bg-gray-400', 'text-gray-700');
+                } else {
+                    this.classList.add('selected');
+                    this.classList.remove('bg-gray-50', 'text-gray-500');
+                    this.classList.add('bg-gray-400', 'text-gray-700');
+                }
+            }
+        });
+    });
+
+    function applyInitialMovieFilterSelections() {
+        const initialSelectionsData = {
+             "Thể loại": ["Anime"], // "Anime" is selected in the screenshot
+             "Năm phát hành": [], 
+        };
+        if (!filterSections || filterSections.length === 0) return;
+
+        filterSections.forEach((section, sectionIndex) => { // Added sectionIndex
+            const titleElement = section.querySelector('.font-semibold');
+            if (!titleElement) return;
+            const title = titleElement.textContent;
+            const itemsToSelect = initialSelectionsData[title] || []; 
+
+            const itemsInSection = section.querySelectorAll('.filter-item');
+            itemsInSection.forEach(item => {
+                // Apply default light theme item styles
+                item.classList.remove('selected', 'bg-gray-400', 'text-gray-700');
+                item.classList.add('bg-gray-50', 'text-gray-500', 'hover:bg-gray-100'); 
+                
+                if (itemsToSelect.includes(item.textContent)) { 
+                    item.classList.add('selected');
+                    item.classList.remove('bg-gray-50', 'text-gray-500', 'hover:bg-gray-100');
+                    item.classList.add('bg-gray-400', 'text-gray-700');
+                }
+            });
+
+            // If "Thể loại" is the section and has "Anime" selected, open it by default
+            if (title === "Thể loại" && itemsToSelect.includes("Anime")) {
+                toggleFilterSection(sectionIndex); // Open the "Thể loại" section
+            }
+        });
+    }
+    applyInitialMovieFilterSelections();
+});
+
+
+// SCRIPT FOR THE ADVANCED SEARCH SECTION (search-section) - Should be separate if it's distinct logic
+// ... (Keep your existing script for the #search-section toggle and its internal filters)
+</script>
+<style>
+    /* Styles for the #filter-movie component */
+    #filter-movie-wrapper .condition-filter.collapsed { /* More specific */
+        display: none;
+    }
+    #filter-movie-wrapper .trigger-buttons > .trigger-button-item:not(:first-child) {
+        border-left-width: 1px; /* Tailwind gray-200 for a subtle border */
+    }
+    #filter-movie-wrapper .condition-filter .filter-item {
+        color: #6B7280; /* Tailwind gray-500 */
+        background-color: #F9FAFB; /* Tailwind gray-50 */
+    }
+    #filter-movie-wrapper .condition-filter .filter-item:hover {
+        background-color: #F3F4F6; /* Tailwind gray-100 */
+    }
+    #filter-movie-wrapper .condition-filter .filter-item.selected {
+        background-color: #9CA3AF; /* Tailwind gray-400 */
+        color: #374151; /* Tailwind gray-700 */
+    }
+
+
+    /* Styles for the advanced search section (#search-section) */
+    /* Keep these separate if they are for a different component */
+    .search-section { 
+        transition: max-height 0.4s ease-in-out, opacity 0.3s 0.1s ease-in-out, visibility 0.3s 0.1s ease-in-out, padding 0.4s ease-in-out, border-width 0.4s ease-in-out;
+        overflow: hidden;
+    }
+    .search-section.opacity-0 { opacity: 0; }
+    .search-section.invisible { visibility: hidden; }
+
+    #search-section .filter-label.active { background-color: #EBF8FF; color: #2B6CB0; }
+    #search-section .filter-label.active .checkbox-visual,
+    #search-section .filter-label.active .radio-visual { border-color: #2B6CB0; background-color: #2B6CB0; }
+    #search-section .filter-label.active .check-icon,
+    #search-section .filter-label.active .radio-dot { opacity: 1; }
+    #search-section .checkbox-visual, #search-section .radio-visual { 
+        width: 1.25rem; height: 1.25rem; border: 2px solid #CBD5E0; border-radius: 0.25rem; margin-right: 0.75rem; 
+        display: flex; align-items: center; justify-content: center; transition: all 0.2s ease-in-out; flex-shrink: 0; 
+    }
+    #search-section .radio-visual { border-radius: 50%; }
+    #search-section .check-icon { color: white; font-size: 0.7rem; opacity: 0; transition: opacity 0.2s ease-in-out; }
+    #search-section .radio-dot { width: 0.65rem; height: 0.65rem; background-color: white; border-radius: 50%; opacity: 0; transition: opacity 0.2s ease-in-out; }
+    #search-section .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    #search-section .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    #search-section .custom-scrollbar::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 10px; }
+    #search-section .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #A0AEC0; }
+</style>
+
+</body>
+</html>

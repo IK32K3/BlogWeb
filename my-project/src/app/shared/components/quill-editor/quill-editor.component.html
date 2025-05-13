@@ -4,6 +4,7 @@
   [modules]="editorModules"
   [placeholder]="'Write your story here...'"
   theme="snow"
+  (onContentChanged)="onContentChanged($event)"
   class="text-lg"
 ></quill-editor>
 

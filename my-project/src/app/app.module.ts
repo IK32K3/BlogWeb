@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
     AppComponent,
       // Đảm bảo khai báo ở đây
   ],
-  imports: [BrowserModule,AppRoutingModule,FormsModule],
+  imports: [BrowserModule,AppRoutingModule,FormsModule ],
   providers: [],
   bootstrap: [AppComponent]
 })

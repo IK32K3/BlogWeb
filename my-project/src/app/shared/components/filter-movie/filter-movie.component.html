@@ -1,0 +1,82 @@
+<div class="mx-auto mt-4 bg-white shadow-md rounded-lg p-4">
+    <!-- Search Input & Button -->
+  <div class="flex flex-col md:flex-row items-center gap-4  mb-3">
+    <div class="relative w-full md:flex-1">
+      <input
+        type="text"
+        placeholder="Nhập từ khóa tìm kiếm..."
+        class="w-full px-4 py-3 pl-11 rounded-lg bg-gray-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 shadow-sm text-gray-700 transition duration-200"
+      />
+      <i class="fas fa-search absolute left-4 top-4 -translate-y-1/2 text-gray-400"></i>
+    </div>
+    <button
+      class="search-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-base font-medium transition duration-300 w-full md:w-auto flex items-center justify-center gap-2 shadow hover:shadow-md hover:-translate-y-0.5"
+    >
+      <i class="fas fa-search"></i> Tìm kiếm
+    </button>
+  </div>
+
+    <div id="filter-movie-tabs" class="flex text-black bg-gray-200 shadow-sm"
+        [class.rounded-lg]="!isAnySectionOpen()"
+        [class.rounded-t-lg]="isAnySectionOpen()"
+    >
+        <div *ngFor="let tab of tabs" 
+        (click)="toggleSection(tab)" 
+        [class.active]="sectionsOpen[tab]"
+        class="tab-button flex-1 py-3 px-4 font-medium flex flex-1 border-r-2 border-white items-center justify-center cursor-pointer">
+            <span>{{ tab | titlecase }}</span>
+            <i
+        class="fas text-sm ml-1"
+        [class.fa-chevron-down]="!sectionsOpen[tab]"
+        [class.fa-chevron-up]="sectionsOpen[tab]"
+        ></i>
+        </div>
+    </div>
+    
+    <div id="filter-movie-content" class="condition-filter bg-gray-100 px-4 text-gray-700 rounded-b-lg shadow-sm">
+        <div *ngIf="sectionsOpen['genre']"  class="filter-section py-4 border-b border-gray-300">
+            <div class="font-semibold mb-3 text-gray-800">Năm phát hành</div>
+            <div class="flex flex-wrap gap-2">
+                <div *ngFor="let genre of genresData" (click)="selectGenre(genre.value)" [class.active]="isFilterActive('genre', genre.value)"
+                class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition hover:bg-gray-300">
+                {{ genre.name }}
+                </div>
+            </div>    
+        </div>
+
+        <div *ngIf="sectionsOpen['year']" class="filter-section py-4 border-b border-gray-300">
+            <div class="font-semibold mb-3 text-gray-800">Năm phát hành</div>
+            <div class="flex flex-wrap gap-2">
+                <div *ngFor="let year of yearsData" (click)="selectYear(year.value)" [class.active]="isFilterActive('year', year.value)"
+                class="flex flex-wrap gap-2 filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition hover:bg-gray-200">
+                {{ year.name }}
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="sectionsOpen['episodes']" class="filter-section py-4 border-b border-gray-300">
+            <div class="font-semibold mb-3 text-gray-800">Số tập ít nhất</div>
+            <div class="flex flex-wrap gap-2">
+                <div *ngFor="let episode of episodesData" (click)="selectEpisodes(episode.value)" [class.active]="isFilterActive('episodes', episode.value)"
+                class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition hover:bg-gray-200">
+                {{ episode.name }}
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="sectionsOpen['status']" class="filter-section py-4 border-b border-gray-300">
+            <div class="font-semibold mb-3 text-gray-800">Trạng thái</div>
+            <div class="flex flex-wrap gap-2">
+                <div *ngFor="let status of statusData" (click)="selectStatus(status.value)" [class.active]="isFilterActive('status', status.value)"
+                class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition hover:bg-gray-200">
+                {{ status.name }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

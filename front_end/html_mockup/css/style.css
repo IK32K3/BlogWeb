@@ -415,3 +415,15 @@ input.custom-radio + .filter-label > span:first-child {
 .status-dot { /* Example usage */
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+#filter-movie-wrapper .condition-filter .filter-item {
+    color: #6B7280; /* Tailwind's gray-500 for unselected text */
+    background-color: #F9FAFB; /* Tailwind's gray-50 for very light bg */
+}
+#filter-movie-wrapper .condition-filter .filter-item:hover {
+    background-color: #F3F4F6; /* Tailwind's gray-100 on hover */
+}
+#filter-movie-wrapper .condition-filter .filter-item.selected {
+    background-color: #9CA3AF; /* Tailwind's gray-400 for selected background */
+    color: #374151; /* Tailwind's gray-700 for selected text */
+}
+

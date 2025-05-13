@@ -1,0 +1,12 @@
+/* Basic styling for the filter items and sections */
+div > div.active {
+  background-color: #75a0da;
+  color: white;
+}
+#filter-movie-content {
+  margin-top: 20px;
+}
+
+#filter-movie-content div {
+  margin-left: 10px;
+}

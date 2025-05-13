@@ -75,7 +75,9 @@
                     />
                 </div>
 
-                <app-quill-editor></app-quill-editor>
+                <app-quill-editor
+                    (contentChange)="postContent = $event"
+                ></app-quill-editor>
             </div>
 
             <div class="p-6 border-t border-gray-100 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">

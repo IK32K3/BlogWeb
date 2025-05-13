@@ -1,1 +1,146 @@
-<p>update-post works!</p>
+<app-navbar></app-navbar>
+
+<div class="bg-gray-200 text-slate-800">
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+
+      <!-- Post Status Banner -->
+      <div class="bg-indigo-600 text-white px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-pen-fancy"></i>
+          <span class="font-medium">Editing published post</span>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span class="text-sm">Last updated: {{ lastUpdated }}</span>
+          <span class="text-sm bg-indigo-700 px-2 py-1 rounded">{{ postStatus }}</span>
+        </div>
+      </div>
+
+      <!-- Post Title Input -->
+      <div class="p-6 border-b border-gray-100">
+        <input type="text" 
+               class="title-input w-full border-none outline-none text-4xl font-bold mb-4 placeholder:text-gray-400" 
+               [(ngModel)]="title"
+               placeholder="Enter the title of your post">
+
+        <!-- Category and Tags Section -->
+        <div class="flex flex-col md:flex-row gap-6 mt-4">
+
+          <!-- Category Selector -->
+          <div class="flex-1 min-w-[200px]">
+            <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+            <div class="relative">
+              <input type="text" 
+                     [(ngModel)]="categorySearch"
+                     (input)="filterCategories()"
+                     class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                     placeholder="Search or select a category">
+              <ul *ngIf="showCategoryOptions && filteredCategories.length > 0" 
+                  class="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto">
+                <li *ngFor="let category of filteredCategories" 
+                    class="px-4 py-2 hover:bg-indigo-100 cursor-pointer" 
+                    (click)="selectCategory(category)">
+                  {{ category }}
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Tags Input -->
+          <div class="flex-1 min-w-[200px]">
+            <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+            <div class="flex flex-wrap items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500">
+              <div *ngFor="let tag of tags; let i = index" 
+                   class="bg-indigo-100 text-indigo-800 text-xs px-3 py-1 rounded-full flex items-center">
+                {{ tag }} 
+                <button type="button" (click)="removeTag(i)" class="ml-1 text-indigo-600 hover:text-indigo-800">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <input type="text" 
+                     [(ngModel)]="newTag"
+                     (keydown.enter)="addTag($any($event))"
+                     class="flex-1 min-w-[100px] outline-none tag-input" 
+                     placeholder="Add tags (press Enter)">
+            </div>
+          </div>
+
+        </div>
+      </div>
+    <div class="p-6">
+      <!-- Featured Image Upload/Update -->
+        <div id="image-uploader" class="my-6 rounded-lg overflow-hidden border border-gray-200">
+            <div class="relative group">
+                <img 
+                [src]="featuredImage || defaultImage"
+                alt="Current featured image" 
+                class="w-full h-64 object-cover">
+
+                <div class="absolute inset-0 hover:text-white bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <button type="button"
+                        class="bg-gray-600 text-gray-200 px-4 py-2 rounded-lg font-medium hover:bg-white hover:text-black transition-colors"
+                        (click)="triggerFileInput()">
+                    <i class="fas fa-camera mr-2"></i> Change Image
+                </button>
+                </div>
+            </div>
+
+            <div class="p-4 bg-gray-50 border-t border-gray-200 flex justify-between items-center">
+                <div>
+                <p class="text-sm font-medium text-gray-700">Featured Image</p>
+                <p class="text-xs text-gray-500">Recommended size: 1200x630px</p>
+                </div>
+                <button type="button"
+                        class="text-red-600 hover:text-red-800 text-sm font-medium"
+                        (click)="removeImage()">
+                <i class="fas fa-trash mr-1"></i> Remove
+                </button>
+            </div>
+
+            <input type="file" #fileInput id="featured-image" class="hidden" accept="image/*" (change)="onFileSelected($event)">
+        </div>
+        <app-quill-editor
+        [initialContent]="existingPostContent"
+        (contentChange)="updatedContent = $event"
+        ></app-quill-editor>
+    </div>
+    <!-- Action Buttons -->
+    <div class="p-6 border-t border-gray-100 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 status-dot"></span>
+            <span class="text-sm text-gray-500">Last saved: {{ lastSavedTime }}</span>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+            <button
+            class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+            (click)="moveToTrash()"
+            >
+            <i class="fas fa-trash"></i>
+            <span>Move to Trash</span>
+            </button>
+
+            <button
+            class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+            (click)="saveAsDraft()"
+            >
+            <i class="fas fa-save"></i>
+            <span>Save as Draft</span>
+            </button>
+
+            <button
+            class="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            (click)="updatePost()"
+            >
+            <i class="fas fa-sync-alt mr-1"></i>
+            <span>Update Post</span>
+            </button>
+        </div>
+    </div>
+    
+    </div>
+  </main>
+</div>
+
+<app-footer></app-footer>
+<router-outlet></router-outlet>

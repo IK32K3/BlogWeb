@@ -1,0 +1,7 @@
+.pagination-link {
+  cursor: pointer;
+}
+
+.pagination-link:hover {
+  transition: background-color 0.2s, color 0.2s;
+}

@@ -31,7 +31,7 @@ import { ReactiveFormsModule } from '@angular/forms'; // Nếu bạn sử dụng
       { path: 'write-post', component: WritePostComponent },
       { path: 'post-detail', component: PostDetailComponent },
       { path: 'contact-us', component: ContactUsComponent },
-      { path: 'update-post', component: UpdatePostComponent},
+      { path: 'update-post/:id', component: UpdatePostComponent},
     ]),
   ],
   providers: [],
