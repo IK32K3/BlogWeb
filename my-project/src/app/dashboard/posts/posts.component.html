@@ -1,1 +1,230 @@
-<p>posts works!</p>
+<app-header-dashboard></app-header-dashboard>
+<div class="flex">
+    <app-sidebar-dashboard></app-sidebar-dashboard>
+    
+    <main class="flex-1 pb-10 lg:ml-2">
+        <div class="px-4 sm:px-6 lg:px-3 py-6">
+            <!-- Page header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Posts Management</h1>
+                    <p class="text-gray-500 mt-1">Create, edit, and manage your blog posts</p>
+                </div>
+                <div class="flex gap-3">
+                    <button
+                        (click)="openGlobalFilter()"
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i class="fas fa-filter mr-2"></i> Filter
+                    </button>
+                    <button
+                        (click)="createNewPost()"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i class="fas fa-plus mr-2"></i> New Post
+                    </button>
+                </div>
+            </div>
+
+            <!-- Posts Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <!-- Filter Bar -->
+                <div class="px-6 py-3 bg-gray-50 border-b border-gray-200 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center space-x-2">
+                        <div class="relative">
+                            <select
+                                [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()"
+                                class="appearance-none bg-white pl-3 pr-8 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <select
+                                [(ngModel)]="selectedCategory" (ngModelChange)="onFilterChange()"
+                                class="appearance-none bg-white pl-3 pr-8 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option *ngFor="let category of categoryOptions" [value]="category">{{ category }}</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative flex-1 max-w-xs">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input
+                            type="text"
+                            [(ngModel)]="searchTerm" (ngModelChange)="onFilterChange()"
+                            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Search posts...">
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            [checked]="allSelected()"
+                                            (change)="toggleSelectAll($event)"
+                                            [disabled]="paginatedPosts().length === 0"
+                                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <span class="ml-2">Title</span>
+                                    </div>
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Author
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Categories
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Date
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr *ngIf="paginatedPosts().length === 0">
+                                <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                    No posts found.
+                                </td>
+                            </tr>
+                            <tr *ngFor="let post of paginatedPosts(); trackBy: trackByPostId" class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            [(ngModel)]="post.selected"
+                                            (ngModelChange)="onPostSelectedChange()"
+                                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900" [class.line-through]="post.status === 'Trash'">{{ post.title }}</div>
+                                            <div class="text-sm text-gray-500">{{ post.tags }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <img class="h-10 w-10 rounded-full" [src]="post.author.avatarUrl" [alt]="post.author.name">
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">{{ post.author.name }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                        [ngClass]="{
+                                            'bg-indigo-100 text-indigo-800': post.category === 'Programming',
+                                            'bg-blue-100 text-blue-800': post.category === 'Web Design',
+                                            'bg-pink-100 text-pink-800': post.category === 'Design',
+                                            'bg-yellow-100 text-yellow-800': post.category === 'Business',
+                                            'bg-gray-100 text-gray-800': post.category === 'Technology' || !['Programming', 'Web Design', 'Design', 'Business'].includes(post.category)
+                                        }">
+                                        {{ post.category }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                        [ngClass]="{
+                                            'bg-green-100 text-green-800': post.status === 'Published',
+                                            'bg-gray-100 text-gray-800': post.status === 'Draft',
+                                            'bg-purple-100 text-purple-800': post.status === 'Scheduled',
+                                            'bg-red-100 text-red-800': post.status === 'Trash'
+                                        }">
+                                        {{ post.status }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ post.date }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex justify-end space-x-2">
+                                        <button (click)="viewPost(post)" class="text-indigo-600 hover:text-indigo-900" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button (click)="editPost(post)" class="text-yellow-600 hover:text-yellow-900" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button (click)="deletePost(post)" class="text-red-600 hover:text-red-900" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div *ngIf="totalFilteredItems() > 0" class="bg-white px-6 py-3 flex items-center justify-between border-t border-gray-200">
+                    <!-- Mobile Pagination (Simplified) -->
+                    <div class="flex-1 flex justify-between sm:hidden">
+                        <button (click)="prevPage()" [disabled]="currentPage() === 1"
+                                class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Previous
+                        </button>
+                        <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
+                                class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next
+                        </button>
+                    </div>
+
+                    <!-- Desktop Pagination -->
+                    <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-sm text-gray-700">
+                                Showing <span class="font-medium">{{ showingStart() }}</span>
+                                to <span class="font-medium">{{ showingEnd() }}</span>
+                                of <span class="font-medium">{{ totalFilteredItems() }}</span> posts
+                            </p>
+                        </div>
+                        <div *ngIf="totalPages() > 1">
+                            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                <button (click)="prevPage()" [disabled]="currentPage() === 1"
+                                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <span class="sr-only">Previous</span>
+                                    <i class="fas fa-chevron-left h-4 w-4"></i>
+                                </button>
+
+                                <ng-container *ngFor="let pageNum of paginationNumbers()">
+                                    <button (click)="goToPage(pageNum)"
+                                            [attr.aria-current]="pageNum === currentPage() ? 'page' : null"
+                                            class="relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+                                            [ngClass]="{
+                                                'z-10 bg-indigo-50 border-indigo-500 text-indigo-600': pageNum === currentPage(),
+                                                'bg-white border-gray-300 text-gray-500 hover:bg-gray-50': pageNum !== currentPage()
+                                            }">
+                                        {{ pageNum }}
+                                    </button>
+                                </ng-container>
+
+                                <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
+                                        class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <span class="sr-only">Next</span>
+                                    <i class="fas fa-chevron-right h-4 w-4"></i>
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<router-outlet></router-outlet>

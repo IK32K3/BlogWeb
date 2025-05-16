@@ -1,0 +1,6 @@
+.progress-bar {
+  height: 6px;
+  border-radius: 3px;
+  background-color: var(--gray-200);
+  overflow: hidden;
+}

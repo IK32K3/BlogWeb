@@ -13,6 +13,7 @@ import { QuillEditorComponent } from './components/quill-editor/quill-editor.com
 import { FilterMovieComponent } from './components/filter-movie/filter-movie.component'; // Import your FilterMovieComponent if you have it
 import { SidebarDashboardComponent } from './components/sidebar-dashboard/sidebar-dashboard.component';
 import { HeaderDashboardComponent } from './components/header-dashboard/header-dashboard.component';
+import { UploadModalComponent } from './components/upload-modal/upload-modal.component';
 @NgModule({
   declarations: [
     NavbarIntroduceComponent,
@@ -24,6 +25,7 @@ import { HeaderDashboardComponent } from './components/header-dashboard/header-d
     FilterMovieComponent,
     HeaderDashboardComponent,
     SidebarDashboardComponent,
+    UploadModalComponent,
   ],
   exports: [
     NavbarIntroduceComponent,
@@ -35,6 +37,7 @@ import { HeaderDashboardComponent } from './components/header-dashboard/header-d
     FilterMovieComponent,
     HeaderDashboardComponent,
     SidebarDashboardComponent,
+    UploadModalComponent
   ],
   imports: [
     CommonModule,
@@ -51,6 +54,7 @@ import { HeaderDashboardComponent } from './components/header-dashboard/header-d
     FilterMovieComponent, // Import your FilterMovieComponent if you want to use it in this module,
     HeaderDashboardComponent,
     SidebarDashboardComponent,
+    UploadModalComponent,
   ]
 })
 export class SharedModule { }

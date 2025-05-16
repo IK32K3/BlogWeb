@@ -1,112 +1,80 @@
-<aside
-  [ngClass]="{
-    'translate-x-0': sidebarOpen,
-    '-translate-x-full': !sidebarOpen,
-    'lg:translate-x-0': true
-  }"
-  class="fixed inset-y-0 left-0 z-20 w-64 transform overflow-y-auto bg-white border-r border-gray-200 transition duration-200 ease-in-out lg:static"
+<!-- Nút Hamburger (nếu bạn muốn nó là một phần của component này) -->
+<!-- Thường thì nút này nằm ở LayoutComponent để có thể truy cập global -->
+<button
+  *ngIf="isMobileView() && !sidebarOpen()"
+  (click)="toggleSidebar()"
+  class="sidebar-toggle-button fixed top-4 left-4 z-30 p-2 bg-white border border-gray-300 rounded-md shadow-md lg:hidden"
+  aria-label="Open sidebar menu"
 >
-  <div class="flex h-full flex-col px-4 py-4">
-    <!-- Sidebar Header -->
+  <i class="fas fa-bars"></i>
+</button>
+
+<aside
+  id="sidebar"
+  [ngClass]="{
+    'translate-x-0': sidebarOpen(),
+    '-translate-x-full': !sidebarOpen() && isMobileView(),
+    'lg:translate-x-0': true,
+    'lg:static': true
+  }"
+  class="fixed inset-y-0 left-0 z-20 w-64 transform overflow-y-auto bg-white border-r border-gray-200 transition-transform duration-200 ease-in-out"
+>
+  <!-- Các comment HTML có thể đặt ở đây nếu muốn giải thích -->
+  <!-- 'translate-x-0': Mở nếu sidebarOpen là true -->
+  <!-- '-translate-x-full': Đóng và ẩn trên mobile nếu sidebarOpen là false và là mobile view -->
+  <!-- 'lg:translate-x-0': Luôn hiển thị tĩnh trên desktop (lg) -->
+  <!-- 'lg:static': Đảm bảo nó chiếm không gian trên desktop -->
+
+  <div class="flex h-full flex-col px-4 py-6">
+    <!-- Sidebar header -->
     <div class="flex items-center justify-between px-2">
-      <button class="p-1 text-gray-500 hover:text-gray-700 lg:hidden" (click)="toggleSidebar()">
+      <button
+        *ngIf="isMobileView()"
+        (click)="toggleSidebar()"
+        class="p-1 text-gray-500 hover:text-gray-700 lg:hidden"
+        aria-label="Close sidebar menu"
+      >
         <i class="fas fa-times"></i>
       </button>
     </div>
 
     <!-- Navigation -->
     <nav class="flex-1 space-y-1">
-      <a
-        routerLink="/overview"
-        class="sidebar-item active-sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-indigo-600"
-      >
-        <i class="fas fa-chart-pie w-5 text-center"></i>
-        <span>Overview</span>
-      </a>
+      <ng-container *ngFor="let item of navItems">
+        <div *ngIf="item.isSettingsHeader" class="px-3 pt-5 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          {{ item.settingsLabel }}
+        </div>
 
-      <a
-        routerLink="/posts"
-        class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600"
-      >
-        <i class="fas fa-newspaper w-5 text-center"></i>
-        <span>Posts</span>
-        <span
-          class="ml-auto inline-flex items-center rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-800"
-          >12</span
+        <a *ngIf="!item.isSettingsHeader"
+          [routerLink]="item.path"
+          routerLinkActive="active-sidebar-item"
+          [routerLinkActiveOptions]="{ exact: item.exact !== false }"
+          (click)="closeSidebarOnMobileClick()"
+          class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md"
         >
-      </a>
-
-      <a
-        routerLink="/media"
-        class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600"
-      >
-        <i class="fas fa-image w-5 text-center"></i>
-        <span>Media Library</span>
-      </a>
-
-      <a
-        routerLink="/audience"
-        class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600"
-      >
-        <i class="fas fa-users w-5 text-center"></i>
-        <span>Audience</span>
-      </a>
-
-      <div
-        class="px-3 pt-5 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider"
-      >
-        Settings
-      </div>
-
-      <a
-        routerLink="/profile"
-        class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600"
-      >
-        <i class="fas fa-user-cog w-5 text-center"></i>
-        <span>Profile</span>
-      </a>
-
-      <a
-        routerLink="/settings"
-        class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600"
-      >
-        <i class="fas fa-sliders-h w-5 text-center"></i>
-        <span>Settings</span>
-      </a>
-
-      <a
-        routerLink="/help"
-        class="sidebar-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-indigo-600"
-      >
-        <i class="fas fa-question-circle w-5 text-center"></i>
-        <span>Help Center</span>
-      </a>
+          <i [class]="item.icon + ' w-5 text-center'"></i>
+          <span>{{ item.label }}</span>
+          <span *ngIf="item.badge"
+            class="ml-auto inline-flex items-center rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-800"
+          >
+            {{ item.badge }}
+          </span>
+        </a>
+      </ng-container>
     </nav>
 
     <!-- User profile mini -->
-    <div
-      class="mt-6 flex items-center gap-3 rounded-lg p-3 hover:bg-gray-50"
-    >
-      <img
-        class="h-9 w-9 rounded-full object-cover"
-        src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg"
-        alt="User avatar"
-      />
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-medium text-gray-900 truncate">
-          Edogawa Conan
-        </p>
-        <p class="text-xs text-gray-500 truncate">Admin Bloger</p>
+    <div class="mt-auto pt-6">
+      <div class="flex items-center gap-3 rounded-lg p-3 hover:bg-gray-50">
+        <img class="h-9 w-9 rounded-full object-cover" [src]="user.avatarUrl" [alt]="user.name + ' avatar'">
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900 truncate">{{ user.name }}</p>
+          <p class="text-xs text-gray-500 truncate">{{ user.role }}</p>
+        </div>
+        <button class="text-gray-400 hover:text-gray-500" aria-label="User options">
+          <i class="fas fa-ellipsis-vertical"></i>
+        </button>
       </div>
-      <button class="text-gray-400 hover:text-gray-500">
-        <i class="fas fa-ellipsis-vertical"></i>
-      </button>
     </div>
   </div>
 </aside>
-<button
-  class="fixed top-4 left-4 z-30 p-2 bg-white border rounded-md shadow-md lg:hidden"
-  (click)="toggleSidebar()"
->
-  <i class="fas fa-bars"></i>
-</button>
