@@ -146,6 +146,11 @@ class WithLocale
         this.withLocale = this.withLocale.toBoolean()
         return this
     }
+    matches(regex, message) {
+    this.withLocale = this.withLocale.matches(regex).withMessage(message);
+    return this;
+    }
+
     
 }
 

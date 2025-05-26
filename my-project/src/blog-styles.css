@@ -11,6 +11,7 @@
     --shadow-card-hover: 0 4px 12px 0 rgba(0, 0, 0, 0.12);
   }
   
+  
   /* Class cho màu sắc */
   .bg-primary-50 { background-color: var(--color-primary-50); }
   .bg-primary-100 { background-color: var(--color-primary-100); }

@@ -1,4 +1,3 @@
-<!-- register.component.html -->
 <navbar-introduce></navbar-introduce>
 <div class="bg-gray-200 flex flex-col items-center justify-center min-h-screen">
     <div id="navbar-introduce" class="w-full fixed top-0"></div>
@@ -12,33 +11,144 @@
   
     <div class="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
       <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
+        <!-- Username -->
         <div class="mb-4">
-          <label for="name" class="block text-gray-800 text-lg mb-2">Name</label>
-          <input type="text" id="name" name="name" ngModel required class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Enter your name">
+          <label for="username"
+          [ngClass]="{
+              'text-red-500': registerForm.submitted && usernameInput.invalid,
+              'text-gray-800': !(registerForm.submitted && usernameInput.invalid)
+            }"
+          class="block text-gray-800 text-lg mb-2">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            ngModel
+            required
+            minlength="3"
+            maxlength="50"
+            #usernameInput="ngModel"
+            [ngClass]="{
+              'border-red-500 focus:ring-red-500': registerForm.submitted && usernameInput.invalid,
+              'border-gray-300 focus:ring-gray-700': !(registerForm.submitted && usernameInput.invalid)
+            }"
+            class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+            placeholder="Enter your username"
+          >
+          
+          <div *ngIf="registerForm.submitted && usernameInput.invalid" class="text-red-500 text-sm mt-1">
+            <span *ngIf="usernameInput.errors?.['required']">Username không được để trống.</span>
+            <span *ngIf="usernameInput.errors?.['minlength']">Username phải từ 3 ký tự trở lên.</span>
+            <span *ngIf="usernameInput.errors?.['maxlength']">Username tối đa 50 ký tự.</span>
+          </div>
         </div>
+        <!-- Email -->
         <div class="mb-4">
-          <label for="email" class="block text-gray-800 text-lg mb-2">Email Address</label>
-          <input type="email" id="email" name="email" ngModel required class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Enter your email address">
+          <label for="email" 
+          [ngClass]="{
+              'text-red-500': registerForm.submitted && emailInput.invalid,
+              'text-gray-800': !(registerForm.submitted && emailInput.invalid)
+            }"
+          class="block text-gray-800 text-lg mb-2">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            ngModel
+            required
+            email
+            #emailInput="ngModel"
+            [ngClass]="{
+              'border-red-500 focus:ring-red-500': registerForm.submitted && emailInput.invalid,
+              'border-gray-300 focus:ring-gray-700': !(registerForm.submitted && emailInput.invalid)
+            }"
+            class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+            placeholder="Enter your email address"
+          >
+          <div *ngIf="registerForm.submitted && emailInput.invalid" class="text-red-500 text-sm mt-1">
+            <span *ngIf="emailInput.errors?.['required']">Email không được để trống.</span>
+            <span *ngIf="emailInput.errors?.['email']">Email không đúng định dạng.</span>
+          </div>
         </div>
+        <!-- Password -->
         <div class="mb-4 relative">
-          <label for="password" class="block text-gray-800 text-lg mb-2">Password</label>
-          <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" ngModel required class="w-full px-4 py-2 h-14 text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Enter your password">
-          <button type="button" class="absolute right-3 top-12 mt-1 text-gray-500 hover:text-gray-700" (click)="togglePasswordVisibility()">
+          <label for="password"
+            [ngClass]="{
+              'text-red-500': registerForm.submitted && passwordInput.invalid,
+              'text-gray-800': !(registerForm.submitted && passwordInput.invalid)
+            }"
+            class="block text-lg mb-2"
+          >
+            Password
+          </label>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            name="password"
+            ngModel
+            required
+            minlength="6"
+            maxlength="100"
+            #passwordInput="ngModel"
+            [ngClass]="{
+              'border-red-500 focus:ring-red-500': registerForm.submitted && passwordInput.invalid,
+              'border-gray-300 focus:ring-gray-700': !(registerForm.submitted && passwordInput.invalid)
+            }"
+            class="w-full px-4 py-2 h-14 text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+            placeholder="Enter your password"
+          >
+          <button type="button" class="absolute right-3 top-12 mt-1 text-gray-500 hover:text-gray-700" 
+          (click)="togglePasswordVisibility()">
             <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
           </button>
+          <div *ngIf="registerForm.submitted && passwordInput.invalid" class="text-red-500 text-sm mt-1">
+            <span *ngIf="passwordInput.errors?.['required']">Mật khẩu không được để trống.</span>
+            <span *ngIf="passwordInput.errors?.['minlength']">Mật khẩu phải từ 6 ký tự trở lên.</span>
+            <span *ngIf="passwordInput.errors?.['maxlength']">Mật khẩu tối đa 100 ký tự.</span>
+          </div>
         </div>
+        <!-- Confirm Password -->
         <div class="mb-4">
-          <label for="confirm-password" class="block text-gray-800 text-lg mb-2">Confirm Password</label>
-          <input type="password" id="confirm-password" name="confirmPassword"  ngModel required class="w-full px-4 py-2 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Confirm your password">
+          <label for="confirm-password"
+          [ngClass]="{
+              'text-red-500': registerForm.submitted && confirmPasswordInput.invalid,
+              'text-gray-800': !(registerForm.submitted && confirmPasswordInput.invalid)
+            }"
+          class="block text-gray-800 text-lg mb-2">Confirm Password</label>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="confirm-password"
+            name="confirmPassword"
+            ngModel
+            required
+            #confirmPasswordInput="ngModel"
+            [ngClass]="{
+              'border-red-500 focus:ring-red-500': registerForm.submitted && confirmPasswordInput.invalid,
+              'border-gray-300 focus:ring-gray-700': !(registerForm.submitted && confirmPasswordInput.invalid)
+            }"
+            class="w-full px-4 py-2 h-14 text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+            placeholder="Confirm your password"
+          >
+          <div *ngIf="registerForm.submitted && confirmPasswordInput.invalid" class="text-red-500 text-sm mt-1">
+            <span *ngIf="confirmPasswordInput.errors?.['required']">Xác nhận mật khẩu không được để trống.</span>
+          </div>
+          <div *ngIf="registerForm.submitted && passwordInput.value !== confirmPasswordInput.value" class="text-red-500 text-sm mt-1">
+            Mật khẩu xác nhận không khớp.
+          </div>
         </div>
+        <!-- Terms -->
         <div class="mb-4">
-          <input type="checkbox" id="terms" name="terms" ngModel class="mr-2">
+          <input type="checkbox" id="terms" name="terms" ngModel required class="mr-2">
           <label for="terms" class="text-gray-800">
             I agree to Medium's
             <a href="#" class="text-blue-500 hover:underline">Terms of Service</a> and
             <a href="#" class="text-blue-500 hover:underline">Privacy Policy</a>
           </label>
+          <div *ngIf="registerForm.submitted && !registerForm.controls['terms']?.value" class="text-red-500 text-sm mt-1">
+            Bạn phải đồng ý với điều khoản dịch vụ.
+          </div>
         </div>
+        <!-- Updates -->
         <div class="mb-4">
           <input type="checkbox" id="updates" name="updates" ngModel class="mr-2">
           <label for="updates" class="text-gray-800">
@@ -52,7 +162,9 @@
         </div>
       </form>
       <p class="text-center text-gray-700 mt-4">Already have an account?
-        <a routerLink="/login" class="text-blue-500 hover:underline">Sign In</a>
+        <a routerLink="/auth/login" class="text-blue-500 hover:underline">
+          <button class="hover:underline">Sign In</button>
+        </a>
       </p>
     </div>
   </div>

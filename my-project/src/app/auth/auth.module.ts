@@ -9,6 +9,9 @@ import { AppComponent } from '../app.component'; // Đảm bảo đường dẫn
 import { FormsModule } from '@angular/forms'; // Nếu bạn sử dụng FormsModule trong các component
 import { NavbarIntroduceComponent } from '../shared/components/navbar-introduce/navbar-introduce.component'; // Đảm bảo đường dẫn đúng đến NavbarIntroduceComponent
 import { SharedModule } from '../shared/shared.module';
+import { HttpClient } from '@angular/common/http';
+import { ToastrModule } from 'ngx-toastr';
+import { HeaderComponent } from '../shared/header/header.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +19,7 @@ import { SharedModule } from '../shared/shared.module';
     RegisterComponent,
     ForgotPasswordComponent,
     NavbarIntroduceComponent,
+    HeaderComponent,
   ],
   imports: [
     CommonModule,
@@ -27,6 +31,13 @@ import { SharedModule } from '../shared/shared.module';
     ]),
     SharedModule, 
     FormsModule ,// Nếu bạn sử dụng FormsModule trong các component
+    HttpClient,
+    ToastrModule.forRoot({
+      positionClass: 'toast-top-center', // hoặc toast-bottom-right, toast-center-center,...
+      timeOut: 3000,
+      closeButton: true,
+      progressBar: true,
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -52,15 +52,40 @@ const authService = {
    * @throws {AuthError|ConflictError}
    */
   registerUser: async (userData) => {
-    const { username, email, password, description } = userData;
+    const { username, email, password ,description } = userData;
 
-    // --- Input Validation (Business Rules) ---
-    if (!validator.isEmail(email)) {
-      throw new AuthError('Invalid email format');
-    }
-    if (password.length < PASSWORD_MIN_LENGTH) {
-      throw new AuthError(`Password must be at least ${PASSWORD_MIN_LENGTH} characters long`);
-    }
+  // --- Username validation ---
+if (
+  !username ||
+  typeof username !== 'string' ||
+  !/^[a-zA-Z]{3,50}$/.test(username)
+) {
+  throw new AuthError('Username chỉ được chứa chữ, số, dấu gạch dưới và có độ dài từ 3 đến 50 ký tự');
+}
+
+// --- Email validation ---
+if (
+  !email ||
+  typeof email !== 'string' ||
+  !validator.isEmail(email) ||
+  !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)
+) {
+  throw new AuthError('Email không đúng định dạng hoặc chứa ký tự không hợp lệ');
+}
+
+// --- Password validation ---
+if (
+  !password ||
+  typeof password !== 'string' ||
+  password.length < PASSWORD_MIN_LENGTH
+) {
+  throw new AuthError(`Password phải có ít nhất ${PASSWORD_MIN_LENGTH} ký tự`);
+}
+
+// Password phải chứa ít nhất 1 chữ cái và 1 số
+if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
+  throw new AuthError('Password phải chứa ít nhất 1 chữ cái và 1 số');
+}
 
     // --- Check for existing user ---
     const existingUser = await User.findOne({
@@ -88,7 +113,7 @@ const authService = {
       email,
       password: hashedPassword,
       role_id: defaultRole.id,
-      description,
+       description: description || '',
       is_active: true // Default to active
     }, {
       fields: ['username', 'email', 'password', 'role_id', 'description', 'is_active']
@@ -119,10 +144,15 @@ const authService = {
    * @returns {Promise<object>} - { user, tokens }
    * @throws {UnauthorizedError|ForbiddenError}
    */
-  loginUser: async (username, password) => {
+  loginUser: async (usernameOrEmail, password) => {
     // --- Find user with role ---
     const user = await User.findOne({
-      where: { username },
+      where: {
+      [Op.or]: [
+        { username: usernameOrEmail },
+        { email: usernameOrEmail }
+      ]
+    },
       include: [{
         model: Role,
         as: 'role', // Ensure 'as: role' matches your model definition
@@ -132,7 +162,7 @@ const authService = {
     });
 
     if (!user) {
-      throw new UnauthorizedError('Invalid credentials');
+      throw new UnauthorizedError('Invalid usernameOrEmail credentials');
     }
 
     if (!user.is_active) {
@@ -140,14 +170,14 @@ const authService = {
     }
     // Check if role was loaded correctly
     if (!user.role || !user.role.name) {
-        console.error(`Role data missing for user: ${username}`);
+        console.error(`Role data missing for user: ${usernameOrEmail}`);
         throw new Error('User data configuration error.'); // Internal server error
     }
 
     // --- Verify password ---
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedError('Invalid credentials');
+      throw new UnauthorizedError('Invalid password credentials');
     }
 
     // --- Generate tokens ---

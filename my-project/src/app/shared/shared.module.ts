@@ -14,6 +14,7 @@ import { FilterMovieComponent } from './components/filter-movie/filter-movie.com
 import { SidebarDashboardComponent } from './components/sidebar-dashboard/sidebar-dashboard.component';
 import { HeaderDashboardComponent } from './components/header-dashboard/header-dashboard.component';
 import { UploadModalComponent } from './components/upload-modal/upload-modal.component';
+import { HeaderComponent } from './header/header.component';
 @NgModule({
   declarations: [
     NavbarIntroduceComponent,
@@ -26,6 +27,7 @@ import { UploadModalComponent } from './components/upload-modal/upload-modal.com
     HeaderDashboardComponent,
     SidebarDashboardComponent,
     UploadModalComponent,
+    HeaderComponent
   ],
   exports: [
     NavbarIntroduceComponent,
@@ -37,7 +39,8 @@ import { UploadModalComponent } from './components/upload-modal/upload-modal.com
     FilterMovieComponent,
     HeaderDashboardComponent,
     SidebarDashboardComponent,
-    UploadModalComponent
+    UploadModalComponent,
+    HeaderComponent,
   ],
   imports: [
     CommonModule,
@@ -55,6 +58,7 @@ import { UploadModalComponent } from './components/upload-modal/upload-modal.com
     HeaderDashboardComponent,
     SidebarDashboardComponent,
     UploadModalComponent,
+    HeaderComponent
   ]
 })
 export class SharedModule { }

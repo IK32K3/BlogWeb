@@ -12,6 +12,10 @@ import { FormsModule } from '@angular/forms'; // Nếu bạn sử dụng FormsMo
 import { SharedModule } from '../shared/shared.module'; // Nếu bạn có module chia sẻ nào đó
 import { RouterModule } from '@angular/router'; // Import RouterModule if you need routing in your shared module
 import { ReactiveFormsModule } from '@angular/forms'; // Nếu bạn sử dụng ReactiveFormsModule trong các component
+import { HeaderComponent } from '../shared/header/header.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrModule } from 'ngx-toastr';
+
 @NgModule({
   declarations: [
     WritePostComponent,
@@ -20,6 +24,7 @@ import { ReactiveFormsModule } from '@angular/forms'; // Nếu bạn sử dụng
     NavBarComponent,
     FooterComponent,
     UpdatePostComponent,
+    HeaderComponent,
   ],
   imports: [
     CommonModule,
@@ -33,6 +38,13 @@ import { ReactiveFormsModule } from '@angular/forms'; // Nếu bạn sử dụng
       { path: 'contact-us', component: ContactUsComponent },
       { path: 'update-post/:id', component: UpdatePostComponent},
     ]),
+    HttpClient,
+    ToastrModule.forRoot({
+      positionClass: 'toast-top-center', // hoặc toast-bottom-right, toast-center-center,...
+      timeOut: 3000,
+      closeButton: true,
+      progressBar: true,
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],

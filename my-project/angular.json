@@ -30,7 +30,8 @@
               "src/styles.css",
               "src/blog-styles.css",
               "node_modules/quill/dist/quill.snow.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": [
               "src/assets/js/main.js"
@@ -93,7 +94,8 @@
               "src/styles.css",
               "src/blog-styles.css",
               "node_modules/quill/dist/quill.snow.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": [
               

@@ -3,20 +3,40 @@ const { User } = require('models'); // Assuming this path is correct
 
 // Registration validation - Removed the outer array brackets []
 const registerValidation = [
-  // Each rule is now a direct element of this array
-  new BodyWithLocale('username').notEmpty().isLength({ min: 3, max: 50 })
-    .unique(User, 'username').get(),
-  new BodyWithLocale('email').notEmpty().isEmail()
-    .unique(User, 'email').get(),
-  new BodyWithLocale('password').notEmpty().isLength({ min: 6, max: 100 }).get(),
-  new BodyWithLocale('confirmPassword').notEmpty().confirmed('password').get(),
-  new BodyWithLocale('description').get() // Assuming you want to validate/sanitize description, even if just checking existence
+  // Username: bắt buộc, từ 3 đến 50 ký tự, duy nhất
+  new BodyWithLocale('username')
+    .notEmpty()
+    .matches(/^[a-zA-Z]+$/, 'Tên người dùng chỉ được chứa chữ cái (không dấu, không số, không ký tự đặc biệt)')
+    .isLength({ min: 3, max: 50 })
+    .unique(User, 'username', 'Tên người dùng đã được sử dụng')
+    .get(),
+
+  // Email: bắt buộc, đúng định dạng, duy nhất
+  new BodyWithLocale('email')
+    .notEmpty()
+    .isEmail().matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+    .unique(User, 'email', 'Email đã được sử dụng')
+    .get(),
+
+  // Password: bắt buộc, từ 6 đến 100 ký tự
+  new BodyWithLocale('password')
+    .notEmpty()
+    .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>])/,
+    'Mật khẩu phải chứa ít nhất một số và một ký tự đặc biệt')
+    .isLength({ min: 6, max: 100 })
+    .get(),
+
+  // Confirm Password: bắt buộc, giống với password
+  new BodyWithLocale('confirmPassword')
+    .notEmpty()
+    .confirmed('password', 'Xác nhận mật khẩu không khớp')
+    .get(),
 ];
 
 // Login validation - Removed the outer array brackets []
 const loginValidation = [
-  new BodyWithLocale('username').notEmpty().get(),
-  new BodyWithLocale('password').notEmpty().get()
+  new BodyWithLocale('usernameOrEmail').notEmpty().get().isLength({min : 3,max:50}).trim(),
+  new BodyWithLocale('password').notEmpty().get().isLength({min : 6,max: 100})
 ];
 
 // Forgot password validation - Removed the outer array brackets []

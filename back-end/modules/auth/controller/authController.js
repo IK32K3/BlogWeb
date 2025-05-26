@@ -9,14 +9,14 @@ const authController = {
    */
   register: async (req, res) => {
     // Basic request validation
-    const { username, email, password, description } = req.body;
+    const { username, email, password } = req.body;
     if (!username || !email || !password) {
       return responseUtils.badRequest(res, 'Username, email and password are required');
     }
 
     try {
       // Call the service
-      const result = await authService.registerUser({ username, email, password, description });
+      const result = await authService.registerUser({ username, email, password });
       return responseUtils.created(res, result);
 
     } catch (error) {
@@ -38,14 +38,14 @@ const authController = {
    */
   login: async (req, res) => {
     // Basic request validation
-    const { username, password } = req.body;
-    if (!username || !password) {
+    const { usernameOrEmail, password } = req.body;
+    if (!usernameOrEmail || !password) {
       return responseUtils.badRequest(res, 'Username and password are required');
     }
 
     try {
       // Call the service
-      const result = await authService.loginUser(username, password);
+      const result = await authService.loginUser(usernameOrEmail, password);
       return responseUtils.success(res, result);
 
     } catch (error) {
