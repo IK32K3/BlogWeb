@@ -12,9 +12,6 @@ import { FooterComponent } from '../shared/components/footer/footer.component';
 
 @NgModule({
   declarations: [
-    CategoryPageComponent,
-    NavBarComponent,
-    FooterComponent,
   ],
   imports: [
     CommonModule,
@@ -27,6 +24,6 @@ import { FooterComponent } from '../shared/components/footer/footer.component';
         ]),
       ],
       providers: [],
-      bootstrap: [AppComponent],
+      bootstrap: [],
 })
 export class CategoryModule { }

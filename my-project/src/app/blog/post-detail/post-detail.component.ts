@@ -7,10 +7,11 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
 import { HeaderComponent } from '../../shared/header/header.component';
 import { ActivatedRoute } from '@angular/router';
 import { BlogPostService } from '../services/blog-post.service';
+import { SharedModule } from '../../shared/shared.module';
 
 @Component({
   selector: 'app-post-detail',
-  imports: [CommonModule,FormsModule,RouterOutlet,HeaderComponent,FooterComponent],
+  imports: [CommonModule,FormsModule,RouterOutlet,SharedModule ],
   templateUrl: './post-detail.component.html',
   styleUrl: './post-detail.component.css'
 })

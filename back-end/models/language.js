@@ -23,16 +23,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(10),
       allowNull: false
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
-    },
     is_active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -42,7 +32,9 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Language',
     tableName: 'languages',
-    timestamps: false // Disable Sequelize's automatic timestamps
+    timestamps: true,
+      // --- THÊM underscored ĐỂ KHỚP VỚI TÊN CỘT created_at/updated_at ---
+      underscored: true // Rất quan trọng nếu tên cột DB có dấu gạch dưới
   });
   return Language;
 };

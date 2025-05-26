@@ -3,30 +3,29 @@ const { User } = require('models'); // Assuming this path is correct
 
 // Registration validation - Removed the outer array brackets []
 const registerValidation = [
-  // Username: bắt buộc, từ 3 đến 50 ký tự, duy nhất
+  // Username: bắt buộc, 3-50 ký tự, chỉ chứa chữ cái, số và gạch dưới
   new BodyWithLocale('username')
     .notEmpty()
-    .matches(/^[a-zA-Z]+$/, 'Tên người dùng chỉ được chứa chữ cái (không dấu, không số, không ký tự đặc biệt)')
-    .isLength({ min: 3, max: 50 })
+    .matches(/^[a-zA-Z0-9_]{3,50}$/, 'Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới (3-50 ký tự)')
     .unique(User, 'username', 'Tên người dùng đã được sử dụng')
     .get(),
 
   // Email: bắt buộc, đúng định dạng, duy nhất
   new BodyWithLocale('email')
     .notEmpty()
-    .isEmail().matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+    .isEmail().withMessage('Email không hợp lệ')
+    .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
     .unique(User, 'email', 'Email đã được sử dụng')
     .get(),
 
-  // Password: bắt buộc, từ 6 đến 100 ký tự
+  // Password: bắt buộc, 6-100 ký tự, có số và ký tự đặc biệt
   new BodyWithLocale('password')
     .notEmpty()
-    .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>])/,
-    'Mật khẩu phải chứa ít nhất một số và một ký tự đặc biệt')
+    .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>])/, 'Mật khẩu phải chứa ít nhất một số và một ký tự đặc biệt')
     .isLength({ min: 6, max: 100 })
     .get(),
 
-  // Confirm Password: bắt buộc, giống với password
+  // Confirm Password: giống password
   new BodyWithLocale('confirmPassword')
     .notEmpty()
     .confirmed('password', 'Xác nhận mật khẩu không khớp')
