@@ -51,43 +51,10 @@ const authService = {
    * @returns {Promise<object>} - { user, tokens }
    * @throws {AuthError|ConflictError}
    */
-  registerUser: async (userData) => {
-    const { username, email, password ,description } = userData;
+    registerUser: async (userData) => {
+    const { username, email, password, description } = userData;
 
-  // --- Username validation ---
-if (
-  !username ||
-  typeof username !== 'string' ||
-  !/^[a-zA-Z]{3,50}$/.test(username)
-) {
-  throw new AuthError('Username chỉ được chứa chữ, số, dấu gạch dưới và có độ dài từ 3 đến 50 ký tự');
-}
-
-// --- Email validation ---
-if (
-  !email ||
-  typeof email !== 'string' ||
-  !validator.isEmail(email) ||
-  !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)
-) {
-  throw new AuthError('Email không đúng định dạng hoặc chứa ký tự không hợp lệ');
-}
-
-// --- Password validation ---
-if (
-  !password ||
-  typeof password !== 'string' ||
-  password.length < PASSWORD_MIN_LENGTH
-) {
-  throw new AuthError(`Password phải có ít nhất ${PASSWORD_MIN_LENGTH} ký tự`);
-}
-
-// Password phải chứa ít nhất 1 chữ cái và 1 số
-if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
-  throw new AuthError('Password phải chứa ít nhất 1 chữ cái và 1 số');
-}
-
-    // --- Check for existing user ---
+    // --- Check for existing user (đã kiểm trong middleware, nhưng vẫn có thể giữ lại để chắc chắn hơn nếu dùng nhiều nơi khác) ---
     const existingUser = await User.findOne({
       where: { [Op.or]: [{ username }, { email }] }
     });
@@ -100,10 +67,9 @@ if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     // --- Get default role ---
-    const defaultRole = await Role.findOne({ where: { name: 'Viewer' } });
+    const defaultRole = await Role.findOne({ where: { name: 'Blogger' } });
     if (!defaultRole) {
-      // This is a server configuration issue, throw a generic error
-      console.error("Default role 'Viewer' not found in database.");
+      console.error("Default role 'Blogger' not found in database.");
       throw new Error('User registration configuration error.');
     }
 
@@ -113,8 +79,8 @@ if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
       email,
       password: hashedPassword,
       role_id: defaultRole.id,
-       description: description || '',
-      is_active: true // Default to active
+      description: description || '',
+      is_active: true
     }, {
       fields: ['username', 'email', 'password', 'role_id', 'description', 'is_active']
     });
@@ -125,9 +91,9 @@ if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
       refresh_token: jwtUtils.signRefreshToken(user.id, defaultRole.name)
     };
 
-    // --- Return necessary data ---
+    // --- Return user and tokens ---
     return {
-      user: { // Return only safe/relevant fields
+      user: {
         id: user.id,
         username: user.username,
         email: user.email,
@@ -135,67 +101,7 @@ if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
       },
       tokens
     };
-  },
 
-  /**
-   * Handles user login logic.
-   * @param {string} username
-   * @param {string} password
-   * @returns {Promise<object>} - { user, tokens }
-   * @throws {UnauthorizedError|ForbiddenError}
-   */
-  loginUser: async (usernameOrEmail, password) => {
-    // --- Find user with role ---
-    const user = await User.findOne({
-      where: {
-      [Op.or]: [
-        { username: usernameOrEmail },
-        { email: usernameOrEmail }
-      ]
-    },
-      include: [{
-        model: Role,
-        as: 'role', // Ensure 'as: role' matches your model definition
-        attributes: ['name']
-      }],
-      attributes: ['id', 'username', 'email', 'password', 'is_active'] // Select necessary fields
-    });
-
-    if (!user) {
-      throw new UnauthorizedError('Invalid usernameOrEmail credentials');
-    }
-
-    if (!user.is_active) {
-      throw new ForbiddenError('Account is disabled');
-    }
-    // Check if role was loaded correctly
-    if (!user.role || !user.role.name) {
-        console.error(`Role data missing for user: ${usernameOrEmail}`);
-        throw new Error('User data configuration error.'); // Internal server error
-    }
-
-    // --- Verify password ---
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedError('Invalid password credentials');
-    }
-
-    // --- Generate tokens ---
-    const tokens = {
-      access_token: jwtUtils.sign(user.id, user.role.name),
-      refresh_token: jwtUtils.signRefreshToken(user.id, user.role.name)
-    };
-
-    // --- Return necessary data ---
-    return {
-      user: { // Return only safe/relevant fields
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role.name
-      },
-      tokens
-    };
   },
 
   /**

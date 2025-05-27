@@ -15,12 +15,7 @@ import { HeroSectionComponent } from '../shared/components/hero-section/hero-sec
 
 @NgModule({
   declarations: [
-    HomePageComponent,
-    AboutPageComponent,
-    IntroducePageComponent,
-    NavbarIntroduceComponent, // Nếu bạn muốn sử dụng NavbarIntroduceComponent ở đây
-    FooterComponent, // Nếu bạn muốn sử dụng FooterComponent ở đây
-    HeroSectionComponent
+
   ],
   imports: [
     CommonModule,
@@ -34,6 +29,6 @@ import { HeroSectionComponent } from '../shared/components/hero-section/hero-sec
     FormsModule, // Nếu bạn sử dụng FormsModule trong các component
   ],
   providers: [],
-  bootstrap: [AppComponent],
+  bootstrap: [],
 })
 export class HomeModule { }

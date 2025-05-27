@@ -69,22 +69,14 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       },
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP ')
-    }
     
   }, {
     sequelize,
     modelName: 'Post',
     tableName: 'posts',
-    timestamps: false, // Disable Sequelize's automatic timestamps
+    timestamps: true,
+      // --- THÊM underscored ĐỂ KHỚP VỚI TÊN CỘT created_at/updated_at ---
+      underscored: true, // Rất quan trọng nếu tên cột DB có dấu gạch dưới
     
     indexes: [
       { unique: true, fields: ['slug'] },

@@ -11,10 +11,7 @@ import { SharedModule } from '../shared/shared.module'; // Nếu bạn có modul
 import { AppComponent } from '../app.component'; // Nếu bạn muốn sử dụng AppComponent ở đây
 @NgModule({
   declarations: [
-    ProfileUserComponent,
-    ProfileSettingsComponent,
-    NavBarComponent,
-    FooterComponent
+    
   ],
   imports: [
     CommonModule,
@@ -27,6 +24,6 @@ import { AppComponent } from '../app.component'; // Nếu bạn muốn sử dụ
     FormsModule, // Nếu bạn sử dụng FormsModule trong các component
   ],
   providers: [],
-  bootstrap: [AppComponent], // Nếu bạn muốn sử dụng AppComponent ở đây
+  bootstrap: [], // Nếu bạn muốn sử dụng AppComponent ở đây
 })
 export class ProfileModule { }

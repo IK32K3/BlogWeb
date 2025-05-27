@@ -16,18 +16,9 @@ import { HeaderDashboardComponent } from './components/header-dashboard/header-d
 import { UploadModalComponent } from './components/upload-modal/upload-modal.component';
 import { HeaderComponent } from './header/header.component';
 @NgModule({
+
   declarations: [
-    NavbarIntroduceComponent,
-    FooterComponent,
-    HeroSectionComponent,
-    PostCardComponent,
-    NavBarComponent,
-    QuillEditorComponent, 
-    FilterMovieComponent,
-    HeaderDashboardComponent,
-    SidebarDashboardComponent,
-    UploadModalComponent,
-    HeaderComponent
+  
   ],
   exports: [
     NavbarIntroduceComponent,

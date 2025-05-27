@@ -35,8 +35,6 @@ const searchPostsValidation = [
 
 // [POST] /posts
 const createPostValidation = [
-  new BodyWithLocale('user_id').notEmpty().isNumeric().toInt().withMessage('User ID must be a number').get(),
-  // User ID
   new BodyWithLocale('title').notEmpty().isLength({ min: 3, max: 300 }).withMessage('Title must be between 3 and 300 characters long').get(),
   new BodyWithLocale('content').notEmpty().isLength({ min: 10, max: 10000 }).withMessage('Content must be between 10 and 10000 characters long').get(),
   // Content
