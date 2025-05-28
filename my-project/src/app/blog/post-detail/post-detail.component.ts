@@ -1,55 +1,55 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
-import { HeaderComponent } from '../../shared/header/header.component';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 import { ActivatedRoute } from '@angular/router';
-import { BlogPostService } from '../services/blog-post.service';
+import { BlogPostService } from '../../core/services/blog-post.service';
 import { SharedModule } from '../../shared/shared.module';
 
 @Component({
   selector: 'app-post-detail',
-  imports: [CommonModule,FormsModule,RouterOutlet,SharedModule ],
+  imports: [CommonModule, FormsModule, RouterOutlet, SharedModule],
   templateUrl: './post-detail.component.html',
   styleUrl: './post-detail.component.css'
 })
-export class PostDetailComponent  {
+export class PostDetailComponent {
   post = {
-  imageUrl: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-  category: 'Writing & Blogging',
-  title: 'How to Write Professional Blogs That Attract Readers',
-  author: {
-    name: 'John Smith',
-    avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg'
-  },
-  date: 'March 21, 2025',
-  readTime: '8 min read',
-  introQuote: "Blogging isn't just about sharing thoughts, it's a skill that needs practice to attract readers.",
-  section1: "Effective blogging starts with clearly identifying...",
-  tip1: "Create reader personas with characteristics like age, occupation, etc.",
-  section2: "Even when writing about professional topics...",
-  languageTips: [
-    { title: 'Avoid overly complex terminology', detail: 'If you must use it, provide a brief explanation' },
-    { title: 'Write concise, readable sentences', detail: 'Long-winded sentences can easily make readers lose focus' },
-    { title: 'Use illustrative examples', detail: 'Helps readers visualize the issue' },
-  ],
-  imageTipUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-  imageTipCaption: 'A comfortable writing space helps improve article quality',
-  quote: 'Blogging is an art, and the blogger is an artist...',
-  quoteAuthor: 'Sarah Johnson, Professional Blogger',
-  section3: 'Quality content is the most important factor...',
-  qualityTips: [
-    { title: 'Break articles into small paragraphs', detail: 'Each paragraph should present one main idea' },
-    { title: 'Use images and videos for illustration', detail: 'Multimedia content makes articles more vivid' },
-    { title: 'Check spelling and grammar', detail: 'Spelling mistakes reduce article credibility' },
-    { title: 'Update information regularly', detail: 'Ensure content is always fresh and accurate' }
-  ],
-  ctaNote: "Don't forget to add a call-to-action (CTA)...",
-  finalNote: "Blogging isn't just about creating content...",
-  tags: ['writing', 'blogging', 'content'],
-  likes: 248
-};
+    imageUrl: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+    category: 'Writing & Blogging',
+    title: 'How to Write Professional Blogs That Attract Readers',
+    author: {
+      name: 'John Smith',
+      avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg'
+    },
+    date: 'March 21, 2025',
+    readTime: '8 min read',
+    introQuote: "Blogging isn't just about sharing thoughts, it's a skill that needs practice to attract readers.",
+    section1: "Effective blogging starts with clearly identifying...",
+    tip1: "Create reader personas with characteristics like age, occupation, etc.",
+    section2: "Even when writing about professional topics...",
+    languageTips: [
+      { title: 'Avoid overly complex terminology', detail: 'If you must use it, provide a brief explanation' },
+      { title: 'Write concise, readable sentences', detail: 'Long-winded sentences can easily make readers lose focus' },
+      { title: 'Use illustrative examples', detail: 'Helps readers visualize the issue' },
+    ],
+    imageTipUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+    imageTipCaption: 'A comfortable writing space helps improve article quality',
+    quote: 'Blogging is an art, and the blogger is an artist...',
+    quoteAuthor: 'Sarah Johnson, Professional Blogger',
+    section3: 'Quality content is the most important factor...',
+    qualityTips: [
+      { title: 'Break articles into small paragraphs', detail: 'Each paragraph should present one main idea' },
+      { title: 'Use images and videos for illustration', detail: 'Multimedia content makes articles more vivid' },
+      { title: 'Check spelling and grammar', detail: 'Spelling mistakes reduce article credibility' },
+      { title: 'Update information regularly', detail: 'Ensure content is always fresh and accurate' }
+    ],
+    ctaNote: "Don't forget to add a call-to-action (CTA)...",
+    finalNote: "Blogging isn't just about creating content...",
+    tags: ['writing', 'blogging', 'content'],
+    likes: 248
+  };
   relateposts = [
     {
       image: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
@@ -73,7 +73,7 @@ export class PostDetailComponent  {
       readTime: '6 min read'
     }
   ];
-comments = [
+  comments = [
     {
       userImage: 'https://randomuser.me/api/portraits/men/75.jpg',
       username: 'user****@gmail.com',
@@ -102,7 +102,7 @@ comments = [
       isMostLiked: false
     }
   ];
-  
+
   newComment = '';
 
   postComment() {

@@ -12,8 +12,8 @@ import { FormsModule } from '@angular/forms'; // Nếu bạn sử dụng FormsMo
 import { SharedModule } from '../shared/shared.module'; // Nếu bạn có module chia sẻ nào đó
 import { RouterModule } from '@angular/router'; // Import RouterModule if you need routing in your shared module
 import { ReactiveFormsModule } from '@angular/forms'; // Nếu bạn sử dụng ReactiveFormsModule trong các component
-import { HeaderComponent } from '../shared/header/header.component';
-import { HttpClientModule  } from '@angular/common/http';
+import { HeaderComponent } from '../shared/components/header/header.component';
+import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
@@ -29,7 +29,7 @@ import { ToastrModule } from 'ngx-toastr';
       { path: 'write-post', component: WritePostComponent },
       { path: 'post-detail', component: PostDetailComponent },
       { path: 'contact-us', component: ContactUsComponent },
-      { path: 'update-post/:id', component: UpdatePostComponent},
+      { path: 'update-post/:id', component: UpdatePostComponent },
     ]),
     HttpClientModule,
     ToastrModule.forRoot({

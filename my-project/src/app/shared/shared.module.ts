@@ -14,11 +14,11 @@ import { FilterMovieComponent } from './components/filter-movie/filter-movie.com
 import { SidebarDashboardComponent } from './components/sidebar-dashboard/sidebar-dashboard.component';
 import { HeaderDashboardComponent } from './components/header-dashboard/header-dashboard.component';
 import { UploadModalComponent } from './components/upload-modal/upload-modal.component';
-import { HeaderComponent } from './header/header.component';
+import { HeaderComponent } from './components/header/header.component';
 @NgModule({
 
   declarations: [
-  
+
   ],
   exports: [
     NavbarIntroduceComponent,
@@ -38,13 +38,13 @@ import { HeaderComponent } from './header/header.component';
     NavbarIntroduceComponent,
     FormsModule,
     RouterModule,
-    RouterOutlet ,
+    RouterOutlet,
     FooterComponent,
     HeroSectionComponent,
     PostCardComponent,
     NavBarComponent,
     QuillModule,
-    QuillEditorComponent ,
+    QuillEditorComponent,
     FilterMovieComponent, // Import your FilterMovieComponent if you want to use it in this module,
     HeaderDashboardComponent,
     SidebarDashboardComponent,

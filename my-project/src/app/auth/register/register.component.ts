@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { NavbarIntroduceComponent } from '../../shared/components/navbar-introduce/navbar-introduce.component';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -18,7 +18,7 @@ export class RegisterComponent {
   constructor(
     private authService: AuthService,
     private toastr: ToastrService
-  ) {}
+  ) { }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;

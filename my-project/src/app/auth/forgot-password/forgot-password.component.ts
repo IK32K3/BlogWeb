@@ -2,14 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import { HeaderComponent } from '../../shared/header/header.component';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 
 
 @Component({
   selector: 'app-forgot-password',
-  imports: [CommonModule, RouterLink, RouterOutlet, FormsModule,HeaderComponent],
+  imports: [CommonModule, RouterLink, RouterOutlet, FormsModule, HeaderComponent],
   standalone: true,
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.css'
@@ -20,7 +20,7 @@ export class ForgotPasswordComponent {
   constructor(
     private authService: AuthService,
     private toastr: ToastrService
-  ) {}
+  ) { }
 
   onSubmit() {
     // Kiểm tra rỗng
