@@ -1,75 +1,72 @@
-<section class="relative w-full h-90 text-white overflow-hidden">
+<section class="relative w-full h-[70vh] md:h-[80vh] text-white overflow-hidden">
   <!-- Hiển thị khi không có slide nào -->
-  <div *ngIf="slides.length === 0" class="w-screen h-screen flex flex-col justify-center items-center bg-gray-800">
+  <div *ngIf="slides.length === 0" class="w-full h-full flex flex-col justify-center items-center bg-gray-800">
     <img [src]="DEFAULT_POST_IMAGE" alt="No slides available" class="w-1/2 h-1/2 object-contain opacity-50">
     <p class="mt-4 text-xl">Không có bài viết nào để hiển thị.</p>
   </div>
 
   <ng-container *ngIf="slides.length > 0">
-    <div class="overflow-hidden relative w-screen h-screen">
+    <div class="relative w-full h-full">
       <div class="flex transition-transform duration-500 ease-in-out h-full" [style.transform]="getTransform()" #carousel>
         <ng-container *ngFor="let slide of slides; index as i">
-          <div class="carousel-item min-w-full h-screen relative">
-            <!-- Sử dụng <a> nếu bạn muốn slide có thể click được -->
-            <!-- <a [routerLink]="['/posts', slide.slug]" class="block w-full h-full"> -->
-            <img [src]="slide.image" 
-                 [alt]="slide.title || 'Slide image'" 
-                 title="{{ slide.title || 'Slide image' }}"
+          <div class="carousel-item min-w-full h-[70vh] md:h-[80vh] relative flex items-center justify-center">
+            <img [src]="slide.image"
+                 [alt]="slide.title || 'Slide image'"
                  class="w-full h-full object-cover"
-                 onError="this.src='https://pixahive.com/wp-content/uploads/2021/04/Doraemon-Cartoon-Illustration-410092-pixahive.jpg'"> <!-- Fallback trực tiếp trên img nếu URL lỗi -->
-            <div class="absolute inset-0 bg-black bg-opacity-60 flex flex-col justify-end items-center text-center p-4 md:p-8 pb-16 md:pb-24">
-              <span 
-                class="inline-block text-white text-xs px-3 py-1.5 rounded-full mb-3 md:mb-4 font-semibold"
+                 onError="this.src='https://pixahive.com/wp-content/uploads/2021/04/Doraemon-Cartoon-Illustration-410092-pixahive.jpg'">
+            <div class="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center text-center px-4">
+              <span
+                class="inline-block text-white text-xs px-4 py-1 rounded-full mb-4 font-semibold"
                 [ngClass]="{
-                  'bg-blue-600 hover:bg-blue-700': slide.category === 'Technology',
-                  'bg-green-600 hover:bg-green-700': slide.category === 'Health',
-                  'bg-red-600 hover:bg-red-700': slide.category === 'Lifestyle',
-                  'bg-purple-600 hover:bg-purple-700': slide.category === 'Programming',
-                  'bg-yellow-500 hover:bg-yellow-600 text-black': slide.category === 'News',
-                  'bg-gray-600 hover:bg-gray-700': slide.category && !['Technology', 'Health', 'Lifestyle', 'Programming', 'News'].includes(slide.category) || slide.category === 'Uncategorized'
+                  'bg-blue-600': slide.category === 'Technology',
+                  'bg-green-600': slide.category === 'Health',
+                  'bg-red-600': slide.category === 'Lifestyle',
+                  'bg-purple-600': slide.category === 'Programming',
+                  'bg-yellow-500 text-black': slide.category === 'News',
+                  'bg-gray-600': !['Technology', 'Health', 'Lifestyle', 'Programming', 'News'].includes(slide.category)
                 }"
               >
                 {{ slide.category }}
               </span>
-              <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight">{{ slide.title }}</h1>
-              <div class="flex items-center space-x-3 md:space-x-4">
-                <img [src]="slide.authorImage" 
-                     [alt]="slide.author || 'Author avatar'" 
-                     title="{{ slide.author || 'Author avatar' }}"
-                     class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-gray-400"
+              <h1 class="text-3xl md:text-5xl font-bold mb-6 drop-shadow-lg">{{ slide.title }}</h1>
+              <div class="flex items-center justify-center space-x-3 mb-2">
+                <img [src]="slide.authorImage"
+                     [alt]="slide.author || 'Author avatar'"
+                     class="w-10 h-10 rounded-full object-cover border-2 border-gray-300"
                      onError="this.src='https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'">
-                <div class="text-xs md:text-sm text-left text-gray-200">
+                <div class="text-sm text-gray-200 text-left">
                   <p class="font-medium">{{ slide.author }}</p>
-                  <p>{{ slide.date }}</p>
+                  <p class="text-xs">{{ slide.date }}</p>
                 </div>
               </div>
             </div>
-            <!-- </a> -->
           </div>
         </ng-container>
       </div>
-    </div>
 
-    <button (click)="prevSlide()" 
-            class="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 bg-white/70 hover:bg-white text-blue-500 p-2 md:p-3 rounded-full shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-300"
-            aria-label="Previous slide">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
-    </button>
-    <button (click)="nextSlide()" 
-            class="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 bg-white/70 hover:bg-white text-blue-500 p-2 md:p-3 rounded-full shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-300"
-            aria-label="Next slide">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-      </svg>
-    </button>
+      <!-- Nút chuyển slide -->
+      <button (click)="prevSlide()"
+              class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white text-blue-500 p-2 md:p-3 rounded-full shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 z-10"
+              aria-label="Previous slide">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button (click)="nextSlide()"
+              class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white text-blue-500 p-2 md:p-3 rounded-full shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 z-10"
+              aria-label="Next slide">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
 
-    <div class="absolute bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 md:space-x-3">
-      <span *ngFor="let dot of slides; index as i" (click)="setSlide(i)"
-        class="dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full cursor-pointer transition-all duration-300"
-        [ngClass]="{ 'bg-blue-500 scale-125': currentIndex === i, 'bg-gray-400 hover:bg-gray-200': currentIndex !== i }">
-      </span>
+      <!-- Dot điều hướng -->
+      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2">
+        <span *ngFor="let dot of slides; index as i" (click)="setSlide(i)"
+          class="w-3 h-3 rounded-full cursor-pointer transition-all duration-300 border-2 border-white"
+          [ngClass]="{ 'bg-blue-500 scale-125': currentIndex === i, 'bg-gray-300 hover:bg-gray-400': currentIndex !== i }">
+        </span>
+      </div>
     </div>
   </ng-container>
 </section>

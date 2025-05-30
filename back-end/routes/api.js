@@ -67,8 +67,10 @@ router.group("/users", (router) => {
 
 // ===== Post Routes =====
 router.group("/posts", (router) => {
-   // --- Authenticated routes ---
-   router.group("/", middlewares([authenticated]), (router) => { // Use 'authenticated' instead of 'isAuthenticated' if it's the primary check
+  // --- Public routes (Read operations) ---
+  router.get("/", validate(getAllPostsValidation), postController.getAllPosts);
+  // --- Authenticated routes ---
+  router.group("/", middlewares([authenticated]), (router) => { // Use 'authenticated' instead of 'isAuthenticated' if it's the primary check
     router.get("/my", validate(getMyPostsValidation), postController.getMyPosts); // Combined route for user's posts (can filter by status via query)
     // Post creation
     router.post("/", middlewares([isBlogOwnerRole]),validate(createPostValidation), postController.createPost);  
@@ -76,13 +78,11 @@ router.group("/posts", (router) => {
     router.delete("/:id", middlewares([isResourceOwner(Post)]), postController.deletePost);
   });
   // --- Public routes (Read operations) ---
-  router.get("/", validate(getAllPostsValidation), postController.getAllPosts);//done
   router.get("/search", validate(searchPostsValidation), postController.searchPosts); // Search functionality , done
   router.get("/slug/:slug", validate(getPostBySlugValidation), postController.getPostBySlug); // Get by slug before ID to avoid conflict if slug could be numeric , done
   router.get("/categories/:categoryId", validate(getPostsByCategoryValidation), postController.getPostsByCategory); // Posts by category , done
   router.get("/author/:userId", validate(getPostsByAuthorValidation), postController.getPostsByAuthor); // Corrected Path: Posts by author , dôn
   router.get("/:id", validate(getPostByIdValidation), postController.getPostById); // Get by ID (usually last among GET routes with params)
-
 });
 
 

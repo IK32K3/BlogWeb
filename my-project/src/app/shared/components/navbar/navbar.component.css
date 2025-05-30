@@ -1,0 +1,4 @@
+/* Nếu cần, thêm hiệu ứng shadow hoặc transition */
+nav {
+  transition: top 0.3s;
+}

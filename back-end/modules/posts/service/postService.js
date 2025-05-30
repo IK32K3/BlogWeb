@@ -76,10 +76,11 @@ class PostService {
     query,
     page = 1,
     limit = 10,
-    category_id,
+    categories,
     user_id,
     status,
-    sort = 'newest',
+    sort_by,
+    sort_order,
     date_from,
     date_to
   }) {
@@ -97,14 +98,14 @@ class PostService {
     };
 
     // Apply filters
-    if (category_id) where.category_id = category_id;
+    if (categories && categories.length > 0) {
+        where.category_id = { [Op.in]: categories };
+    }
     if (user_id) where.user_id = user_id;
     if (status) where.status = status;
-    // Removed default status setting here - let getAllPosts handle defaults if needed,
-    // or let the route decide if 'published' is the default when no status is passed.
 
     // Date range filter (check column name, usually 'createdAt' or 'created_at')
-    const createdAtColumn = Post.rawAttributes.createdAt ? 'createdAt' : 'created_at'; // Adjust if your column is named differently
+    const createdAtColumn = Post.rawAttributes.createdAt ? 'createdAt' : 'created_at';
     if (date_from || date_to) {
         where[createdAtColumn] = {};
         if (date_from) where[createdAtColumn][Op.gte] = new Date(date_from);
@@ -112,12 +113,23 @@ class PostService {
     }
 
 
-    // Build sort order
-    let order;
-    switch (sort) {
-      case 'oldest': order = [[createdAtColumn, 'ASC']]; break;
-      case 'most_viewed': order = [['views', 'DESC']]; break;
-      default: order = [[createdAtColumn, 'DESC']]; // newest
+    // Build sort order using sort_by and sort_order
+    let order = [];
+    if (sort_by) {
+        // Map frontend sort_by names to backend column names if necessary
+        const columnMap = {
+            views: 'views',
+            comments: 'comments', // Assuming a 'comments' count column or similar
+            // Add other mappings like 'date' to 'created_at'
+        };
+        const columnName = columnMap[sort_by] || sort_by; // Use mapping or the name directly
+        const orderDirection = sort_order && sort_order.toLowerCase() === 'asc' ? 'ASC' : 'DESC';
+        order.push([columnName, orderDirection]);
+    }
+
+    // Add a default sort if no sort is specified, or as a secondary sort
+    if (order.length === 0 || !sort_by) {
+         order.push([createdAtColumn, 'DESC']); // Default to newest
     }
 
     const { count, rows } = await Post.findAndCountAll({

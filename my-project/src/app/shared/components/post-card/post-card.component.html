@@ -1,40 +1,47 @@
-<section class="container mx-auto px-4 py-12">
-  <div class="text-center mb-12">
-    <h2 class="text-3xl font-bold mb-4">Featured Articles</h2>
-    <p class="text-gray-600 max-w-2xl mx-auto">Check out our most popular and recent articles on various topics</p>
+<section class="container mx-auto px-4">
+  <div class="text-center mb-12 mt-10">
+    <h2 class="text-3xl font-bold mb-4">{{ title }}</h2>
+    <p class="text-gray-600 max-w-2xl mx-auto">{{ description }}</p>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    <div *ngFor="let post of posts" class="post-card bg-white rounded-lg overflow-hidden">
-      <img [src]="getPostImage(post)" alt="Post Image" class="w-full h-48 object-cover">
-      <div class="p-6">
-        <span
-          class="category-tag inline-block bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full mb-3">
-          {{ post.categories?.name || post.category?.name || 'Uncategorized' }}
-        </span>
-        <h3 class="text-xl font-bold mb-3">{{ post.title }}</h3>
-        <p class="text-gray-600 mb-4">{{ post.description || post.excerpt }}</p>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-3">
-            <img
-              [src]="post.user?.avatarUrl || 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'"
-              alt="Author" class="w-10 h-10 rounded-full">
-            <div>
-              <p class="text-sm font-medium">{{ post.user?.username || 'Unknown Author' }}</p>
-              <p class="text-xs text-gray-500">{{ post.created_at | date:'mediumDate' }}</p>
+    <div *ngFor="let post of posts" class="post-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col min-h-[420px]">
+      <a [routerLink]="['/posts', post.slug]" class="flex flex-col h-full">
+        <img [src]="getPostImage(post)" [alt]="post.title" class="w-full h-48 object-cover">
+        <div class="p-6 flex flex-col flex-1">
+          <div class="flex items-center justify-between mb-3">
+            <span class="category-tag bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full inline-block w-auto max-w-full whitespace-nowrap">
+              {{ post.categories?.name || 'Uncategorized' }}
+            </span>
+            <span class="flex items-center text-xs text-gray-500 ml-2">
+              <i class="fas fa-eye mr-1"></i>{{ post.views || 0 }}
+            </span>
+          </div>
+          <h3 class="text-xl font-bold mb-3 line-clamp-2">{{ post.title }}</h3>
+          <p class="text-gray-600 mb-4 line-clamp-3 flex-1">{{ post.description || '' }}</p>
+          <div class="flex items-center justify-between mt-auto">
+            <div class="flex items-center space-x-3">
+              <img [src]="post.user?.avatarUrl || 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'"
+                   [alt]="post.user?.username || 'Unknown Author'" 
+                   class="w-10 h-10 rounded-full">
+              <div>
+                <p class="text-sm font-medium">{{ post.user?.username || 'Unknown Author' }}</p>
+                <p class="text-xs text-gray-500">{{ post.created_at | date:'mediumDate' }}</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="text-blue-600 hover:text-blue-800 text-sm font-medium">Read More→</span>
             </div>
           </div>
-          <a [routerLink]="['/post-detail', post.id]" class="text-blue-600 hover:underline text-sm font-medium">Read
-            More→</a>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 
-  <div class="text-center mt-12">
-    <button
-      class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-6 border border-gray-300 rounded-lg shadow-sm">
+  <div *ngIf="showViewAllButton" class="text-center mt-12 mb-10">
+    <a routerLink="/auth/login" 
+       class="inline-block bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-6 border border-gray-300 rounded-lg shadow-sm transition-colors">
       View All Articles
-    </button>
+    </a>
   </div>
 </section>

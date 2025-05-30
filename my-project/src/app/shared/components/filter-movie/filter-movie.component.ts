@@ -1,35 +1,26 @@
-import { Component, ElementRef, HostListener, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CategoryService } from '../../../core/services/category.service';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 interface FilterItem {
   value: string;
   name: string;
 }
 
+interface CategoryApiResponse {
+  data: { categories: { id: string; name: string; slug: string }[] };
+}
+
 @Component({
   selector: 'app-filter-movie',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './filter-movie.component.html',
   styleUrls: ['./filter-movie.component.css'],
 })
 export class FilterMovieComponent implements OnInit {
-
-  genresData: FilterItem[] = [
-    { value: '1', name: 'Anime' }, { value: '2', name: 'Hành động' },
-    { value: '3', name: 'Hài hước' }, { value: '4', name: 'Tình cảm' },
-    { value: '5', name: 'Harem' }, { value: '6', name: 'Bí ẩn' },
-    { value: '7', name: 'Bi kịch' }, { value: '8', name: 'Giả tưởng' },
-    { value: '9', name: 'Học đường' }, { value: '10', name: 'Đời thường' },
-    { value: '11', name: 'Võ thuật' }, { value: '12', name: 'Trò chơi' },
-    { value: '13', name: 'Thám tử' }, { value: '14', name: 'Lịch sử' },
-    { value: '15', name: 'Siêu năng lực' }, { value: '16', name: 'Shounen' },
-    { value: '17', name: 'Shounen AI' }, { value: '18', name: 'Shoujo' },
-    { value: '19', name: 'Shoujo AI' }, { value: '20', name: 'Thể thao' },
-    { value: '21', name: 'Âm nhạc' }, { value: '22', name: 'Psychological' },
-  ];
-
   yearsData: FilterItem[] = [
     { value: '2025', name: '2025' }, { value: '2024', name: '2024' },
     { value: '2023', name: '2023' }, { value: '2022', name: '2022' },
@@ -38,55 +29,68 @@ export class FilterMovieComponent implements OnInit {
     { value: '1111', name: 'Trước 2014' }
   ];
 
-  episodesData: FilterItem[] = [
-    { value: '9999', name: 'Full' }, { value: '300', name: '300' },
-    { value: '200', name: '200' }, { value: '100', name: '100' },
-    { value: '50', name: '50' }, { value: '20', name: '20' },
-    { value: '10', name: '10' }
-  ];
-
-  statusData: FilterItem[] = [
-    { value: '0', name: 'Đang tiến hành' },
-    { value: '1', name: 'Hoàn thành' }
-  ];
-
   // State for which sections are open
   sectionsOpen: { [key: string]: boolean } = {
-    genre: false,
+    category: false,
     year: false,
-    episodes: false,
+    sort: false,
     status: false
   };
 
   // Selected filter values
   selectedFilters = {
-    genres: new Set<string>(), // Use Set for multi-select
+    categories: new Set<string>(),
     year: null as string | null,
-    episodes: null as string | null,
+    sort: null as 'views' | 'comments' | null,
     status: null as string | null,
   };
 
-  constructor(private elRef: ElementRef) {}
+  categoriesData: { value: string, name: string }[] = [];
+
+  @Output() filterChange = new EventEmitter<any>();
+
+  // Thêm biến cho ô search
+  searchQuery: string = '';
+
+  constructor(private elRef: ElementRef, private categoryService: CategoryService, private translateService: TranslateService) {}
 
   ngOnInit(): void {
-    this.logSelectedFilters(); // Initial log
+    this.loadCategories();
+    this.logSelectedFilters();
+  }
+
+  loadCategories() {
+    this.categoryService.getAll().subscribe({
+      next: (res: CategoryApiResponse) => {
+        this.categoriesData = (res.data.categories || []).map((cat) => {
+          const translatedName = this.translateService.instant('category.' + cat.slug);
+          return {
+            value: cat.id,
+            name: translatedName === 'category.' + cat.slug ? cat.name : translatedName
+          };
+        });
+      },
+      error: () => {
+        this.categoriesData = [];
+      }
+    });
   }
 
   isAnySectionOpen(): boolean {
     return Object.values(this.sectionsOpen).some(isOpen => isOpen);
   }
 
-  tabs: ('genre' | 'year' | 'episodes' | 'status')[] = ['genre', 'year', 'episodes', 'status'];
+  tabs: ('category' | 'year' | 'sort' | 'status')[] = ['category', 'year', 'sort', 'status'];
   
-  toggleSection(tab: 'genre' | 'year' | 'episodes' | 'status'): void {
+  toggleSection(tab: 'category' | 'year' | 'sort' | 'status'): void {
     this.sectionsOpen[tab] = !this.sectionsOpen[tab];
   }
 
-  selectGenre(genreValue: string): void {
-    if (this.selectedFilters.genres.has(genreValue)) {
-      this.selectedFilters.genres.delete(genreValue);
+  selectCategory(categoryValue: string): void {
+    if (this.selectedFilters.categories.has(categoryValue)) {
+      this.selectedFilters.categories.delete(categoryValue);
     } else {
-      this.selectedFilters.genres.add(genreValue);
+      this.selectedFilters.categories.add(categoryValue);
     }
     this.logSelectedFilters();
   }
@@ -96,24 +100,24 @@ export class FilterMovieComponent implements OnInit {
     this.logSelectedFilters();
   }
 
-  selectEpisodes(episodeValue: string): void {
-    this.selectedFilters.episodes = this.selectedFilters.episodes === episodeValue ? null : episodeValue;
+  selectSort(value: 'views' | 'comments'): void {
+    this.selectedFilters.sort = this.selectedFilters.sort === value ? null : value;
     this.logSelectedFilters();
   }
 
-  selectStatus(statusValue: string): void {
-    this.selectedFilters.status = this.selectedFilters.status === statusValue ? null : statusValue;
+  selectStatus(value: string): void {
+    this.selectedFilters.status = this.selectedFilters.status === value ? null : value;
     this.logSelectedFilters();
   }
 
-  isFilterActive(type: 'genre' | 'year' | 'episodes' | 'status', value: string): boolean {
+  isFilterActive(type: 'category' | 'year' | 'sort' | 'status', value: string): boolean {
     switch (type) {
-      case 'genre':
-        return this.selectedFilters.genres.has(value);
+      case 'category':
+        return this.selectedFilters.categories.has(value);
       case 'year':
         return this.selectedFilters.year === value;
-      case 'episodes':
-        return this.selectedFilters.episodes === value;
+      case 'sort':
+        return this.selectedFilters.sort === value;
       case 'status':
         return this.selectedFilters.status === value;
       default:
@@ -123,10 +127,10 @@ export class FilterMovieComponent implements OnInit {
 
   logSelectedFilters(): void {
     console.clear();
-    console.log("Selected Angular Filters:", {
-      genres: Array.from(this.selectedFilters.genres),
+    console.log('Selected Angular Filters:', {
+      categories: Array.from(this.selectedFilters.categories),
       year: this.selectedFilters.year,
-      episodes: this.selectedFilters.episodes,
+      sort: this.selectedFilters.sort,
       status: this.selectedFilters.status,
     });
   }
@@ -138,5 +142,18 @@ export class FilterMovieComponent implements OnInit {
         this.sectionsOpen[key] = false;
       });
     }
+  }
+
+  search() {
+    const filter = {
+      search: this.searchQuery,
+      categories: Array.from(this.selectedFilters.categories),
+      year: this.selectedFilters.year,
+      sort_by: this.selectedFilters.sort,
+      sort_order: this.selectedFilters.sort ? 'desc' : undefined,
+      status: this.selectedFilters.status,
+    };
+    console.log('Filter to search:', filter);
+    this.filterChange.emit(filter);
   }
 }

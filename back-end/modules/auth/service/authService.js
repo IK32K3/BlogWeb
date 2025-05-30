@@ -104,6 +104,66 @@ const authService = {
 
   },
 
+  /**Add commentMore actions
+   * Handles user login logic.
+   * @param {string} username
+   * @param {string} password
+   * @returns {Promise<object>} - { user, tokens }
+   * @throws {UnauthorizedError|ForbiddenError}
+   */
+  loginUser: async (usernameOrEmail, password) => {
+    // --- Find user with role ---
+    const user = await User.findOne({
+      where: {
+      [Op.or]: [
+        { username: usernameOrEmail },
+        { email: usernameOrEmail }
+      ]
+    },
+      include: [{
+        model: Role,
+        as: 'role', // Ensure 'as: role' matches your model definition
+        attributes: ['name']
+      }],
+      attributes: ['id', 'username', 'email', 'password', 'is_active'] // Select necessary fields
+    });
+
+    if (!user) {
+      throw new UnauthorizedError('Invalid usernameOrEmail credentials');
+    }
+
+    if (!user.is_active) {
+      throw new ForbiddenError('Account is disabled');
+    }
+    // Check if role was loaded correctly
+    if (!user.role || !user.role.name) {
+        console.error(`Role data missing for user: ${usernameOrEmail}`);
+        throw new Error('User data configuration error.'); // Internal server error
+    }
+
+    // --- Verify password ---
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedError('Invalid password credentials');
+    }
+
+    // --- Generate tokens ---
+    const tokens = {
+      access_token: jwtUtils.sign(user.id, user.role.name),
+      refresh_token: jwtUtils.signRefreshToken(user.id, user.role.name)
+    };
+
+    // --- Return necessary data ---
+    return {
+      user: { // Return only safe/relevant fields
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role.name
+      },
+      tokens
+    };
+  },
   /**
    * Handles forgot password request logic.
    * @param {string} email

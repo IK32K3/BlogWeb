@@ -16,6 +16,12 @@ export interface Language {
   name: string;
 }
 
+export interface Media {
+  id: number;
+  url: string;
+  // Add other media properties if needed
+}
+
 export interface PostTranslateLanguage {
   id: number;
   post_id: number;
@@ -36,8 +42,7 @@ export interface PostMedia {
   created_at?: string;
   updated_at?: string;
   
-  // Bạn có thể thêm các trường khác nếu cần, ví dụ:
-  // media?: Media;
+  media?: Media;
 }
 
 export interface Post {
@@ -53,6 +58,7 @@ export interface Post {
   id_post_original?: number | null;
   created_at: string;
   updated_at: string;
+  comments?: number;
 
   user?: User;
   categories?: Category;

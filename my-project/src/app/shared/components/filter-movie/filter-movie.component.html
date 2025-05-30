@@ -6,11 +6,13 @@
         type="text"
         placeholder="Nhập từ khóa tìm kiếm..."
         class="w-full px-4 py-3 pl-11 rounded-lg bg-gray-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 shadow-sm text-gray-700 transition duration-200"
+        [(ngModel)]="searchQuery"
       />
       <i class="fas fa-search absolute left-4 top-4 -translate-y-1/2 text-gray-400"></i>
     </div>
     <button
       class="search-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-base font-medium transition duration-300 w-full md:w-auto flex items-center justify-center gap-2 shadow hover:shadow-md hover:-translate-y-0.5"
+      (click)="search()"
     >
       <i class="fas fa-search"></i> Tìm kiếm
     </button>
@@ -34,12 +36,12 @@
     </div>
     
     <div id="filter-movie-content" class="condition-filter bg-gray-100 px-4 text-gray-700 rounded-b-lg shadow-sm">
-        <div *ngIf="sectionsOpen['genre']"  class="filter-section py-4 border-b border-gray-300">
-            <div class="font-semibold mb-3 text-gray-800">Năm phát hành</div>
+        <div *ngIf="sectionsOpen['category']" class="filter-section py-4 border-b border-gray-300">
+            <div class="font-semibold mb-3 text-gray-800">Thể loại</div>
             <div class="flex flex-wrap gap-2">
-                <div *ngFor="let genre of genresData" (click)="selectGenre(genre.value)" [class.active]="isFilterActive('genre', genre.value)"
+                <div *ngFor="let category of categoriesData" (click)="selectCategory(category.value)" [class.active]="isFilterActive('category', category.value)"
                 class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition hover:bg-gray-300">
-                {{ genre.name }}
+                {{ category.name }}
                 </div>
             </div>    
         </div>
@@ -54,12 +56,16 @@
             </div>
         </div>
 
-        <div *ngIf="sectionsOpen['episodes']" class="filter-section py-4 border-b border-gray-300">
-            <div class="font-semibold mb-3 text-gray-800">Số tập ít nhất</div>
+        <div *ngIf="sectionsOpen['sort']" class="filter-section py-4 border-b border-gray-300">
+            <div class="font-semibold mb-3 text-gray-800">Sắp xếp</div>
             <div class="flex flex-wrap gap-2">
-                <div *ngFor="let episode of episodesData" (click)="selectEpisodes(episode.value)" [class.active]="isFilterActive('episodes', episode.value)"
+                <div (click)="selectSort('views')" [class.active]="isFilterActive('sort', 'views')"
                 class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition hover:bg-gray-200">
-                {{ episode.name }}
+                Lượt xem nhiều nhất
+                </div>
+                <div (click)="selectSort('comments')" [class.active]="isFilterActive('sort', 'comments')"
+                class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition hover:bg-gray-200">
+                Bình luận nhiều nhất
                 </div>
             </div>
         </div>
@@ -67,10 +73,11 @@
         <div *ngIf="sectionsOpen['status']" class="filter-section py-4 border-b border-gray-300">
             <div class="font-semibold mb-3 text-gray-800">Trạng thái</div>
             <div class="flex flex-wrap gap-2">
-                <div *ngFor="let status of statusData" (click)="selectStatus(status.value)" [class.active]="isFilterActive('status', status.value)"
+                <div (click)="selectStatus('completed')" [class.active]="isFilterActive('status', 'completed')"
                 class="filter-item px-3 py-1.5 text-sm rounded cursor-pointer transition hover:bg-gray-200">
-                {{ status.name }}
+                Hoàn thành
                 </div>
+                <!-- Thêm các trạng thái khác nếu cần -->
             </div>
         </div>
     </div>

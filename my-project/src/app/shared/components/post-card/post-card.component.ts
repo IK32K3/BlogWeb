@@ -1,17 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { BlogPostService } from '../../../core/services/blog-post.service';
 import { Post } from '../../model/post.model';
 
 @Component({
   selector: 'app-post-card',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   standalone: true,
   templateUrl: './post-card.component.html',
   styleUrl: './post-card.component.css'
 })
 export class PostCardComponent implements OnInit {
-  posts: Post[] = [];
+  @Input() posts: Post[] = [];
+  @Input() showViewAllButton: boolean = true;
+  @Input() title: string = 'Featured Articles';
+  @Input() description: string = 'Check out our most popular and recent articles on various topics';
 
   // Ảnh mặc định nếu không có ảnh bài viết
   readonly DEFAULT_IMAGE = 'https://placehold.co/400x200';
@@ -19,13 +23,24 @@ export class PostCardComponent implements OnInit {
   constructor(private blogPostService: BlogPostService) { }
 
   ngOnInit(): void {
+    console.log('PostCardComponent posts:', this.posts);
+    if (this.posts.length === 0) {
+      this.loadPosts();
+    }
+  }
+
+  loadPosts() {
     this.blogPostService.getAll({ status: 'published', limit: 12 }).subscribe({
       next: (res) => {
-        // Tùy vào API trả về, lấy đúng mảng post
-        this.posts = res?.data?.posts || res?.data || res?.posts || [];
+        if (res.success && res.data && res.data.posts) {
+          this.posts = res.data.posts;
+        } else {
+          this.posts = [];
+        }
       },
       error: (err) => {
         console.error('Lỗi khi lấy danh sách bài viết:', err);
+        this.posts = [];
       }
     });
   }

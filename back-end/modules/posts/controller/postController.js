@@ -28,29 +28,71 @@ class PostController {
     async getAllPosts(req, res) {
         try {
             const {
+                search = '', // Expect 'search' from frontend
                 page,
                 limit,
-                category_id, // Keep snake_case if client sends this way
-                search,
-                user_id,     // Keep snake_case if client sends this way
-                sort,
-                status       // Added based on validation rules
+                categories, // Expect 'categories' array from frontend
+                user_id, // Keep if needed, but frontend currently doesn't send this for main list
+                status, // Expect 'status' from frontend
+                sort_by, // Expect 'sort_by' from frontend
+                sort_order, // Expect 'sort_order' from frontend
+                year // Expect 'year' from frontend
             } = req.query;
 
             // Use helper for safe parsing and defaults
             const parsedPage = parseIntOrDefault(page, 1);
             const parsedLimit = parseIntOrDefault(limit, 10);
 
-            // Pass validated/parsed data to the service
-            const result = await postService.getAllPosts({
+             // Convert year to date_from and date_to, similar to searchPosts
+            let date_from = null;
+            let date_to = null;
+            if (year) {
+                const yearInt = parseInt(year, 10);
+                if (!isNaN(yearInt)) {
+                    date_from = `${yearInt}-01-01T00:00:00.000Z`; // Use ISO format for date objects
+                    date_to = `${yearInt}-12-31T23:59:59.999Z`; // Use ISO format for date objects
+                }
+            }
+
+            // Prepare parameters for the service call
+            const serviceParams = {
                 page: parsedPage,
                 limit: parsedLimit,
-                categoryId: category_id ? parsePositiveInt (category_id) : null, // Ensure categoryId is number or null
-                search,
-                userId: user_id ? parsePositiveInt (user_id) : null,          // Ensure userId is number or null
-                sort: sort || 'latest', // Use default from service if not provided
-                status: status ?? null // Default to published for public view unless specified
-            });
+                 // Handle categories array: ensure it's an array of numbers or undefined/null
+                categories: Array.isArray(categories) ? categories.map(id => parsePositiveInt(id)).filter(id => id !== null) : (categories ? [parsePositiveInt(categories)].filter(id => id !== null) : undefined), 
+                search, // Pass search term to service (service uses 'query' in searchPosts, check getAllPosts service method)
+                userId: user_id ? parsePositiveInt (user_id) : null, // Pass user_id if present          
+                status: status ?? null, // Pass status, use null if undefined
+                sort_by, // Pass sort_by to service
+                sort_order, // Pass sort_order to service
+                date_from, // Pass date_from to service
+                date_to // Pass date_to to service
+            };
+
+             // Remove undefined parameters before passing to service (optional but clean)
+            Object.keys(serviceParams).forEach(key => serviceParams[key] === undefined && delete serviceParams[key]);
+
+            // Call the service method with the prepared parameters
+            // Note: postService.getAllPosts currently expects categoryId (single), search, userId, sort, status. Need to align service or map params here.
+            // Based on the backend service code provided earlier, getAllPosts in service *does* handle search, categoryId, userId, sort, status. Let's map the frontend params to match the service's expected params for getAllPosts.
+            const serviceGetAllParams = {
+                page: parsedPage,
+                limit: parsedLimit,
+                // For getAllPosts service, map categories array from frontend to a single categoryId if only one is selected, or remove if multiple/none.
+                // This might need clarification on backend behavior with multiple categories on getAllPosts.
+                // Let's assume for simplicity for getAllPosts, we only pass the first category if any, or rely on the backend's search endpoint for multi-category.
+                categoryId: Array.isArray(serviceParams.categories) && serviceParams.categories.length > 0 ? serviceParams.categories[0] : (serviceParams.categories ? serviceParams.categories : null), // Pass first category ID or null
+                search: serviceParams.search, // Pass search term
+                userId: serviceParams.userId, // Pass userId
+                sort: serviceParams.sort_by, // Map sort_by to sort for getAllPosts service
+                status: serviceParams.status, // Pass status
+                 // Note: getAllPosts service does NOT currently handle date_from/date_to. This filtering will only work on the search endpoint.
+                 // If year filtering is needed on the main /posts list, postService.getAllPosts needs to be updated.
+            };
+
+             Object.keys(serviceGetAllParams).forEach(key => serviceGetAllParams[key] === undefined && delete serviceGetAllParams[key]);
+
+            const result = await postService.getAllPosts(serviceGetAllParams);
 
             return responseUtils.success(res, result);
         } catch (error) {
@@ -63,13 +105,13 @@ class PostController {
     async searchPosts(req, res) {
         try {
             const {
-                query: searchQuery = '', // Renamed to avoid conflict with req.query object
+                query: searchQuery = '', // Backend expects 'query' for the search term
                 page,
                 limit,
-                category_id,
+                category_id, // Backend expects 'category_id' (single ID)
                 user_id,
                 status,
-                sort,
+                sort, // Backend expects 'sort' for sorting criteria
                 date_from,
                 date_to
             } = req.query;
@@ -78,7 +120,6 @@ class PostController {
             const parsedLimit = parseIntOrDefault(limit, 10);
 
             // Example: Allow filtering by any status only for Admins
-            // Adjust role checking based on your actual auth implementation
             const isAdmin = req.user?.role === 'Admin'; // Use optional chaining
             const finalStatus = isAdmin ? status : (status || 'published'); // Default non-admins to published
 
@@ -90,8 +131,8 @@ class PostController {
                 user_id: user_id ? parsePositiveInt (user_id) : null,
                 status: finalStatus,
                 sort: sort || 'newest', // Default sort for search
-                date_from,
-                date_to
+                date_from, // Pass original date_from string
+                date_to // Pass original date_to string
             });
 
             // Return a structured response for search

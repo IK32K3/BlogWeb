@@ -1,10 +1,9 @@
-<app-navbar></app-navbar> 
-<div class="bg-gray-200">
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <div class="px-6 py-3 border-gray-100">
-                <input type="text" [(ngModel)]="post.title" class="title-input w-full border-none outline-none text-4xl font-bold mb-4 placeholder:text-gray-400 placeholder:opacity-70"
-                    placeholder="Your amazing post title...">
+<app-navbar ></app-navbar> 
+<div class="bg-gray-200 min-h-screen flex flex-col mt-16">
+    <main class="flex-1 flex items-center justify-center py-10">
+        <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div class="px-8 py-6 border-b border-gray-100">
+                <input type="text" [(ngModel)]="post.title" class="w-full border-none outline-none text-3xl md:text-4xl font-bold mb-4 placeholder:text-gray-400 placeholder:opacity-70 bg-transparent" placeholder="Your amazing post title...">
 
                 <div class="flex flex-col md:flex-row gap-6 mt-4">
                     <div class="flex-1 min-w-[200px]">
@@ -22,7 +21,7 @@
 
                     <div class="flex-1 min-w-[200px]">
                         <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
-                        <div class="flex flex-wrap items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent">
+                        <div class="flex flex-wrap items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent bg-white">
                             <div id="tag-container" class="flex flex-wrap gap-2">
                                 <div *ngFor="let tag of post.tags" class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full flex items-center gap-2">
                                     {{ tag }}
@@ -31,13 +30,13 @@
                                     </span>
                                 </div>
                             </div>
-                            <input type="text" [(ngModel)]="newTag" class="flex-1 min-w-[100px] outline-none" placeholder="Add tags (press Enter)" (keydown.enter)="addTag()">
+                            <input type="text" [(ngModel)]="newTag" class="flex-1 min-w-[100px] outline-none bg-transparent" placeholder="Add tags (press Enter)" (keydown.enter)="addTag()">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="px-6  max-w-6xl mx-auto">
+            <div class="px-8">
                 <div
                     class="my-6 border-2 border-dashed border-gray-200 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-300 hover:bg-gray-50 transition-colors"
                     (click)="triggerFileInput()"
@@ -56,7 +55,7 @@
                         <img
                         [src]="imagePreview"
                         alt="Preview"
-                        class="mx-auto max-h-94 w-full object-contain mb-4"
+                        class="mx-auto max-h-80 w-full object-contain mb-4 rounded-lg border border-gray-200"
                         />
                         <button
                         class="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"

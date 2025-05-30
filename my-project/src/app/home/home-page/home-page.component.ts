@@ -1,89 +1,141 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { NavBarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { HeroSectionComponent } from '../../shared/components/hero-section/hero-section.component';
+import { BlogPostService } from '../../core/services/blog-post.service';
+import { CategoryService } from '../../core/services/category.service';
+import { Post } from '../../shared/model/post.model';
+import { Category } from '../../shared/model/category.model';
+import { PostCardComponent } from '../../shared/components/post-card/post-card.component';
 
 @Component({
   selector: 'app-home-page',
-  imports: [CommonModule,FormsModule,RouterOutlet,NavBarComponent,FooterComponent,HeroSectionComponent],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterOutlet,
+    RouterLink,
+    NavBarComponent,
+    FooterComponent,
+    HeroSectionComponent,
+    PostCardComponent
+  ],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.css'
 })
-export class HomePageComponent {
- posts = [
-  { 
-    id: 1, 
-    title: "What Are Your Tips for Hosting an Easy Birthday Party?", 
-    description: "Learn how to throw a memorable party without the stress. Perfect for busy people who still want to celebrate.", 
-    category: "Lifestyle", 
-    date: "May 15, 2023", 
-    imageUrl: "https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj", 
-    link: "/path-to-article-1"
-  },
-  { 
-    id: 2, 
-    title: "Exploring the Beauty of Nature in Vietnam", 
-    description: "Discover hidden gems and breathtaking landscapes in Vietnam's countryside and national parks.", 
-    category: "Travel", 
-    date: "May 15, 2023", 
-    imageUrl: "https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj", 
-    link: "/path-to-article-2"
-  },
-  { 
-    id: 3, 
-    title: "Creating a Cozy Home Environment", 
-    description: "Simple tips to transform your living space into a warm and inviting sanctuary.", 
-    category: "Home", 
-    date: "May 10, 2023", 
-    imageUrl: "https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj", 
-    link: "/path-to-article-3"
-  },
-  { 
-    id: 4, 
-    title: "What Are Your Tips for Hosting an Easy Birthday Party?", 
-    description: "Learn how to throw a memorable party without the stress. Perfect for busy people who still want to celebrate.", 
-    category: "Lifestyle", 
-    date: "May 15, 2023", 
-    imageUrl: "https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj", 
-    link: "/path-to-article-1"
-  },
-  { 
-    id: 5, 
-    title: "What Are Your Tips for Hosting an Easy Birthday Party?", 
-    description: "Learn how to throw a memorable party without the stress. Perfect for busy people who still want to celebrate.", 
-    category: "Lifestyle", 
-    date: "May 15, 2023", 
-    imageUrl: "https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj", 
-    link: "/path-to-article-1"
-  },
-  { 
-    id: 6, 
-    title: "What Are Your Tips for Hosting an Easy Birthday Party?", 
-    description: "Learn how to throw a memorable party without the stress. Perfect for busy people who still want to celebrate.", 
-    category: "Lifestyle", 
-    date: "May 15, 2023", 
-    imageUrl: "https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj", 
-    link: "/path-to-article-1"
-  },
-  // Thêm bài viết khác nếu cần
-];
+export class HomePageComponent implements OnInit {
+  posts: Post[] = [];
+  displayedPosts: Post[] = [];
+  popularPosts: Post[] = [];
+  categories: Category[] = [];
+  currentPage = 1;
+  totalPages = 1;
+  POSTS_PER_PAGE = 9;
+  isLoading = false;
+  isLoadingPopular = false;
+  isLoadingCategories = false;
+  isFading = false;
 
-    popularPosts = [
-    { rank: 1, title: "How to Learn Programming Faster", date: "May 1, 2023" },
-    { rank: 2, title: "Best Travel Destinations for 2023", date: "April 28, 2023" },
-    { rank: 3, title: "Minimalist Living: Less is More", date: "April 25, 2023" },
-    { rank: 4, title: "The Future of Remote Work", date: "April 22, 2023" },
-  ];
+  constructor(
+    private blogPostService: BlogPostService,
+    private categoryService: CategoryService
+  ) {}
 
-  categories = [
-    { name: "Technology", link: "#" },
-    { name: "Lifestyle", link: "#" },
-    { name: "Travel", link: "#" },
-    { name: "Health", link: "#" },
-    { name: "Food", link: "#" },
-    { name: "Home", link: "#" },
-  ];
+  ngOnInit() {
+    this.loadPosts();
+    this.loadPopularPosts();
+    this.loadCategories();
+  }
+
+  loadPosts() {
+    this.isLoading = true;
+    this.blogPostService.getAll({
+      status: 'published'
+    }).subscribe({
+      next: (response) => {
+        if (response.success && response.data && response.data.posts) {
+          this.posts = response.data.posts;
+          this.totalPages = Math.ceil(this.posts.length / this.POSTS_PER_PAGE);
+          this.updateDisplayedPosts();
+          console.log('posts:', this.posts);
+          console.log('displayedPosts:', this.displayedPosts);
+        } else {
+          this.posts = [];
+          this.displayedPosts = [];
+          this.totalPages = 1;
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading posts:', error);
+        this.isLoading = false;
+        this.posts = [];
+        this.displayedPosts = [];
+        this.totalPages = 1;
+      }
+    });
+  }
+
+  updateDisplayedPosts() {
+    const start = (this.currentPage - 1) * this.POSTS_PER_PAGE;
+    const end = start + this.POSTS_PER_PAGE;
+    this.displayedPosts = this.posts.slice(start, end);
+  }
+
+  loadPopularPosts() {
+    this.isLoadingPopular = true;
+    this.blogPostService.getAll({
+      status: 'published',
+      sort_by: 'views',
+      sort_order: 'desc',
+      limit: 4
+    }).subscribe({
+      next: (response) => {
+        if (response.success && response.data && response.data.posts) {
+          this.popularPosts = response.data.posts;
+        } else {
+          this.popularPosts = [];
+        }
+        this.isLoadingPopular = false;
+      },
+      error: (error) => {
+        console.error('Error loading popular posts:', error);
+        this.isLoadingPopular = false;
+        this.popularPosts = [];
+      }
+    });
+  }
+
+  loadCategories() {
+    this.isLoadingCategories = true;
+    this.categoryService.getAll().subscribe({
+      next: (response) => {
+        this.categories = response.data.categories;
+        this.isLoadingCategories = false;
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+        this.isLoadingCategories = false;
+      }
+    });
+  }
+
+  onPageChange(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.isFading = true;
+    setTimeout(() => {
+      this.currentPage = page;
+      this.updateDisplayedPosts();
+      this.isFading = false;
+      window.scrollTo({ top: 600, behavior: 'smooth' });
+    }, 300); // 300ms là thời gian fade out
+  }
+
+  getPagesArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
 }
