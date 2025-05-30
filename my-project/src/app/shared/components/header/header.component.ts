@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { NavBarComponent } from '../navbar/navbar.component';
 import { NavbarIntroduceComponent } from '../navbar-introduce/navbar-introduce.component';
@@ -13,12 +13,22 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
+  private storageListener = () => this.checkLoginStatus();
 
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isAuthenticated(); // hoặc dùng Observable
+    this.checkLoginStatus();
+    window.addEventListener('storage', this.storageListener);
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('storage', this.storageListener);
+  }
+
+  checkLoginStatus() {
+    this.isLoggedIn = this.authService.isLoggedIn?.() || false;
   }
 }

@@ -10,6 +10,12 @@ export interface User {
   avatarUrl?: string;
 }
 
+export interface Language {
+  id: number;
+  locale: string;  // ví dụ: 'en', 'vi', ...
+  name: string;
+}
+
 export interface PostTranslateLanguage {
   id: number;
   post_id: number;
@@ -20,11 +26,18 @@ export interface PostTranslateLanguage {
   created_at: string;
   updated_at: string;
   is_original: boolean;
-  language: {
-    id: number;
-    locale: string;
-    name: string;
-  };
+  language: Language;
+}
+
+export interface PostMedia {
+  post_id: number;
+  media_id: number;
+  is_featured: boolean;
+  created_at?: string;
+  updated_at?: string;
+  
+  // Bạn có thể thêm các trường khác nếu cần, ví dụ:
+  // media?: Media;
 }
 
 export interface Post {
@@ -37,16 +50,26 @@ export interface Post {
   status: 'draft' | 'published' | 'archived';
   views: number;
   slug: string;
-  id_post_original?: number;
+  id_post_original?: number | null;
   created_at: string;
   updated_at: string;
+
   user?: User;
   categories?: Category;
-  postMedia?: any[];
+  postMedia?: PostMedia[];
   postTranslateLanguage?: PostTranslateLanguage[];
   tags?: string[];
   likes?: number;
 }
+
+export interface PostTranslateLanguageDto {
+  language_id: number;
+  title: string;
+  content: string;
+  description?: string;
+  is_original?: boolean;
+}
+
 export interface PostDto {
   title: string;
   content: string;
@@ -54,12 +77,6 @@ export interface PostDto {
   category_id: number;
   tags?: string[];
   status?: 'draft' | 'published' | 'archived';
-  postMedia?: any[]; // hoặc kiểu dữ liệu media bạn định nghĩa
-  postTranslateLanguage?: {
-    language_id: number;
-    title: string;
-    content: string;
-    description?: string;
-    is_original?: boolean;
-  }[];
+  postMedia?: PostMedia[];  // Bạn có thể định nghĩa kiểu media riêng nếu cần
+  postTranslateLanguage?: PostTranslateLanguageDto[];
 }
