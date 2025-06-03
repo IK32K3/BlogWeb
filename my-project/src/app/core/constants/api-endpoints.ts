@@ -60,11 +60,11 @@ export const COMMENT_API = {
 
 // Đường dẫn API cho tải lên tệp (nếu có)
 export const UPLOAD_API = {
-  BASE: `${API_BASE}/uploads`,
-  UPLOAD_IMAGE: `${API_BASE}/uploads/image`,
-  UPLOAD_IMAGES: `${API_BASE}/uploads/images`,
-  UPLOAD_EDITOR: `${API_BASE}/uploads/editor`,
-  DELETE_FILE: (publicId: string) => `${API_BASE}/uploads/${publicId}`,
+  BASE: `${API_BASE}/api/uploads`,
+  UPLOAD_IMAGE: `${API_BASE}/api/uploads/image`,
+  UPLOAD_IMAGES: `${API_BASE}/api/uploads/images`,
+  UPLOAD_EDITOR: `${API_BASE}/api/uploads/editor`,
+  DELETE_FILE: (publicId: string) => `${API_BASE}/api/uploads/${publicId}`,
 };
 
 // Nhóm tất cả các API vào một đối tượng

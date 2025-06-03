@@ -83,6 +83,14 @@ export interface PostDto {
   category_id: number;
   tags?: string[];
   status?: 'draft' | 'published' | 'archived';
-  postMedia?: PostMedia[];  // Bạn có thể định nghĩa kiểu media riêng nếu cần
-  postTranslateLanguage?: PostTranslateLanguageDto[];
+  postMedia?: {
+    media_id: number;
+    is_featured: boolean;
+  }[];
+  translations?: {
+    language_id: number;
+    title: string;
+    content: string;
+    description?: string;
+  }[];
 }

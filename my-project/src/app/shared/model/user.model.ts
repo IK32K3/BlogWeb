@@ -1,18 +1,14 @@
-export interface User {
-  id?: number;
-  username: string;
-  email: string;
-  password?: string; // optional nếu không trả về từ server
-  role_id: number;
-  description?: string;
-  is_active: boolean;
-  created_at?: string; // ISO string
-  updated_at?: string;
+export interface Role {
+  id: number;
+  name: string;
+}
 
-  // Dữ liệu quan hệ (optional hoặc theo nhu cầu)
-  role?: {
-    id: number;
-    name: string;
-  }
-  data : any;
-};
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+  role: Role | string;
+  avatar?: string;
+  created_at?: string;
+  updated_at?: string;
+}

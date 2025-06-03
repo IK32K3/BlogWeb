@@ -569,15 +569,30 @@ class PostService {
 
 
   async _addPostTranslations(postId, translations) {
-    const translationEntries = translations.map(translation => ({
-      post_id: postId,
-      language_id: translation.language_id,
-      title: translation.title,
-      content: translation.content,
-      description: translation.description,
-      // is_original flag might be managed differently, ensure logic is correct
-      is_original: translation.is_original || false
-    }));
+    const translationEntries = [];
+
+    for (const translation of translations) {
+      const { locale, title, content, description, is_original } = translation;
+
+      // Find the Language ID based on locale
+      const language = await Language.findOne({ where: { locale: locale } });
+
+      if (!language) {
+        console.warn(`[PostService] Skipping translation for unknown locale: ${locale}`);
+        // Or throw an error if you require all locales to be valid
+        // throw new Error(`Invalid locale provided: ${locale}`);
+        continue; // Skip this translation if locale is not found
+      }
+
+      translationEntries.push({
+        post_id: postId,
+        language_id: language.id, // Use the found language ID
+        title: title,
+        content: content,
+        description: description,
+        is_original: is_original || false
+      });
+    }
 
     if (translationEntries.length > 0) {
         await PostTranslateLanguage.bulkCreate(translationEntries);
