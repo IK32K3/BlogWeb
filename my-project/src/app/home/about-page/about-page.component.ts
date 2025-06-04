@@ -4,10 +4,11 @@ import { RouterOutlet } from '@angular/router';
 import { NavbarIntroduceComponent } from '../../shared/components/navbar-introduce/navbar-introduce.component';
 import { FormsModule } from '@angular/forms';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-about-page',
-  imports: [CommonModule,RouterOutlet,NavbarIntroduceComponent,FormsModule,FooterComponent],
+  imports: [CommonModule,RouterOutlet,HeaderComponent,FormsModule,FooterComponent],
   templateUrl: './about-page.component.html',
   styleUrl: './about-page.component.css'
 })

@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AUTH_API } from '../constants/api-endpoints';
-import { StorageUtil } from '../constants/storage-key';
+import { StorageUtil, REFRESH_TOKEN_KEY } from '../constants/storage-key';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -37,7 +37,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         }
 
         // Get refresh token from storage
-        const refreshToken = StorageUtil.get<string>('refreshToken');
+        const refreshToken = StorageUtil.get<string>(REFRESH_TOKEN_KEY);
         if (!refreshToken) {
           authService.logout();
           return throwError(() => new Error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.'));

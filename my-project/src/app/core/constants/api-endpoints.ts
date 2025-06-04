@@ -60,11 +60,16 @@ export const COMMENT_API = {
 
 // Đường dẫn API cho tải lên tệp (nếu có)
 export const UPLOAD_API = {
-  BASE: `${API_BASE}/api/uploads`,
-  UPLOAD_IMAGE: `${API_BASE}/api/uploads/image`,
-  UPLOAD_IMAGES: `${API_BASE}/api/uploads/images`,
-  UPLOAD_EDITOR: `${API_BASE}/api/uploads/editor`,
-  DELETE_FILE: (publicId: string) => `${API_BASE}/api/uploads/${publicId}`,
+  BASE: `${API_BASE}/media`,
+  UPLOAD_IMAGE: `${API_BASE}/media`,
+  UPLOAD_IMAGES: `${API_BASE}/media/multiple`,
+  UPLOAD_EDITOR: `${API_BASE}/media/editor`,
+  DELETE_FILE: (id: string | number) => `${API_BASE}/media/${id}`,
+};
+
+// Đường dẫn API cho liên hệ
+export const CONTACT_API = {
+  BASE: `${API_BASE}/contact`,
 };
 
 // Nhóm tất cả các API vào một đối tượng
@@ -77,6 +82,7 @@ export const API_ENDPOINTS = {
   COMMENT: COMMENT_API,
   UPLOAD: UPLOAD_API,
   BASE: API_BASE,
+  CONTACT: CONTACT_API,
 };
 
 // DTOs (Data Transfer Objects)

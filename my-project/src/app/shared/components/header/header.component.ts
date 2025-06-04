@@ -5,6 +5,7 @@ import { NavbarIntroduceComponent } from '../navbar-introduce/navbar-introduce.c
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -15,20 +16,19 @@ import { FormsModule } from '@angular/forms';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
-  private storageListener = () => this.checkLoginStatus();
+  private authSubscription!: Subscription;
 
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.checkLoginStatus();
-    window.addEventListener('storage', this.storageListener);
+    this.authSubscription = this.authService.isLoggedIn$.subscribe(loggedIn => {
+      this.isLoggedIn = loggedIn;
+    });
   }
 
   ngOnDestroy(): void {
-    window.removeEventListener('storage', this.storageListener);
-  }
-
-  checkLoginStatus() {
-    this.isLoggedIn = this.authService.isLoggedIn?.() || false;
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
   }
 }

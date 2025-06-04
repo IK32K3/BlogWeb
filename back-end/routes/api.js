@@ -2,6 +2,8 @@ require("express-router-group");
 const express = require("express");
 const middlewares = require("kernels/middlewares"); // Assuming this correctly applies an array of middlewares
 const { validate } = require("kernels/validations");
+const multer = require('multer');
+const path = require('path');
 
 // Import Models (needed for isResourceOwner)
 const { Post, Comment, Media } = require('models'); // Import necessary models directly
@@ -14,6 +16,7 @@ const commentController = require("modules/comments/controller/commentController
 const categoryController = require("modules/categories/controller/categoryController");
 const languageController = require("modules/languages/controller/languageController");
 const mediaController = require("modules/media/controller/mediaController");
+const contactController = require("modules/contact/controller/contactController"); // Import Contact Controller
 
 // Import Middleware
 // Ensure 'isResourceOwner' correctly handles model lookup and owner check (req.user.id vs resource.user_id)
@@ -28,9 +31,44 @@ const { getCommentsByPostValidation, addCommentValidation, updateCommentValidati
 const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation } = require("modules/categories/validation/categoryValidations");
 const { getAllLanguagesValidation, getLanguageByIdValidation, createLanguageValidation, updateLanguageValidation } = require("modules/languages/validation/languageValidations");
 const { getAllMediaValidation, getMediaByIdValidation, createMediaValidation, updateMediaValidation } = require("modules/media/validation/mediaValidations");
+const { contactFormValidation } = require("modules/contact/validation/contactValidations"); // Import Contact Validations
 const comment = require("models/comment");
 
 const router = express.Router({ mergeParams: true });
+
+// Set up storage engine for multer
+const storage = multer.diskStorage({
+    destination: './uploads/', // Destination folder for uploads
+    filename: function(req, file, cb){
+        // Use the original file extension
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+// Init upload
+const upload = multer({
+    storage: storage,
+    limits:{fileSize: 1000000}, // Limit file size to 1MB (adjust as needed)
+    fileFilter: function(req, file, cb){
+        checkFileType(file, cb);
+    }
+}).single('file'); // Expecting a single file with the field name 'file'
+
+// Check file type
+function checkFileType(file, cb){
+    // Allowed ext
+    const filetypes = /jpeg|jpg|png|gif/;
+    // Check ext
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    // Check mime
+    const mimetype = filetypes.test(file.mimetype);
+
+    if(mimetype && extname){
+        return cb(null,true);
+    } else {
+        cb('Error: Images Only!');
+    }
+}
 
 // ===== Auth Routes =====
 router.group("/auth", (router) => {
@@ -139,13 +177,19 @@ router.group("/media", (router) => {
 
   // Authenticated user routes (primarily for upload)
   router.group("/", middlewares([authenticated]), (router) => {
-    router.post("/", validate(createMediaValidation), mediaController.createMedia); // Upload media
+    // Use the 'upload' middleware directly here
+    router.post("/", middlewares([authenticated, upload]), validate(createMediaValidation), mediaController.createMedia); // Upload media
 
     // --- Routes requiring specific media access (Owner or Admin) ---
     // Use :mediaId or :id consistently. Let's use :id.
     router.put("/:id", middlewares([isResourceOwner(Media)]), validate(updateMediaValidation), mediaController.updateMedia); // Update media details
-    router.delete("/:id", middlewares([isResourceOwner(Media)]), mediaController.deleteMedia); // Delete media
+    router.delete("/:id", middlewares([isResourceOwner(Media)]), middlewares([isResourceOwner(Media)]), mediaController.deleteMedia); // Delete media
   });
+});
+
+// ===== Contact Routes =====
+router.group("/contact", (router) => {
+  router.post("/", validate(contactFormValidation), contactController.sendMessage);
 });
 
 module.exports = router;

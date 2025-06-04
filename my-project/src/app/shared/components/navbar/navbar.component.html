@@ -11,46 +11,58 @@
     </a>
 
     <!-- Menu -->
-    <div class="hidden lg:flex items-center space-x-6 ml-auto" id="menu">
-      <a routerLink="/category" class="text-gray-700 hover:text-indigo-700 flex items-center mr-0">
-        <i class="fas fa-list mr-2"></i>
-        <span class="hidden lg:block text-xl font-light">Category</span>
-      </a>
-      <a routerLink="/blog/write-post" class="text-gray-700 hover:text-indigo-700 flex items-center">
-        <i class="fas fa-pen mr-2"></i>
-        <span class="hidden lg:block text-xl font-light">Write</span>
-      </a>
-
-      <!-- Dropdown -->
-      <div class="relative">
-        <button
-          (click)="toggleDropdown()"
-          class="text-gray-700 hover:text-gray-900 flex items-center w-10 h-10 bg-gray-400 rounded-full justify-center"
-        >
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuPIJYQ5PcZ4rBME_C7s0ZckXvp9WLD9US9Q&s"
-            alt="gao đỏ"
-            class="rounded-full w-full h-full"
-          />
-        </button>
-
-        <div
-          *ngIf="dropdownOpen"
-          class="absolute z-10 right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg"
-        >
-          <a routerLink="/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
-          <a routerLink="/category" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Category</a>
-          <a routerLink="/write-post" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Write</a>
-          <a routerLink="/contact-us" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Contact Us</a>
-          <div class="border-t my-2"></div>
-          <a routerLink="/settings" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
-          <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">About Us</a>
-          <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Help</a>
-          <div class="border-t my-2"></div>
-          <a routerLink="/home/introduce-page" class="block px-4 py-2 text-gray-700 ">Log out</a>
+    <div class="hidden lg:flex items-center space-x-6 ml-auto" id="menu" [ngClass]="{'hidden': !menuOpen && !isLargeScreen}">
+      
+      <div class="flex items-center space-x-6">
+        <!-- Category Link -->
+        <div class="flex items-center space-x-6 ">
+          <a routerLink="/category" class="text-gray-700 hover:text-indigo-700 flex items-center">
+            <i class="fas fa-list mr-2"></i>
+            <span class="hidden lg:block text-xl font-light">Category</span>
+          </a>
+          <!-- Write Post Link -->
+          <a routerLink="/blog/write-post" class="text-gray-700 hover:text-indigo-700 flex items-center">
+            <i class="fas fa-pen mr-2"></i>
+            <span class="hidden lg:block text-xl font-light">Write</span>
+          </a>
+        </div>
+        <!-- Dropdown Avatar -->
+        <div class="relative">
+          <button
+            (click)="toggleDropdown($event)"
+            class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300 focus:outline-none focus:border-indigo-500"
+          >
+            <img
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuPIJYQ5PcZ4rBME_C7s0ZckXvp9WLD9US9Q&s"
+              alt="User avatar"
+              class="object-cover w-full h-full"
+            />
+          </button>
+      
+          <!-- Dropdown Menu -->
+          <div
+            *ngIf="dropdownOpen"
+            class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+          >
+            <a routerLink="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+            <a routerLink="/category" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Category</a>
+            <a routerLink="/blog/write-post" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Write</a>
+            <a routerLink="/blog/contact-us" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Contact Us</a>
+      
+            <div class="border-t my-2"></div>
+      
+            <a routerLink="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">About Us</a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Help</a>
+      
+            <div class="border-t my-2"></div>
+      
+            <a routerLink="/home/introduce-page" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Log out</a>
+          </div>
         </div>
       </div>
     </div>
+    
 
     <!-- Mobile menu toggle -->
     <button class="lg:hidden text-gray-700 hover:text-gray-900 ml-4" (click)="toggleMenu()">

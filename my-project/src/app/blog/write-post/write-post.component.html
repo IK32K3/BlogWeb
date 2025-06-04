@@ -56,13 +56,15 @@
                         <img
                         [src]="imagePreview"
                         alt="Preview"
-                        class="mx-auto max-h-80 w-full object-contain mb-4 rounded-lg border border-gray-200"
+                        class="mx-auto w-full object-contain mb-4 rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors"
                         />
+                        
                         <button
                         class="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                         (click)="resetImage($event)"
                         >
-                        Remove Image
+                        <i class="fas fa-trash-alt"></i>
+                        Remove 
                         </button>
                     </ng-container>
 
