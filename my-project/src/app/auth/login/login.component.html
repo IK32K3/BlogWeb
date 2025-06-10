@@ -1,7 +1,7 @@
 <!-- <p>login works!</p> -->
 
-<navbar-introduce></navbar-introduce>
-<div class="bg-gray-200 flex flex-col items-center justify-center h-screen">
+<app-navbar-introduce></app-navbar-introduce>
+<div class="bg-gray-300 flex flex-col items-center justify-center h-screen">
     <div class="py-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-4xl mx-auto">
         <h1 class="text-4xl font-bold mb-4">Welcome Back</h1>
@@ -13,7 +13,7 @@
         <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
         <div class="mb-4">
             <label
-            for="email"
+            for="usernameOrEmail"
             class="text-lg font-normal block mb-2"
             [ngClass]="{'text-red-500': errorUserNotFound, 'text-gray-800': !errorUserNotFound}"
             >
@@ -21,9 +21,9 @@
             </label>
             <input
             type="text"
-            id="email"
-            name="email"
-            [(ngModel)]="email"
+            id="usernameOrEmail"
+            name="usernameOrEmail"
+            [(ngModel)]="usernameOrEmail"
             required
             #emailInput="ngModel"
             [ngClass]="{

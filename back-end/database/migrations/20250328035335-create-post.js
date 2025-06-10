@@ -37,6 +37,11 @@ module.exports = {
         type: Sequelize.TEXT('long'),
         allowNull: false,
       },
+      thumbnail: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        comment: 'URL của ảnh đại diện từ Cloudinary'
+      },
       views: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -53,6 +58,7 @@ module.exports = {
       },
       id_post_original: {
         type: Sequelize.INTEGER,
+        allowNull: true,
         references: {
           model: 'posts', // Trỏ đến chính bảng posts
           key: 'id'
@@ -73,6 +79,7 @@ module.exports = {
     await queryInterface.addIndex('posts', ['category_id']);
     await queryInterface.addIndex('posts', ['status']);
     await queryInterface.addIndex('posts', ['created_at']);
+    await queryInterface.addIndex('posts', ['slug'], { unique: true });
   },
   async down(queryInterface, Sequelize) {
     
@@ -81,6 +88,7 @@ module.exports = {
     await queryInterface.removeIndex('posts', ['category_id']);
     await queryInterface.removeIndex('posts', ['status']);
     await queryInterface.removeIndex('posts', ['created_at']);
+    await queryInterface.removeIndex('posts', ['slug']);
     
     await queryInterface.dropTable('Posts');
   }

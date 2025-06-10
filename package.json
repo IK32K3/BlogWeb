@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "rxjs": "^7.8.2"
+    "@sweetalert2/ngx-sweetalert2": "^13.0.0",
+    "cloudinary": "^2.6.1",
+    "rxjs": "^7.8.2",
+    "sweetalert2": "^11.22.0"
   }
 }

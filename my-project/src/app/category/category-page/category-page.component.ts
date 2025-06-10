@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterOutlet, ActivatedRoute } from '@angular/router';
+import { RouterOutlet, ActivatedRoute, RouterModule } from '@angular/router';
 import { NavBarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { FilterMovieComponent } from '../../shared/components/filter-movie/filter-movie.component';
@@ -10,6 +10,15 @@ import { BlogPostService } from '../../core/services/blog-post.service';
 import { Post } from '../../shared/model/post.model';
 import { UsersService } from '../../core/services/users.service';
 import { User } from '../../shared/model/user.model';
+import { DEFAULT_POST_IMAGE, DEFAULT_AUTHOR_IMAGE } from '../../core/constants/app-constants';
+import { CategoryService } from '../../core/services/category.service';
+import { Category } from '../../shared/model/category.model';
+import { Observable } from 'rxjs';
+
+interface Tag {
+  name: string;
+  url: string;
+}
 
 @Component({
   selector: 'app-category-page',
@@ -18,6 +27,7 @@ import { User } from '../../shared/model/user.model';
     CommonModule,
     FormsModule,
     RouterOutlet,
+    RouterModule,
     NavBarComponent,
     FooterComponent,
     FilterMovieComponent,
@@ -41,20 +51,27 @@ export class CategoryPageComponent implements OnInit {
 
   latestPosts: Post[] = [];
   suggestedUsers: User[] = [];
+  categories: Category[] = [];
+  readonly DEFAULT_AUTHOR_IMAGE = DEFAULT_AUTHOR_IMAGE;
+
+  tags: Tag[] = [];
 
   constructor(
     private blogPostService: BlogPostService,
     private route: ActivatedRoute,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private categoryService: CategoryService
   ) {}
 
   ngOnInit(): void {
     this.loadPosts(this.currentFilters);
     this.loadLatestPosts();
     this.loadSuggestedUsers();
+    this.loadCategories();
   }
 
   loadPosts(filters: any): void {
+    console.log('loadPosts - Initial filters:', filters);
     this.isLoading = true;
     this.error = null;
     this.currentFilters = filters;
@@ -65,54 +82,66 @@ export class CategoryPageComponent implements OnInit {
       limit: this.itemsPerPage,
     };
 
+    // Set default status to 'published' if not explicitly set by user
+    if (params.status === undefined || params.status === null) {
+      params.status = 'published';
+    }
+
+    console.log('loadPosts - Derived params before cleaning:', params);
     Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
+    console.log('loadPosts - Params after cleaning:', params);
 
-    // Determine which service method to call based on filters presence
-    let postsObservable;
-    // Check if any filters are present other than pagination
-    const filterKeys = Object.keys(this.currentFilters).filter(key => key !== 'page' && key !== 'limit');
+    let postsObservable: Observable<any>; // Declare outside to handle all paths
 
-    // If filters are present, use the search endpoint and map parameters
-    if (filterKeys.length > 0 && (this.currentFilters.search || this.currentFilters.categories?.length > 0 || this.currentFilters.year || this.currentFilters.sort_by || this.currentFilters.status)) {
-       const searchParams = {
-         query: params.search, // Map frontend 'search' to backend 'query'
-         page: params.page,
-         limit: params.limit,
-         // Map frontend 'categories' array to backend 'category_id' (service expects single for search)
-         // This is still a mismatch. The backend search endpoint expects a single category_id.
-         // To support multiple categories on search, backend searchService would need update.
-         // For now, let's pass the first category ID if multiple are selected, or the single one.
-         category_id: Array.isArray(params.categories) && params.categories.length > 0 ? params.categories[0] : (params.categories ? params.categories : null), // Pass first category ID or null
-         status: params.status,
-         // Map frontend sort_by to backend sort.
-         sort: params.sort_by, 
-         // Convert frontend year to backend date_from/date_to strings
-         date_from: params.year ? `${params.year}-01-01T00:00:00.000Z` : undefined,
-         date_to: params.year ? `${params.year}-12-31T23:59:59.999Z` : undefined,
-       };
-        Object.keys(searchParams).forEach(key => (searchParams[key as keyof typeof searchParams] === undefined || searchParams[key as keyof typeof searchParams] === null) && delete searchParams[key as keyof typeof searchParams]);
+    const hasCategoryFilter = Array.isArray(params.categories) && params.categories.length > 0;
+    const categoryId = hasCategoryFilter ? Number(params.categories[0]) : undefined;
 
-      // Note: blogPostService.search() expects parameters matching the /posts/search endpoint.
-      // Based on backend searchPosts, it expects: query, page, limit, category_id, user_id, status, sort, date_from, date_to
+    // Determine if there are *any* "complex" filters that require the search endpoint
+    // "Complex" means: a search query, a year, a sort_by, or a status other than 'published'
+    // Explicitly check for a non-empty string for params.search
+    const isComplexFilterActive = (typeof params.search === 'string' && params.search.length > 0) || // Refined check
+                                  !!params.year ||
+                                  !!params.sort_by ||
+                                  (params.status && params.status !== 'published');
 
-       postsObservable = this.blogPostService.search(searchParams);
-    } else {
-      // If no significant filters, use the default getAll endpoint
-      // Note: blogPostService.getAll() expects parameters matching the /posts endpoint.
-      // Based on backend getAllPosts, it expects: page, limit, categoryId, search, userId, sort, status
-      const getAllParams = {
-          page: params.page,
-          limit: params.limit,
-          search: params.search, // Pass search term if present even without other filters
-          status: params.status,
-          // Map frontend categories array to service categoryId (single)
-          categoryId: Array.isArray(params.categories) && params.categories.length > 0 ? params.categories[0] : (params.categories ? params.categories : null), 
-          sort: params.sort_by, // Map sort_by to sort for getAllPosts service
-          // getAllPosts service does not support date range.
+    console.log('loadPosts - hasCategoryFilter:', hasCategoryFilter, 'isComplexFilterActive:', isComplexFilterActive);
+
+    if (isComplexFilterActive) {
+      // Case 1: Complex filters are active (e.g., search term, year, sort, or non-default status)
+      // Use search endpoint, even if a category is also selected
+      const searchParams = {
+        ...(typeof params.search === 'string' && params.search.length > 0 && { query: params.search }), // Refined check
+        page: params.page,
+        limit: params.limit,
+        category_id: categoryId, // Pass numeric category_id if present
+        status: params.status,
+        sort: params.sort_by,
+        date_from: params.year ? `${params.year}-01-01T00:00:00.000Z` : undefined,
+        date_to: params.year ? `${params.year}-12-31T23:59:59.999Z` : undefined,
       };
-       Object.keys(getAllParams).forEach(key => (getAllParams[key as keyof typeof getAllParams] === undefined || getAllParams[key as keyof typeof getAllParams] === null) && delete getAllParams[key as keyof typeof getAllParams]);
-
-       postsObservable = this.blogPostService.getAll(getAllParams);
+      // Clean up undefined/null values for searchParams
+      Object.keys(searchParams).forEach(key => (searchParams[key as keyof typeof searchParams] === undefined || searchParams[key as keyof typeof searchParams] === null) && delete searchParams[key as keyof typeof searchParams]);
+      postsObservable = this.blogPostService.search(searchParams);
+      console.log('Calling blogPostService.search with params:', searchParams);
+    } else if (hasCategoryFilter) {
+      // Case 2: Only category filter (and default 'published' status), no other complex filters
+      postsObservable = this.blogPostService.getByCategory(categoryId!, {
+        page: params.page,
+        limit: params.limit,
+        status: params.status // Will be 'published' here
+      });
+      console.log('Calling blogPostService.getByCategory with categoryId:', categoryId, 'and params:', { page: params.page, limit: params.limit, status: params.status });
+    } else {
+      // Case 3: No significant filters (just default pagination and 'published' status)
+      const getAllParams = {
+        page: params.page,
+        limit: params.itemsPerPage,
+        status: params.status,
+      };
+      // Clean up undefined/null values for getAllParams
+      Object.keys(getAllParams).forEach(key => (getAllParams[key as keyof typeof getAllParams] === undefined || getAllParams[key as keyof typeof getAllParams] === null) && delete getAllParams[key as keyof typeof getAllParams]);
+      postsObservable = this.blogPostService.getAll(getAllParams);
+      console.log('Calling blogPostService.getAll with params:', getAllParams);
     }
 
     postsObservable.subscribe({
@@ -121,9 +150,9 @@ export class CategoryPageComponent implements OnInit {
           // Note: The response structure might differ between getAll and search endpoints.
           // Adjust based on actual backend response.
           // Assuming search returns results in 'results' key and pagination in 'pagination' key, similar to getAll.
-          this.posts = response.data.posts || response.results || []; // Handle potential different response keys
-          this.totalItems = response.data.pagination?.totalItems || response.pagination?.total || 0; // Handle potential different response keys
-          this.totalPages = response.data.pagination?.totalPages || response.pagination?.totalPages || 0; // Handle potential different response keys
+          this.posts = response.data.posts || []; // Handle potential different response keys
+          this.totalItems = response.data.pagination?.total || 0; // Handle potential different response keys
+          this.totalPages = response.data.pagination?.totalPages || 0; // Handle potential different response keys
           this.calculatePages();
         } else {
           this.posts = [];
@@ -200,8 +229,8 @@ export class CategoryPageComponent implements OnInit {
   loadSuggestedUsers(): void {
     this.usersService.getAll({ limit: 2 /*, role: 'blogger'*/ }).subscribe({ // Temporarily remove role filter
       next: (response) => {
-        if (response.users) {
-          this.suggestedUsers = response.users || [];
+        if (response.data?.users) {
+          this.suggestedUsers = response.data.users || [];
         } else {
           this.suggestedUsers = [];
         }
@@ -213,17 +242,28 @@ export class CategoryPageComponent implements OnInit {
     });
   }
 
-  tags = [
-    { name: 'du lịch', url: '#' },
-    { name: 'ẩm thực', url: '#' },
-    { name: 'công nghệ', url: '#' },
-    { name: 'sức khỏe', url: '#' },
-    { name: 'thể thao', url: '#' },
-    { name: 'giáo dục', url: '#' }
-  ];
+  loadCategories(): void {
+    this.categoryService.getAll().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.categories = response.data.categories || [];
+          // Populate tags from fetched categories
+          this.tags = this.categories.map(cat => ({ name: cat.name, url: `/category/${cat.slug || cat.id}` }));
+        } else {
+          this.categories = [];
+          this.tags = [];
+        }
+      },
+      error: (err) => {
+        console.error('Error loading categories:', err);
+        this.categories = [];
+        this.tags = [];
+      }
+    });
+  }
 
   getPostImageUrl(post: Post): string {
-    const featuredMedia = post.postMedia?.find(media => media.is_featured);
-    return featuredMedia?.media?.url || 'placeholder.jpg';
+    const featuredMedia = post.postUploads?.find(media => media.is_featured);
+    return featuredMedia?.file?.url || DEFAULT_POST_IMAGE;
   }
 }

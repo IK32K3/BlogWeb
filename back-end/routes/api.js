@@ -1,90 +1,71 @@
+// Các import ở đầu file không thay đổi nhiều, chỉ cập nhật tên cho nhất quán
 require("express-router-group");
 const express = require("express");
-const middlewares = require("kernels/middlewares"); // Assuming this correctly applies an array of middlewares
+const middlewares = require("kernels/middlewares");
 const { validate } = require("kernels/validations");
-const multer = require('multer');
-const path = require('path');
+// Import middleware upload đã được cập nhật
+const uploadMiddleware = require("modules/upload/middleware/uploadMiddleware");
 
-// Import Models (needed for isResourceOwner)
-const { Post, Comment, Media } = require('models'); // Import necessary models directly
+// Import Models (đã có sẵn)
+const { Post, Comment } = require('models');
 
-// Import Controllers
+// Import Controllers (cập nhật tên hàm của mediaController)
 const authController = require("modules/auth/controller/authController");
 const userController = require("modules/users/controller/userController");
 const postController = require("modules/posts/controller/postController");
 const commentController = require("modules/comments/controller/commentController");
 const categoryController = require("modules/categories/controller/categoryController");
 const languageController = require("modules/languages/controller/languageController");
-const mediaController = require("modules/media/controller/mediaController");
-const contactController = require("modules/contact/controller/contactController"); // Import Contact Controller
+// Cập nhật tên các hàm trong controller cho đúng với phiên bản mới
+const contactController = require("modules/contact/controller/contactController");
+const uploadController = require("modules/upload/controller/uploadController");
+const { uploadSingleValidation, uploadMultipleValidation, uploadEditorValidation, deleteFileValidation } = require("modules/upload/validation/uploadValidation");
 
-// Import Middleware
-// Ensure 'isResourceOwner' correctly handles model lookup and owner check (req.user.id vs resource.user_id)
-// and potentially allows admins.
-const { authenticated , isAdmin, isAuthenticatedUserWithRole ,isBlogOwnerRole, isResourceOwner } = require("kernels/middlewares/authMiddleware");
+// Import Middleware (không đổi)
+const { authenticated, isAdmin, isBlogOwnerRole, isResourceOwner } = require("kernels/middlewares/authMiddleware");
 
-// Import Validations (ensure these match exports)
-const { registerValidation, loginValidation, forgotPasswordValidation, resetPasswordValidation, refreshTokenValidation } = require("modules/auth/validation/authValidations");
+// Import Validations (cập nhật tên cho nhất quán)
+const { registerValidation, loginValidation, forgotPasswordValidation, resetPasswordValidation, refreshTokenValidation, logoutValidation } = require("modules/auth/validation/authValidations");
 const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, updateProfileValidation, saveSettingsValidation, changePasswordValidation } = require("modules/users/validation/userValidations");
-const { createPostValidation, updatePostValidation, getPostByIdValidation, getPostBySlugValidation, getPostsByCategoryValidation, getAllPostsValidation, getMyPostsValidation, searchPostsValidation, getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
+const { createPostValidation, updatePostValidation, getPostByIdValidation, getPostBySlugValidation, getPostsByCategoryValidation, getAllPostsValidation, getMyPostsValidation, getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
 const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
 const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation } = require("modules/categories/validation/categoryValidations");
 const { getAllLanguagesValidation, getLanguageByIdValidation, createLanguageValidation, updateLanguageValidation } = require("modules/languages/validation/languageValidations");
-const { getAllMediaValidation, getMediaByIdValidation, createMediaValidation, updateMediaValidation } = require("modules/media/validation/mediaValidations");
-const { contactFormValidation } = require("modules/contact/validation/contactValidations"); // Import Contact Validations
-const comment = require("models/comment");
+// Cập nhật tên các validation cho media
+const { contactFormValidation } = require("modules/contact/validation/contactValidations");
 
 const router = express.Router({ mergeParams: true });
 
-// Set up storage engine for multer
-const storage = multer.diskStorage({
-    destination: './uploads/', // Destination folder for uploads
-    filename: function(req, file, cb){
-        // Use the original file extension
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
-
-// Init upload
-const upload = multer({
-    storage: storage,
-    limits:{fileSize: 1000000}, // Limit file size to 1MB (adjust as needed)
-    fileFilter: function(req, file, cb){
-        checkFileType(file, cb);
-    }
-}).single('file'); // Expecting a single file with the field name 'file'
-
-// Check file type
-function checkFileType(file, cb){
-    // Allowed ext
-    const filetypes = /jpeg|jpg|png|gif/;
-    // Check ext
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    // Check mime
-    const mimetype = filetypes.test(file.mimetype);
-
-    if(mimetype && extname){
-        return cb(null,true);
-    } else {
-        cb('Error: Images Only!');
-    }
-}
-
 // ===== Auth Routes =====
 router.group("/auth", (router) => {
-  router.post("/register", validate(registerValidation), authController.register);
-  router.post("/login", validate(loginValidation), authController.login);
-  router.post("/forgot-password", validate(forgotPasswordValidation), authController.forgotPassword);
-  router.post("/reset-password", validate(resetPasswordValidation), authController.resetPassword);
-  router.post("/refresh-token", validate(refreshTokenValidation), authController.refreshToken);
-  // Consider adding a '/logout' route if using server-side sessions or blacklisting tokens
-  // router.post("/logout", authenticated, authController.logout);
+  router.post("/register", 
+    validate(registerValidation), 
+    authController.register
+  );
+  router.post("/login", 
+    validate(loginValidation), 
+    authController.login
+  );
+  router.post("/forgot-password", 
+    validate(forgotPasswordValidation), 
+    authController.forgotPassword
+  );
+  router.post("/reset-password", 
+    validate(resetPasswordValidation), 
+    authController.resetPassword
+  );
+  router.post("/refresh-token", 
+    validate(refreshTokenValidation), 
+    authController.refreshToken
+  );
+  router.post("/logout", 
+    authenticated, 
+    validate(logoutValidation), 
+    authController.logout
+  );
 });
-
 // ===== User Routes =====
 router.group("/users", (router) => {
-  // ─────────── Authenticated User Routes ─────────── //
-  // Move this BEFORE the admin routes with parameters
   router.group("/me", middlewares([authenticated]), (router) => {
     router.get("/", userController.getProfile);
     router.put("/", validate(updateProfileValidation), userController.updateProfile);
@@ -92,7 +73,6 @@ router.group("/users", (router) => {
     router.put("/changePassword", validate(changePasswordValidation), userController.changePassword);
   }); 
 
-  // ─────────────── Admin Routes ─────────────── //
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
     router.get("/admin", validate(getAllUsersValidation), userController.getAllUsers);
     router.post("/admin", validate(createUserValidation), userController.createUser);
@@ -100,68 +80,69 @@ router.group("/users", (router) => {
     router.put("/:id", validate(updateUserValidation), userController.updateUser);
     router.delete("/:id", userController.deleteUser);
   });
-
 });
+
+// ===== Search Route =====
 
 // ===== Post Routes =====
 router.group("/posts", (router) => {
-  // --- Public routes (Read operations) ---
   router.get("/", validate(getAllPostsValidation), postController.getAllPosts);
-  // --- Authenticated routes ---
-  router.group("/", middlewares([authenticated]), (router) => { // Use 'authenticated' instead of 'isAuthenticated' if it's the primary check
-    router.get("/my", validate(getMyPostsValidation), postController.getMyPosts); // Combined route for user's posts (can filter by status via query)
-    // Post creation
-    router.post("/", middlewares([isBlogOwnerRole]),validate(createPostValidation), postController.createPost);  
-    router.put("/:id", middlewares([isResourceOwner(Post)]), validate(updatePostValidation), postController.updatePost);
-    router.delete("/:id", middlewares([isResourceOwner(Post)]), postController.deletePost);
+  
+  router.group("/", middlewares([authenticated]), (router) => {
+    router.get("/my", validate(getMyPostsValidation), postController.getMyPosts);
+    router.post("/", 
+      middlewares([isBlogOwnerRole]), 
+      uploadMiddleware.uploadMultipleImages,
+      validate(createPostValidation), 
+      postController.createPost
+    );
+    router.put("/:id", 
+      middlewares([isResourceOwner(Post)]), 
+      uploadMiddleware.uploadMultipleImages,
+      validate(updatePostValidation), 
+      postController.updatePost
+    );
+    router.delete("/:id", 
+      middlewares([isResourceOwner(Post)]), 
+      postController.deletePost
+    );
   });
-  // --- Public routes (Read operations) ---
-  router.get("/search", validate(searchPostsValidation), postController.searchPosts); // Search functionality , done
-  router.get("/slug/:slug", validate(getPostBySlugValidation), postController.getPostBySlug); // Get by slug before ID to avoid conflict if slug could be numeric , done
-  router.get("/categories/:categoryId", validate(getPostsByCategoryValidation), postController.getPostsByCategory); // Posts by category , done
-  router.get("/author/:userId", validate(getPostsByAuthorValidation), postController.getPostsByAuthor); // Corrected Path: Posts by author , dôn
-  router.get("/:id", validate(getPostByIdValidation), postController.getPostById); // Get by ID (usually last among GET routes with params)
-});
 
+  router.get("/slug/:slug", validate(getPostBySlugValidation), postController.getPostBySlug);
+  router.get("/categories/:categoryId", validate(getPostsByCategoryValidation), postController.getPostsByCategory);
+  router.get("/author/:userId", validate(getPostsByAuthorValidation), postController.getPostsByAuthor);
+  router.get("/:id", validate(getPostByIdValidation), postController.getPostById);
+});
 
 // ===== Comment Routes =====
 router.group("/comments", (router) => {
-  // Public: Get comments for a post
-  router.get("/post/:postId", validate(getCommentsByPostValidation), commentController.getCommentsByPost); // Use /post/:postId for clarity
+  router.get("/post/:postId", validate(getCommentsByPostValidation), commentController.getCommentsByPost);
 
-  // Authenticated user routes for managing comments
   router.group("/", middlewares([authenticated]), (router) => {
-    router.post("/post/:postId", validate(addCommentValidation), commentController.addComment); // Add comment to specific post
-    router.get("/my", validate(getMyCommentsValidation), commentController.getMyComments); // Get user's own comments
-
-    // Actions on a specific comment (Owner or Admin)
-    // Use :commentId consistently
-        router.put("/:commentId", middlewares([isResourceOwner(comment)]),validate(updateCommentValidation), commentController.updateComment);
-        router.delete("/:commentId",middlewares([isResourceOwner(comment)]), commentController.deleteComment);
+    router.post("/post/:postId", validate(addCommentValidation), commentController.addComment);
+    router.get("/my", validate(getMyCommentsValidation), commentController.getMyComments);
+    router.put("/:commentId", middlewares([isResourceOwner(Comment)]), validate(updateCommentValidation), commentController.updateComment);
+    router.delete("/:commentId", middlewares([isResourceOwner(Comment)]), commentController.deleteComment);
   });
 });
 
 // ===== Category Routes =====
 router.group("/categories", (router) => {
-  // Public routes
   router.get("/", validate(getAllCategoriesValidation), categoryController.getAllCategories);
-  router.get("/:id", validate(getCategoryByIdValidation), categoryController.getCategoryById); // Or use slug /slug/:slug
+  router.get("/:id", validate(getCategoryByIdValidation), categoryController.getCategoryById);
 
-  // Admin only routes for managing categories
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
     router.post("/", validate(createCategoryValidation), categoryController.createCategory);
     router.put("/:id", validate(updateCategoryValidation), categoryController.updateCategory);
-    router.delete("/:id",categoryController.deleteCategory);
+    router.delete("/:id", categoryController.deleteCategory);
   });
 });
 
 // ===== Language Routes =====
 router.group("/languages", (router) => {
-  // Public routes (if languages are publicly listed)
   router.get("/", validate(getAllLanguagesValidation), languageController.getAllLanguages);
   router.get("/:id", validate(getLanguageByIdValidation), languageController.getLanguageById);
 
-  // Admin only routes for managing languages
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
     router.post("/", validate(createLanguageValidation), languageController.createLanguage);
     router.put("/:id", validate(updateLanguageValidation), languageController.updateLanguage);
@@ -169,22 +150,34 @@ router.group("/languages", (router) => {
   });
 });
 
-// ===== Media Routes =====
-router.group("/media", (router) => {
-  // Public routes? Usually media is accessed via its URL, but an API might list/get details.
-  router.get("/", validate(getAllMediaValidation), mediaController.getAllMedia); // Consider if this needs auth/admin
-  router.get("/:id", validate(getMediaByIdValidation), mediaController.getMediaById); // Consider if this needs auth/admin
-
-  // Authenticated user routes (primarily for upload)
-  router.group("/", middlewares([authenticated]), (router) => {
-    // Use the 'upload' middleware directly here
-    router.post("/", middlewares([authenticated, upload]), validate(createMediaValidation), mediaController.createMedia); // Upload media
-
-    // --- Routes requiring specific media access (Owner or Admin) ---
-    // Use :mediaId or :id consistently. Let's use :id.
-    router.put("/:id", middlewares([isResourceOwner(Media)]), validate(updateMediaValidation), mediaController.updateMedia); // Update media details
-    router.delete("/:id", middlewares([isResourceOwner(Media)]), middlewares([isResourceOwner(Media)]), mediaController.deleteMedia); // Delete media
-  });
+// ===== Upload Routes =====
+router.group("/uploads", (router) => {
+  router.post('/image', 
+    authenticated, 
+    validate(uploadSingleValidation),
+    uploadMiddleware.uploadSingleImage,
+    uploadController.uploadSingleImage
+  );
+  
+  router.post('/images', 
+    authenticated, 
+    validate(uploadMultipleValidation),
+    uploadMiddleware.uploadMultipleImages,
+    uploadController.uploadMultipleImages
+  );
+  
+  router.post('/editor', 
+    authenticated, 
+    validate(uploadEditorValidation),
+    uploadMiddleware.uploadEditorImage,
+    uploadController.uploadEditorImage
+  );
+  
+  router.delete('/:publicId', 
+    authenticated, 
+    validate(deleteFileValidation),
+    uploadController.deleteUploadedFile
+  );
 });
 
 // ===== Contact Routes =====

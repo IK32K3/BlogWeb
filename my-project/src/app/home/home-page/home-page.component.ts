@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { NavBarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { HeroSectionComponent } from '../../shared/components/hero-section/hero-section.component';
 import { BlogPostService } from '../../core/services/blog-post.service';
@@ -10,6 +9,7 @@ import { CategoryService } from '../../core/services/category.service';
 import { Post } from '../../shared/model/post.model';
 import { Category } from '../../shared/model/category.model';
 import { PostCardComponent } from '../../shared/components/post-card/post-card.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @Component({
   selector: 'app-home-page',
@@ -19,7 +19,7 @@ import { PostCardComponent } from '../../shared/components/post-card/post-card.c
     FormsModule,
     RouterOutlet,
     RouterLink,
-    NavBarComponent,
+    SharedModule,
     FooterComponent,
     HeroSectionComponent,
     PostCardComponent

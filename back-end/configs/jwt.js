@@ -1,6 +1,8 @@
+const crypto = require('crypto');
+
 module.exports = {
-    secret: process.env.JWT_SECRET_KEY || 'secret',
-    refreshSecret: process.env.JWT_REFRESH_SECRET_KEY || 'refreshSecret',
+    secret: process.env.JWT_SECRET_KEY || crypto.randomBytes(32).toString('hex'),
+    refreshSecret: process.env.JWT_REFRESH_SECRET_KEY || crypto.randomBytes(32).toString('hex'),
     algorithm: 'HS256',
     resetTokenExpiration: '15m',
     expiresIn: process.env.JWT_EXPIRES_IN || '1h', // Default 1 hour for access token

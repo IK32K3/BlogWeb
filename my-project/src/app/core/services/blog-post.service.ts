@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { POST_API, UPLOAD_API } from '../constants/api-endpoints';
-import { PostDto } from '../../shared/model/post.model';
+import { PostDto, Post, Comment } from '../../shared/model/post.model';
 import { catchError } from 'rxjs/operators';
 
 interface UploadResponse {
@@ -11,6 +11,12 @@ interface UploadResponse {
     id: number;
     url: string;
   };
+  message?: string;
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
   message?: string;
 }
 
@@ -26,8 +32,12 @@ export class BlogPostService {
    * @param params - Các tùy chọn để lọc và phân trang
    * @returns Observable - Dữ liệu bài viết và thông tin phân trang
    */
-  getAll(params?: any): Observable<any> {
-    return this.http.get(POST_API.BASE, { params });
+  getAll(params?: any): Observable<{ success: boolean, message: string, data: { posts: Post[], pagination: any } }> {
+    const queryParams = {
+      ...params,
+      include: ['category', 'author']
+    };
+    return this.http.get<{ success: boolean, message: string, data: { posts: Post[], pagination: any } }>(POST_API.BASE, { params: queryParams });
   }
 
   // ============================================
@@ -51,8 +61,8 @@ export class BlogPostService {
    * @param id - ID của bài viết
    * @returns Observable - Dữ liệu bài viết
    */
-  getById(id: number | string): Observable<any> {
-    return this.http.get(POST_API.GET_BY_ID(id));
+  getById(id: number | string): Observable<ApiResponse<Post>> {
+    return this.http.get<ApiResponse<Post>>(POST_API.GET_BY_ID(id));
   }
 
   // ============================================
@@ -82,8 +92,12 @@ export class BlogPostService {
    * @param params - Các tùy chọn để lọc và phân trang
    * @returns Observable - Dữ liệu bài viết và thông tin phân trang
    */
-  search(params?: any): Observable<any> {
-    return this.http.get(POST_API.SEARCH, { params });
+  search(params?: any): Observable<{ success: boolean, message: string, data: { posts: Post[], pagination: any } }> {
+    const queryParams = {
+      ...params,
+      include: ['category', 'author']
+    };
+    return this.http.get<{ success: boolean, message: string, data: { posts: Post[], pagination: any } }>(POST_API.GET_ALL, { params: queryParams });
   } 
 
   // ============================================
@@ -94,31 +108,101 @@ export class BlogPostService {
    * @returns Observable - Dữ liệu bài viết và thông tin phân trang
    */
   getByCategory(categoryId: number | string, params?: any): Observable<any> {
-    return this.http.get(POST_API.GET_BY_CATEGORY(categoryId), { params });
+    const queryParams = {
+      ...params,
+      include: ['category', 'author']
+    };
+    return this.http.get(POST_API.GET_BY_CATEGORY(categoryId), { params: queryParams });
   }
 
   // ============================================
-  // Các hàm khác giữ nguyên nếu cần (ví dụ: getPostBySlug, getRelatedPosts, getComments, postComment)
-  getPostBySlug(slug: string): Observable<any> {
-    return this.http.get(POST_API.GET_BY_SLUG(slug));
+  /**
+   * Lấy bài viết theo slug
+   * @param slug - Slug của bài viết
+   * @returns Observable - Dữ liệu bài viết
+   */
+  getPostBySlug(slug: string): Observable<ApiResponse<Post>> {
+    return this.http.get<ApiResponse<Post>>(POST_API.GET_BY_SLUG(slug));
   }
 
-  getRelatedPosts(categoryId: number): Observable<any> {
-    return this.http.get(POST_API.GET_BY_CATEGORY(categoryId));
+  // ============================================
+  /**
+   * Lấy danh sách bài viết liên quan
+   * @param categoryId - ID của danh mục
+   * @returns Observable - Dữ liệu bài viết liên quan
+   */
+  getRelatedPosts(categoryId: number): Observable<ApiResponse<Post[]>> {
+    return this.http.get<ApiResponse<Post[]>>(POST_API.GET_BY_CATEGORY(categoryId));
   }
 
-  getComments(postId: number): Observable<any> {
-    return this.http.get(`/comments/post/${postId}`);
+  // ============================================
+  /**
+   * Lấy danh sách bình luận của bài viết
+   * @param postId - ID của bài viết
+   * @returns Observable - Dữ liệu bình luận
+   */
+  getComments(postId: number): Observable<ApiResponse<Comment[]>> {
+    return this.http.get<ApiResponse<Comment[]>>(`/comments/post/${postId}`);
   }
 
-  postComment(postId: number, comment: any): Observable<any> {
-    return this.http.post(`/comments/post/${postId}`, comment);
-  }
-
-  uploadImage(formData: FormData): Observable<UploadResponse> {
-    return this.http.post<UploadResponse>(UPLOAD_API.UPLOAD_IMAGE, formData).pipe(
+  // ============================================
+  /**
+   * Lấy danh sách bài viết của người dùng hiện tại
+   * @returns Observable - Dữ liệu bài viết
+   */
+  getMyPosts(): Observable<ApiResponse<{ posts: Post[] }>> {
+    return this.http.get<ApiResponse<{ posts: Post[] }>>(POST_API.GET_MY).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.error('Upload error:', error);
+        console.error('Get my posts error:', error);
+        return throwError(() => new Error(error.error?.message || 'Failed to get my posts'));
+      })
+    );
+  }
+
+  // ============================================
+  /**
+   * Thêm bình luận cho bài viết
+   * @param postId - ID của bài viết
+   * @param text - Nội dung bình luận
+   * @returns Observable - Dữ liệu bình luận đã thêm
+   */
+  postComment(postId: number, text: string): Observable<ApiResponse<Comment>> {
+    return this.http.post<ApiResponse<Comment>>(`/comments/post/${postId}`, { text });
+  }
+
+  // ============================================
+  /**
+   * Xóa bài viết
+   * @param postId - ID của bài viết
+   * @returns Observable - Kết quả xóa
+   */
+  deletePost(postId: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(POST_API.GET_BY_ID(postId)).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Delete post error:', error);
+        return throwError(() => new Error(error.error?.message || 'Failed to delete post'));
+      })
+    );
+  }
+
+  // ============================================
+  /**
+   * Upload hình ảnh
+   * @param formData - Dữ liệu form chứa file
+   * @returns Observable - Dữ liệu upload
+   */
+  uploadImage(formData: FormData): Observable<UploadResponse> {
+    console.log('Uploading image with FormData:', formData);
+    return this.http.post<UploadResponse>(UPLOAD_API.UPLOAD_SINGLE, formData).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Upload error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          headers: error.headers,
+          url: error.url
+        });
+        
         if (error.status === 404) {
           return throwError(() => new Error('Upload endpoint not found. Please check server configuration.'));
         }
@@ -127,6 +211,9 @@ export class BlogPostService {
         }
         if (error.status === 415) {
           return throwError(() => new Error('Invalid file type. Please upload JPG or PNG only.'));
+        }
+        if (error.status === 500) {
+          return throwError(() => new Error(`Server error: ${error.error?.message || 'Unknown server error'}`));
         }
         return throwError(() => new Error(error.error?.message || 'Failed to upload image'));
       })

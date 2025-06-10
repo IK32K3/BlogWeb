@@ -1,16 +1,33 @@
 {
    "compilerOptions": {
-      "baseUrl": ".",
-      "moduleResolution": "Node",
-      "paths": {
-         "modules/*": ["./modules/*"],
-         "middlewares/*": ["./middlewares/*"],
-         "config/*": ["./config/*"],
-         "database/*": ["./database/*"],
-         "kernels/*": ["./kernels/*"],
-         "models/*": ["./models/*"],
-         "utils/*": ["utils/*"]
-      }
+     /* ----- Các tùy chọn cơ bản và quan trọng ----- */
+     "target": "ES2020",                // Chỉ định phiên bản ECMAScript mục tiêu cho Node.js hiện đại
+     "module": "commonjs",             // Quan trọng: Chỉ định hệ thống module là CommonJS (cho require/module.exports)
+     "moduleResolution": "node",       // Giữ nguyên, đúng cho môi trường Node.js
+     "baseUrl": ".",                   // Thư mục gốc để phân giải các đường dẫn (đã có)
+ 
+     /* ----- Các tùy chọn bổ sung giúp code tốt hơn ----- */
+     "esModuleInterop": true,          // Cho phép tương tác tốt hơn giữa các loại module
+     "forceConsistentCasingInFileNames": true, // Đảm bảo tên file được viết nhất quán
+     "strict": true,                   // Bật chế độ kiểm tra nghiêm ngặt để phát hiện lỗi sớm
+     "skipLibCheck": true,             // Bỏ qua việc kiểm tra kiểu của các thư viện bên ngoài (tăng hiệu suất)
+ 
+     /* ----- Định nghĩa các đường dẫn tắt (Path Aliases) ----- */
+     "paths": {
+       "configs/*": ["./configs/*"],       // Giả sử bạn có thư mục configs ở gốc
+       "kernels/*": ["./kernels/*"],
+       "models/*": ["./models/*"],
+       "modules/*": ["./modules/*"],
+       "utils/*": ["./utils/*"]          // Đã sửa lại, thêm "./" cho nhất quán
+     }
    },
-   "include": ["./**/*"]
-}
+   /* ----- Chỉ định các file cần phân tích hoặc loại trừ ----- */
+   "include": [
+     "./**/*.js"                         // Chỉ bao gồm các file .js trong quá trình phân tích
+   ],
+   "exclude": [
+     "node_modules",                     // Rất quan trọng: Loại trừ node_modules để tăng tốc VS Code
+     "build",                            // Thư mục chứa code đã build (nếu có)
+     "dist"                              // Một tên phổ biến khác cho thư mục build
+   ]
+ }

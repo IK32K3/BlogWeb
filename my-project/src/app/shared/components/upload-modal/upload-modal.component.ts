@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component , EventEmitter, Input, Output, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { UploadService } from '../../../core/services/upload.service';
 
 export interface FilePreview {
   file: File;
@@ -33,7 +34,7 @@ export class UploadModalComponent {
   totalFilesToUpload: number = 0;
   filesCurrentlyUploaded: number = 0;
 
-  constructor() { }
+  constructor(private uploadService: UploadService) { }
 
   // Getter for the "Start Upload" button's disabled state
   get isStartUploadDisabled(): boolean {
@@ -164,7 +165,7 @@ export class UploadModalComponent {
   }
 
   async startUpload(): Promise<void> {
-    if (this.isStartUploadDisabled) { // Use the getter here as well for consistency
+    if (this.isStartUploadDisabled) {
       return;
     }
 
@@ -180,7 +181,12 @@ export class UploadModalComponent {
         preview.status = 'uploading';
         preview.progress = 0;
         try {
-          await this.simulateFileUpload(preview);
+          // Use the new upload service
+          const result = await this.uploadService.uploadFile(preview.file, {
+            name: preview.name,
+            type: this.getFileType(preview.file.type)
+          }).toPromise();
+          
           preview.status = 'success';
           filesToUploadActually.push(preview.file);
         } catch (error) {
@@ -189,11 +195,10 @@ export class UploadModalComponent {
           console.error(`Error uploading ${preview.name}:`, error);
         } finally {
           this.filesCurrentlyUploaded++;
-          // Ensure totalFilesToUpload is not zero to avoid division by zero
           if (this.totalFilesToUpload > 0) {
             this.overallProgress = Math.round((this.filesCurrentlyUploaded / this.totalFilesToUpload) * 100);
           } else {
-            this.overallProgress = 0; // Or 100 if it implies completion of zero files
+            this.overallProgress = 0;
           }
         }
       }
@@ -201,24 +206,17 @@ export class UploadModalComponent {
 
     const allDone = this.selectedFilePreviews.every(p => p.status === 'success' || p.status === 'error');
     if (allDone) {
-        this.isUploading = false;
-        if (filesToUploadActually.length > 0) {
-            this.filesUploadedEvent.emit(filesToUploadActually);
-        }
+      this.isUploading = false;
+      if (filesToUploadActually.length > 0) {
+        this.filesUploadedEvent.emit(filesToUploadActually);
+      }
     }
   }
 
-  private simulateFileUpload(preview: FilePreview): Promise<void> {
-    return new Promise((resolve, reject) => {
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 10;
-        preview.progress = progress;
-        if (progress >= 100) {
-          clearInterval(interval);
-            resolve();
-        }
-      }, 200);
-    });
+  private getFileType(mimeType: string): 'image' | 'video' | 'document' | 'gallery' {
+    if (mimeType.startsWith('image/')) return 'image';
+    if (mimeType.startsWith('video/')) return 'video';
+    if (mimeType.startsWith('audio/')) return 'document';
+    return 'document';
   }
 }

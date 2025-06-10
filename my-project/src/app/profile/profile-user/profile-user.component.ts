@@ -1,65 +1,137 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterOutlet } from '@angular/router';
-import { NavBarComponent } from '../../shared/components/navbar/navbar.component';
+import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
+import { UsersService } from '../../core/services/users.service';
+import { BlogPostService } from '../../core/services/blog-post.service';
+import { User } from '../../shared/model/user.model';
+import { Post } from '../../shared/model/post.model';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+import { SharedModule } from '../../shared/shared.module';
+import { ToastrService } from 'ngx-toastr';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-profile-user',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, FormsModule, NavBarComponent, FooterComponent],
+  imports: [CommonModule, RouterOutlet, FormsModule, SharedModule, FooterComponent, RouterModule],
   templateUrl: './profile-user.component.html',
   styleUrls: ['./profile-user.component.css']
 })
-export class ProfileUserComponent {
-  selectedTab: string = 'comments';
+export class ProfileUserComponent implements OnInit {
+  selectedTab: string = 'posts';
+  user: User | undefined;
+  userPosts: Post[] = [];
+  isLoading = true;
+  error: string | null = null;
 
   tabs = [
-    { id: '1', key: 'comments', label: 'Comments', icon: 'fas fa-comment-alt' },
-    { id: '2', key: 'stories', label: 'Stories', icon: 'fas fa-book-open' },
-    { id: '3', key: 'lists', label: 'Lists', icon: 'fas fa-list-ul' },
-    { id: '4', key: 'about', label: 'About', icon: 'fas fa-user' }
+    { id: '1', key: 'posts', label: 'Stories', icon: 'fas fa-book-open' },
+    { id: '2', key: 'comments', label: 'Comments', icon: 'fas fa-comment-alt' },
+    { id: '3', key: 'about', label: 'About', icon: 'fas fa-user' }
   ];
+
+  constructor(
+    private usersService: UsersService,
+    private blogPostService: BlogPostService,
+    private router: Router,
+    private toastr: ToastrService
+  ) { }
+
+  ngOnInit(): void {
+    this.fetchUserProfile();
+    this.fetchUserPosts();
+  }
+
+  fetchUserProfile(): void {
+    this.isLoading = true;
+    this.usersService.getProfile().pipe(
+      catchError((error) => {
+        console.error('Error fetching user profile:', error);
+        this.error = 'Failed to load user profile.';
+        this.isLoading = false;
+        return throwError(() => error);
+      })
+    ).subscribe(response => {
+      if (response.success && response.data && response.data.user) {
+        this.user = response.data.user;
+        // Set avatar from userUploads if available
+        if (this.user.userUploads && this.user.userUploads.length > 0) {
+          const avatarMedia = this.user.userUploads.find(media => media.file?.type === 'image');
+          if (avatarMedia) {
+            this.user.avatar = avatarMedia.file.url;
+          }
+        }
+      }
+      this.isLoading = false;
+    });
+  }
+
+  fetchUserPosts(): void {
+    this.isLoading = true;
+    this.blogPostService.getMyPosts().pipe(
+      catchError((error) => {
+        console.error('Error fetching user posts:', error);
+        this.error = 'Failed to load user posts.';
+        this.isLoading = false;
+        return throwError(() => error);
+      })
+    ).subscribe(response => {
+      if (response.success && response.data && response.data.posts) {
+        this.userPosts = response.data.posts;
+      }
+      this.isLoading = false;
+    });
+  }
 
   selectTab(tabKey: string, event: Event): void {
     event.preventDefault();
     this.selectedTab = tabKey;
   }
+
   editProfile(): void {
-    alert('Edit profile functionality would open a modal or form here.');
+    this.router.navigate(['/dashboard/settings']);
   }
 
-  comments = [
-    {
-      id :1,
-      author: 'John Doe',
-      avatar: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
-      postTitle: 'The Future of Web Development',
-      date: 'Apr 22, 2025',
-      content: `This article resonates deeply with me. The predictions about WebAssembly are spot on. I've been using it in my recent projects and the performance gains are substantial. Great insights about the future of web development!`,
-      likes: 24,
-    },
-    {
-      id :2,
-      author: 'John Doe',
-      avatar: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
-      postTitle: 'React 19 Features Preview',
-      date: 'Mar 15, 2025',
-      content: `The new compiler improvements look promising! I've been following the RFCs closely and the performance benchmarks are impressive. The simplified state management API will be a game-changer for large applications.`,
-      likes: 42,
-    }
-  ];
-
-  likeComment(comment: any) {
-    comment.likes += 1;
+  editPost(postId: number): void {
+    this.router.navigate(['/blog/update-post', postId]);
   }
 
-  editComment(comment: any) {
-    console.log('Edit clicked:', comment);
-  }
-
-  deleteComment(comment: any) {
-    console.log('Delete clicked:', comment);
+  deletePost(postId: number): void {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this post!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, keep it',
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.blogPostService.deletePost(postId).pipe(
+          catchError((error) => {
+            console.error('Error deleting post:', error);
+            this.toastr.error('Failed to delete post.');
+            return throwError(() => error);
+          })
+        ).subscribe(response => {
+          if (response.success) {
+            Swal.fire(
+              'Deleted!',
+              'Your post has been deleted.',
+              'success'
+            );
+            this.fetchUserPosts(); // Refresh the list of posts
+          } else {
+            this.toastr.error(response.message || 'Failed to delete post.');
+          }
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        this.toastr.info('Your post is safe :)');
+      }
+    });
   }
 }

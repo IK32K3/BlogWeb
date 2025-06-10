@@ -1,161 +1,122 @@
 <app-navbar></app-navbar> 
-<div class="bg-gray-200 py-4 px-4">
-    <div class="px-4 mt-6">
-            <div class="container mx-auto ">
-                <div class="relative rounded-lg shadow-sm  bg-gray-100">
-                    <!-- Cover Photo -->
-                    <div class="h-60 bg-gradient-to-r rounded-t-lg overflow-hidden mb-12">
-                        <img src="https://kenh14cdn.com/2017/powerrangers0828131280jpg-8dd373-1280w-1-1490847186920.jpg" 
-                            alt="Cover Photo" 
-                            class="w-full h-60 object-cover">
-                    </div>
-                    
-                    <!-- Profile Info -->
-                    <div class="flex flex-col md:flex-row items-center md:items-end px-6 pb-6 -mt-16">
-                        <div class="relative">
-                            <img class="w-32 h-32 rounded-full avatar-ring mx-auto md:mx-0" 
-                                src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" 
-                                alt="Profile Picture">
-                        </div>
-                        
-                        <div class="text-center md:text-left mt-4 md:mt-0 md:ml-8">
-                            <h2 class="text-3xl font-bold text-gray-800">John Doe</h2>
-                            <p class="text-gray-600 mt-1">Senior Software Engineer &#64; TechCorp</p>
-                            
-                            <div class="flex flex-wrap justify-center md:justify-start gap-x-4 gap-y-2 mt-3 text-gray-600">
-                                <span class="flex items-center">
-                                    <i class="fas fa-map-marker-alt mr-1.5"></i> San Francisco, CA
-                                </span>
-                                <span class="flex items-center">
-                                    <i class="fas fa-envelope mr-1.5"></i> johndoe&#64;example.com
-                                </span>
-                                <span class="flex items-center">
-                                    <i class="fas fa-calendar-alt mr-1.5"></i> Joined June 2020
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-4 md:mt-0 md:ml-auto">
-                            <button id="editProfileBtn" class="bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-700 hover:to-blue-900 text-white px-6 py-2 rounded-full font-medium shadow-md transition-colors">
-                                <i class="fas fa-pen mr-2"></i> Edit Profile
-                            </button>
-                        </div>
-                    </div>
-                </div>
+<div class="bg-gray-300 min-h-screen">
+    <div class="container mx-auto py-6 px-4">
+        <div class="relative rounded-lg shadow-sm bg-white overflow-hidden">
+            <!-- Cover Photo -->
+            <div class="h-48 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-t-lg overflow-hidden">
+                <img src="https://kenh14cdn.com/2017/powerrangers0828131280jpg-8dd373-1280w-1-1490847186920.jpg" 
+                    alt="Cover Photo" 
+                    class="w-full h-full object-cover opacity-80">
             </div>
-    </div>
-
-    <!-- Tabs -->
-  <div class="container bg-gray-100 mx-auto px-4 mt-6">
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-        <nav class="flex overflow-x-auto">
-            <a href="#" 
-            *ngFor="let tab of tabs" 
-            (click)="selectTab(tab.key, $event)"
-            [ngClass]="{
-                'text-blue-600 active': selectedTab === tab.key,
-                'text-gray-600 hover:text-blue-600': selectedTab !== tab.key
-            }"
-            class="tab-item px-6 py-4 font-medium whitespace-nowrap">
-            <i [class]="tab.icon + ' mr-2'"></i> {{ tab.label }}
-            </a>
-        </nav>
-        </div>
-
-    <!-- Tab Contents -->
-        <div class="container mx-auto px-4 py-8">
-            <div *ngIf="selectedTab === 'comments'">
-                <div id="commentsTab" class="space-y-6 tab-content active">
-                    <div *ngFor="let comment of comments"  class="post-card bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="p-6">
-                        <div class="flex items-start">
-                        <img [src]="comment.avatar" alt="Author" class="w-12 h-12 rounded-full mr-4" />
-
-                        <div class="flex-1">
-                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                            <div>
-                                <h4 class="font-semibold text-gray-800">{{ comment.author }}</h4>
-                                <p class="text-gray-500 text-sm">
-                                Commented on <span class="text-blue-600">{{ comment.postTitle }}</span>
-                                </p>
-                            </div>
-                            <span class="text-sm text-gray-500">{{ comment.date }}</span>
-                            </div>
-                            <p class="text-gray-700 mt-3 mb-4">{{ comment.content }}</p>
-                            <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-                                <div class="flex space-x-4 text-gray-500 text-sm">
-                                    <button class="like-btn flex items-center hover:text-blue-600" (click)="likeComment(comment)">
-                                    <i class="far fa-thumbs-up mr-1"></i>
-                                    <span class="like-count">{{ comment.likes }}</span>
-                                    </button>
-                                    <button class="flex items-center hover:text-blue-600">
-                                    <i class="far fa-comment mr-1"></i> Reply
-                                    </button>
-                                </div>
-
-                                <div class="flex space-x-3">
-                                    <button class="edit-btn text-gray-400 hover:text-blue-600" (click)="editComment(comments)">
-                                    <i class="far fa-edit"></i>
-                                    </button>
-                                    <button class="delete-btn text-gray-400 hover:text-red-600" (click)="deleteComment(comments)">
-                                    <i class="far fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+            
+            <!-- Profile Info -->
+            <div class="relative flex flex-col md:flex-row items-center md:items-end px-6 pb-6 -mt-24 md:-mt-16">
+                <div class="flex-shrink-0 relative mb-4 md:mb-0">
+                    <img [src]="user?.avatar || 'assets/images/default-avatar.jpg'" 
+                        alt="Profile Picture"
+                        class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                </div>
+                
+                <div class="flex-grow text-center md:text-left md:ml-6 mt-4 md:mt-0">
+                    <h1 class="text-2xl font-bold text-gray-900">{{user?.username || 'Loading...'}}</h1>
+                    <p class="text-md text-gray-600">{{user?.description || 'No description available'}}</p>
+                    <div class="flex items-center justify-center md:justify-start text-gray-500 text-sm mt-2 space-x-4">
+                        <span *ngIf="user?.email"><i class="fas fa-envelope mr-1"></i> {{user?.email}}</span>
+                        <span><i class="fas fa-calendar-alt mr-1"></i> Joined {{(user?.createdAt | date: 'mediumDate') || 'Loading...'}}</span>
                     </div>
                 </div>
-            </div>
-            </div> 
-            </div>
-
-            <div *ngIf="selectedTab === 'lists'">
-                <div id="listsTab" class="space-y-6 tab-content" *ngIf="selectedTab === 'lists'">
-                    <div class="bg-white rounded-xl shadow-md p-6 text-center">
-                        <i class="fas fa-list-ul text-4xl text-gray-300 mb-4"></i>
-                        <h3 class="text-xl font-semibold text-gray-700">No lists yet</h3>
-                        <p class="text-gray-500 mt-2">When you create lists, they'll appear here.</p>
-                    </div>
+                
+                <div class="flex-shrink-0 mt-4 md:mt-0">
+                    <button (click)="editProfile()" class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300">
+                        <i class="fas fa-pencil-alt mr-2"></i> Edit Profile
+                    </button>
                 </div>
-            </div>
-
-                <div *ngIf="selectedTab === 'stories'" class="space-y-6 tab-content">
-                    <div class="bg-white rounded-xl shadow-md p-6 text-center">
-                        <i class="fas fa-book-open text-4xl text-gray-300 mb-4"></i>
-                        <h3 class="text-xl font-semibold text-gray-700">No stories yet</h3>
-                        <p class="text-gray-500 mt-2">When you publish stories, they'll appear here.</p>
-                    </div>
-                </div>
-
-            <div *ngIf="selectedTab === 'about'">
-                <div id="aboutTab" class="space-y-6 tab-content" *ngIf="selectedTab === 'about'">
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">About John Doe</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h4 class="font-medium text-gray-700 mb-2">Bio</h4>
-                                <p class="text-gray-600">
-                                Senior Software Engineer with 8+ years of experience building scalable web applications.
-                                Passionate about React, Node.js, and cloud technologies.
-                                </p>
-                            </div>
-                            <div>
-                                <h4 class="font-medium text-gray-700 mb-2">Skills</h4>
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-full text-sm">JavaScript</span>
-                                    <span class="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-full text-sm">React</span>
-                                    <span class="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-full text-sm">Node.js</span>
-                                    <span class="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-full text-sm">AWS</span>
-                                    <span class="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-full text-sm">TypeScript</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
 
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-container text-center py-12">
+            <div class="spinner mx-auto"></div>
+            <p class="text-gray-600 mt-4">Loading profile...</p>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error" class="error-container text-center py-12 text-red-600">
+            <i class="fas fa-exclamation-circle text-5xl mb-4"></i>
+            <p class="text-lg mb-4">{{error}}</p>
+            <button class="btn btn-primary" (click)="fetchUserProfile()">Try Again</button>
+        </div>
+
+        <!-- Content -->
+        <div *ngIf="!isLoading && !error" class="mt-6">
+            <!-- Tabs -->
+            <div class="tabs flex bg-white rounded-lg shadow-sm mb-6 overflow-hidden">
+                <button *ngFor="let tab of tabs" 
+                        [class.active]="selectedTab === tab.key"
+                        (click)="selectedTab = tab.key"
+                        class="tab-button flex-1 py-3 px-4 text-center text-gray-600 font-medium hover:bg-gray-100 transition duration-200 border-b-2 border-transparent focus:outline-none"
+                        [class.text-indigo-700]="selectedTab === tab.key" 
+                        [class.border-indigo-600]="selectedTab === tab.key">
+                    <i [class]="tab.icon" class="mr-2"></i>
+                    {{tab.label}}
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content bg-white p-6 rounded-lg shadow-sm">
+                <!-- Stories Tab -->
+                <div *ngIf="selectedTab === 'posts'" class="posts-tab">
+                    <div *ngIf="userPosts.length === 0" class="no-content text-center py-12 text-gray-500">
+                        <i class="fas fa-book-open text-6xl mb-4"></i>
+                        <p class="text-lg mb-4">No stories yet</p>
+                        <p class="mb-6">When you publish stories, they'll appear here.</p>
+                        <button class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-300" routerLink="/create-post">Write Your First Post</button>
+                    </div>
+                    <div *ngFor="let post of userPosts" class="post-card bg-gray-50 rounded-lg shadow-sm overflow-hidden border border-gray-100 hover:shadow-md mb-4 last:mb-0">
+                        <div class="flex flex-col md:flex-row">
+                            <img [src]="post.author?.avatar || 'assets/images/default-avatar.jpg'" alt="Author" class="w-full md:w-40 h-32 md:h-auto object-cover flex-shrink-0 rounded-l-lg" />
+                            <div class="p-4 flex flex-col flex-grow">
+                                <h3 class="text-lg font-bold mb-1 leading-tight text-gray-800">{{post.title}}</h3>
+                                <p class="text-sm text-gray-600 mb-3 flex-grow">{{post.content | slice:0:150}}...</p>
+                                <div class="flex items-center text-xs mt-auto pt-2 border-t border-gray-100">
+                                    <div class="flex items-center gap-2 text-gray-500">
+                                        <span><i class="fas fa-heart"></i> {{post.likes_count || 0}}</span>
+                                        <span><i class="fas fa-comment"></i> {{post.comments_count || 0}}</span>
+                                    </div>
+                                    <div class="ml-auto flex items-center gap-2">
+                                        <button (click)="editPost(post.id)" class="text-blue-600 hover:text-blue-800 text-sm font-medium"><i class="fas fa-edit"></i> Edit</button>
+                                        <button (click)="deletePost(post.id)" class="text-red-600 hover:text-red-800 text-sm font-medium"><i class="fas fa-trash-alt"></i> Delete</button>
+                                        <span class="text-gray-500">{{post.created_at | date: 'mediumDate'}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments Tab -->
+                <div *ngIf="selectedTab === 'comments'" class="comments-tab">
+                    <div class="no-content text-center py-12 text-gray-500">
+                        <i class="fas fa-comment-alt text-6xl mb-4"></i>
+                        <p class="text-lg mb-4">No comments yet</p>
+                        <p>Any comments you've made will appear here.</p>
+                    </div>
+                </div>
+
+                <!-- About Tab -->
+                <div *ngIf="selectedTab === 'about'" class="about-tab">
+                    <div class="about-section mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3 border-b pb-2">About Me</h3>
+                        <p class="text-gray-700 leading-relaxed">{{user?.description || 'No detailed description available.'}}</p>
+                    </div>
+                    <div class="contact-section">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3 border-b pb-2">Contact Information</h3>
+                        <p class="text-gray-700"><i class="fas fa-envelope mr-2"></i> {{user?.email || 'Not provided'}}</p>
+                        <!-- Add more contact info if available in user model -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <app-footer></app-footer>

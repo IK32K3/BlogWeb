@@ -2,18 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../../shared/model/user.model';
+import { API_BASE } from '../constants/api-endpoints';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
-  private API_URL = '/api/users';
+  private API_URL = `${API_BASE}/users`;
 
   constructor(private http: HttpClient) {}
 
   // Lấy tất cả user (có thể truyền params: page, limit, search, role_id)
-  getAll(params?: any): Observable<{ users: User[], pagination: any }> {
-    return this.http.get<{ users: User[], pagination: any }>(this.API_URL, { params });
+  getAll(params?: any): Observable<{ success: boolean, message: string, data: { users: User[], pagination: any } }> {
+    return this.http.get<{ success: boolean, message: string, data: { users: User[], pagination: any } }>(this.API_URL, { params });
   }
 
   // Lấy user theo id
@@ -37,13 +38,13 @@ export class UsersService {
   }
 
   // Lấy profile của user hiện tại
-  getProfile(): Observable<{ user: User }> {
-    return this.http.get<{ user: User }>(`${this.API_URL}/me`);
+  getProfile(): Observable<{ success: boolean, message: string, data: { user: User } }> {
+    return this.http.get<{ success: boolean, message: string, data: { user: User } }>(`${this.API_URL}/me`);
   }
 
   // Sửa profile của user hiện tại
-  updateProfile(data: Partial<User>): Observable<{ message: string, user: User }> {
-    return this.http.put<{ message: string, user: User }>(`${this.API_URL}/me`, data);
+  updateProfile(data: Partial<User>): Observable<{ success: boolean, message: string, data: { message: string, user: User } }> {
+    return this.http.put<{ success: boolean, message: string, data: { message: string, user: User } }>(`${this.API_URL}/me`, data);
   }
 
   // Đổi mật khẩu

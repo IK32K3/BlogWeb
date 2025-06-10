@@ -55,10 +55,16 @@ const refreshTokenValidation = [
   new BodyWithLocale('refresh_token').notEmpty().get()
 ];
 
+// Logout validation
+const logoutValidation = [
+  new BodyWithLocale('refresh_token').notEmpty().get()
+];
+
 module.exports = {
   registerValidation,
   loginValidation,
   forgotPasswordValidation,
   resetPasswordValidation,
-  refreshTokenValidation
+  refreshTokenValidation,
+  logoutValidation
 };

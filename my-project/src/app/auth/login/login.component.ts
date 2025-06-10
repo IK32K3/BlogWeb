@@ -16,7 +16,7 @@ import { AuthLoginDto } from '../../core/constants/api-endpoints';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  email = '';
+  usernameOrEmail = '';
   password = '';
   showPassword = false;
   rememberMe = false;
@@ -38,29 +38,29 @@ export class LoginComponent {
     this.errorUserNotFound = false;
     this.errorPassword = false;
 
-    if (!this.email || !this.password) {
-      this.toastr.warning('Vui lòng nhập đầy đủ email và mật khẩu');
-      if (!this.email) this.errorUserNotFound = true;
+    if (!this.usernameOrEmail || !this.password) {
+      this.toastr.warning('Vui lòng nhập đầy đủ username hoặc email và mật khẩu');
+      if (!this.usernameOrEmail) this.errorUserNotFound = true;
       if (!this.password) this.errorPassword = true;
       return;
     }
 
     const loginData: AuthLoginDto = {
-      email: this.email,
+      usernameOrEmail: this.usernameOrEmail,
       password: this.password
     };
 
     this.authService.login(loginData).subscribe({
       next: (res) => {
-        if (res.tokens?.access_token) {
-          localStorage.setItem('accessToken', res.tokens.access_token);
+        if (res.data?.tokens?.access_token) {
+          localStorage.setItem('accessToken', res.data.tokens.access_token);
         }
-        if (res.user) {
-          localStorage.setItem('user_info', JSON.stringify(res.user));
+        if (res.data?.user) {
+          localStorage.setItem('user_info', JSON.stringify(res.data.user));
         }
-        const role = res.user?.role || res.role;
+        const roleName = res.data?.user?.role?.name;
 
-        if (role === 'Admin') {
+        if (roleName !== undefined && roleName === 'Admin') {
           this.router.navigate(['/admin']);
         } else {
           this.router.navigate(['/home', 'home-page']);

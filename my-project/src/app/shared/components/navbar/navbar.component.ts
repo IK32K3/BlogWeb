@@ -1,69 +1,79 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router'; // Thêm cái này để dùng routerLink
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+
+interface NavItem {
+  path: string;
+  label: string;
+  icon?: string;
+}
 
 @Component({
   selector: 'app-navbar',
+  imports: [CommonModule, FormsModule, RouterModule],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule], // ✅ Thêm RouterModule để dùng routerLink
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css'] // ✅ Sửa thành styleUrls
+  styleUrls: ['./navbar.component.css']
 })
 export class NavBarComponent implements OnInit {
   dropdownOpen = false;
   menuOpen = false;
   isLargeScreen = false;
+  
+  readonly LARGE_SCREEN_BREAKPOINT = 1024;
+  
+  navItems: NavItem[] = [
+    { path: '/category', label: 'Category', icon: 'fas fa-list' },
+    { path: '/blog/write-post', label: 'Write', icon: 'fas fa-pen' }
+  ];
+
+  dropdownItems: NavItem[] = [
+    { path: '/profile/profile-user', label: 'Profile' },
+    { path: '/category', label: 'Category' },
+    { path: '/blog/write-post', label: 'Write' },
+    { path: '/blog/contact-us', label: 'Contact Us' },
+    { path: '/settings', label: 'Settings' },
+    { path: '#', label: 'About Us' },
+    { path: '#', label: 'Help' },
+    { path: '/home/introduce-page', label: 'Log out' }
+  ];
 
   constructor() { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.checkScreenSize();
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event) {
+  @HostListener('window:resize')
+  onResize(): void {
     this.checkScreenSize();
   }
 
-  checkScreenSize() {
-    const largeScreenBreakpoint = 1024;
-    this.isLargeScreen = window.innerWidth >= largeScreenBreakpoint;
-
+  checkScreenSize(): void {
+    this.isLargeScreen = window.innerWidth >= this.LARGE_SCREEN_BREAKPOINT;
     if (this.isLargeScreen) {
       this.menuOpen = false;
     }
   }
 
-  toggleDropdown(event: Event) {
-    // Prevent the click from immediately closing the dropdown via HostListener
+  toggleDropdown(event: Event): void {
     event.stopPropagation();
     this.dropdownOpen = !this.dropdownOpen;
   }
 
-  toggleMenu() {
+  toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
-    // Remove DOM manipulation here
   }
 
   @HostListener('document:click', ['$event'])
-  handleOutsideClick(event: MouseEvent) {
+  handleOutsideClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    // Check if the click was outside the dropdown container and the dropdown toggle button
-    const dropdownContainer = document.querySelector('.relative'); // Assuming the relative div is the container
-    const dropdownButton = target.closest('button'); // Get the actual button element
+    const dropdownContainer = document.querySelector('.relative');
+    const dropdownButton = target.closest('button');
 
-    // If the click is outside the container or the button, close the dropdown
     if (dropdownContainer && !dropdownContainer.contains(target) && !dropdownButton?.contains(target)) {
-       this.dropdownOpen = false;
+      this.dropdownOpen = false;
     }
-
-    // Assuming you might have a separate mobile menu button, adjust the logic if needed
-    // For now, the HostListener only focuses on the dropdown.
-    // Mobile menu closing on outside click might need different handling or a separate HostListener if it's complex.
   }
-
-  // Add ViewChild to get references to the dropdown elements if more precise control is needed
-  // @ViewChild('dropdownButton') dropdownButton!: ElementRef;
-  // @ViewChild('dropdownMenu') dropdownMenu!: ElementRef;
 }

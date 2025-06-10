@@ -1,256 +1,162 @@
 <app-header></app-header>
-<div class="bg-gray-200">
+<div class="bg-gray-200 mt-20">
     <main class="container mx-auto px-4 py-8 max-w-4xl">
-        <article class="bg-white shadow-lg rounded-xl overflow-hidden hover-scale">
+        <!-- Error Message -->
+        <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline"> {{ error }}</span>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="!post && !error" class="flex justify-center items-center py-8">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+
+        <!-- Post Content -->
+        <article *ngIf="post && !error" class="bg-white shadow-lg rounded-xl overflow-hidden hover-scale">
             <div class="relative">
                 <img 
-                [src]="post.imageUrl" 
-                alt="Professional Blogging" 
-                class="w-full h-96 object-cover"
+                    [src]="getThumbnailUrl(post)" 
+                    [alt]="post.title" 
+                    class="w-full h-96 object-cover"
                 >
                 <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
-                <div class="text-white">
-                    <span class="bg-blue-600 text-xs px-2 py-1 rounded-md">{{ post.category }}</span>
-                    <h1 class="text-3xl md:text-4xl font-bold mt-2">{{ post.title }}</h1>
-                </div>
+                    <div class="text-white">
+                        <span class="bg-blue-600 text-xs px-2 py-1 rounded-md">{{ post.category?.name || 'Uncategorized' }}</span>
+                        <h1 class="text-3xl md:text-4xl font-bold mt-2">{{ post.title }}</h1>
+                    </div>
                 </div>
             </div>
  
             <div class="p-6 md:p-8 prose">
                 <div class="flex items-center space-x-4 mb-6">
-                <img 
-                    [src]="post.author.avatarUrl" 
-                    alt="Author" 
-                    class="w-14 h-14 rounded-full border-2 border-blue-200"
-                >
-                <div>
-                    <p class="font-medium">{{ post.author.name }}</p>
-                    <div class="flex items-center text-sm text-gray-500 space-x-4">
-                    <span><i class="far fa-calendar-alt mr-1"></i> {{ post.date }}</span>
-                    <span><i class="far fa-clock mr-1"></i> {{ post.readTime }}</span>
+                    <img 
+                        [src]="getImageUrl(post.author?.avatar)" 
+                        [alt]="post.author?.username || 'Author'" 
+                        class="w-14 h-14 rounded-full border-2 border-blue-200"
+                    >
+                    <div>
+                        <p class="font-medium">{{ post.author?.username || 'Anonymous' }}</p>
+                        <div class="flex items-center text-sm text-gray-500 space-x-4">
+                            <span><i class="far fa-calendar-alt mr-1"></i> {{ post.created_at | date:'mediumDate' }}</span>
+                            <span><i class="far fa-clock mr-1"></i> {{ post.views || 0 }} views</span>
+                        </div>
                     </div>
-                </div>
                 </div>
 
                 <div class="border-l-4 border-blue-500 bg-blue-50 px-4 py-2 mb-6">
-                <p class="text-gray-700 italic font-medium">"{{ post.introQuote }}"</p>
+                    <p class="text-gray-700 italic font-medium">"{{ post.description }}"</p>
                 </div>
 
-                <h2 class="text-2xl font-bold mb-4 text-gray-800">1. Define Your Topic and Target Audience</h2>
-                <p class="text-gray-700 mb-4">{{ post.section1 }}</p>
+                <div class="prose max-w-none" [innerHTML]="post.content"></div>
 
-                <div class="bg-gray-100 p-4 rounded-lg mb-6">
-                <h3 class="font-bold text-gray-800 mb-2">Quick Tip:</h3>
-                <p>{{ post.tip1 }}</p>
+                <!-- Language Translations -->
+                <div *ngIf="post.postTranslateLanguage && post.postTranslateLanguage.length > 0" class="mt-8 border-t pt-6">
+                    <h3 class="text-lg font-semibold mb-4">Available Translations</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div *ngFor="let translation of post.postTranslateLanguage" class="bg-gray-50 p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-600">{{ translation.language.name }}</span>
+                                <span class="text-xs text-gray-500">{{ translation.language.locale }}</span>
+                            </div>
+                            <h4 class="font-medium text-gray-800">{{ translation.title }}</h4>
+                            <p class="text-sm text-gray-600 mt-1">{{ translation.description }}</p>
+                        </div>
+                    </div>
                 </div>
-
-                <h2 class="text-2xl font-bold mb-4 text-gray-800">2. Use Clear, Approachable Language</h2>
-                <p class="text-gray-700 mb-4">{{ post.section2 }}</p>
-
-                <ul class="list-disc list-inside mb-6 space-y-2 text-gray-700">
-                <li class="pl-2" *ngFor="let tip of post.languageTips">
-                    <span class="font-medium">{{ tip.title }}</span> - {{ tip.detail }}
-                </li>
-                </ul>
-
-                <figure class="mb-6">
-                <img 
-                    [src]="post.imageTipUrl" 
-                    alt="Writing workspace" 
-                    class="w-full rounded-lg"
-                >
-                <figcaption class="text-center text-sm text-gray-500 mt-2">{{ post.imageTipCaption }}</figcaption>
-                </figure>
-
-                <blockquote class="border-l-4 border-blue-500 bg-blue-50 pl-6 py-4 italic text-gray-700 mb-6">
-                <p class="text-lg">"{{ post.quote }}"</p>
-                <cite class="block mt-2 text-blue-600">- {{ post.quoteAuthor }}</cite>
-                </blockquote>
-
-                <h2 class="text-2xl font-bold mb-4 text-gray-800">3. Improve Content Quality</h2>
-                <p class="text-gray-700 mb-4">{{ post.section3 }}</p>
-
-                <ol class="list-decimal list-inside mb-6 space-y-3 text-gray-700">
-                <li class="pl-2" *ngFor="let rule of post.qualityTips">
-                    <span class="font-medium">{{ rule.title }}</span> - {{ rule.detail }}
-                </li>
-                </ol>
-
-                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-                <h3 class="font-bold text-yellow-800 mb-2">Important Note:</h3>
-                <p class="text-yellow-700">{{ post.ctaNote }}</p>
-                </div>
-
-                <p class="text-gray-700 mb-4 font-medium">"{{ post.finalNote }}"</p>
 
                 <div class="flex items-center justify-between border-t border-b border-gray-200 py-4 mt-8">
-                <div class="flex items-center space-x-2">
-                    <span class="text-gray-600">Tags:</span>
-                    <a 
-                    *ngFor="let tag of post.tags" 
-                    href="#" 
-                    class="bg-gray-100 px-3 py-1 rounded-full text-sm text-gray-700 hover:bg-gray-200"
-                    >
-                    {{ tag }}
-                    </a>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <button class="text-gray-500 hover:text-red-500">
-                    <i class="far fa-heart"></i> <span class="ml-1">{{ post.likes }}</span>
-                    </button>
-                    <button class="text-gray-500 hover:text-blue-500">
-                    <i class="far fa-bookmark"></i>
-                    </button>
-                </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-600">Tags:</span>
+                        <a 
+                            *ngFor="let tag of post.tags" 
+                            href="#" 
+                            class="bg-gray-100 px-3 py-1 rounded-full text-sm text-gray-700 hover:bg-gray-200"
+                        >
+                            {{ tag }}
+                        </a>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="text-gray-500 hover:text-red-500">
+                            <i class="far fa-heart"></i> <span class="ml-1">{{ post.likes_count || 0 }}</span>
+                        </button>
+                        <button class="text-gray-500 hover:text-blue-500">
+                            <i class="far fa-bookmark"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </article>
 
-    </main>
-    <section class="container mx-auto px-4 py-6 max-w-4xl">
-        <div class="bg-white shadow-md rounded-lg p-6 flex flex-col md:flex-row items-start md:items-center gap-6">
-            <img src="https://randomuser.me/api/portraits/men/32.jpg" 
-                 alt="Author" 
-                 class="w-24 h-24 rounded-full border-4 border-blue-100">
-            <div>
-                <h3 class="text-xl font-bold text-gray-800">John Smith</h3>
-                <p class="text-gray-600 mb-3">Content Marketing Specialist with 5 years experience</p>
-                <p class="text-gray-700 mb-4">I'm passionate about sharing knowledge about writing, content marketing and personal branding. I've helped hundreds of people start their professional blogging journey.</p>
-                <div class="flex space-x-4">
-                    <a href="#" class="text-blue-600 hover:text-blue-800" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="text-blue-400 hover:text-blue-600" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-gray-800 hover:text-black" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="#" class="text-red-600 hover:text-red-800" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Social Share Buttons -->
-    <section class="container mx-auto px-4 py-6 max-w-4xl">
-        <div class="bg-gray-50 rounded-lg p-6">
-            <h3 class="text-lg font-medium text-gray-800 mb-4">Share this post</h3>
-            <div class="flex flex-wrap gap-3">
-                <a href="#" class="social-btn bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
-                    <i class="fab fa-facebook-f"></i> Facebook
-                </a>
-                <a href="#" class="social-btn bg-blue-400 text-white px-5 py-2 rounded-lg hover:bg-blue-500">
-                    <i class="fab fa-twitter"></i> Twitter
-                </a>
-                <a href="#" class="social-btn bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700">
-                    <i class="fab fa-pinterest"></i> Pinterest
-                </a>
-                <a href="#" class="social-btn bg-blue-800 text-white px-5 py-2 rounded-lg hover:bg-blue-900">
-                    <i class="fab fa-linkedin-in"></i> LinkedIn
-                </a>
-                <a href="#" class="social-btn bg-gray-800 text-white px-5 py-2 rounded-lg hover:bg-gray-900">
-                    <i class="fas fa-link"></i> Copy Link
-                </a>
-            </div>
-        </div>
-    </section>
-
-    
-
-    <section class="container mx-auto px-4 py-8 max-w-4xl">
-        <div class="bg-white shadow-md rounded-xl overflow-hidden">
-            <div class="p-6 border-b">
-            <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-gray-800">Comments ({{ comments.length }})</h2>
-                <div class="flex space-x-4">
-                <button class="text-gray-700 font-medium hover:text-blue-600 focus:outline-none">
-                    <i class="fas fa-fire mr-1"></i> Top comments
-                </button>
-                <button class="text-blue-600 font-medium focus:outline-none">
-                    <i class="fas fa-clock mr-1"></i> Newest
-                </button>
-                </div>
-            </div>
-            </div>
-            
-            <div class="p-6">
-            <!-- Comment Form -->
-            <div class="mb-6">
-                <h3 class="text-lg font-medium mb-4">Leave a comment</h3>
-                <textarea [(ngModel)]="newComment" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                        rows="4" 
-                        placeholder="Write your comment here..."></textarea>
-                <div class="flex justify-between items-center mt-4">
-                <div class="flex items-center space-x-2">
-                    <button class="text-gray-500 hover:text-gray-700">
-                    <i class="far fa-image"></i>
-                    </button>
-                    <button class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-link"></i>
-                    </button>
-                </div>
-                <button (click)="postComment()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                    Post Comment
-                </button>
-                </div>
-            </div>
-
-            <!-- Comments List -->
-            <div class="space-y-6">
-                <div *ngFor="let comment of comments" class="flex space-x-4">
-                <div class="relative">
-                    <img [src]="comment.userImage" alt="User" class="w-12 h-12 rounded-full">
-                    <span *ngIf="comment.isTop" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">Top</span>
-                </div>
-                <div class="flex-1">
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                        <h4 class="font-bold text-gray-800">{{ comment.username }}</h4>
-                        <span class="text-xs text-gray-500">{{ comment.timeAgo }}</span>
+        <!-- Related Posts -->
+        <section *ngIf="relateposts.length > 0" class="mt-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Related Posts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <article *ngFor="let relatedPost of relateposts" class="bg-white shadow-md rounded-lg overflow-hidden hover-scale">
+                    <img [src]="getThumbnailUrl(relatedPost)" 
+                         [alt]="relatedPost.title" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <span class="text-xs font-semibold text-blue-600 uppercase">{{ relatedPost.category?.name || 'Uncategorized' }}</span>
+                        <h3 class="text-xl font-bold mb-2 text-gray-800">{{ relatedPost.title }}</h3>
+                        <p class="text-gray-600 text-sm mb-4">{{ relatedPost.description }}</p>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <span><i class="far fa-clock mr-1"></i> {{ relatedPost.views || 0 }} views</span>
                         </div>
-                        <span *ngIf="comment.isMostLiked" class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Most liked</span>
                     </div>
-                    <p class="text-gray-700 mb-3">{{ comment.text }}</p>
-                    <div class="flex items-center space-x-4 text-sm">
-                        <button class="text-blue-600 hover:text-blue-800 flex items-center font-medium">
-                        <i class="fas fa-thumbs-up mr-1"></i> {{ comment.likes }}
-                        </button>
-                        <button class="text-gray-500 hover:text-blue-600 flex items-center">
-                        <i class="far fa-reply mr-1"></i> Reply
-                        </button>
-                        <button class="text-gray-500 hover:text-blue-600 flex items-center">
-                        <i class="fas fa-share mr-1"></i> Share
-                        </button>
-                    </div>
-                    </div>
-                </div>
-                </div>
+                </article>
+            </div>
+        </section>
 
-                <div class="mt-6 text-center">
-                <button class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center">
-                    View more comments <i class="fas fa-chevron-down ml-2"></i>
-                </button>
+        <!-- Comments Section -->
+        <section class="mt-8">
+            <div class="bg-white shadow-md rounded-xl overflow-hidden">
+                <div class="p-6 border-b">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold text-gray-800">Comments ({{ comments.length }})</h2>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <!-- Comment Form -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium mb-4">Leave a comment</h3>
+                        <textarea [(ngModel)]="newComment" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                                rows="4" 
+                                placeholder="Write your comment here..."></textarea>
+                        <div class="flex justify-end mt-4">
+                            <button (click)="postComment()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                                Post Comment
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Comments List -->
+                    <div class="space-y-6">
+                        <div *ngFor="let comment of comments" class="flex space-x-4">
+                            <div class="relative">
+                                <img [src]="getImageUrl(comment.user?.avatar)" 
+                                     [alt]="comment.user?.username || 'User'" 
+                                     class="w-12 h-12 rounded-full">
+                            </div>
+                            <div class="flex-1">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <h4 class="font-bold text-gray-800">{{ comment.user?.username || 'Anonymous' }}</h4>
+                                            <span class="text-xs text-gray-500">{{ comment.created_at | date:'medium' }}</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-700 mb-3">{{ comment.text }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            </div>
-        </div>
-    </section>
-    <!-- Related Posts -->
-    <section class="container mx-auto px-4 py-8 max-w-6xl">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Related Posts</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <article *ngFor="let post of relateposts" class="bg-white shadow-md rounded-lg overflow-hidden hover-scale">
-                <img [src]="post.image" alt="{{ post.category }}" class="w-full h-48 object-cover">
-                <div class="p-5">
-                    <span class="text-xs font-semibold text-blue-600 uppercase">{{ post.category }}</span>
-                    <h3 class="text-xl font-bold mb-2 text-gray-800">{{ post.title }}</h3>
-                    <p class="text-gray-600 text-sm mb-4">{{ post.description }}</p>
-                    <div class="flex items-center text-sm text-gray-500">
-                        <span><i class="far fa-clock mr-1"></i> {{ post.readTime }}</span>
-                    </div>
-                </div>
-            </article>
-        </div>
-    </section>
-
-    
-
+        </section>
+    </main>
 </div>
 <app-footer></app-footer>
 <router-outlet></router-outlet>

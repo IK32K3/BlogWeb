@@ -70,10 +70,11 @@
                 featuredImageInput.click();
             });
             
-            featuredImageInput.addEventListener('change', function(e) {
+            featuredImageInput.addEventListener('change', async function(e) {
                 if (e.target.files.length) {
                     const file = e.target.files[0];
                     if (file.type.match('image.*')) {
+                        // Show preview
                         const reader = new FileReader();
                         reader.onload = function(e) {
                             imageUploader.innerHTML = `
@@ -90,8 +91,54 @@
                             });
                         };
                         reader.readAsDataURL(file);
+
+                        // Upload the image
+                        const formData = new FormData();
+                        formData.append('image', file);
+
+                        try {
+                            // Get the boundary from FormData
+                            const boundary = Math.random().toString().substr(2);
+
+                            // Get auth token from localStorage
+                            const token = localStorage.getItem('token');
+                            if (!token) {
+                                alert('Please login to upload files');
+                                resetImageUploader();
+                                return;
+                            }
+
+                            const response = await axios({
+                                method: 'post',
+                                url: '/api/media',
+                                data: formData,
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': `multipart/form-data; boundary=${boundary}`,
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                transformRequest: [(data) => data] // Prevent axios from transforming the FormData
+                            });
+
+                            if (response.data.success) {
+                                // Store the uploaded image URL for later use
+                                window.uploadedImageUrl = response.data.data.url;
+                            }
+                        } catch (error) {
+                            console.error('Image upload failed:', error);
+                            if (error.response && error.response.status === 401) {
+                                alert('Your session has expired. Please login again.');
+                                // Redirect to login page or handle session expiry
+                                window.location.href = '/login';
+                            } else {
+                                alert('Failed to upload image. Please try again.');
+                            }
+                            resetImageUploader();
+                        }
                     } else {
                         alert('Please select an image file (JPG, PNG)');
+                        resetImageUploader();
                     }
                 }
             });
@@ -135,9 +182,9 @@
             function resetImageUploader() {
                 imageUploader.innerHTML = `
                     <i class="fas fa-cloud-upload-alt text-indigo-400 text-4xl mb-3"></i>
-                    <p class="text-gray-600 font-medium">Drag & drop your featured image here or click to browse</p>
+                    <p class="text-gray-600 font-medium">Drag & drop your featured images here or click to browse</p>
                     <p class="text-gray-400 text-sm mt-1">Recommended size: 1200x630px (JPG, PNG up to 5MB)</p>
-                    <input type="file" id="featured-image" class="hidden" accept="image/*">
+                    <input type="file" id="featured-image" class="hidden" accept="image/*" multiple>
                 `;
                 featuredImageInput.value = '';
                 
@@ -175,7 +222,7 @@
                     category,
                     tags,
                     content,
-                    featuredImage: featuredImageInput.files.length ? featuredImageInput.files[0] : null
+                    featuredImages: window.uploadedImageUrls
                 };
                 
                 console.log('Publishing post:', postData);

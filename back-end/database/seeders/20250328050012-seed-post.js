@@ -3,56 +3,98 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    
-    await queryInterface.bulkInsert('Posts', [ // Use the exact table name (case-sensitive depending on DB)
+    await queryInterface.bulkInsert('Posts', [
       {
-        user_id: 1, // Must exist in 'users' table
-        category_id: 1, // Must exist in 'categories' table
-        title: 'First Post Title',
-        content: 'This is the content of the first post. It can be longer text, potentially including basic HTML if your frontend renders it.',
-        description: 'This is a short description for the first post, often used for previews or meta tags.',
-        views: 100,
-        status: 'published', // Must be one of 'draft', 'published', 'archived'
-        slug: 'first-post-title', // Should be unique
-        id_post_original: null, // Assuming this is not a translation/copy initially
-        // Explicitly setting timestamps:
-        created_at: new Date(),
-        updated_at: new Date()
-        // Note: If your migration defines defaultValue for timestamps,
-        // you can omit created_at and updated_at here, and the DB will handle them.
+        user_id: 1,
+        category_id: 1,
+        title: 'Giới thiệu về BlogWeb - Nền tảng chia sẻ kiến thức',
+        content: `<h2>BlogWeb là gì?</h2>
+        <p>BlogWeb là một nền tảng blog hiện đại, được xây dựng với mục đích chia sẻ kiến thức và kết nối cộng đồng. Với giao diện thân thiện và tính năng đa dạng, BlogWeb mang đến trải nghiệm viết blog tuyệt vời cho người dùng.</p>
+        
+        <h2>Tính năng nổi bật</h2>
+        <ul>
+          <li>Hỗ trợ đa ngôn ngữ</li>
+          <li>Tích hợp Cloudinary cho quản lý hình ảnh</li>
+          <li>Hệ thống phân quyền linh hoạt</li>
+          <li>Giao diện responsive, thân thiện với người dùng</li>
+        </ul>`,
+        description: 'Giới thiệu tổng quan về BlogWeb - nền tảng blog hiện đại với nhiều tính năng hữu ích',
+        thumbnail: 'https://res.cloudinary.com/your-cloud-name/image/upload/v1/blog_uploads/intro-blogweb.jpg',
+        status: 'published',
+        slug: 'gioi-thieu-blogweb',
+        id_post_original: null,
+        created_at: new Date('2024-03-01T08:00:00Z'),
+        updated_at: new Date('2024-03-01T08:00:00Z')
       },
       {
-        user_id: 2, // Must exist in 'users' table
-        category_id: 2, // Must exist in 'categories' table
-        title: 'Second Post About Technology',
-        content: 'Content discussing the latest tech trends goes here. Lorem ipsum dolor sit amet...',
-        description: 'A brief overview of the technology discussion in the second post.',
-        views: 50,
-        status: 'draft', // Must be one of 'draft', 'published', 'archived'
-        slug: 'second-post-technology', // Should be unique
+        user_id: 2,
+        category_id: 2,
+        title: 'Hướng dẫn sử dụng Cloudinary trong BlogWeb',
+        content: `<h2>Tại sao chọn Cloudinary?</h2>
+        <p>Cloudinary cung cấp giải pháp lưu trữ và quản lý hình ảnh chuyên nghiệp, giúp tối ưu hiệu suất website của bạn.</p>
+        
+        <h2>Các bước tích hợp</h2>
+        <ol>
+          <li>Cài đặt package cần thiết</li>
+          <li>Cấu hình Cloudinary</li>
+          <li>Tích hợp vào hệ thống upload</li>
+        </ol>`,
+        description: 'Hướng dẫn chi tiết cách tích hợp và sử dụng Cloudinary trong BlogWeb',
+        thumbnail: 'https://res.cloudinary.com/your-cloud-name/image/upload/v1/blog_uploads/cloudinary-guide.jpg',
+        status: 'published',
+        slug: 'huong-dan-su-dung-cloudinary',
         id_post_original: null,
-        created_at: new Date(),
-        updated_at: new Date()
+        created_at: new Date('2024-03-15T10:30:00Z'),
+        updated_at: new Date('2024-03-15T10:30:00Z')
       },
       {
-        user_id: 1, // Same user as post 1
-        category_id: 3, // Must exist in 'categories' table
-        title: 'An Archived Post Example',
-        content: 'This post discusses a topic that is no longer relevant or has been superseded, hence it is archived.',
-        description: 'Description for the third post, which is archived.',
-        views: 200,
-        status: 'archived', // Must be one of 'draft', 'published', 'archived'
-        slug: 'archived-post-example', // Should be unique
+        user_id: 1,
+        category_id: 3,
+        title: 'Cách tối ưu SEO cho bài viết blog',
+        content: `<h2>SEO là gì?</h2>
+        <p>SEO (Search Engine Optimization) là quá trình tối ưu hóa website để tăng thứ hạng trên các công cụ tìm kiếm.</p>
+        
+        <h2>Các yếu tố SEO quan trọng</h2>
+        <ul>
+          <li>Tiêu đề và meta description</li>
+          <li>Nội dung chất lượng</li>
+          <li>Tốc độ tải trang</li>
+          <li>Mobile-friendly</li>
+        </ul>`,
+        description: 'Hướng dẫn chi tiết về cách tối ưu SEO cho bài viết blog',
+        thumbnail: 'https://res.cloudinary.com/your-cloud-name/image/upload/v1/blog_uploads/seo-guide.jpg',
+        status: 'draft',
+        slug: 'toi-uu-seo-bai-viet-blog',
         id_post_original: null,
-        created_at: new Date(), // Could set to an older date if needed: new Date('2023-01-15T10:00:00Z')
-        updated_at: new Date()  // Could set to an older date: new Date('2023-05-20T12:30:00Z')
+        created_at: new Date('2024-03-20T14:15:00Z'),
+        updated_at: new Date('2024-03-20T14:15:00Z')
+      },
+      {
+        user_id: 2,
+        category_id: 1,
+        title: 'Cập nhật mới: Tính năng đa ngôn ngữ',
+        content: `<h2>Tính năng mới</h2>
+        <p>BlogWeb vừa ra mắt tính năng đa ngôn ngữ, cho phép người dùng đọc và viết blog bằng nhiều ngôn ngữ khác nhau.</p>
+        
+        <h2>Hướng dẫn sử dụng</h2>
+        <p>Để sử dụng tính năng này, bạn cần:</p>
+        <ol>
+          <li>Chọn ngôn ngữ mặc định</li>
+          <li>Thêm bản dịch cho bài viết</li>
+          <li>Quản lý các bản dịch</li>
+        </ol>`,
+        description: 'Thông báo về tính năng đa ngôn ngữ mới trong BlogWeb',
+        thumbnail: 'https://res.cloudinary.com/your-cloud-name/image/upload/v1/blog_uploads/multilingual-feature.jpg',
+        status: 'published',
+        slug: 'tinh-nang-da-ngon-ngu',
+        id_post_original: null,
+        created_at: new Date('2024-03-25T09:45:00Z'),
+        updated_at: new Date('2024-03-25T09:45:00Z')
       }
-      // Add more post objects here if needed
-    ], {}); // The empty object {} is for options, usually not needed for basic inserts
+    ], {});
   },
 
   async down(queryInterface, Sequelize) {
-    // This will delete all the posts inserted above.
     await queryInterface.bulkDelete('Posts', null, {});
   }
 };

@@ -3,6 +3,7 @@ import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BlogPostService } from '../../../core/services/blog-post.service';
 import { Post } from '../../model/post.model';
+import { DEFAULT_POST_IMAGE, DEFAULT_AUTHOR_IMAGE } from '../../../core/constants/app-constants';
 
 interface Slide {
   image: string;
@@ -27,8 +28,8 @@ export class HeroSectionComponent implements OnInit, OnDestroy {
   slides: Slide[] = [];
 
   // Ảnh fallback
-  public readonly DEFAULT_POST_IMAGE = 'https://pixahive.com/wp-content/uploads/2021/04/Doraemon-Cartoon-Illustration-410092-pixahive.jpg';
-  private readonly DEFAULT_AUTHOR_IMAGE = 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg';
+  public readonly DEFAULT_POST_IMAGE = DEFAULT_POST_IMAGE;
+  private readonly DEFAULT_AUTHOR_IMAGE = DEFAULT_AUTHOR_IMAGE;
 
   constructor(private blogPostService: BlogPostService) {}
 
@@ -41,35 +42,36 @@ export class HeroSectionComponent implements OnInit, OnDestroy {
       order: 'desc'
     }).subscribe({
       next: (res) => {
-        const posts: Post[] = res?.data?.posts || res?.data || res?.posts || [];
+        const posts: Post[] = res?.data?.posts || [];
         this.slides = posts.map((post: Post): Slide => {
+          console.log('created_at:', post.created_at);
           let imageUrl = this.DEFAULT_POST_IMAGE;
-          if (post.postMedia && post.postMedia.length > 0) {
+          if (post.postUploads && post.postUploads.length > 0) {
             // Ưu tiên ảnh featured và là image
-            const featured = post.postMedia.find(pm =>
-              pm.is_featured && (pm as any).media?.type === 'image'
+            const featured = post.postUploads.find(pm =>
+              pm.is_featured && pm.file?.type === 'image'
             );
-            if (featured && (featured as any).media?.url) {
-              imageUrl = (featured as any).media.url;
+            if (featured && featured.file?.url) {
+              imageUrl = featured.file.url;
             } else {
               // Nếu không có, lấy ảnh đầu tiên là image
-              const firstImage = post.postMedia.find(pm => (pm as any).media?.type === 'image');
-              if (firstImage && (firstImage as any).media?.url) {
-                imageUrl = (firstImage as any).media.url;
+              const firstImage = post.postUploads.find(pm => pm.file?.type === 'image');
+              if (firstImage && firstImage.file?.url) {
+                imageUrl = firstImage.file.url;
               }
             }
           }
           return {
             image: imageUrl,
             title: post.title || 'No Title',
-            author: post.user?.username || 'Unknown Author',
-            date: new Date(post.created_at).toLocaleDateString('vi-VN', {
+            author: post.author?.username || 'Unknown Author',
+            date: post.created_at ? new Date(post.created_at).toLocaleDateString('vi-VN', {
               day: '2-digit',
               month: '2-digit',
               year: 'numeric'
-            }),
-            authorImage: this.DEFAULT_AUTHOR_IMAGE,
-            category: post.categories?.name || 'Uncategorized',
+            }) : 'N/A',
+            authorImage: post.author?.avatar || this.DEFAULT_AUTHOR_IMAGE,
+            category: post.category?.name || 'Uncategorized',
             slug: post.slug
           };
         });

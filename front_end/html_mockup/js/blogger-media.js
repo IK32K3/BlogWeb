@@ -208,28 +208,72 @@ document.addEventListener('keydown', function(event) {
 });
 
 // Simulate upload progress
-startUploadBtn.addEventListener('click', function() {
+startUploadBtn.addEventListener('click', async function() {
+    const files = fileInput.files;
+    if (files.length === 0) return;
+
     const progressBar = uploadProgress.querySelector('.bg-primary-600');
-    let width = 0;
-    const interval = setInterval(() => {
-        if (width >= 100) {
-            clearInterval(interval);
+    const formData = new FormData();
+
+    // Add files to formData with correct field name
+    if (files.length === 1) {
+        formData.append('image', files[0]);
+    } else {
+        Array.from(files).forEach(file => {
+            formData.append('gallery', file);
+        });
+    }
+
+    try {
+        // Get the boundary from FormData
+        const boundary = Math.random().toString().substr(2);
+        
+        // Get auth token from localStorage
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please login to upload files');
+            return;
+        }
+
+        const response = await axios({
+            method: 'post',
+            url: '/api/media',
+            data: formData,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': `multipart/form-data; boundary=${boundary}`,
+                'X-Requested-With': 'XMLHttpRequest',
+                'Authorization': `Bearer ${token}`
+            },
+            transformRequest: [(data) => data], // Prevent axios from transforming the FormData
+            onUploadProgress: (progressEvent) => {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                progressBar.style.width = percentCompleted + '%';
+                uploadProgress.querySelector('.font-medium').textContent = percentCompleted + '%';
+            }
+        });
+
+        if (response.data.success) {
+            // Reset UI after successful upload
             setTimeout(() => {
                 uploadModal.classList.add('hidden');
                 document.body.style.overflow = '';
-                // Reset upload UI
-                setTimeout(() => {
-                    uploadDropzone.classList.remove('hidden');
-                    uploadProgress.classList.add('hidden');
-                    startUploadBtn.disabled = true;
-                    progressBar.style.width = '0%';
-                    uploadProgress.querySelector('.font-medium').textContent = '0%';
-                }, 300);
+                uploadDropzone.classList.remove('hidden');
+                uploadProgress.classList.add('hidden');
+                startUploadBtn.disabled = true;
+                progressBar.style.width = '0%';
+                uploadProgress.querySelector('.font-medium').textContent = '0%';
+                fileInput.value = ''; // Clear file input
             }, 500);
-        } else {
-            width += 5;
-            progressBar.style.width = width + '%';
-            uploadProgress.querySelector('.font-medium').textContent = width + '%';
         }
-    }, 100);
+    } catch (error) {
+        console.error('Upload failed:', error);
+        if (error.response && error.response.status === 401) {
+            alert('Your session has expired. Please login again.');
+            // Redirect to login page or handle session expiry
+            window.location.href = '/login';
+        } else {
+            alert('Upload failed. Please try again.');
+        }
+    }
 });

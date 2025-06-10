@@ -1,8 +1,8 @@
-import { Component, ElementRef, HostListener, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CategoryService } from '../../../core/services/category.service';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { Category } from '../../../shared/model/category.model';
 
 interface FilterItem {
   value: string;
@@ -20,7 +20,7 @@ interface CategoryApiResponse {
   templateUrl: './filter-movie.component.html',
   styleUrls: ['./filter-movie.component.css'],
 })
-export class FilterMovieComponent implements OnInit {
+export class FilterMovieComponent implements OnInit, OnChanges {
   yearsData: FilterItem[] = [
     { value: '2025', name: '2025' }, { value: '2024', name: '2024' },
     { value: '2023', name: '2023' }, { value: '2022', name: '2022' },
@@ -45,6 +45,7 @@ export class FilterMovieComponent implements OnInit {
     status: null as string | null,
   };
 
+  @Input() categories: Category[] = [];
   categoriesData: { value: string, name: string }[] = [];
 
   @Output() filterChange = new EventEmitter<any>();
@@ -52,28 +53,20 @@ export class FilterMovieComponent implements OnInit {
   // Thêm biến cho ô search
   searchQuery: string = '';
 
-  constructor(private elRef: ElementRef, private categoryService: CategoryService, private translateService: TranslateService) {}
+  constructor(private elRef: ElementRef, private translateService: TranslateService) {}
 
   ngOnInit(): void {
-    this.loadCategories();
+    // categoriesData will now be populated in ngOnChanges
     this.logSelectedFilters();
   }
 
-  loadCategories() {
-    this.categoryService.getAll().subscribe({
-      next: (res: CategoryApiResponse) => {
-        this.categoriesData = (res.data.categories || []).map((cat) => {
-          const translatedName = this.translateService.instant('category.' + cat.slug);
-          return {
-            value: cat.id,
-            name: translatedName === 'category.' + cat.slug ? cat.name : translatedName
-          };
-        });
-      },
-      error: () => {
-        this.categoriesData = [];
-      }
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['categories'] && changes['categories'].currentValue) {
+      this.categoriesData = this.categories.map(cat => ({
+        value: String(cat.id),
+        name: cat.name
+      }));
+    }
   }
 
   isAnySectionOpen(): boolean {
@@ -88,11 +81,13 @@ export class FilterMovieComponent implements OnInit {
 
   selectCategory(categoryValue: string): void {
     if (this.selectedFilters.categories.has(categoryValue)) {
-      this.selectedFilters.categories.delete(categoryValue);
+      this.selectedFilters.categories.clear();
     } else {
+      this.selectedFilters.categories.clear();
       this.selectedFilters.categories.add(categoryValue);
     }
     this.logSelectedFilters();
+    this.search();
   }
 
   selectYear(yearValue: string): void {

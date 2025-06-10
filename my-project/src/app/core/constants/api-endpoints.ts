@@ -13,87 +13,108 @@ export const AUTH_API = {
   REFRESH_TOKEN: `${API_BASE}/auth/refresh-token`,
   FORGOT_PASSWORD: `${API_BASE}/auth/forgot-password`,
   RESET_PASSWORD: `${API_BASE}/auth/reset-password`,
-  // ...thêm các endpoint khác nếu có
-};
-
-// Đường dẫn API cho ngôn ngữ
-export const LANGUAGE_API = {
-  BASE: `${API_BASE}/languages`,
-  GET_BY_ID: (id: string | number) => `${API_BASE}/languages/${id}`,
-};
-
-// Đường dẫn API cho danh mục
-export const CATEGORY_API = {
-  BASE: `${API_BASE}/categories`,
-  GET_BY_ID: (id: string | number) => `${API_BASE}/categories/${id}`,
+  LOGOUT: `${API_BASE}/auth/logout`,
 };
 
 // Đường dẫn API cho người dùng
 export const USER_API = {
   BASE: `${API_BASE}/users`,
+  ME: `${API_BASE}/users/me`,
+  GET_PROFILE: `${API_BASE}/users/me`,
+  UPDATE_PROFILE: `${API_BASE}/users/me`,
+  SAVE_SETTINGS: `${API_BASE}/users/me/settings`,
+  CHANGE_PASSWORD: `${API_BASE}/users/me/changePassword`,
+  ADMIN: {
+    BASE: `${API_BASE}/users/admin`,
+    GET_ALL: `${API_BASE}/users/admin`,
+    CREATE: `${API_BASE}/users/admin`,
+  },
   GET_BY_ID: (id: string | number) => `${API_BASE}/users/${id}`,
-  GET_COMMENTS_BY_USER: (userId: string | number) => `${API_BASE}/users/${userId}/comments`,
-  // ...thêm các endpoint khác nếu có
+  UPDATE: (id: string | number) => `${API_BASE}/users/${id}`,
+  DELETE: (id: string | number) => `${API_BASE}/users/${id}`,
 };
 
 // Đường dẫn API cho bài viết
 export const POST_API = {
   BASE: `${API_BASE}/posts`,
-  SEARCH: `${API_BASE}/posts/search`,
-  GET_BY_CATEGORY: (categoryId: string | number) => `${API_BASE}/posts/categories/${categoryId}`,
-  GET_BY_USER: (userId: string | number) => `${API_BASE}/posts/author/${userId}`,
-  GET_BY_ID: (id: string | number) => `${API_BASE}/posts/${id}`,
-  GET_BY_SLUG: (slug: string) => `${API_BASE}/posts/slug/${slug}`,
+  GET_ALL: `${API_BASE}/posts`,
   GET_MY: `${API_BASE}/posts/my`,
-  GET_COMMENTS: (postId: string | number) => `${API_BASE}/comments/post/${postId}`,
-  ADD_COMMENT: (postId: string | number) => `${API_BASE}/comments/post/${postId}`,
+  CREATE: `${API_BASE}/posts`,
+  UPDATE: (id: string | number) => `${API_BASE}/posts/${id}`,
+  DELETE: (id: string | number) => `${API_BASE}/posts/${id}`,
+  GET_BY_SLUG: (slug: string) => `${API_BASE}/posts/slug/${slug}`,
+  GET_BY_CATEGORY: (categoryId: string | number) => `${API_BASE}/posts/categories/${categoryId}`,
+  GET_BY_AUTHOR: (userId: string | number) => `${API_BASE}/posts/author/${userId}`,
+  GET_BY_ID: (id: string | number) => `${API_BASE}/posts/${id}`,
 };
 
 // Đường dẫn API cho bình luận
 export const COMMENT_API = {
   BASE: `${API_BASE}/comments`,
-  GET_BY_ID: (id: string | number) => `${API_BASE}/comments/${id}`,
-  UPDATE: (id: string | number) => `${API_BASE}/comments/${id}`,
-  DELETE: (id: string | number) => `${API_BASE}/comments/${id}`,
+  GET_BY_POST: (postId: string | number) => `${API_BASE}/comments/post/${postId}`,
+  ADD_TO_POST: (postId: string | number) => `${API_BASE}/comments/post/${postId}`,
   GET_MY: `${API_BASE}/comments/my`,
+  UPDATE: (commentId: string | number) => `${API_BASE}/comments/${commentId}`,
+  DELETE: (commentId: string | number) => `${API_BASE}/comments/${commentId}`,
 };
 
-// Đường dẫn API cho tải lên tệp (nếu có)
+// Đường dẫn API cho danh mục
+export const CATEGORY_API = {
+  BASE: `${API_BASE}/categories`,
+  GET_ALL: `${API_BASE}/categories`,
+  GET_BY_ID: (id: string | number) => `${API_BASE}/categories/${id}`,
+  CREATE: `${API_BASE}/categories`,
+  UPDATE: (id: string | number) => `${API_BASE}/categories/${id}`,
+  DELETE: (id: string | number) => `${API_BASE}/categories/${id}`,
+};
+
+// Đường dẫn API cho ngôn ngữ
+export const LANGUAGE_API = {
+  BASE: `${API_BASE}/languages`,
+  GET_ALL: `${API_BASE}/languages`,
+  GET_BY_ID: (id: string | number) => `${API_BASE}/languages/${id}`,
+  CREATE: `${API_BASE}/languages`,
+  UPDATE: (id: string | number) => `${API_BASE}/languages/${id}`,
+  DELETE: (id: string | number) => `${API_BASE}/languages/${id}`,
+};
+
+// Đường dẫn API cho tải lên tệp
 export const UPLOAD_API = {
-  BASE: `${API_BASE}/media`,
-  UPLOAD_IMAGE: `${API_BASE}/media`,
-  UPLOAD_IMAGES: `${API_BASE}/media/multiple`,
-  UPLOAD_EDITOR: `${API_BASE}/media/editor`,
-  DELETE_FILE: (id: string | number) => `${API_BASE}/media/${id}`,
+  BASE: `${API_BASE}/uploads`,
+  UPLOAD_SINGLE: `${API_BASE}/uploads/image`,
+  UPLOAD_MULTIPLE: `${API_BASE}/uploads/images`,
+  UPLOAD_EDITOR: `${API_BASE}/uploads/editor`,
+  DELETE: (publicId: string) => `${API_BASE}/uploads/${publicId}`,
 };
 
 // Đường dẫn API cho liên hệ
 export const CONTACT_API = {
   BASE: `${API_BASE}/contact`,
+  SEND_MESSAGE: `${API_BASE}/contact`,
 };
 
 // Nhóm tất cả các API vào một đối tượng
 export const API_ENDPOINTS = {
   AUTH: AUTH_API,
-  LANGUAGE: LANGUAGE_API,
-  CATEGORY: CATEGORY_API,
   USER: USER_API,
   POST: POST_API,
   COMMENT: COMMENT_API,
+  CATEGORY: CATEGORY_API,
+  LANGUAGE: LANGUAGE_API,
   UPLOAD: UPLOAD_API,
-  BASE: API_BASE,
   CONTACT: CONTACT_API,
+  BASE: API_BASE,
 };
 
 // DTOs (Data Transfer Objects)
 export interface AuthRegisterDto {
+  username: string;
   email: string;
   password: string;
-  name: string;
 }
 
 export interface AuthLoginDto {
-  email: string;
+  usernameOrEmail: string;
   password: string;
 }
 
@@ -109,21 +130,31 @@ export interface UpdateCommentDto {
 export interface CreatePostDto {
   title: string;
   content: string;
-  slug?: string;
-  excerpt?: string;
+  description?: string;
   category_id: string | number;
   tags?: string[];
   status?: string;
+  translations?: Array<{
+    language_id: number;
+    title: string;
+    content: string;
+    description?: string;
+  }>;
 }
 
 export interface UpdatePostDto {
   title?: string;
   content?: string;
-  slug?: string;
-  excerpt?: string;
+  description?: string;
   category_id?: string | number;
   tags?: string[];
   status?: string;
+  translations?: Array<{
+    language_id: number;
+    title: string;
+    content: string;
+    description?: string;
+  }>;
 }
 
 export interface CreateCategoryDto {

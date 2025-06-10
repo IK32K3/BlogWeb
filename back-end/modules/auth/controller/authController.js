@@ -15,8 +15,12 @@ const authController = {
     }
 
     try {
-      // Call the service
-      const result = await authService.registerUser({ username, email, password });
+      // Call the service with only required fields
+      const result = await authService.registerUser({ 
+        username, 
+        email, 
+        password 
+      });
       return responseUtils.created(res, result);
 
     } catch (error) {
@@ -25,8 +29,8 @@ const authController = {
       if (error.name === 'ConflictError') {
         return responseUtils.conflict(res, error.message);
       }
-      if (error.name === 'AuthError') { // General validation errors from service
-          return responseUtils.badRequest(res, error.message);
+      if (error.name === 'AuthError') {
+        return responseUtils.badRequest(res, error.message);
       }
       // Default to server error for unexpected issues
       return responseUtils.serverError(res, 'Registration failed');
@@ -151,7 +155,32 @@ const authController = {
         return responseUtils.serverError(res, 'Token refresh failed');
     }
   },
-  
+
+  /**
+   * Handle user logout
+   */
+  logout: async (req, res) => {
+    try {
+      const { refresh_token } = req.body;
+      
+      if (!refresh_token) {
+        return responseUtils.badRequest(res, 'Refresh token is required');
+      }
+
+      await authService.logoutUser(refresh_token);
+      
+      return responseUtils.success(res, {
+        message: 'Logged out successfully'
+      });
+
+    } catch (error) {
+      console.error('Logout Controller Error:', error.message);
+      if (error.name === 'UnauthorizedError') {
+        return responseUtils.unauthorized(res, error.message);
+      }
+      return responseUtils.serverError(res, 'Logout failed');
+    }
+  }
 };
 
 module.exports = authController; // Keep exporting the controller

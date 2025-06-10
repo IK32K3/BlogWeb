@@ -54,7 +54,7 @@ const authService = {
     registerUser: async (userData) => {
     const { username, email, password, description } = userData;
 
-    // --- Check for existing user (đã kiểm trong middleware, nhưng vẫn có thể giữ lại để chắc chắn hơn nếu dùng nhiều nơi khác) ---
+    // --- Check for existing user ---
     const existingUser = await User.findOne({
       where: { [Op.or]: [{ username }, { email }] }
     });
@@ -67,13 +67,16 @@ const authService = {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     // --- Get default role ---
-    const defaultRole = await Role.findOne({ where: { name: 'Blogger' } });
+    const defaultRole = await Role.findOne({
+      where: { name: 'Blogger' },
+      attributes: ['id', 'name'] // Chỉ lấy những cột cần thiết
+    });
     if (!defaultRole) {
       console.error("Default role 'Blogger' not found in database.");
       throw new Error('User registration configuration error.');
     }
 
-    // --- Create user ---
+    // --- Create user with explicit fields ---
     const user = await User.create({
       username,
       email,
@@ -115,17 +118,18 @@ const authService = {
     // --- Find user with role ---
     const user = await User.findOne({
       where: {
-      [Op.or]: [
-        { username: usernameOrEmail },
-        { email: usernameOrEmail }
-      ]
-    },
+        [Op.or]: [
+          { username: usernameOrEmail },
+          { email: usernameOrEmail }
+        ]
+      },
       include: [{
         model: Role,
-        as: 'role', // Ensure 'as: role' matches your model definition
-        attributes: ['name']
+        as: 'role',
+        attributes: ['name'],
+        required: true // Use INNER JOIN instead of LEFT JOIN
       }],
-      attributes: ['id', 'username', 'email', 'password', 'is_active'] // Select necessary fields
+      attributes: ['id', 'username', 'email', 'password', 'is_active'] // Select only necessary fields
     });
 
     if (!user) {
@@ -135,12 +139,10 @@ const authService = {
     if (!user.is_active) {
       throw new ForbiddenError('Account is disabled');
     }
-    // Check if role was loaded correctly
     if (!user.role || !user.role.name) {
-        console.error(`Role data missing for user: ${usernameOrEmail}`);
-        throw new Error('User data configuration error.'); // Internal server error
-    }
-
+      console.error(`Role data missing for user: ${usernameOrEmail}`);
+      throw new Error('User data configuration error.'); // Internal server error
+  }
     // --- Verify password ---
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -155,7 +157,7 @@ const authService = {
 
     // --- Return necessary data ---
     return {
-      user: { // Return only safe/relevant fields
+      user: {
         id: user.id,
         username: user.username,
         email: user.email,

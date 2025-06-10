@@ -5,10 +5,11 @@ import { NavbarIntroduceComponent } from '../../shared/components/navbar-introdu
 import { FormsModule } from '@angular/forms';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @Component({
   selector: 'app-about-page',
-  imports: [CommonModule,RouterOutlet,HeaderComponent,FormsModule,FooterComponent],
+  imports: [CommonModule,RouterOutlet,SharedModule,FormsModule,FooterComponent],
   templateUrl: './about-page.component.html',
   styleUrl: './about-page.component.css'
 })

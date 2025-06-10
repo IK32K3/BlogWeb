@@ -7,7 +7,8 @@ export interface Category {
 export interface User {
   id: number;
   username: string;
-  avatarUrl?: string;
+  name?: string;
+  avatar?: string;
 }
 
 export interface Language {
@@ -16,10 +17,12 @@ export interface Language {
   name: string;
 }
 
-export interface Media {
+export interface UploadedFile {
   id: number;
   url: string;
-  // Add other media properties if needed
+  name?: string;
+  type?: 'image' | 'video' | 'document' | 'gallery';
+  metadata?: Record<string, any>;
 }
 
 export interface PostTranslateLanguage {
@@ -35,14 +38,24 @@ export interface PostTranslateLanguage {
   language: Language;
 }
 
-export interface PostMedia {
+export interface PostUpload {
   post_id: number;
-  media_id: number;
+  file_id: number;
   is_featured: boolean;
   created_at?: string;
   updated_at?: string;
   
-  media?: Media;
+  file?: UploadedFile;
+}
+
+export interface Comment {
+  id: number;
+  post_id: number;
+  user_id: number;
+  text: string;
+  created_at: string;
+  updated_at: string;
+  user?: User;
 }
 
 export interface Post {
@@ -52,28 +65,33 @@ export interface Post {
   title: string;
   content: string;
   description: string;
+  thumbnail?: string;
   status: 'draft' | 'published' | 'archived';
   views: number;
   slug: string;
   id_post_original?: number | null;
   created_at: string;
   updated_at: string;
+  createdAt?: string;  // For API response compatibility
+  updatedAt?: string;  // For API response compatibility
   comments?: number;
+  likes_count?: number;
+  comments_count?: number;
 
-  user?: User;
-  categories?: Category;
-  postMedia?: PostMedia[];
+  author?: User;
+  category?: Category;
+  postUploads?: PostUpload[];
   postTranslateLanguage?: PostTranslateLanguage[];
   tags?: string[];
   likes?: number;
 }
 
-export interface PostTranslateLanguageDto {
+export interface PostTranslation {
   language_id: number;
   title: string;
   content: string;
   description?: string;
-  is_original?: boolean;
+  locale?: string;
 }
 
 export interface PostDto {
@@ -82,15 +100,7 @@ export interface PostDto {
   description?: string;
   category_id: number;
   tags?: string[];
-  status?: 'draft' | 'published' | 'archived';
-  postMedia?: {
-    media_id: number;
-    is_featured: boolean;
-  }[];
-  translations?: {
-    language_id: number;
-    title: string;
-    content: string;
-    description?: string;
-  }[];
+  status?: string;
+  translations?: PostTranslation[];
+  thumbnail?: string;
 }

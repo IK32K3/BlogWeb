@@ -2,47 +2,61 @@ const slugify = require('slugify');
 const { Op } = require('sequelize');
 // Ensure you are importing the SINGULAR model names correctly defined in your models/index.js or definitions
 const db = require('models'); // Import your models
-const { Post, Categories, Media, User, PostMedia, PostTranslateLanguage, Language } = db; // Assuming models are named singularly
+const { Post, Categories, User, PostTranslateLanguage, Language } = db; // Removed Media and PostMedia
+const { uploadToCloudinary } = require('../../../configs/cloudinary');
 
 
-class PostService {
+class postService {
   // Get all posts with pagination and filters
-  async getAllPosts({ page = 1, limit = 10, categoryId, search, userId, sort, status }) { // Added status filter possibility based on validation
+  /**
+   * [HỢP NHẤT & TỐI ƯU] Lấy danh sách bài viết với bộ lọc linh hoạt.
+   * Thay thế cho cả getAllPosts và searchPosts.
+   */
+  async getPosts({
+    page = 1,
+    limit = 10,
+    search,
+    categoryId,
+    userId,
+    status,
+    sort,
+    dateFrom,
+    dateTo
+  }) {
     const offset = (page - 1) * limit;
 
-    // Build where clause
-    const whereClause = {}; 
-
-    if (categoryId) whereClause.category_id = categoryId;
-    if (userId) whereClause.user_id = userId;
-
-    // Handle status filtering ('all' should not add a status clause)
+    // Xây dựng điều kiện WHERE một cách linh hoạt
+    const whereClause = {};
     if (status && status !== 'all') {
-        whereClause.status = status;
+      whereClause.status = status;
     }
-
+    if (categoryId) {
+      whereClause.category_id = categoryId;
+    }
+    if (userId) {
+      whereClause.user_id = userId;
+    }
     if (search) {
-      // Ensure search works across potential translations too if needed,
-      // otherwise this only searches the main Post table columns
       whereClause[Op.or] = [
         { title: { [Op.like]: `%${search}%` } },
-        { content: { [Op.like]: `%${search}%` } },
-        // Add description if it's a main column and should be searchable
-        // { description: { [Op.like]: `%${search}%` } }
+        { content: { [Op.like]: `%${search}%` } }
       ];
     }
+    if (dateFrom || dateTo) {
+      whereClause.created_at = {};
+      if (dateFrom) whereClause.created_at[Op.gte] = dateFrom;
+      if (dateTo) whereClause.created_at[Op.lte] = dateTo;
+    }
 
-    // Build order clause
     const orderClause = this._getSortOrder(sort);
 
-    // Fetch posts
     const { count, rows: posts } = await Post.findAndCountAll({
       where: whereClause,
       limit: parseInt(limit),
       offset: parseInt(offset),
       order: orderClause,
       include: this._getDefaultIncludes(),
-      distinct: true // Recommended when using includes with limits/offsets
+      distinct: true // Important for correct count with includes
     });
 
     return {
@@ -56,6 +70,9 @@ class PostService {
     };
   }
 
+  // ... (Các hàm getPostById, getPostBySlug, getPostsByCategory, getUserPosts không thay đổi nhiều)
+
+
   // Get post by ID
   async getPostById(id, incrementViews = true) {
     const post = await Post.findByPk(id, {
@@ -64,7 +81,7 @@ class PostService {
 
     if (!post) return null;
 
-    if (incrementViews && post.status === 'published') { // Only increment views for published posts viewed by ID/Slug
+    if (incrementViews && post.status === 'published') {
       await post.increment('views');
     }
 
@@ -88,12 +105,9 @@ class PostService {
 
     // Build search conditions
     const where = {
-      // Consider searching in translations if applicable
       [Op.or]: [
         { title: { [Op.like]: `%${query}%` } },
-        { content: { [Op.like]: `%${query}%` } },
-        // Only include description if it's a main post column
-        // { description: { [Op.like]: `%${query}%` } }
+        { content: { [Op.like]: `%${query}%` } }
       ]
     };
 
@@ -104,7 +118,7 @@ class PostService {
     if (user_id) where.user_id = user_id;
     if (status) where.status = status;
 
-    // Date range filter (check column name, usually 'createdAt' or 'created_at')
+    // Date range filter
     const createdAtColumn = Post.rawAttributes.createdAt ? 'createdAt' : 'created_at';
     if (date_from || date_to) {
         where[createdAtColumn] = {};
@@ -112,24 +126,20 @@ class PostService {
         if (date_to) where[createdAtColumn][Op.lte] = new Date(date_to);
     }
 
-
-    // Build sort order using sort_by and sort_order
+    // Build sort order
     let order = [];
     if (sort_by) {
-        // Map frontend sort_by names to backend column names if necessary
         const columnMap = {
             views: 'views',
-            comments: 'comments', // Assuming a 'comments' count column or similar
-            // Add other mappings like 'date' to 'created_at'
+            comments: 'comments'
         };
-        const columnName = columnMap[sort_by] || sort_by; // Use mapping or the name directly
+        const columnName = columnMap[sort_by] || sort_by;
         const orderDirection = sort_order && sort_order.toLowerCase() === 'asc' ? 'ASC' : 'DESC';
         order.push([columnName, orderDirection]);
     }
 
-    // Add a default sort if no sort is specified, or as a secondary sort
     if (order.length === 0 || !sort_by) {
-         order.push([createdAtColumn, 'DESC']); // Default to newest
+         order.push([createdAtColumn, 'DESC']);
     }
 
     const { count, rows } = await Post.findAndCountAll({
@@ -137,18 +147,17 @@ class PostService {
       limit: parseInt(limit),
       offset: parseInt(offset),
       order,
-      include: [ // Use minimal includes needed for search results list
+      include: [
         {
           model: User,
-          as: 'user', // Ensure 'user' alias is defined in Post model associations
+          as: 'author',
           attributes: ['id', 'username']
         },
         {
-          model: Categories, // Corrected: Singular model name
-          as: 'categories', // Corrected: Likely singular alias matching association
+          model: Categories,
+          as: 'category',
           attributes: ['id', 'name']
         }
-        // Add other includes only if necessary for the search result display
       ],
       distinct: true
     });
@@ -173,193 +182,221 @@ class PostService {
 
     if (!post) return null;
 
-    if (incrementViews && post.status === 'published') { // Only increment views for published posts
+    if (incrementViews && post.status === 'published') {
       await post.increment('views');
     }
 
     return post;
   }
 
-  // Create new post
-  async createPost(userId, postData) {
-    const {
-      title,
-      content,
-      description, // Assuming description is a main column
-      category_id,
-      id_post_original,
-      media_ids = [],
-      translations = [],
-      status = 'draft',
-      scheduled_at // Added from validation
-    } = postData;
-
-    // Validate slug uniqueness before creating
-    let baseSlug = slugify(title, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g });
-    let slug = baseSlug;
-    let slugExists = true;
-    let counter = 1;
-    while(slugExists) {
-        const existingPost = await Post.findOne({ where: { slug: slug }, attributes: ['id'] });
-        if (!existingPost) {
-            slugExists = false;
-        } else {
-            slug = `${baseSlug}-${counter}`;
-            counter++;
-        }
-    }
-
-
-    // Create post
-    const post = await Post.create({
-      title,
-      content,
-      description,
-      user_id: userId,
-      category_id,
-      id_post_original,
-      slug, // Use the generated unique slug
-      status,
-      scheduled_at: status === 'scheduled' ? scheduled_at : null, // Set scheduled_at only if status is scheduled    }, {
-      fields: ['title', 'content', 'description', 'user_id', 'category_id', 'slug', 'status', 'scheduled_at',]
-
-    });
-
-    // Attach media to post
-    if (media_ids.length > 0) {
-      // Ensure featured_media_id is part of media_ids if provided
-      await this._attachMediaToPost(post.id, media_ids);
-    }
-
-    // Add translations if provided
-    if (translations.length > 0) {
-      await this._addPostTranslations(post.id, translations);
-    }
-
-    // Return the post with details if needed immediately
-    return this.getPostById(post.id, false); // Fetch with includes, don't increment views
-  }
-
-
-  // Update post
-  async updatePost(postId, userId, isAdmin, updateData) {
-    const transaction = await db.sequelize.transaction(); // Start transaction for safety
+  /**
+   * [CẬP NHẬT] Tạo bài viết mới, tích hợp upload thumbnail và bản dịch.
+   * @param {object} postData - Dữ liệu chính của bài viết (title, content, etc.)
+   * @param {Array} translations - Mảng các bản dịch.
+   * @param {object} thumbnailFile - File thumbnail từ multer.
+   */
+  async createPost(postData, translations = [], thumbnailFile = null) {
+    const transaction = await Post.sequelize.transaction();
     try {
-      // Check if post exists
-      const post = await Post.findByPk(postId);
-      if (!post) {
-        await transaction.rollback();
-        throw new NotFoundError('Post not found');
-      } 
+      const { title, content, description, category_id, status = 'draft', user_id } = postData;
 
-      // Check authorization
-      if (post.user_id !== userId && !isAdmin) {
-          // Consider throwing a specific AuthorizationError
-          await transaction.rollback();
-          throw new Error('Unauthorized to update this post');
-      }
-
-      const { title, media_ids, translations, status, scheduled_at, ...otherUpdateData } = updateData;
-
-      // Prepare data for update
-      const dataToUpdate = { ...otherUpdateData };
-
-      if (title !== undefined && title !== post.title) {
-          dataToUpdate.title = title;
-          // Generate and check unique slug if title changes
-          let baseSlug = slugify(title, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g });
-          let newSlug = baseSlug;
-          let slugExists = true;
-          let counter = 1;
-          while(slugExists) {
-              const existingPost = await Post.findOne({ where: { slug: newSlug, id: { [Op.ne]: postId } }, attributes: ['id'] }); // Check slug excluding current post
-              if (!existingPost) {
-                  slugExists = false;
-              } else {
-                  newSlug = `${baseSlug}-${counter}`;
-                  counter++;
-              }
-          }
-          dataToUpdate.slug = newSlug;
-      }
-
-      if (status !== undefined) {
-          dataToUpdate.status = status;
-          // Handle scheduled_at based on status
-          if (status === 'scheduled' && scheduled_at) {
-              dataToUpdate.scheduled_at = scheduled_at;
-          } else if (status !== 'scheduled') {
-              // Set scheduled_at to null if status is no longer scheduled
-              dataToUpdate.scheduled_at = null;
-          }
-      } else if (scheduled_at !== undefined && post.status === 'scheduled') {
-          // Allow updating scheduled_at if status is already scheduled
-          dataToUpdate.scheduled_at = scheduled_at;
+      // 1. Upload thumbnail lên Cloudinary nếu có
+      let thumbnailUrl = null;
+      if (thumbnailFile) {
+        const uploadedImage = await uploadToCloudinary(thumbnailFile.path, 'posts');
+        thumbnailUrl = uploadedImage.secure_url;
       }
       
-      // Update post main fields
-      await post.update(dataToUpdate);
+      // 2. Tạo slug
+      const slug = await this._generateUniqueSlug(title);
+      
+      // 3. Tạo bài viết trong transaction
+      const post = await Post.create({
+        title,
+        content,
+        description,
+        category_id,
+        status,
+        slug,
+        user_id,
+        thumbnail: thumbnailUrl // Lưu URL của ảnh
+      }, { transaction });
 
-      // Update media (replace all if provided)
-      if (media_ids !== undefined) {
-        await this._updatePostMedia(post.id, media_ids);
+      // 4. Thêm các bản dịch nếu có
+      if (translations.length > 0) {
+        await this._addPostTranslations(post.id, translations, transaction);
       }
-    
-      // Update translations if provided
-      if (translations !== undefined) {
-        await this._updatePostTranslations(post.id, translations);
-      }
-      await transaction.commit(); // Commit transaction if all updates are successful
-      return this.getPostById(postId, false);
-      // Return the updated post with details if needed immediately
+
+      await transaction.commit();
+      // Lấy lại post với đầy đủ thông tin để trả về
+      return this.getPostById(post.id, false);
     } catch (error) {
-      await transaction.rollback(); // Rollback transaction on error
-      console.error("Error updating post:", error);
-      throw error; // Re-throw the error to be handled upstream
+      await transaction.rollback();
+      throw error;
     }
   }
+
+  /**
+   * [CẬP NHẬT] Cập nhật bài viết, tích hợp upload thumbnail và bản dịch.
+   */
+  async updatePost(postId, userId, isAdmin, updateData, translations = [], thumbnailFile = null) {
+    const transaction = await Post.sequelize.transaction();
+    try {
+        const post = await Post.findByPk(postId);
+        if (!post) throw new Error('Post not found');
+
+        if (!isAdmin && post.user_id !== userId) {
+            throw new Error('Unauthorized to update this post');
+        }
+
+        // 1. Cập nhật thumbnail nếu có file mới
+        let thumbnailUrl = post.thumbnail;
+        if (thumbnailFile) {
+            const uploadedImage = await uploadToCloudinary(thumbnailFile.path, 'posts');
+            thumbnailUrl = uploadedImage.secure_url;
+        }
+
+        // 2. Cập nhật slug nếu tiêu đề thay đổi
+        if (updateData.title && updateData.title !== post.title) {
+            updateData.slug = await this._generateUniqueSlug(updateData.title, postId);
+        }
+
+        // 3. Cập nhật dữ liệu chính của bài viết
+        await post.update({
+            ...updateData,
+            thumbnail: thumbnailUrl
+        }, { transaction });
+
+        // 4. Cập nhật bản dịch (xóa cũ, thêm mới hoặc update)
+        if (translations.length > 0) {
+            await this._updatePostTranslations(postId, translations, transaction);
+        }
+        
+        await transaction.commit();
+        return this.getPostById(postId, false);
+    } catch (error) {
+        await transaction.rollback();
+        throw error;
+    }
+  }
+
+  // --- Helper Methods ---
+
+  async _generateUniqueSlug(title, excludePostId = null) {
+    let baseSlug = slugify(title, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g });
+    let slug = baseSlug;
+    let counter = 1;
+
+    const where = { slug };
+    if (excludePostId) {
+        where.id = { [Op.ne]: excludePostId };
+    }
+
+    while (await Post.findOne({ where })) {
+        slug = `${baseSlug}-${counter}`;
+        where.slug = slug;
+        counter++;
+    }
+    return slug;
+  }
+  
+  // Sửa lại helper để nhận transaction
+  async _addPostTranslations(postId, translations, transaction) {
+    if (!Array.isArray(translations) || translations.length === 0) {
+      return;
+    }
+
+    try {
+      const languageLocales = translations.map(t => t.locale);
+      const languages = await Language.findAll({ 
+        where: { 
+          locale: { [Op.in]: languageLocales },
+          is_active: true 
+        } 
+      });
+
+      if (languages.length === 0) {
+        throw new Error('No valid languages found for the provided locales');
+      }
+
+      const languageMap = new Map(languages.map(lang => [lang.locale, lang.id]));
+
+      const translationEntries = translations
+        .map(t => ({
+          post_id: postId,
+          language_id: languageMap.get(t.locale),
+          title: t.title,
+          content: t.content,
+          description: t.description || '',
+          is_original: t.is_original || false,
+        }))
+        .filter(t => t.language_id); // Filter out invalid locales
+
+      if (translationEntries.length === 0) {
+        throw new Error('No valid translations could be created');
+      }
+
+      await PostTranslateLanguage.bulkCreate(translationEntries, { transaction });
+    } catch (error) {
+      console.error('[PostService._addPostTranslations] Error:', error);
+      throw new Error(`Failed to add translations: ${error.message}`);
+    }
+  }
+
   // Delete post
-  async deletePost(postId, userId, isAdmin) {
-    const post = await Post.findByPk(postId);
-    if (!post) return false; // Indicate not found
-
-    // Check authorization
-    if (post.user_id !== userId && !isAdmin) {
-      // Consider throwing a specific AuthorizationError
-      throw new Error('Unauthorized to delete this post');
+    // Delete post
+    async deletePost(postId, userId, isAdmin) {
+      const transaction = await Post.sequelize.transaction();
+      try {
+        const post = await Post.findByPk(postId, { transaction });
+        if (!post) return false;
+  
+        if (!isAdmin && post.user_id !== userId) {
+          throw new Error('Unauthorized to delete this post');
+        }
+  
+        // Xoá bản dịch liên quan (nếu có)
+        await PostTranslateLanguage.destroy({
+          where: { post_id: postId },
+          transaction
+        });
+  
+        // TODO: Nếu có PostMedia, bạn nên xoá ở đây nữa
+  
+        // Xoá bài viết
+        await post.destroy({ transaction });
+  
+        await transaction.commit();
+        return true;
+      } catch (error) {
+        await transaction.rollback();
+        throw error;
+      }
     }
-
-    // Sequelize transactions might be good here if deleting related data
-    // e.g., delete related PostMedia, PostTranslateLanguage first if using CASCADE isn't set/desired
-
-    await post.destroy();
-    return true; // Indicate success
-  }
+  
 
   // Get posts by category
   async getPostsByCategory(categoryId, { page = 1, limit = 10 }) {
     const offset = (page - 1) * limit;
     const createdAtColumn = Post.rawAttributes.createdAt ? 'createdAt' : 'created_at';
 
-    // Check if category exists first is good practice
-    const category = await Categories.findByPk(categoryId, { attributes: ['id', 'name', 'slug'] }); // Fetch needed category details
-    if (!category) return null; // Or throw NotFoundError
+    const category = await Categories.findByPk(categoryId, { attributes: ['id', 'name', 'slug'] });
+    if (!category) return null;
 
-    // Fetch posts
     const { count, rows: posts } = await Post.findAndCountAll({
       where: {
         category_id: categoryId,
-        status: 'published' // Typically only show published posts in category listings
+        status: 'published'
       },
       limit: parseInt(limit),
       offset: parseInt(offset),
       order: [[createdAtColumn, 'DESC']],
-      include: this._getDefaultIncludes(), // Use default includes for lists
+      include: this._getDefaultIncludes(),
       distinct: true
     });
 
     return {
-      category, // Return category details along with posts
+      category,
       posts,
       pagination: {
         total: count,
@@ -370,24 +407,22 @@ class PostService {
     };
   }
 
-  // Get user's own posts (e.g., for a dashboard)
+  // Get user's own posts
   async getUserPosts(userId, { page = 1, limit = 10, includeDrafts = false }) {
     const offset = (page - 1) * limit;
     const createdAtColumn = Post.rawAttributes.createdAt ? 'createdAt' : 'created_at';
 
     const whereClause = { user_id: userId };
-    // Adjust status filtering based on includeDrafts or other potential statuses
     if (!includeDrafts) {
-        // Maybe fetch 'published' and 'scheduled' by default, or allow specifying statuses
         whereClause.status = { [Op.in]: ['published', 'scheduled'] };
-    } // If includeDrafts is true, no status clause needed, fetches all
+    }
 
     const { count, rows: posts } = await Post.findAndCountAll({
       where: whereClause,
       limit: parseInt(limit),
       offset: parseInt(offset),
       order: [[createdAtColumn, 'DESC']],
-      include: this._getDefaultIncludes(), // Default includes are usually sufficient here
+      include: this._getDefaultIncludes(),
       distinct: true
     });
 
@@ -403,32 +438,29 @@ class PostService {
   }
 
   // Get public posts by a specific author/user
-  async getPostsByAuthor({ // Renamed from internal _getPostsByAuthor
+  async getPostsByAuthor({
     userId,
     page = 1,
     limit = 10,
-    status = 'published', // Default to published for public view
+    status = 'published',
     sort = 'newest'
   }) {
     const offset = (page - 1) * limit;
     const createdAtColumn = Post.rawAttributes.createdAt ? 'createdAt' : 'created_at';
 
-    // Build where conditions
     const where = {
       user_id: userId
     };
 
-    // Apply status filter if provided (allow overriding the default)
     if (status) {
       where.status = status;
     }
 
-    // Build sort order
     let order;
     switch (sort) {
       case 'oldest': order = [[createdAtColumn, 'ASC']]; break;
       case 'most_viewed': order = [['views', 'DESC']]; break;
-      default: order = [[createdAtColumn, 'DESC']]; // newest
+      default: order = [[createdAtColumn, 'DESC']];
     }
 
     const { count, rows } = await Post.findAndCountAll({
@@ -436,33 +468,22 @@ class PostService {
       limit: parseInt(limit),
       offset: parseInt(offset),
       order,
-      include: [ // Include necessary details for public author page
+      include: [
         {
-          model: Categories,      // Corrected: Singular
-          as: 'categories',     // Corrected: Singular alias (verify in model)
-          attributes: ['id', 'name', 'slug'] // Include slug for linking
+          model: Categories,
+          as: 'category',
+          attributes: ['id', 'name', 'slug']
         },
-        // Include featured media if desired for list display
         {
-            model: PostMedia,
-            as: 'postMedia', // Ensure alias matches model definition
-            required: false,
-            where: { is_featured: true },
-            include: [{ model: Media, as: 'media' }] // Ensure alias matches model definition
-        },
-        // Don't include translations unless you specifically need language info in the list
-         {
-           model: PostTranslateLanguage,
-           as: 'postTranslateLanguage', // VERIFY THIS ALIAS in Post model associations
-           attributes: ['language_id'] // Only fetch language ID if needed
-         }
+          model: PostTranslateLanguage,
+          as: 'postTranslations',
+          attributes: ['language_id']
+        }
       ],
       distinct: true
     });
 
-
     return {
-      // author, // Optionally return author details
       posts: rows,
       pagination: {
         total: count,
@@ -473,7 +494,6 @@ class PostService {
     };
   }
 
-
   // --- Helper Methods ---
 
   _getSortOrder(sort) {
@@ -483,203 +503,88 @@ class PostService {
       case 'most_viewed': return [['views', 'DESC']];
       case 'title_asc': return [['title', 'ASC']];
       case 'title_desc': return [['title', 'DESC']];
-      case 'latest': // Fallthrough intentional
+      case 'latest':
       default: return [[createdAtColumn, 'DESC']];
     }
   }
 
   _getDefaultIncludes() {
-    // Includes suitable for list views (index pages, category pages, user dashboards)
     return [
       {
         model: User,
-        as: 'user', // Ensure 'user' alias is defined in Post model
-        attributes: ['id', 'username'] // Add other needed attributes like avatar
+        as: 'author',
+        attributes: ['id', 'username', 'avatar']
       },
       {
         model: Categories,
-        as: 'categories', // Ensure 'category' alias is defined in Post model
-        attributes: ['id', 'name', 'slug'] // Include slug for links
-      },
-      {
-        model: PostMedia,
-        as: 'postMedia', // Use the correct alias defined in Post model associations
-        required: false, // Left join: don't exclude posts without featured media
-        where: { is_featured: true },
-        include: [{
-            model: Media,
-            as: 'media', // Use the correct alias defined in PostMedia model associations
-            attributes: ['id', 'url', 'type'] // Get necessary media attributes
-        }]
+        as: 'category',
+        attributes: ['id', 'name', 'slug']
       }
     ];
   }
 
   _getDetailedIncludes() {
-    // Includes suitable for single post view (getById, getBySlug)
     return [
       {
         model: User,
-        as: 'user', // Ensure 'user' alias is defined in Post model
-        attributes: ['id', 'username'] // Add more user details if needed
+        as: 'author',
+        attributes: ['id', 'username']
       },
       {
         model: Categories,
-        as: 'categories', // Ensure 'category' alias is defined in Post model
+        as: 'category',
         attributes: ['id', 'name', 'slug']
       },
       {
-        model: PostMedia,
-        as: 'postMedia', // Use the correct alias defined in Post model associations
-        attributes: ['is_featured', 'media_id'], // Include is_featured flag
-        include: [{
-            model: Media,
-            as: 'media', // Use the correct alias defined in PostMedia model associations
-            attributes: ['id', 'url', 'type'] // Get all necessary media attributes
-        }]
-      },
-      {
         model: PostTranslateLanguage,
-        as: 'postTranslateLanguage', // VERIFY THIS ALIAS in Post model associations
+        as: 'postTranslations',
         include: [{
-            model: Language,
-            as: 'language', // Ensure 'language' alias is defined in PostTranslateLanguage model
-            attributes: ['id', 'locale', 'name'] // Get language details
+          model: Language,
+          as: 'language',
+          attributes: ['id', 'name', 'locale']
         }]
       }
-      // Include Tags if you have a Tag model and PostTag join table
-      // { model: Tag, as: 'tags', through: { attributes: [] } }
     ];
   }
 
-  async _attachMediaToPost(postId, mediaIds) {
-    // Ensure mediaIds are unique
-    const uniqueMediaIds = [...new Set(mediaIds)];
+  async _updatePostTranslations(postId, translations, transaction) {
+    try {
+        for (const translation of translations) {
+            const { language_id, title, content, description, is_original } = translation;
+            const [transRecord, created] = await PostTranslateLanguage.findOrCreate({
+                where: { post_id: postId, language_id: language_id },
+                defaults: {
+                    title,
+                    content,
+                    description,
+                    is_original: is_original || false
+                },
+                transaction
+            });
 
-    const mediaEntries = uniqueMediaIds.map(media_id => ({
-      post_id: postId,
-      media_id: parseInt(media_id, 10), // Ensure IDs are numbers
-      // Set featured flag correctly, ensuring only one can be true
-    }));
+            if (!created) {
+                await transRecord.update({
+                    title,
+                    content,
+                    description,
+                    is_original: is_original !== undefined ? is_original : transRecord.is_original
+                }, { transaction });
+            }
+        }
 
-    if (mediaEntries.length > 0) {
-        await PostMedia.bulkCreate(mediaEntries, { ignoreDuplicates: true }); // Ignore if somehow a duplicate PK is formed
+        const currentLanguageIds = translations.map(t => t.language_id);
+        await PostTranslateLanguage.destroy({
+            where: {
+                post_id: postId,
+                language_id: { [Op.notIn]: currentLanguageIds }
+            },
+            transaction
+        });
+    } catch (error) {
+        console.error("Error updating post translations:", error);
+        throw error;
     }
-  }
-
-
-  async _addPostTranslations(postId, translations) {
-    const translationEntries = [];
-
-    for (const translation of translations) {
-      const { locale, title, content, description, is_original } = translation;
-
-      // Find the Language ID based on locale
-      const language = await Language.findOne({ where: { locale: locale } });
-
-      if (!language) {
-        console.warn(`[PostService] Skipping translation for unknown locale: ${locale}`);
-        // Or throw an error if you require all locales to be valid
-        // throw new Error(`Invalid locale provided: ${locale}`);
-        continue; // Skip this translation if locale is not found
-      }
-
-      translationEntries.push({
-        post_id: postId,
-        language_id: language.id, // Use the found language ID
-        title: title,
-        content: content,
-        description: description,
-        is_original: is_original || false
-      });
-    }
-
-    if (translationEntries.length > 0) {
-        await PostTranslateLanguage.bulkCreate(translationEntries);
-    }
-  }
-
-  async _updatePostMedia(postId, mediaIds, featuredMediaId) {
-    // Ensure mediaIds contains numbers
-    const numericMediaIds = mediaIds.map(id => parseInt(id, 10)).filter(id => !isNaN(id));
-    const numericFeaturedMediaId = featuredMediaId ? parseInt(featuredMediaId, 10) : null;
-
-    // 1. Find existing media associations for this post
-    const existingMedia = await PostMedia.findAll({ where: { post_id: postId }, attributes: ['media_id'] });
-    const existingMediaIds = existingMedia.map(pm => pm.media_id);
-
-    // 2. Determine which media to add and which to remove
-    const mediaToAdd = numericMediaIds.filter(id => !existingMediaIds.includes(id));
-    const mediaToRemove = existingMediaIds.filter(id => !numericMediaIds.includes(id));
-
-    // 3. Remove associations no longer needed
-    if (mediaToRemove.length > 0) {
-      await PostMedia.destroy({ where: { post_id: postId, media_id: { [Op.in]: mediaToRemove } } });
-    }
-
-    // 4. Add new associations
-    if (mediaToAdd.length > 0) {
-      const mediaEntries = mediaToAdd.map(media_id => ({
-        post_id: postId,
-        media_id,
-      }));
-      await PostMedia.bulkCreate(mediaEntries);
-    }
-
-  }
-
-  async _updatePostTranslations(postId, translations) {
-      // Use transaction for updating multiple translations
-      const transaction = await Post.sequelize.transaction();
-      try {
-          // Option 1: Delete existing and bulk insert (simpler if full replacement is okay)
-          // await PostTranslateLanguage.destroy({ where: { post_id: postId }, transaction });
-          // await this._addPostTranslations(postId, translations); // Reuse add helper within transaction
-
-          // Option 2: Upsert logic (findOrCreate/update) - handles partial updates better
-          for (const translation of translations) {
-              const { language_id, title, content, description, is_original } = translation;
-              const [transRecord, created] = await PostTranslateLanguage.findOrCreate({
-                  where: { post_id: postId, language_id: language_id },
-                  defaults: {
-                      title,
-                      content,
-                      description,
-                      is_original: is_original || false
-                  },
-                  transaction
-              });
-
-              if (!created) {
-                  // If record existed, update it
-                  await transRecord.update({
-                      title,
-                      content,
-                      description,
-                      // Decide how to handle is_original on update - keep existing? overwrite?
-                      is_original: is_original !== undefined ? is_original : transRecord.is_original
-                  }, { transaction });
-              }
-          }
-          // Optionally, delete translations that were present before but are not in the new `translations` array.
-          const currentLanguageIds = translations.map(t => t.language_id);
-          await PostTranslateLanguage.destroy({
-              where: {
-                  post_id: postId,
-                  language_id: { [Op.notIn]: currentLanguageIds }
-              },
-              transaction
-          });
-
-
-          await transaction.commit();
-      } catch (error) {
-          await transaction.rollback();
-          console.error("Error updating post translations:", error);
-          throw error; // Re-throw the error to be handled upstream
-      }
   }
 }
 
-// Export a single instance
-module.exports = new PostService();
+module.exports = new postService();

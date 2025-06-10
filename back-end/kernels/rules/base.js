@@ -150,7 +150,10 @@ class WithLocale
     this.withLocale = this.withLocale.matches(regex).withMessage(message);
     return this;
     }
-
+    custom(validatorFunction) {
+        this.withLocale = this.withLocale.custom(validatorFunction);
+        return this;
+    }
     
 }
 

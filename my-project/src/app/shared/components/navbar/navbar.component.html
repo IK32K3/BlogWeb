@@ -6,27 +6,24 @@
         <i class="fas fa-pen-fancy text-white text-sm"></i>
       </div>
       <span class="ml-2 text-3xl font-bold bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text text-transparent hidden sm:block">
-          My<span class="bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent">Blog</span>
-        </span>
+        My<span class="bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent">Blog</span>
+      </span>
     </a>
 
-    <!-- Menu -->
-    <div class="hidden lg:flex items-center space-x-6 ml-auto" id="menu" [ngClass]="{'hidden': !menuOpen && !isLargeScreen}">
-      
+    <!-- Desktop Menu -->
+    <div class="hidden lg:flex items-center space-x-6 ml-auto" [ngClass]="{'hidden': !menuOpen && !isLargeScreen}">
       <div class="flex items-center space-x-6">
-        <!-- Category Link -->
-        <div class="flex items-center space-x-6 ">
-          <a routerLink="/category" class="text-gray-700 hover:text-indigo-700 flex items-center">
-            <i class="fas fa-list mr-2"></i>
-            <span class="hidden lg:block text-xl font-light">Category</span>
-          </a>
-          <!-- Write Post Link -->
-          <a routerLink="/blog/write-post" class="text-gray-700 hover:text-indigo-700 flex items-center">
-            <i class="fas fa-pen mr-2"></i>
-            <span class="hidden lg:block text-xl font-light">Write</span>
-          </a>
+        <!-- Navigation Items -->
+        <div class="flex items-center space-x-6">
+          <ng-container *ngFor="let item of navItems">
+            <a [routerLink]="item.path" class="text-gray-700 hover:text-indigo-700 flex items-center">
+              <i [class]="item.icon" class="mr-2"></i>
+              <span class="hidden lg:block text-xl font-light">{{item.label}}</span>
+            </a>
+          </ng-container>
         </div>
-        <!-- Dropdown Avatar -->
+
+        <!-- User Avatar Dropdown -->
         <div class="relative">
           <button
             (click)="toggleDropdown($event)"
@@ -38,33 +35,27 @@
               class="object-cover w-full h-full"
             />
           </button>
-      
+
           <!-- Dropdown Menu -->
           <div
             *ngIf="dropdownOpen"
             class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50"
           >
-            <a routerLink="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
-            <a routerLink="/category" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Category</a>
-            <a routerLink="/blog/write-post" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Write</a>
-            <a routerLink="/blog/contact-us" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Contact Us</a>
-      
-            <div class="border-t my-2"></div>
-      
-            <a routerLink="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">About Us</a>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Help</a>
-      
-            <div class="border-t my-2"></div>
-      
-            <a routerLink="/home/introduce-page" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Log out</a>
+            <ng-container *ngFor="let item of dropdownItems; let i = index">
+              <a 
+                [routerLink]="item.path" 
+                [class]="'block px-4 py-2 text-sm ' + (item.label === 'Log out' ? 'text-red-600 hover:bg-red-50' : 'text-gray-700 hover:bg-gray-100')"
+              >
+                {{item.label}}
+              </a>
+              <div *ngIf="i === 3 || i === 6" class="border-t my-2"></div>
+            </ng-container>
           </div>
         </div>
       </div>
     </div>
-    
 
-    <!-- Mobile menu toggle -->
+    <!-- Mobile Menu Toggle -->
     <button class="lg:hidden text-gray-700 hover:text-gray-900 ml-4" (click)="toggleMenu()">
       <i class="fas fa-bars text-2xl"></i>
     </button>

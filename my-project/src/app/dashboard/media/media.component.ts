@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component ,OnInit  } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { HeaderDashboardComponent } from '../../shared/components/header-dashboard/header-dashboard.component';
 import { SidebarDashboardComponent } from '../../shared/components/sidebar-dashboard/sidebar-dashboard.component';
 import { UploadModalComponent } from '../../shared/components/upload-modal/upload-modal.component';
-
+import { UploadService } from '../../core/services/upload.service';
 
 export interface MediaItem {
   id: string | number;
@@ -30,8 +30,8 @@ export interface MediaItem {
 
 @Component({
   selector: 'app-media',
-  imports: [CommonModule,FormsModule,RouterOutlet,HeaderDashboardComponent,
-    SidebarDashboardComponent,UploadModalComponent
+  imports: [CommonModule, FormsModule, RouterOutlet, HeaderDashboardComponent,
+    SidebarDashboardComponent, UploadModalComponent
   ],
   templateUrl: './media.component.html',
   styleUrl: './media.component.css'
@@ -59,16 +59,19 @@ export class MediaComponent implements OnInit {
   searchTerm: string = '';
 
   showUploadModal: boolean = false;
+  showMediaPreviewModal: boolean = false;
+  selectedMediaForPreview: MediaItem | null = null;
 
-  constructor() { }
+  constructor(private uploadService: UploadService) { }
 
   ngOnInit(): void {
-    this.loadMockMediaItems();
+    this.loadMediaItems();
     this.applyFiltersAndPagination();
   }
 
-  loadMockMediaItems(): void {
-    // Replace with your actual data fetching logic
+  loadMediaItems(): void {
+    // TODO: Implement actual data fetching from backend
+    // For now, using mock data
     this.mediaItems = [
       {
         id: 1, name: 'beach-sunset.jpg', type: 'Image', size: '1.2 MB', dimensionsOrDuration: '1920×1080',
@@ -145,36 +148,44 @@ export class MediaComponent implements OnInit {
     this.showUploadModal = false;
   }
 
-  handleFilesActuallyUploaded(uploadedFiles: File[]): void {
-    console.log('Files received in MediaComponent:', uploadedFiles);
-
-    uploadedFiles.forEach(file => {
-      const newId = this.mediaItems.length > 0 ? Math.max(...this.mediaItems.map(item => item.id as number)) + 1 : 1;
-      const newMediaItem: MediaItem = {
-        id: newId,
+  handleFilesUploaded(files: File[]): void {
+    // Handle the uploaded files
+    files.forEach(file => {
+      // Create a new media item from the uploaded file
+      const newItem: MediaItem = {
+        id: Date.now(), // Temporary ID
         name: file.name,
-        type: this.getMediaTypeFromFile(file), // Corrected: Method is now part of the class
-        size: this.formatFileSize(file.size),   // Corrected: Method is now part of the class
+        type: this.getMediaTypeFromFile(file),
+        size: this.formatFileSize(file.size),
         url: URL.createObjectURL(file),
-        tagText: this.getMediaTypeFromFile(file), // Corrected: Method is now part of the class
-        tagBgColor: 'bg-gray-200',
-        tagTextColor: 'text-gray-700',
+        tagText: this.getMediaTypeFromFile(file),
+        tagBgColor: this.getTagBgColor(this.getMediaTypeFromFile(file)),
+        tagTextColor: this.getTagTextColor(this.getMediaTypeFromFile(file)),
         isChecked: false
-        // Add other necessary properties for your MediaItem
       };
-      this.mediaItems.unshift(newMediaItem);
+      this.mediaItems.unshift(newItem);
     });
-
     this.applyFiltersAndPagination();
-    this.showUploadModal = false;
   }
 
-  // --- Helper Methods (now correctly part of the class) ---
-  private getMediaTypeFromFile(file: File): 'Image' | 'Video' | 'Document' | 'Audio' {
-    if (file.type.startsWith('image/')) return 'Image';
-    if (file.type.startsWith('video/')) return 'Video';
-    if (file.type.startsWith('audio/')) return 'Audio';
-    return 'Document';
+  private getTagBgColor(type: 'Image' | 'Video' | 'Document' | 'Audio'): string {
+    switch (type) {
+      case 'Image': return 'bg-primary-100';
+      case 'Video': return 'bg-purple-100';
+      case 'Document': return 'bg-blue-100';
+      case 'Audio': return 'bg-green-100';
+      default: return 'bg-gray-100';
+    }
+  }
+
+  private getTagTextColor(type: 'Image' | 'Video' | 'Document' | 'Audio'): string {
+    switch (type) {
+      case 'Image': return 'text-primary-800';
+      case 'Video': return 'text-purple-800';
+      case 'Document': return 'text-blue-800';
+      case 'Audio': return 'text-green-800';
+      default: return 'text-gray-800';
+    }
   }
 
   private formatFileSize(bytes: number, decimals = 2): string {
@@ -229,11 +240,6 @@ export class MediaComponent implements OnInit {
     const to = this.currentPage * this.itemsPerPage;
     return to > this.totalItems ? this.totalItems : to;
   }
-  
-  showMediaPreviewModal: boolean = false;
-  selectedMediaForPreview: MediaItem | null = null;
-
-  // ... (constructor, ngOnInit, other methods) ...
 
   // Method to open the preview modal (called when a media item in the grid is clicked)
   openMediaPreview(item: MediaItem): void {
@@ -262,5 +268,12 @@ export class MediaComponent implements OnInit {
   viewItem(item: MediaItem): void {
     console.log('View item clicked, opening preview for:', item.name);
     this.openMediaPreview(item);
+  }
+
+  private getMediaTypeFromFile(file: File): 'Image' | 'Video' | 'Document' | 'Audio' {
+    if (file.type.startsWith('image/')) return 'Image';
+    if (file.type.startsWith('video/')) return 'Video';
+    if (file.type.startsWith('audio/')) return 'Audio';
+    return 'Document';
   }
 }

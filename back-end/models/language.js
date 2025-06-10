@@ -10,22 +10,24 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // Define associations here
-      // Example: language.hasMany(models.category_translate_language, { foreignKey: 'language_id' });
+      Language.hasMany(models.PostTranslateLanguage, {
+        foreignKey: 'language_id',
+        as: 'translations'
+      });
     }
   }
   Language.init({
-    name: {
-      type: DataTypes.STRING(50),
-      allowNull: false
-    },
     locale: {
       type: DataTypes.STRING(10),
+      allowNull: false,
+      unique: true
+    },
+    name: {
+      type: DataTypes.STRING,
       allowNull: false
     },
     is_active: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       defaultValue: true
     }
   }, {

@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterOutlet, Router } from '@angular/router';
+import { RouterOutlet, Router, ActivatedRoute } from '@angular/router';
 import { NavBarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { QuillEditorComponent } from '../../shared/components/quill-editor/quill-editor.component';
 import { BlogPostService } from '../../core/services/blog-post.service';
 import { CategoryService } from '../../core/services/category.service';
-import { PostDto } from '../../shared/model/post.model';
+import { PostDto, Post } from '../../shared/model/post.model';
 import { Category } from '../../shared/model/category.model';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
+import { UploadService, MediaResponse } from '../../core/services/upload.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -29,18 +30,16 @@ import { firstValueFrom } from 'rxjs';
   styleUrl: './write-post.component.css'
 })
 export class WritePostComponent implements OnInit {
+  postId: number | null = null;
   postContent = '';
   post: PostDto = {
     title: '',
     content: '',
     description: '',
     category_id: 0,
-    tags: [],
     status: 'draft',
-    postMedia: [],
     translations: []
   };
-  newTag = '';
   categories: Category[] = [];
   filteredCategories: Category[] = [];
   categoryOptionsVisible = false;
@@ -57,11 +56,55 @@ export class WritePostComponent implements OnInit {
     private categoryService: CategoryService,
     private router: Router,
     private toastr: ToastrService,
-    private authService: AuthService
+    private authService: AuthService,
+    private uploadService: UploadService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
     this.loadCategories();
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.postId = +id;
+        this.loadPost(this.postId);
+      }
+    });
+  }
+
+  loadPost(id: number) {
+    this.blogPostService.getById(id).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          const post: Post = response.data;
+          this.post = {
+            title: post.title,
+            content: post.content,
+            description: post.description,
+            category_id: post.category_id,
+            status: post.status,
+            thumbnail: post.thumbnail,
+            translations: post.postTranslateLanguage?.map(t => ({
+              language_id: t.language_id,
+              title: t.title,
+              content: t.content,
+              description: t.description
+            })) || []
+          };
+          this.postContent = post.content;
+          this.selectedCategoryName = post.category?.name || '';
+          if (post.thumbnail) {
+            this.imagePreview = post.thumbnail;
+            this.imageSelected = true;
+          }
+        }
+      },
+      error: (err) => {
+        console.error('Error loading post:', err);
+        this.toastr.error('Failed to load post');
+        this.router.navigate(['/write-post']);
+      }
+    });
   }
 
   loadCategories() {
@@ -96,21 +139,6 @@ export class WritePostComponent implements OnInit {
     this.categoryOptionsVisible = false;
   }
 
-  addTag() {
-    const tag = this.newTag.trim();
-    if (tag && this.post.tags!.length < 5 && !this.post.tags!.includes(tag)) {
-      this.post.tags!.push(tag);
-    }
-    this.newTag = '';
-  }
-
-  removeTag(tag: string) {
-    const index = this.post.tags!.indexOf(tag);
-    if (index !== -1) {
-      this.post.tags!.splice(index, 1);
-    }
-  }
-
   triggerFileInput(): void {
     this.fileInputRef.nativeElement.click();
   }
@@ -137,6 +165,7 @@ export class WritePostComponent implements OnInit {
       reader.onload = () => {
         this.imagePreview = reader.result;
         this.imageSelected = true;
+        this.toastr.success('Image uploaded successfully!');
       };
       reader.readAsDataURL(file);
     }
@@ -174,20 +203,27 @@ export class WritePostComponent implements OnInit {
       this.post.content = this.postContent;
       this.post.status = 'published';
 
+      // Format translations to match backend structure
+      if (this.post.translations && this.post.translations.length > 0) {
+        this.post.translations = this.post.translations.map(translation => ({
+          language_id: translation.language_id,
+          title: String(translation.title || ''),
+          content: String(translation.content || ''),
+          description: String(translation.description || ''),
+          locale: translation.locale || 'en' // Add locale instead of code
+        }));
+      } else {
+        this.post.translations = [];
+      }
+
       // Handle image upload if exists
       if (this.selectedFile) {
-        const formData = new FormData();
-        formData.append('file', this.selectedFile);
-        
         try {
-          const uploadResponse = await firstValueFrom(this.blogPostService.uploadImage(formData));
-          if (uploadResponse.success && uploadResponse.data) {
-            this.post.postMedia = [{
-              media_id: uploadResponse.data.id,
-              is_featured: true
-            }];
+          const uploadResponse: MediaResponse = await firstValueFrom(this.uploadService.uploadFile(this.selectedFile));
+          if (uploadResponse && uploadResponse.url) {
+            this.post.thumbnail = uploadResponse.url;
           } else {
-            throw new Error(uploadResponse.message || 'Failed to upload image');
+            throw new Error('Failed to upload image: No URL returned');
           }
         } catch (uploadError: any) {
           console.error('Error uploading image:', uploadError);
@@ -196,48 +232,27 @@ export class WritePostComponent implements OnInit {
           return;
         }
       } else {
-        this.post.postMedia = [];
+        this.post.thumbnail = undefined;
       }
 
-      // Add default translation
-      this.post.translations = [{
-        language_id: 1, // Assuming 1 is the default language ID
-        title: this.post.title,
-        content: this.post.content,
-        description: this.post.description || ''
-      }];
-
-      // Create post
-      const response = await firstValueFrom(this.blogPostService.create(this.post));
+      // Create or update post
+      let response;
+      if (this.postId) {
+        response = await firstValueFrom(this.blogPostService.update(this.postId, this.post));
+      } else {
+        response = await firstValueFrom(this.blogPostService.create(this.post));
+      }
 
       if (response.success) {
         this.toastr.success('Post published successfully!');
-        this.router.navigate(['/blog/post', response.data.post.id]);
+        this.router.navigate(['/home/home-page']);
       } else {
-        throw new Error(response.message || 'Failed to publish post');
+        this.toastr.error(response.message || 'Failed to publish post');
       }
     } catch (error: any) {
       console.error('Error publishing post:', error);
-
-      if (error instanceof HttpErrorResponse) {
-        if (error.status === 401) {
-          this.toastr.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
-          this.authService.logout();
-          this.router.navigate(['/auth/login']);
-        } else if (error.status === 403) {
-          this.toastr.error('Bạn không có quyền thực hiện thao tác này.');
-        } else if (error.status === 404) {
-          this.toastr.error('Không tìm thấy endpoint upload. Vui lòng kiểm tra cấu hình server.');
-        } else if (error.status === 413) {
-          this.toastr.error('Kích thước file quá lớn. Tối đa 5MB.');
-        } else if (error.status === 415) {
-          this.toastr.error('Định dạng file không hợp lệ. Chỉ chấp nhận JPG hoặc PNG.');
-        } else {
-          this.toastr.error(error.error?.message || 'Failed to publish post');
-        }
-      } else {
-        this.toastr.error(error.message || 'Failed to publish post');
-      }
+      const errorMessage = error instanceof HttpErrorResponse ? error.error.message : error.message;
+      this.toastr.error(errorMessage || 'An unexpected error occurred');
     } finally {
       this.isSubmitting = false;
     }
@@ -246,29 +261,77 @@ export class WritePostComponent implements OnInit {
   async saveDraft() {
     if (this.isSubmitting) return;
 
+    // Validate form (title and content are minimal for draft)
+    if (!this.post.title.trim()) {
+      this.toastr.error('A title is required to save a draft');
+      return;
+    }
+
+    if (!this.postContent.trim()) {
+      this.toastr.error('Content is required to save a draft');
+      return;
+    }
+
     try {
       this.isSubmitting = true;
       this.post.content = this.postContent;
       this.post.status = 'draft';
 
-      // Add default translation
-      this.post.translations = [{
-        language_id: 1, // Assuming 1 is the default language ID
-        title: this.post.title,
-        content: this.post.content,
-        description: this.post.description
-      }];
-
-      const response = await firstValueFrom(this.blogPostService.create(this.post));
-      
-      if (response.success) {
-        this.toastr.success('Draft saved successfully!');
+      // Format translations to match backend structure
+      if (this.post.translations && this.post.translations.length > 0) {
+        this.post.translations = this.post.translations.map(translation => ({
+          language_id: translation.language_id,
+          title: String(translation.title || ''),
+          content: String(translation.content || ''),
+          description: String(translation.description || ''),
+          locale: translation.locale || 'en' // Add locale instead of code
+        }));
       } else {
-        throw new Error(response.message || 'Failed to save draft');
+        this.post.translations = [];
+      }
+
+      // Handle image upload if exists for draft
+      if (this.selectedFile) {
+        try {
+          const uploadResponse: MediaResponse = await firstValueFrom(this.uploadService.uploadFile(this.selectedFile));
+          if (uploadResponse && uploadResponse.url) {
+            this.post.thumbnail = uploadResponse.url;
+          } else {
+            throw new Error('Failed to upload image: No URL returned');
+          }
+        } catch (uploadError: any) {
+          console.error('Error uploading image for draft:', uploadError);
+          this.toastr.error(uploadError.message || 'Failed to upload image for draft. Please try again.');
+          this.isSubmitting = false;
+          return;
+        }
+      } else {
+        this.post.thumbnail = undefined;
+      }
+
+      // Create or update post
+      let response;
+      if (this.postId) {
+        response = await firstValueFrom(this.blogPostService.update(this.postId, this.post));
+      } else {
+        response = await firstValueFrom(this.blogPostService.create(this.post));
+      }
+
+      if (response.success) {
+        this.toastr.success('Post draft saved successfully!');
+        // Optionally, navigate or update postId if it's a new draft
+        if (response.data && response.data.id && !this.postId) {
+          this.router.navigate(['/write-post', response.data.id]); // Navigate to edit mode for the new draft
+        } else {
+          this.router.navigate(['/']); // Navigate to home if it's an existing draft or no new ID
+        }
+      } else {
+        this.toastr.error(response.message || 'Failed to save draft');
       }
     } catch (error: any) {
       console.error('Error saving draft:', error);
-      this.toastr.error(error.message || 'Failed to save draft');
+      const errorMessage = error instanceof HttpErrorResponse ? error.error.message : error.message;
+      this.toastr.error(errorMessage || 'An unexpected error occurred');
     } finally {
       this.isSubmitting = false;
     }
@@ -281,9 +344,7 @@ export class WritePostComponent implements OnInit {
         content: '',
         description: '',
         category_id: 0,
-        tags: [],
         status: 'draft',
-        postMedia: [],
         translations: []
       };
       this.postContent = '';

@@ -117,9 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById(formId);
     if (!form) return false;
   
-    const requiredInputs = form.querySelectorAll('[required]');
     let isValid = true;
   
+    // Validate general required fields
+    const requiredInputs = form.querySelectorAll('[required]');
     requiredInputs.forEach(input => {
       if (!input.value.trim()) {
         input.classList.add('is-invalid');
@@ -128,6 +129,20 @@ document.addEventListener('DOMContentLoaded', () => {
         input.classList.remove('is-invalid');
       }
     });
+  
+    // Specific validation for description length
+    const descriptionInput = form.querySelector('#description');
+    if (descriptionInput && descriptionInput.value.trim().length < 10) {
+      descriptionInput.classList.add('is-invalid');
+      descriptionInput.nextElementSibling.textContent = 'Description must be at least 10 characters long.';
+      isValid = false;
+    } else if (descriptionInput) {
+      descriptionInput.classList.remove('is-invalid');
+      // Reset default message if it was changed
+      if (descriptionInput.nextElementSibling) {
+        descriptionInput.nextElementSibling.textContent = 'Please enter a description for the post.';
+      }
+    }
   
     return isValid;
   };

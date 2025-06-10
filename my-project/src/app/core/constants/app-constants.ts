@@ -1,0 +1,2 @@
+export const DEFAULT_POST_IMAGE = 'https://pixahive.com/wp-content/uploads/2021/04/Doraemon-Cartoon-Illustration-410092-pixahive.jpg';
+export const DEFAULT_AUTHOR_IMAGE = 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'; 

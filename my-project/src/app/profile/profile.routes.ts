@@ -5,5 +5,5 @@ import { ProfileSettingsComponent } from './profile-settings/profile-settings.co
 export const routes: Routes = [
   { path: 'profile-user', component: ProfileUserComponent },
   { path: 'profile', component: ProfileSettingsComponent },
-  { path: '', redirectTo: 'profile', pathMatch: 'full' }
+  { path: '', redirectTo: 'profile-user', pathMatch: 'full' }
 ];

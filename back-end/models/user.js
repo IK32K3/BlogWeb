@@ -4,69 +4,72 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      // Define associations here
-      User.belongsTo(models.Role, { foreignKey: 'role_id', as: 'role' });
-      User.hasMany(models.Post, { foreignKey: 'user_id', as: 'posts' });
+      // Định nghĩa các associations
+      User.hasMany(models.Post, {
+        foreignKey: 'user_id',
+        as: 'posts'
+      });
+      
+      User.hasMany(models.Comment, {
+        foreignKey: 'user_id',
+        as: 'comments'
+      });
+
+      User.belongsTo(models.Role, {
+        foreignKey: 'role_id',
+        as: 'role'
+      });
+
       User.hasOne(models.Setting, {
         foreignKey: 'user_id',
         as: 'settings'
       });
-      User.hasMany(models.UserMedia, {
-        foreignKey: 'user_id',
-        as: 'userMedia'
-      });
+
     }
   }
 
-  User.init(
-    {
-      // Các cột khác giữ nguyên
-      username: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
-        unique: true
-      },
-      password: {
-        type: DataTypes.STRING(100),
-        allowNull: false
-      },
-      email: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-        unique: true
-      },
-      role_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'roles', // Name of the referenced table
-          key: 'id' // Key in the referenced table
-        }
-      },
-      description: {
-        type: DataTypes.TEXT('long'),
-        allowNull: true
-      },
-      is_active: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        // Có thể đặt defaultValue: true nếu bạn muốn user active ngay khi tạo
-        defaultValue: true // Thay đổi từ false thành true nếu muốn
-      },
-      // --- XÓA BỎ ĐỊNH NGHĨA THỦ CÔNG CHO created_at VÀ updated_at ---
-      // created_at: { ... }, <--- Xóa dòng này
-      // updated_at: { ... }, <--- Xóa dòng này
+  User.init({
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
     },
-    {
-      sequelize,
-      modelName: 'User',
-      tableName: 'users', // Đảm bảo tên bảng khớp với database
-      // --- BẬT LẠI QUẢN LÝ TIMESTAMP CỦA SEQUELIZE ---
-      timestamps: true,
-      // --- THÊM underscored ĐỂ KHỚP VỚI TÊN CỘT created_at/updated_at ---
-      underscored: true // Rất quan trọng nếu tên cột DB có dấu gạch dưới
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    role_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'roles',
+        key: 'id'
+      }
+    },
+    is_active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: ''
     }
-  );
+  }, {
+    sequelize,
+    modelName: 'User',
+    tableName: 'users',
+    timestamps: true,
+    underscored: true
+  });
 
   return User;
 };

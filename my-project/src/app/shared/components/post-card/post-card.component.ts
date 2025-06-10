@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BlogPostService } from '../../../core/services/blog-post.service';
 import { Post } from '../../model/post.model';
+import { DEFAULT_AUTHOR_IMAGE } from '../../../core/constants/app-constants';
 
 @Component({
   selector: 'app-post-card',
@@ -19,6 +20,7 @@ export class PostCardComponent implements OnInit {
 
   // Ảnh mặc định nếu không có ảnh bài viết
   readonly DEFAULT_IMAGE = 'https://placehold.co/400x200';
+  readonly DEFAULT_AUTHOR_IMAGE = DEFAULT_AUTHOR_IMAGE;
 
   constructor(private blogPostService: BlogPostService) { }
 
@@ -46,15 +48,15 @@ export class PostCardComponent implements OnInit {
   }
 
   getPostImage(post: Post): string {
-    // Ưu tiên lấy ảnh featured từ postMedia nếu có
-    if (post.postMedia && post.postMedia.length > 0) {
-      const featured = post.postMedia.find(pm => pm.is_featured && (pm as any).media?.type === 'image');
-      if (featured && (featured as any).media?.url) {
-        return (featured as any).media.url;
+    // Ưu tiên lấy ảnh featured từ postUploads nếu có
+    if (post.postUploads && post.postUploads.length > 0) {
+      const featured = post.postUploads.find(pm => pm.is_featured && pm.file?.type === 'image');
+      if (featured && featured.file?.url) {
+        return featured.file.url;
       }
-      const firstImage = post.postMedia.find(pm => (pm as any).media?.type === 'image');
-      if (firstImage && (firstImage as any).media?.url) {
-        return (firstImage as any).media.url;
+      const firstImage = post.postUploads.find(pm => pm.file?.type === 'image');
+      if (firstImage && firstImage.file?.url) {
+        return firstImage.file.url;
       }
     }
     return this.DEFAULT_IMAGE;

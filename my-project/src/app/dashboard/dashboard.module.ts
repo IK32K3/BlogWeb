@@ -9,27 +9,20 @@ import { SharedModule } from '../shared/shared.module'; // Import your shared mo
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router'; // Import RouterModule if you need routing in your dashboard module
 import { AppComponent } from '../app.component'; // Import your AppComponent if you need it in your dashboard module
+
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
+    DashboardRoutingModule,
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
     DashboardMainComponent,
     MediaComponent,
     PostsComponent,
     SettingComponent
   ],
-  imports: [
-    CommonModule,
-    DashboardRoutingModule,
-    SharedModule, // Nếu bạn có module chia sẻ nào đó
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule.forChild([
-    { path: 'dashboard-blogger', component: DashboardMainComponent },
-    { path: 'media', component: MediaComponent },
-    { path: 'dashboard-post', component: PostsComponent },
-    { path: 'setting', component:SettingComponent },
-    ]),
-  ],
-  providers: [],
-  bootstrap: [AppComponent],
+  providers: []
 })
 export class DashboardModule { }

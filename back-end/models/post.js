@@ -9,13 +9,36 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Define associations here
-      Post.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
-      Post.belongsTo(models.Categories, { foreignKey: 'category_id' , as: 'categories' });
-      Post.hasMany(models.PostMedia, {
-        foreignKey: 'post_id',
-        as: 'postMedia'
+      Post.belongsTo(models.User, {
+        foreignKey: 'user_id',
+        as: 'author'
       });
-      Post.hasMany(models.PostTranslateLanguage, { foreignKey: 'post_id' , as: 'postTranslateLanguage' });
+
+      Post.belongsTo(models.Categories, {
+        foreignKey: 'category_id',
+        as: 'category'
+      });
+
+      Post.hasMany(models.Comment, {
+        foreignKey: 'post_id',
+        as: 'comments'
+      });
+
+      Post.belongsTo(models.Post, {
+        foreignKey: 'id_post_original',
+        as: 'originalPost'
+      });
+
+      Post.hasMany(models.Post, {
+        foreignKey: 'id_post_original',
+        as: 'translations'
+      });
+
+      // Add association with PostTranslateLanguage
+      Post.hasMany(models.PostTranslateLanguage, {
+        foreignKey: 'post_id',
+        as: 'postTranslations'
+      });
     }
   }
   Post.init({
@@ -47,6 +70,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT('long'),
       allowNull: false
     },
+    thumbnail: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     status: {
       type: DataTypes.ENUM('draft', 'published', 'archived'), // Có thể thêm các trạng thái khác nếu cần
       allowNull: false,
@@ -59,7 +86,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     slug: {
       type: DataTypes.STRING(150),
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     id_post_original: {
       type: DataTypes.INTEGER,

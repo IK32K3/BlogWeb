@@ -9,6 +9,6 @@ export const routes: Routes = [
     { path: 'dashboard-blogger', component: DashboardMainComponent },
     { path: 'media', component: MediaComponent },
     { path: 'dashboard-post', component: PostsComponent },
-    { path: 'setting', component:SettingComponent },
+    { path: 'settings', component: SettingComponent },
     { path: '', redirectTo: 'dashboard-blogger', pathMatch: 'full' }
 ];

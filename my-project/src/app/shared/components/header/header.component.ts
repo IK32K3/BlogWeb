@@ -9,26 +9,26 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
-  standalone: true,
   imports: [NavBarComponent, NavbarIntroduceComponent, CommonModule, RouterModule, FormsModule],
+  standalone: true,
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
-  private authSubscription!: Subscription;
+  private authSubscription?: Subscription;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.authSubscription = this.authService.isLoggedIn$.subscribe(loggedIn => {
-      this.isLoggedIn = loggedIn;
-    });
+    this.authSubscription = this.authService.isLoggedIn$.subscribe(
+      (status) => {
+        this.isLoggedIn = status;
+      }
+    );
   }
 
   ngOnDestroy(): void {
-    if (this.authSubscription) {
-      this.authSubscription.unsubscribe();
-    }
+    this.authSubscription?.unsubscribe();
   }
 }

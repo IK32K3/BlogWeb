@@ -21,7 +21,7 @@ export class IntroducePageComponent implements OnInit {
     this.blogPostService.getAll({ status: 'published', limit: 9 }).subscribe({
       next: (res) => {
         // Lấy đúng mảng posts
-        const posts = res?.data?.posts || res?.data || res?.posts || [];
+        const posts = res?.data?.posts || [];
         // Chuyển đổi key cho từng post
         this.posts = posts.map((post: any) => ({
           ...post,

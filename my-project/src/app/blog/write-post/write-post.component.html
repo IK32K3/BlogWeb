@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
-<div class="bg-gray-200 min-h-screen flex flex-col mt-16">
+<div class="bg-gray-300 min-h-screen flex flex-col mt-16">
     <main class="flex-1 flex items-center justify-center py-10">
         <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg overflow-hidden">
             <div class="px-8 py-6 border-b border-gray-100">
@@ -7,7 +7,7 @@
 
                 <div class="flex flex-col md:flex-row gap-6 mt-4">
                     <div class="flex-1 min-w-[200px]">
-                        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <label for="category" class="block text-lg font-medium text-gray-700 mb-2">Category</label>
                         <div class="relative">
                             <input type="text" [(ngModel)]="selectedCategoryName" id="category-search" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
                                 placeholder="Search or select a category" (focus)="showCategoryOptions()" (input)="filterCategoryOptions($event)" (blur)="hideCategoryOptionsWithDelay()">
@@ -20,18 +20,9 @@
                     </div>
 
                     <div class="flex-1 min-w-[200px]">
-                        <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
-                        <div class="flex flex-wrap items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent bg-white">
-                            <div id="tag-container" class="flex flex-wrap gap-2">
-                                <div *ngFor="let tag of post.tags" class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full flex items-center gap-2">
-                                    {{ tag }}
-                                    <span class="text-indigo-400 hover:text-indigo-600 cursor-pointer" (click)="removeTag(tag)">
-                                        <i class="fas fa-times text-xs"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <input type="text" [(ngModel)]="newTag" class="flex-1 min-w-[100px] outline-none bg-transparent" placeholder="Add tags (press Enter)" (keydown.enter)="addTag()">
-                        </div>
+                        <label for="description" class="block text-lg font-medium text-gray-700 mb-2">Description</label>
+                        <textarea [(ngModel)]="post.description" id="description" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
+                                  placeholder="Enter a brief description for your post"></textarea>
                     </div>
                 </div>
             </div>
@@ -41,7 +32,7 @@
                     class="my-6 border-2 border-dashed border-gray-400 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-300 hover:bg-gray-50 transition-colors"
                     (click)="triggerFileInput()"
                     >
-                    <label for="featured image" class="block text-sm font-medium text-gray-700 mb-2">featured image</label>
+                    <label for="featured image" class="block text-lg font-medium text-gray-700 mb-2">featured image</label>
                     <ng-container *ngIf="!imageSelected">
                         <i class="fas fa-cloud-upload-alt text-indigo-400 text-4xl mb-3"></i>
                         <p class="text-gray-600 font-medium">
@@ -53,11 +44,17 @@
                     </ng-container>
 
                     <ng-container *ngIf="imageSelected">
-                        <img
-                        [src]="imagePreview"
-                        alt="Preview"
-                        class="mx-auto w-full object-contain mb-4 rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors"
-                        />
+                        <div class="relative">
+                            <img
+                            [src]="imagePreview"
+                            alt="Preview"
+                            class="mx-auto w-full object-contain mb-4 rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors"
+                            />
+                            <div class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-sm flex items-center gap-1">
+                                <i class="fas fa-check"></i>
+                                <span>Uploaded</span>
+                            </div>
+                        </div>
                         
                         <button
                         class="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"

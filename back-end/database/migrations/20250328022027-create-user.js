@@ -36,6 +36,10 @@ module.exports = {
         type: Sequelize.TEXT('long'),
         allowNull: false
       },
+      avatar : {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -57,16 +61,14 @@ module.exports = {
   
   async down(queryInterface, Sequelize) {
     
+    await queryInterface.removeConstraint('post_translate_languages', 'post_translate_languages_post_id_fkey');
     await queryInterface.dropTable('post_translate_languages');
-    await queryInterface.dropTable('post_media');
     await queryInterface.dropTable('comments');
     await queryInterface.dropTable('setting');
     
     // Xóa các bảng khác có phụ thuộc
     await queryInterface.dropTable('posts');
-    await queryInterface.dropTable('categories');
-    await queryInterface.dropTable('user_media');
-    
+    await queryInterface.dropTable('categories');   
     // Cuối cùng mới xóa bảng users
     await queryInterface.dropTable('users');
     

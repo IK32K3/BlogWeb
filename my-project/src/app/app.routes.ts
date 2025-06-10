@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { PostDetailComponent } from './blog/post-detail/post-detail.component';
 
 export const routes: Routes = [
   {
@@ -12,6 +13,10 @@ export const routes: Routes = [
   {
     path: 'blog',
     loadChildren: () => import('./blog/blog.routes').then(m => m.routes)
+  },
+  {
+    path: 'posts/:id',
+    component: PostDetailComponent
   },
   {
     path: 'profile',

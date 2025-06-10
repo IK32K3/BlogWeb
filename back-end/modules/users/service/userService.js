@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
 const db = require('models');
-const { User, Role, Setting, UserMedia, Media } = db;
+const { User, Role, Setting } = db;
 const { config } = require('configs');
 
 const userService = {
@@ -80,15 +80,6 @@ const userService = {
           as: 'settings',
           attributes: ['id', 'settings']
         },
-        {
-          model: UserMedia,
-          as: 'userMedia',
-          include: [{
-            model: Media,
-            as: 'media',
-            attributes: ['id', 'name', 'url', 'type']
-          }]
-        }
       ],
       attributes
     });
@@ -276,15 +267,6 @@ const userService = {
             as: 'settings',
             attributes: ['id', 'settings']
           },
-          {
-            model: UserMedia,
-            as: 'userMedia',
-            include: [{
-              model: Media,
-              as: 'media',
-              attributes: ['id', 'name', 'url', 'type']
-            }]
-          }
         ],
         attributes: { exclude: ['password'] }
       });
