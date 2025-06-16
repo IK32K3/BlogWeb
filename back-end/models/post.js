@@ -72,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     thumbnail: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     },
     status: {
       type: DataTypes.ENUM('draft', 'published', 'archived'), // Có thể thêm các trạng thái khác nếu cần

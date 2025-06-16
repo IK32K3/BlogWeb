@@ -9,5 +9,5 @@ export const routes: Routes = [
     { path: 'post-detail/:id', component: PostDetailComponent },
     { path: 'contact-us', component: ContactUsComponent },
     { path: 'update-post/:id', component: UpdatePostComponent},
-    { path: '', redirectTo: 'post-detail', pathMatch: 'full' }
+    { path: '', redirectTo: 'post-detail/:id', pathMatch: 'full' }
 ];

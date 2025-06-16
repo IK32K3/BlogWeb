@@ -18,6 +18,7 @@
             </div>
             <div *ngIf="!isLoading && !error && posts.length > 0" class="space-y-5">
               <div *ngFor="let post of posts" class="post-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg">
+                <a [routerLink]="['/post', post.slug || post.id]">
                   <div class="flex flex-col md:flex-row">
                       <img [src]="getPostImageUrl(post)" alt="Ảnh bài viết" class="w-full md:w-52 h-48 md:h-auto object-cover flex-shrink-0" />
                       <div class="p-5 flex flex-col flex-grow">
@@ -29,7 +30,7 @@
                           <span class="text-xs text-gray-500"><i class="far fa-comment mr-1"></i> {{ post.comments || 0 }}</span>
                           </div>
                           <h3 class="text-lg font-bold mb-2 leading-tight">
-                          <a href="#" class="text-gray-800 hover:text-blue-600 transition duration-200">{{ post.title }}</a>
+                          <a [routerLink]="[]" class="text-gray-800 hover:text-blue-600 transition duration-200">{{ post.title }}</a>
                           </h3>
                           <p class="text-sm text-gray-600 mb-3 flex-grow">{{ post.description }}</p>
                           <div class="flex items-center justify-between text-xs mt-auto pt-3 border-t border-gray-100">
@@ -46,6 +47,7 @@
                           </div>
                       </div>
                   </div>
+                </a>
               </div>
             </div>
             <div *ngIf="!isLoading && !error && posts.length === 0" class="text-center py-12">

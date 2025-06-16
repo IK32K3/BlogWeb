@@ -45,22 +45,12 @@ export class HeroSectionComponent implements OnInit, OnDestroy {
         const posts: Post[] = res?.data?.posts || [];
         this.slides = posts.map((post: Post): Slide => {
           console.log('created_at:', post.created_at);
+          
           let imageUrl = this.DEFAULT_POST_IMAGE;
-          if (post.postUploads && post.postUploads.length > 0) {
-            // Ưu tiên ảnh featured và là image
-            const featured = post.postUploads.find(pm =>
-              pm.is_featured && pm.file?.type === 'image'
-            );
-            if (featured && featured.file?.url) {
-              imageUrl = featured.file.url;
-            } else {
-              // Nếu không có, lấy ảnh đầu tiên là image
-              const firstImage = post.postUploads.find(pm => pm.file?.type === 'image');
-              if (firstImage && firstImage.file?.url) {
-                imageUrl = firstImage.file.url;
-              }
-            }
+          if (post.thumbnail) {
+            imageUrl = post.thumbnail;
           }
+          
           return {
             image: imageUrl,
             title: post.title || 'No Title',

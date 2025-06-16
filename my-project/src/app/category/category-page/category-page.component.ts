@@ -263,6 +263,11 @@ export class CategoryPageComponent implements OnInit {
   }
 
   getPostImageUrl(post: Post): string {
+    // Ưu tiên sử dụng thumbnail nếu có
+    if (post.thumbnail) {
+      return post.thumbnail;
+    }
+    // Nếu không có thumbnail, tìm ảnh featured từ postUploads
     const featuredMedia = post.postUploads?.find(media => media.is_featured);
     return featuredMedia?.file?.url || DEFAULT_POST_IMAGE;
   }

@@ -10,17 +10,30 @@ class UploadService {
    * @returns {Object} - Thông tin file đã upload
    */
   processCloudinaryUpload(file, options = {}) {
-    return {
-      url: file.path,
-      publicId: file.filename,
-      originalName: file.originalname,
-      size: file.size,
-      format: path.extname(file.originalname).replace('.', ''),
-      type: options.type || 'image',
-      width: file.width,
-      height: file.height,
-      createdAt: new Date()
-    };
+    try {
+      // Kiểm tra file có đúng định dạng không
+      if (!file || !file.path) {
+        throw new Error('File không hợp lệ');
+      }
+
+      // Xử lý URL Cloudinary
+      const cloudinaryUrl = file.path;
+      const publicId = file.filename;
+
+      return {
+        url: cloudinaryUrl,
+        publicId: publicId,
+        originalName: file.originalname,
+        size: file.size,
+        format: path.extname(file.originalname).replace('.', ''),
+        type: options.type || 'image',
+        width: file.width,
+        height: file.height,
+        createdAt: new Date()
+      };
+    } catch (error) {
+      throw new Error(`Lỗi xử lý file Cloudinary: ${error.message}`);
+    }
   }
 
   /**
@@ -54,7 +67,15 @@ class UploadService {
    * @returns {Array} - Mảng thông tin các file đã upload
    */
   processMultipleCloudinaryUploads(files, options = {}) {
-    return files.map(file => this.processCloudinaryUpload(file, options));
+    try {
+      if (!Array.isArray(files)) {
+        throw new Error('Files phải là một mảng');
+      }
+
+      return files.map(file => this.processCloudinaryUpload(file, options));
+    } catch (error) {
+      throw new Error(`Lỗi xử lý nhiều file Cloudinary: ${error.message}`);
+    }
   }
 
   /**
@@ -94,6 +115,10 @@ class UploadService {
    */
   async deleteFromCloudinary(publicId) {
     try {
+      if (!publicId) {
+        throw new Error('Public ID không được để trống');
+      }
+
       const result = await cloudinary.uploader.destroy(publicId);
       return result;
     } catch (error) {
@@ -119,15 +144,62 @@ class UploadService {
   }
 
   /**
-   * Xử lý upload từ editor
+   * Xử lý upload từ editor (QuillJS)
    * @param {Object} file - File đã được upload
    * @returns {Object} - Thông tin file cần trả về cho editor
    */
   processEditorUpload(file) {
-    return {
-      url: file.path,
-      alt: file.originalname
-    };
+    try {
+      if (!file || !file.path) {
+        throw new Error('File không hợp lệ');
+      }
+
+      return {
+        url: file.path,
+        alt: file.originalname,
+        name: file.originalname,
+        size: file.size,
+        type: file.mimetype
+      };
+    } catch (error) {
+      throw new Error(`Lỗi xử lý file editor: ${error.message}`);
+    }
+  }
+
+  /**
+   * Kiểm tra file có tồn tại trên Cloudinary không
+   * @param {String} publicId - Public ID của file
+   * @returns {Promise<Boolean>} - Kết quả kiểm tra
+   */
+  async checkFileExists(publicId) {
+    try {
+      const result = await cloudinary.api.resource(publicId);
+      return !!result;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Lấy thông tin file từ Cloudinary
+   * @param {String} publicId - Public ID của file
+   * @returns {Promise<Object>} - Thông tin file
+   */
+  async getFileInfo(publicId) {
+    try {
+      const result = await cloudinary.api.resource(publicId);
+      return {
+        url: result.secure_url,
+        publicId: result.public_id,
+        format: result.format,
+        size: result.bytes,
+        width: result.width,
+        height: result.height,
+        createdAt: result.created_at
+      };
+    } catch (error) {
+      throw new Error(`Lỗi khi lấy thông tin file: ${error.message}`);
+    }
   }
 }
 

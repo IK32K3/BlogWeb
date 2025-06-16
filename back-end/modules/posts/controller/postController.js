@@ -178,7 +178,25 @@ class PostController {
       
       // Tách dữ liệu
       const { translations, ...postData } = req.body;
-      const thumbnailFile = req.file; // Sử dụng req.file nếu chỉ upload 1 ảnh
+      
+      // Kiểm tra thumbnail file
+      if (!req.files || !req.files.thumbnail || !req.files.thumbnail[0]) {
+        return responseUtils.badRequest(res, 'Thumbnail image file is required');
+      }
+
+      const thumbnailFile = req.files.thumbnail[0];
+
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+      if (!allowedTypes.includes(thumbnailFile.mimetype)) {
+        return responseUtils.badRequest(res, 'Invalid file type. Only JPEG, PNG, GIF, WEBP and SVG are allowed');
+      }
+
+      // Validate file size (5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (thumbnailFile.size > maxSize) {
+        return responseUtils.badRequest(res, 'File size too large. Maximum size is 5MB');
+      }
 
       // Gán user_id vào dữ liệu post
       postData.user_id = userId;
@@ -215,7 +233,9 @@ class PostController {
       return responseUtils.created(res, post, 'Post created successfully');
     } catch (error) {
       console.error('[PostController.createPost] Error:', error);
-      if (error.message.includes('Invalid translations format')) {
+      if (error.message.includes('Invalid translations format') || 
+          error.message.includes('Thumbnail image is required') ||
+          error.message.includes('Failed to upload thumbnail image')) {
         return responseUtils.badRequest(res, error.message);
       }
       return responseUtils.serverError(res, 'Failed to create post');
@@ -236,7 +256,7 @@ class PostController {
       }
 
       const { translations, ...updateData } = req.body;
-      const thumbnailFile = req.file;
+      const thumbnailFile = req.files && req.files.thumbnail ? req.files.thumbnail[0] : null;
 
       let parsedTranslations = [];
       if (translations) {

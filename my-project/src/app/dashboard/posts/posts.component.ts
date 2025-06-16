@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { HeaderDashboardComponent } from '../../shared/components/header-dashboard/header-dashboard.component';
 import { SidebarDashboardComponent } from '../../shared/components/sidebar-dashboard/sidebar-dashboard.component';
+import { Router } from '@angular/router';
 
 export interface Author {
   name: string;
@@ -80,7 +81,7 @@ export class PostsComponent implements OnInit {
   totalFilteredItems = computed(() => this.filteredPosts().length);
 
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.loadInitialPosts();
@@ -176,8 +177,7 @@ export class PostsComponent implements OnInit {
   }
 
   editPost(post: Post): void {
-    console.log('Edit post:', post);
-    // Implement edit logic
+    this.router.navigate(['/blog/update-post', post.id]);
   }
 
   deletePost(post: Post): void {

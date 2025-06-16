@@ -7,6 +7,7 @@ export interface Category {
 export interface User {
   id: number;
   username: string;
+  email: string;
   name?: string;
   avatar?: string;
 }
@@ -52,9 +53,9 @@ export interface Comment {
   id: number;
   post_id: number;
   user_id: number;
-  text: string;
-  created_at: string;
-  updated_at: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
   user?: User;
 }
 

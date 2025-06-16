@@ -33,9 +33,9 @@ export class NavBarComponent implements OnInit {
     { path: '/category', label: 'Category' },
     { path: '/blog/write-post', label: 'Write' },
     { path: '/blog/contact-us', label: 'Contact Us' },
-    { path: '/settings', label: 'Settings' },
-    { path: '#', label: 'About Us' },
-    { path: '#', label: 'Help' },
+    { path: '/dashboard/settings', label: 'Settings' },
+    { path: '/home/about-page', label: 'About Us' },
+    { path: '/dashboard/dashboard-blogger', label: 'Dashboard' },
     { path: '/home/introduce-page', label: 'Log out' }
   ];
 

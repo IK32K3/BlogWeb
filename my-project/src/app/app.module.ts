@@ -10,10 +10,6 @@ import { ToastrModule } from 'ngx-toastr';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 @NgModule({
-  declarations: [
-    
-      // Đảm bảo khai báo ở đây
-  ],
   imports: [BrowserModule,
     AppRoutingModule,
     FormsModule ,
@@ -35,4 +31,7 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
   ],
   bootstrap: [],
 })
-export class AppModule { }
+export class AppModule {
+  constructor() {
+  }
+}

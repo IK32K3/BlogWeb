@@ -48,16 +48,9 @@ export class PostCardComponent implements OnInit {
   }
 
   getPostImage(post: Post): string {
-    // Ưu tiên lấy ảnh featured từ postUploads nếu có
-    if (post.postUploads && post.postUploads.length > 0) {
-      const featured = post.postUploads.find(pm => pm.is_featured && pm.file?.type === 'image');
-      if (featured && featured.file?.url) {
-        return featured.file.url;
-      }
-      const firstImage = post.postUploads.find(pm => pm.file?.type === 'image');
-      if (firstImage && firstImage.file?.url) {
-        return firstImage.file.url;
-      }
+    // Ưu tiên lấy ảnh thumbnail từ trường 'thumbnail' của post
+    if (post.thumbnail) {
+      return post.thumbnail;
     }
     return this.DEFAULT_IMAGE;
   }

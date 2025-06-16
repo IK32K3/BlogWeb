@@ -31,11 +31,11 @@ export class SidebarDashboardComponent implements OnInit, OnDestroy {
   navItems: NavItem[] = [
     { path: '/dashboard/overview', icon: 'fas fa-chart-pie', label: 'Overview', exact: true },
     { path: 'dashboard/posts', icon: 'fas fa-newspaper', label: 'Posts', badge: 12, exact: true },
-    { path: '/media', icon: 'fas fa-image', label: 'Media Library', exact: true },
+    { path: '/dashboard/media', icon: 'fas fa-image', label: 'Media Library', exact: true },
     { path: '/audience', icon: 'fas fa-users', label: 'Audience', exact: true },
     { isSettingsHeader: true, settingsLabel: 'Settings' },
-    { path: '/profile', icon: 'fas fa-user-cog', label: 'Profile', exact: true },
-    { path: '/settings', icon: 'fas fa-sliders-h', label: 'Settings', exact: true },
+    { path: '/dashboard/profile', icon: 'fas fa-user-cog', label: 'Profile', exact: true },
+    { path: '/dashboard/settings', icon: 'fas fa-sliders-h', label: 'Settings', exact: true },
     { path: '/help', icon: 'fas fa-question-circle', label: 'Help Center', exact: true },
   ];
 

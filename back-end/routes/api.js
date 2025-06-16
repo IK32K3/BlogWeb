@@ -92,13 +92,13 @@ router.group("/posts", (router) => {
     router.get("/my", validate(getMyPostsValidation), postController.getMyPosts);
     router.post("/", 
       middlewares([isBlogOwnerRole]), 
-      uploadMiddleware.uploadMultipleImages,
+      uploadMiddleware.uploadFields,
       validate(createPostValidation), 
       postController.createPost
     );
     router.put("/:id", 
       middlewares([isResourceOwner(Post)]), 
-      uploadMiddleware.uploadMultipleImages,
+      uploadMiddleware.uploadFields,
       validate(updatePostValidation), 
       postController.updatePost
     );
@@ -112,14 +112,18 @@ router.group("/posts", (router) => {
   router.get("/categories/:categoryId", validate(getPostsByCategoryValidation), postController.getPostsByCategory);
   router.get("/author/:userId", validate(getPostsByAuthorValidation), postController.getPostsByAuthor);
   router.get("/:id", validate(getPostByIdValidation), postController.getPostById);
+
+  // ===== Comment Routes (Nested under posts) =====
+  router.get("/:postId/comments", validate(getCommentsByPostValidation), commentController.getCommentsByPost);
+  router.post("/:postId/comments", middlewares([authenticated]), validate(addCommentValidation), commentController.addComment);
 });
 
-// ===== Comment Routes =====
+// ===== Comment Routes (Removed post-related routes)
 router.group("/comments", (router) => {
-  router.get("/post/:postId", validate(getCommentsByPostValidation), commentController.getCommentsByPost);
+  // router.get("/post/:postId", validate(getCommentsByPostValidation), commentController.getCommentsByPost); // Moved to /posts/:postId/comments
 
   router.group("/", middlewares([authenticated]), (router) => {
-    router.post("/post/:postId", validate(addCommentValidation), commentController.addComment);
+    // router.post("/post/:postId", validate(addCommentValidation), commentController.addComment); // Moved to /posts/:postId/comments
     router.get("/my", validate(getMyCommentsValidation), commentController.getMyComments);
     router.put("/:commentId", middlewares([isResourceOwner(Comment)]), validate(updateCommentValidation), commentController.updateComment);
     router.delete("/:commentId", middlewares([isResourceOwner(Comment)]), commentController.deleteComment);
@@ -178,6 +182,7 @@ router.group("/uploads", (router) => {
     validate(deleteFileValidation),
     uploadController.deleteUploadedFile
   );
+
 });
 
 // ===== Contact Routes =====

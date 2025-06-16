@@ -1,34 +1,42 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Comment, CommentDto } from '../../shared/model/comment.model';
+import { Comment, CreateCommentDto ,UpdateCommentDto } from '../../shared/model/comment.model';
+import { API_BASE, POST_API } from '../constants/api-endpoints';
+import { User } from '../../shared/model/user.model';
+
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommentsService {
-  private API_URL = '/api/comments';
+  private API_URL = `${API_BASE}/comments`;
 
   constructor(private http: HttpClient) {}
 
   // Lấy comment của 1 post
   getCommentsByPost(postId: number, page: number = 1, limit: number = 20): Observable<{ comments: Comment[], pagination: any }> {
     return this.http.get<{ comments: Comment[], pagination: any }>(
-      `${this.API_URL}/post/${postId}?page=${page}&limit=${limit}`
+      `${POST_API.GET_COMMENTS(postId)}?page=${page}&limit=${limit}`
     );
   }
 
   // Thêm comment vào 1 post
-  addComment(postId: number, dto: CommentDto): Observable<{ message: string, comment: Comment }> {
-    return this.http.post<{ message: string, comment: Comment }>(
-      `${this.API_URL}/post/${postId}`, dto
+  addComment(postId: number, dto: CreateCommentDto): Observable<{ message: string, comment: Comment, user: User }> {
+    return this.http.post<{ message: string, comment: Comment, user: User }>(
+      POST_API.ADD_COMMENT(postId), dto
     );
   }
 
   // Sửa comment
-  updateComment(commentId: number, content: string): Observable<{ message: string, comment: Comment }> {
+  updateComment(commentId: number, dto: UpdateCommentDto): Observable<{ message: string, comment: Comment }> {
     return this.http.put<{ message: string, comment: Comment }>(
-      `${this.API_URL}/${commentId}`, { content }
+      `${this.API_URL}/${commentId}`,  dto 
     );
   }
 

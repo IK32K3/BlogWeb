@@ -75,8 +75,8 @@ export class WritePostComponent implements OnInit {
   loadPost(id: number) {
     this.blogPostService.getById(id).subscribe({
       next: (response) => {
-        if (response.success && response.data) {
-          const post: Post = response.data;
+        if (response.success && response.data?.post) {
+          const post: Post = response.data.post;
           this.post = {
             title: post.title,
             content: post.content,

@@ -1,5 +1,6 @@
 const { processCloudinaryUpload, processMultipleCloudinaryUploads, processEditorUpload, deleteFromCloudinary } = require('../service/uploadService');
 const responseUtils = require('../../../utils/responseUtils');
+const uploadService = require('../service/uploadService');
 
 class UploadController {
   /**
@@ -13,7 +14,7 @@ class UploadController {
         return responseUtils.badRequest(res, 'No file uploaded');
       }
 
-      const result = await processCloudinaryUpload(req.file);
+      const result = await uploadService.processCloudinaryUpload(req.file, { type: 'avatar' });
       return responseUtils.success(res, result, 'File uploaded successfully');
     } catch (error) {
       console.error('[UploadController.uploadSingleImage] Error:', error);
@@ -32,7 +33,7 @@ class UploadController {
         return responseUtils.badRequest(res, 'No files uploaded');
       }
 
-      const results = await processMultipleCloudinaryUploads(req.files);
+      const results = await uploadService.processMultipleCloudinaryUploads(req.files, { type: 'gallery' });
       return responseUtils.success(res, results, 'Files uploaded successfully');
     } catch (error) {
       console.error('[UploadController.uploadMultipleImages] Error:', error);
@@ -51,8 +52,8 @@ class UploadController {
         return responseUtils.badRequest(res, 'No file uploaded');
       }
 
-      const result = await processEditorUpload(req.file);
-      return responseUtils.success(res, result, 'File uploaded successfully');
+      const editorData = await uploadService.processEditorUpload(req.file);
+      return responseUtils.success(res, editorData, 'File uploaded successfully');
     } catch (error) {
       console.error('[UploadController.uploadEditorImage] Error:', error);
       return responseUtils.error(res, error, 'Failed to upload file');
@@ -72,9 +73,11 @@ class UploadController {
         return responseUtils.badRequest(res, 'Public ID is required');
       }
 
-      const result = await deleteFromCloudinary(publicId);
+      const result = await uploadService.deleteFromCloudinary(publicId);
 
       if (result.result === 'ok') {
+        const exists = await uploadService.checkFileExists(publicId);
+        const fileInfo = await uploadService.getFileInfo(publicId);
         return responseUtils.success(res, result, 'File deleted successfully');
       } else {
         return responseUtils.error(res, null, 'Failed to delete file', 400);

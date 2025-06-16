@@ -16,8 +16,10 @@ interface UploadResponse {
 
 interface ApiResponse<T> {
   success: boolean;
-  data: T;
-  message?: string;
+  message: string;
+  data: {
+    post: T;
+  };
 }
 
 @Injectable({
@@ -69,11 +71,11 @@ export class BlogPostService {
   /**
    * Cập nhật thông tin bài viết
    * @param id - ID của bài viết
-   * @param data - Dữ liệu bài viết
+   * @param data - Dữ liệu bài viết (có thể là PostDto hoặc FormData)
    * @returns Observable - Dữ liệu bài viết đã cập nhật
    */
-  update(id: number | string, data: PostDto): Observable<any> {
-    return this.http.put(POST_API.GET_BY_ID(id), data);
+  update(id: number | string, data: PostDto | FormData): Observable<ApiResponse<Post>> {
+    return this.http.put<ApiResponse<Post>>(POST_API.GET_BY_ID(id), data);
   }
 
   // ============================================
@@ -150,8 +152,8 @@ export class BlogPostService {
    * Lấy danh sách bài viết của người dùng hiện tại
    * @returns Observable - Dữ liệu bài viết
    */
-  getMyPosts(): Observable<ApiResponse<{ posts: Post[] }>> {
-    return this.http.get<ApiResponse<{ posts: Post[] }>>(POST_API.GET_MY).pipe(
+  getMyPosts(): Observable<{ success: boolean, message: string, data: { posts: Post[], pagination: any } }> {
+    return this.http.get<{ success: boolean, message: string, data: { posts: Post[], pagination: any } }>(POST_API.GET_MY).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('Get my posts error:', error);
         return throwError(() => new Error(error.error?.message || 'Failed to get my posts'));

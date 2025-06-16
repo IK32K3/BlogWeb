@@ -195,22 +195,29 @@ class postService {
    * @param {Array} translations - Mảng các bản dịch.
    * @param {object} thumbnailFile - File thumbnail từ multer.
    */
-  async createPost(postData, translations = [], thumbnailFile = null) {
+  async createPost(postData, translations = [], thumbnailFile) {
     const transaction = await Post.sequelize.transaction();
     try {
       const { title, content, description, category_id, status = 'draft', user_id } = postData;
 
-      // 1. Upload thumbnail lên Cloudinary nếu có
-      let thumbnailUrl = null;
-      if (thumbnailFile) {
-        const uploadedImage = await uploadToCloudinary(thumbnailFile.path, 'posts');
-        thumbnailUrl = uploadedImage.secure_url;
+      // Kiểm tra thumbnail file
+      if (!thumbnailFile || !thumbnailFile.path) {
+        throw new Error('Thumbnail image file is required');
       }
       
-      // 2. Tạo slug
+      // Thumbnail đã được multer-storage-cloudinary upload lên Cloudinary rồi
+      // Nên chúng ta chỉ cần lấy URL và public_id từ đối tượng thumbnailFile
+      const thumbnailUrl = thumbnailFile.path; // Đây chính là secure_url từ Cloudinary
+      // const publicId = thumbnailFile.filename; // Nếu cần lưu public_id
+
+      if (!thumbnailUrl) {
+        throw new Error('Failed to get uploaded image URL from thumbnail file.');
+      }
+      
+      // Tạo slug
       const slug = await this._generateUniqueSlug(title);
       
-      // 3. Tạo bài viết trong transaction
+      // Tạo bài viết trong transaction
       const post = await Post.create({
         title,
         content,
@@ -222,7 +229,7 @@ class postService {
         thumbnail: thumbnailUrl // Lưu URL của ảnh
       }, { transaction });
 
-      // 4. Thêm các bản dịch nếu có
+      // Thêm các bản dịch nếu có
       if (translations.length > 0) {
         await this._addPostTranslations(post.id, translations, transaction);
       }
@@ -249,12 +256,20 @@ class postService {
             throw new Error('Unauthorized to update this post');
         }
 
-        // 1. Cập nhật thumbnail nếu có file mới
-        let thumbnailUrl = post.thumbnail;
+        let thumbnailUrl = post.thumbnail; // Mặc định là ảnh thumbnail hiện tại của bài viết
+
+        // Trường hợp 1: Có file thumbnail mới được upload (thông qua multer-storage-cloudinary)
         if (thumbnailFile) {
-            const uploadedImage = await uploadToCloudinary(thumbnailFile.path, 'posts');
-            thumbnailUrl = uploadedImage.secure_url;
+            // Lấy URL trực tiếp từ đối tượng thumbnailFile đã được multer xử lý
+            thumbnailUrl = thumbnailFile.path; // Đây là secure_url từ Cloudinary
+            // Nếu cần xóa ảnh cũ trên Cloudinary, bạn có thể thêm logic ở đây bằng public_id của ảnh cũ
+        } else if ('thumbnail' in updateData) {
+            // Trường hợp 2: Frontend có gửi trường 'thumbnail' trong updateData
+            // Điều này có thể là null (nếu người dùng xóa ảnh) hoặc là URL ảnh cũ
+            thumbnailUrl = updateData.thumbnail; // Sử dụng giá trị từ updateData
         }
+        // Xóa thuộc tính thumbnail khỏi updateData để nó không ghi đè lẫn lộn với thumbnailUrl
+        delete updateData.thumbnail;
 
         // 2. Cập nhật slug nếu tiêu đề thay đổi
         if (updateData.title && updateData.title !== post.title) {
@@ -264,7 +279,7 @@ class postService {
         // 3. Cập nhật dữ liệu chính của bài viết
         await post.update({
             ...updateData,
-            thumbnail: thumbnailUrl
+            thumbnail: thumbnailUrl // Lưu URL của ảnh (mới, cũ, hoặc null)
         }, { transaction });
 
         // 4. Cập nhật bản dịch (xóa cũ, thêm mới hoặc update)

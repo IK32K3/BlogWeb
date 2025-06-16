@@ -46,13 +46,16 @@ export const POST_API = {
   GET_BY_CATEGORY: (categoryId: string | number) => `${API_BASE}/posts/categories/${categoryId}`,
   GET_BY_AUTHOR: (userId: string | number) => `${API_BASE}/posts/author/${userId}`,
   GET_BY_ID: (id: string | number) => `${API_BASE}/posts/${id}`,
+  GET_COMMENTS: (postId: string | number) => `${API_BASE}/posts/${postId}/comments`,
+  ADD_COMMENT: (postId: string | number) => `${API_BASE}/posts/${postId}/comments`,
 };
 
-// Đường dẫn API cho bình luận
+// Đường dẫn API cho bình luận (old routes, will be removed or refactored if needed)
 export const COMMENT_API = {
   BASE: `${API_BASE}/comments`,
-  GET_BY_POST: (postId: string | number) => `${API_BASE}/comments/post/${postId}`,
-  ADD_TO_POST: (postId: string | number) => `${API_BASE}/comments/post/${postId}`,
+  // These will be deprecated/removed if not used elsewhere
+  // GET_BY_POST: (postId: string | number) => `${API_BASE}/comments/post/${postId}`,
+  // ADD_TO_POST: (postId: string | number) => `${API_BASE}/comments/post/${postId}`,
   GET_MY: `${API_BASE}/comments/my`,
   UPDATE: (commentId: string | number) => `${API_BASE}/comments/${commentId}`,
   DELETE: (commentId: string | number) => `${API_BASE}/comments/${commentId}`,

@@ -12,6 +12,7 @@ import { throwError } from 'rxjs';
 import { SharedModule } from '../../shared/shared.module';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-profile-user',
@@ -37,15 +38,29 @@ export class ProfileUserComponent implements OnInit {
     private usersService: UsersService,
     private blogPostService: BlogPostService,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
-    this.fetchUserProfile();
-    this.fetchUserPosts();
+    this.authService.isLoggedIn$.subscribe(loggedIn => {
+      if (!loggedIn) {
+        this.router.navigate(['/auth/login']);
+      } else {
+        this.fetchUserProfile();
+        this.fetchUserPosts();
+      }
+    });
   }
 
   fetchUserProfile(): void {
+    // Ensure user is authenticated before attempting to fetch profile
+    if (!this.authService.isAuthenticated()) {
+      this.error = 'Authentication required to load profile.';
+      this.isLoading = false;
+      return;
+    }
+
     this.isLoading = true;
     this.usersService.getProfile().pipe(
       catchError((error) => {
@@ -70,6 +85,13 @@ export class ProfileUserComponent implements OnInit {
   }
 
   fetchUserPosts(): void {
+    // Ensure user is authenticated before attempting to fetch posts
+    if (!this.authService.isAuthenticated()) {
+      this.error = 'Authentication required to load your posts.';
+      this.isLoading = false;
+      return;
+    }
+
     this.isLoading = true;
     this.blogPostService.getMyPosts().pipe(
       catchError((error) => {
@@ -79,7 +101,7 @@ export class ProfileUserComponent implements OnInit {
         return throwError(() => error);
       })
     ).subscribe(response => {
-      if (response.success && response.data && response.data.posts) {
+      if (response.success && response.data?.posts) {
         this.userPosts = response.data.posts;
       }
       this.isLoading = false;
