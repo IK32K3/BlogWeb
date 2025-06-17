@@ -17,7 +17,7 @@
     'lg:translate-x-0': true,
     'lg:static': true
   }"
-  class="fixed inset-y-0 left-0 z-20 w-64 transform overflow-y-auto bg-white border-r border-gray-200 transition-transform duration-200 ease-in-out"
+  class="fixed inset-y-0 left-0 z-20 w-64 transform overflow-y-auto bg-gray-100 border-r border-gray-200 transition-transform duration-200 ease-in-out"
 >
   <!-- Các comment HTML có thể đặt ở đây nếu muốn giải thích -->
   <!-- 'translate-x-0': Mở nếu sidebarOpen là true -->
@@ -66,10 +66,27 @@
     <!-- User profile mini -->
     <div class="mt-auto pt-6">
       <div class="flex items-center gap-3 rounded-lg p-3 hover:bg-gray-50">
-        <img class="h-9 w-9 rounded-full object-cover" [src]="user.avatarUrl" [alt]="user.name + ' avatar'">
+        <img 
+          class="h-9 w-9 rounded-full object-cover" 
+          [src]="currentUser?.avatar || 'assets/images/default-avatar.png'" 
+          [alt]="currentUser?.username + ' avatar'"
+        >
         <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium text-gray-900 truncate">{{ user.name }}</p>
-          <p class="text-xs text-gray-500 truncate">{{ user.role }}</p>
+          <p class="text-sm font-medium text-gray-900 truncate">{{ currentUser?.username || 'Loading...' }}</p>
+          <p class="text-xs text-gray-500 truncate">
+            <span
+              class="role-badge inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+              [ngClass]="{
+                'bg-blue-100 text-blue-800': currentUser?.role?.name === 'admin',
+                'bg-green-100 text-green-800': currentUser?.role?.name === 'user',
+                'bg-purple-100 text-purple-800': currentUser?.role?.name === 'editor',
+                'bg-gray-100 text-gray-800': !currentUser?.role?.name
+              }"
+            >
+              <i class="fas fa-user-shield mr-1"></i>
+              {{ currentUser?.role?.name?.toUpperCase() || 'USER' }}
+            </span>
+          </p>
         </div>
         <button class="text-gray-400 hover:text-gray-500" aria-label="User options">
           <i class="fas fa-ellipsis-vertical"></i>

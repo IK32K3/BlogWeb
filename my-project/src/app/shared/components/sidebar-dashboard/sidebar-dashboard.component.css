@@ -25,18 +25,35 @@
 
 /* Trong sidebar-dashboard.component.css hoặc styles.css toàn cục */
 .sidebar-item.active-sidebar-item {
-  @apply text-indigo-600 bg-indigo-50; /* Tailwind classes cho item active */
-  /* font-weight: 600; */ /* Tùy chọn: làm chữ đậm hơn */
+  color: #4f46e5;         /* text-indigo-600 */
+  background-color: #eef2ff;  /* bg-indigo-50 */
+  /* font-weight: 600; */ /* Nếu muốn chữ đậm, bạn có thể mở dòng này */
 }
 
 .sidebar-item.active-sidebar-item i {
-  @apply text-indigo-600; /* Đảm bảo icon cũng có màu active */
+  color: #4f46e5;         /* text-indigo-600 cho icon */
 }
 
-/* CSS cơ bản cho sidebar-item (màu chữ khi không active và hover) */
 .sidebar-item {
-  @apply text-gray-600;
+  color: #4b5563;         /* text-gray-600 */
 }
+
 .sidebar-item:hover {
-  @apply text-indigo-600 bg-gray-100;
+  color: #4f46e5;         /* text-indigo-600 */
+  background-color: #f3f4f6; /* bg-gray-100 */
+}
+
+#sidebar {
+  height: 100vh;
+  min-height: 100%;
+}
+
+/* Giới hạn chiều rộng badge role và tự động xuống dòng hoặc ẩn phần dư */
+.role-badge {
+  max-width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
 }

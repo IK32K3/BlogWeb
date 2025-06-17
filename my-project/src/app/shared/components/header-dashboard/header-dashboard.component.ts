@@ -1,24 +1,80 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { User } from '../../model/user.model';
+import { AuthService } from '../../../core/services/auth.service';
+import { UsersService } from '../../../core/services/users.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header-dashboard',
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   standalone: true,
   templateUrl: './header-dashboard.component.html',
   styleUrl: './header-dashboard.component.css'
 })
-export class HeaderDashboardComponent {
-dropdownOpen = false;
+export class HeaderDashboardComponent implements OnInit, OnDestroy {
+  dropdownOpen = false;
+  currentUser: User | null = null;
+  private userSubscription: Subscription | null = null;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private usersService: UsersService
+  ) {}
+
+  ngOnInit() {
+    // Subscribe to the current user observable
+    this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
+
+    // If no user is loaded yet, try to load the profile
+    if (!this.currentUser) {
+      this.loadUserProfile();
+    }
+  }
+
+  loadUserProfile() {
+    this.usersService.getProfile().subscribe({
+      next: (response) => {
+        if (response.success && response.data.user) {
+          this.currentUser = response.data.user;
+          this.authService.updateCurrentUser(response.data.user);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading user profile:', error);
+        // If there's an error loading the profile, redirect to login
+        this.router.navigate(['/auth/login']);
+      }
+    });
+  }
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
   }
 
   toggleMobileMenu() {
-    // Xử lý menu mobile nếu có
     console.log("Mobile menu toggled");
+  }
+
+  navigateHome() {
+    this.dropdownOpen = false;
+    this.router.navigate(['/home/home-page']);
+  }
+
+  logout() {
+    this.dropdownOpen = false;
+    this.authService.logout();
+  }
+
+  ngOnDestroy() {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 }
 

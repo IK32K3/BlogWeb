@@ -29,14 +29,14 @@ export class NavBarComponent implements OnInit {
   ];
 
   dropdownItems: NavItem[] = [
-    { path: '/profile/profile-user', label: 'Profile' },
-    { path: '/category', label: 'Category' },
-    { path: '/blog/write-post', label: 'Write' },
-    { path: '/blog/contact-us', label: 'Contact Us' },
-    { path: '/dashboard/settings', label: 'Settings' },
-    { path: '/home/about-page', label: 'About Us' },
-    { path: '/dashboard/dashboard-blogger', label: 'Dashboard' },
-    { path: '/home/introduce-page', label: 'Log out' }
+    { path: '/profile/profile-user', label: 'Profile', icon: 'fas fa-user' },
+    { path: '/category', label: 'Category', icon: 'fas fa-list' },
+    { path: '/blog/write-post', label: 'Write', icon: 'fas fa-pen' },
+    { path: '/blog/contact-us', label: 'Contact Us', icon: 'fas fa-envelope' },
+    { path: '/dashboard/dashboard-setting', label: 'Settings', icon: 'fas fa-cog' },
+    { path: '/home/about-page', label: 'About Us', icon: 'fas fa-info-circle' },
+    { path: '/dashboard/dashboard-main', label: 'Dashboard', icon: 'fas fa-tachometer-alt' },
+    { path: '/home/introduce-page', label: 'Log out', icon: 'fas fa-sign-out-alt' }
   ];
 
   constructor() { }

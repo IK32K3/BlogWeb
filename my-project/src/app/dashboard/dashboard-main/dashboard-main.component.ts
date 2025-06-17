@@ -1,99 +1,108 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnInit } from '@angular/core';
 import { HeaderDashboardComponent } from '../../shared/components/header-dashboard/header-dashboard.component';
 import { SidebarDashboardComponent } from '../../shared/components/sidebar-dashboard/sidebar-dashboard.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterOutlet } from '@angular/router'; // Import RouterOutlet if you need routing in your shared module
-import { Chart } from 'chart.js';
+import { RouterOutlet, Router } from '@angular/router';
+import {
+  Chart,
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  Title,
+  CategoryScale,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
 import { SharedModule } from 'app/shared/shared.module';
+import { HttpClientModule } from '@angular/common/http';
+import { BlogPostService } from 'app/core/services/blog-post.service';
+import { Post } from 'app/shared/model/post.model';
 
+// Đăng ký các thành phần cần thiết cho biểu đồ line
+Chart.register(
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  Title,
+  CategoryScale,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 @Component({
   selector: 'app-dashboard-main',
-  imports: [CommonModule,FormsModule,RouterOutlet,SharedModule],
+  imports: [CommonModule,FormsModule,RouterOutlet,SharedModule,HttpClientModule],
   templateUrl: './dashboard-main.component.html',
   styleUrl: './dashboard-main.component.css'
 })
-export class DashboardMainComponent implements AfterViewInit {
+export class DashboardMainComponent implements AfterViewInit, OnInit {
   username = 'Conan';
-  stats = [
-    {
-      title: 'Total Views',
-      value: '12,458',
-      change: '24.3%',
-      icon: 'fa-eye',
-      progress: 75,
-      goalText: '75% of monthly goal',
-      color: 'indigo'
-    },
-    {
-      title: 'Engagement Rate',
-      value: '42.6%',
-      change: '8.2%',
-      icon: 'fa-heart',
-      progress: 42,
-      goalText: 'Industry avg: 38%',
-      color: 'green'
-    },
-    {
-      title: 'New Subscribers',
-      value: '1,243',
-      change: '15.7%',
-      icon: 'fa-users',
-      progress: 62,
-      goalText: '62% of monthly goal',
-      color: 'blue'
-    },
-    {
-      title: 'Estimated Revenue',
-      value: '$3,245',
-      change: '32.1%',
-      icon: 'fa-dollar-sign',
-      progress: 54,
-      goalText: '54% of monthly goal',
-      color: 'purple'
-    }
-  ];
-
-  topPosts = [
-    { title: 'Getting Started with React Hooks', views: 2456, comments: 84, color: 'indigo' },
-    { title: 'CSS Grid vs Flexbox', views: 1987, comments: 56, color: 'green' },
-    { title: 'JavaScript ES6 Features', views: 1753, comments: 42, color: 'blue' },
-    { title: 'TypeScript Best Practices', views: 1542, comments: 37, color: 'purple' }
-  ];
-
+  stats: any[] = [];
+  topPosts: Post[] = [];
+  posts: Post[] = [];
+  loading = true;
+  error: string | null = null;
   @ViewChild('trafficChart', { static: true }) trafficChartRef!: ElementRef<HTMLCanvasElement>;
   trafficChart: any;
+  subscribeEmail: string = '';
+  subscribeSuccess: boolean = false;
+  subscribeCount: number = 0;
+  isOverviewRoute = false;
 
-  posts = [
-    {
-      title: 'Getting Started with React Hooks',
-      views: '2,456',
-      comments: '84',
-      iconClass: 'bg-indigo-100 text-indigo-600'
-    },
-    {
-      title: 'CSS Grid vs Flexbox',
-      views: '1,987',
-      comments: '56',
-      iconClass: 'bg-green-100 text-green-600'
-    },
-    {
-      title: 'JavaScript ES6 Features',
-      views: '1,753',
-      comments: '42',
-      iconClass: 'bg-blue-100 text-blue-600'
-    },
-    {
-      title: 'TypeScript Best Practices',
-      views: '1,542',
-      comments: '37',
-      iconClass: 'bg-purple-100 text-purple-600'
-    }
-  ];
+  constructor(private blogPostService: BlogPostService, private router: Router) { }
+
+  ngOnInit(): void {
+    this.loadUserPosts();
+    this.router.events.subscribe(() => {
+      // Check if the current route is exactly /dashboard/dashboard-blogger
+      this.isOverviewRoute = this.router.url === '/dashboard/dashboard-blogger';
+    });
+  }
+
+  loadUserPosts() {
+    this.loading = true;
+    this.blogPostService.getMyPosts().subscribe({
+      next: (res) => {
+        this.posts = res.data.posts || [];
+        this.updateStatsAndTopPosts();
+        this.createChart(30);
+        this.loading = false;
+      },
+      error: (error) => {
+        this.error = 'Failed to load posts. Please try again later.';
+        this.loading = false;
+        console.error('Error loading posts:', error);
+      }
+    });
+  }
+
+  updateStatsAndTopPosts() {
+    // Total Views
+    const totalViews = this.posts.reduce((sum, post) => sum + (post.views || 0), 0);
+    // Top 4 posts by views
+    this.topPosts = [...this.posts].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 4);
+    // Update stats
+    this.stats = [
+      {
+        title: 'Total Views',
+        value: totalViews.toLocaleString(),
+        change: '+0%',
+        icon: 'fa-eye',
+        progress: 100,
+        goalText: '',
+        color: 'indigo'
+      },
+      // Các stats khác giữ nguyên hoặc cập nhật nếu có dữ liệu
+    ];
+  }
 
   ngAfterViewInit() {
-    this.createChart(30); // Mặc định là 30 ngày
+    // createChart sẽ được gọi lại sau khi loadUserPosts xong
   }
 
   updateChart(event: Event) {
@@ -102,23 +111,26 @@ export class DashboardMainComponent implements AfterViewInit {
   }
 
   createChart(days: number) {
-    const labels =
-      days === 7
-        ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-        : Array.from({ length: days }, (_, i) => (days === 30 ? `Day ${i + 1}` : `Week ${i + 1}`));
-
-    const pageViews = Array.from({ length: days }, () =>
-      Math.floor(Math.random() * (days === 7 ? 500 : days === 30 ? 1000 : 3000)) + (days === 7 ? 300 : days === 30 ? 500 : 1000)
-    );
-
-    const uniqueVisitors = Array.from({ length: days }, () =>
-      Math.floor(Math.random() * (days === 7 ? 400 : days === 30 ? 800 : 2500)) + (days === 7 ? 200 : days === 30 ? 300 : 800)
-    );
-
+    // Tạo labels cho biểu đồ
+    const labels = Array.from({ length: days }, (_, i) => `Day ${i + 1}`);
+    // Giả lập dữ liệu views mỗi ngày từ các bài viết (nếu có trường viewsByDay thì dùng, nếu không thì chia đều)
+    let pageViews = new Array(days).fill(0);
+    this.posts.forEach(post => {
+      // Nếu có trường viewsByDay thì cộng dồn, nếu không thì chia đều tổng views
+      if ((post as any).viewsByDay && Array.isArray((post as any).viewsByDay)) {
+        (post as any).viewsByDay.slice(0, days).forEach((v: number, idx: number) => {
+          pageViews[idx] += v;
+        });
+      } else {
+        const avg = Math.floor((post.views || 0) / days);
+        for (let i = 0; i < days; i++) pageViews[i] += avg;
+      }
+    });
+    // Unique visitors: giả lập bằng 60% pageViews
+    const uniqueVisitors = pageViews.map(v => Math.floor(v * 0.6));
     if (this.trafficChart) {
-      this.trafficChart.destroy(); // Xoá biểu đồ cũ nếu có
+      this.trafficChart.destroy();
     }
-
     this.trafficChart = new Chart(this.trafficChartRef.nativeElement.getContext('2d')!, {
       type: 'line',
       data: {
@@ -164,7 +176,7 @@ export class DashboardMainComponent implements AfterViewInit {
           y: {
             beginAtZero: true,
             grid: {
-              color: '#e5e7eb', // Chỉnh borderColor hợp lệ
+              color: '#e5e7eb',
             },
           },
           x: {
@@ -176,7 +188,8 @@ export class DashboardMainComponent implements AfterViewInit {
       },
     });
   }
- recentActivities = [
+
+  recentActivities = [
     {
       title: 'New comment on "React Hooks Guide"',
       description: '"Great article! Helped me understand useEffect better." - John Doe',
@@ -198,13 +211,6 @@ export class DashboardMainComponent implements AfterViewInit {
       icon: 'fa-thumbs-up',
       iconClass: 'bg-blue-100 text-blue-600'
     },
-    {
-      title: 'Post shared 18 times',
-      description: '"Getting Started with Next.js" was shared across platforms',
-      timeAgo: '2 days ago',
-      icon: 'fa-share-alt',
-      iconClass: 'bg-purple-100 text-purple-600'
-    }
   ];
 
   quickActions = [
@@ -251,9 +257,20 @@ export class DashboardMainComponent implements AfterViewInit {
     }
   ];
 
-  constructor() { }
+  getPostIconClass(post: Post): string {
+    const colors = ['indigo', 'green', 'blue', 'purple'];
+    const color = colors[post.id % colors.length];
+    return `bg-${color}-100 text-${color}-600`;
+  }
 
-  ngOnInit(): void {
+  onSubscribe() {
+    // Xử lý subscribe (giả lập)
+    this.subscribeSuccess = true;
+    this.subscribeCount++;
+    setTimeout(() => {
+      this.subscribeSuccess = false;
+      this.subscribeEmail = '';
+    }, 2000);
   }
 }
 

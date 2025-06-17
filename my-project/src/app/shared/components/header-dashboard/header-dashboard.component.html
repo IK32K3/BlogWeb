@@ -1,4 +1,4 @@
-<header class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
+<header class="sticky top-0 z-10 bg-gray-100 border-b border-gray-200 shadow-sm">
   <div class="px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 items-center justify-between">
       <!-- Left: Logo & Menu -->
@@ -41,13 +41,13 @@
           >
             <img
               class="h-9 w-9 rounded-full object-cover border-2 border-transparent group-hover:border-indigo-200"
-              src="https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg"
-              alt="User avatar"
+              [src]="currentUser?.avatar || 'assets/images/default-avatar.png'"
+              [alt]="currentUser?.username + ' avatar'"
             />
             <span
               class="hidden lg:inline-flex text-xn font-medium text-gray-700 group-hover:text-indigo-600"
             >
-              Edogawa Conan
+              {{ currentUser?.username || 'Loading...' }}
             </span>
             <i
               class="fas fa-chevron-down hidden lg:inline-flex text-xs text-gray-500 group-hover:text-indigo-600 transition-transform"
@@ -59,23 +59,13 @@
             *ngIf="dropdownOpen"
             class="absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-10"
           >
-            <div class="px-4 py-3 border-b border-gray-100">
-              <p class="text-sm font-medium text-gray-900">Signed in as</p>
-              <p class="text-sm text-gray-500 truncate">conan&#64;detective.com</p>
-            </div>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-              <i class="fas fa-user mr-2 text-gray-400"></i>Your Profile
-            </a>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-              <i class="fas fa-cog mr-2 text-gray-400"></i>Settings
-            </a>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-              <i class="fas fa-chart-line mr-2 text-gray-400"></i>Analytics
-            </a>
+            <button type="button" (click)="navigateHome()" class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              <i class="fas fa-home mr-2 text-gray-400"></i>Back Home
+            </button>
             <div class="border-t border-gray-100"></div>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-              <i class="fas fa-sign-out-alt mr-2 text-gray-400"></i>Sign out
-            </a>
+            <button type="button" (click)="logout()" class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              <i class="fas fa-sign-out-alt mr-2 text-gray-400"></i>Logout
+            </button>
           </div>
         </div>
       </div>

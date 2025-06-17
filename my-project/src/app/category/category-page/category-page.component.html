@@ -18,7 +18,7 @@
             </div>
             <div *ngIf="!isLoading && !error && posts.length > 0" class="space-y-5">
               <div *ngFor="let post of posts" class="post-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg">
-                <a [routerLink]="['/post', post.slug || post.id]">
+                <a [routerLink]="['/posts', post.slug || post.id]">
                   <div class="flex flex-col md:flex-row">
                       <img [src]="getPostImageUrl(post)" alt="Ảnh bài viết" class="w-full md:w-52 h-48 md:h-auto object-cover flex-shrink-0" />
                       <div class="p-5 flex flex-col flex-grow">
@@ -30,17 +30,17 @@
                           <span class="text-xs text-gray-500"><i class="far fa-comment mr-1"></i> {{ post.comments || 0 }}</span>
                           </div>
                           <h3 class="text-lg font-bold mb-2 leading-tight">
-                          <a [routerLink]="[]" class="text-gray-800 hover:text-blue-600 transition duration-200">{{ post.title }}</a>
+                          <a [routerLink]="['/posts', post.slug || post.id]" class="text-gray-800 hover:text-blue-600 transition duration-200">{{ post.title }}</a>
                           </h3>
                           <p class="text-sm text-gray-600 mb-3 flex-grow">{{ post.description }}</p>
                           <div class="flex items-center justify-between text-xs mt-auto pt-3 border-t border-gray-100">
                               <div class="flex items-center gap-2">
-                                  <img [src]="post.author?.avatar || DEFAULT_AUTHOR_IMAGE" alt="Tác giả" class="w-6 h-6 rounded-full" />
+                                  <img [src]="getAuthorImageUrl(post.author)" alt="Tác giả" class="w-6 h-6 rounded-full" />
                                   <span class="text-gray-700 font-medium">{{ post.author?.username || 'Unknown Author' }}</span>
                               </div>
                               <div class="text-gray-500 flex items-center gap-3">
                                   <span><i class="far fa-calendar-alt mr-1"></i> {{ post.created_at | date:'mediumDate' }}</span>
-                                  <a [routerLink]="['/post', post.slug || post.id]" class="text-blue-500 hover:underline flex items-center gap-1 font-medium">
+                                  <a [routerLink]="['/posts', post.slug || post.id]" class="text-blue-500 hover:underline flex items-center gap-1 font-medium">
                                   Đọc tiếp <i class="fas fa-arrow-right text-xs"></i>
                                   </a>
                               </div>
@@ -79,7 +79,7 @@
         </div>
 
         <!-- Follow Suggestions Widget -->
-        <div class="sidebar-card bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+        <div *ngIf="showSuggestedUsers" class="sidebar-card bg-white p-4 rounded-lg shadow-sm border border-gray-100">
             <h3 class="text-lg font-semibold mb-4 pb-3 border-b border-gray-200 flex items-center gap-2">
             <i class="fas fa-user-plus text-purple-500"></i>
             Đề xuất theo dõi

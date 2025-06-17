@@ -152,8 +152,12 @@ export class BlogPostService {
    * Lấy danh sách bài viết của người dùng hiện tại
    * @returns Observable - Dữ liệu bài viết
    */
-  getMyPosts(): Observable<{ success: boolean, message: string, data: { posts: Post[], pagination: any } }> {
-    return this.http.get<{ success: boolean, message: string, data: { posts: Post[], pagination: any } }>(POST_API.GET_MY).pipe(
+  getMyPosts(params?: any): Observable<{ success: boolean, message: string, data: { posts: Post[], pagination: any } }> {
+    const queryParams = {
+      ...params,
+      include: ['category', 'author']
+    };
+    return this.http.get<{ success: boolean, message: string, data: { posts: Post[], pagination: any } }>(POST_API.GET_MY, { params: queryParams }).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('Get my posts error:', error);
         return throwError(() => new Error(error.error?.message || 'Failed to get my posts'));

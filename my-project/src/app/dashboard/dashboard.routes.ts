@@ -6,9 +6,10 @@ import { SettingComponent } from './setting/setting.component';
 
 
 export const routes: Routes = [
-    { path: 'dashboard-blogger', component: DashboardMainComponent },
-    { path: 'media', component: MediaComponent },
+    { path: 'dashboard-main', component: DashboardMainComponent },
     { path: 'dashboard-post', component: PostsComponent },
-    { path: 'settings', component: SettingComponent },
-    { path: '', redirectTo: 'dashboard-blogger', pathMatch: 'full' }
+    { path: 'dashboard-media', component: MediaComponent },
+    { path: 'dashboard-setting', component: SettingComponent },
+
+  { path: '', redirectTo: 'dashboard-main', pathMatch: 'full' }
 ];

@@ -40,6 +40,7 @@ export class CategoryPageComponent implements OnInit {
   posts: Post[] = [];
   isLoading = false;
   error: any = null;
+  showSuggestedUsers = false;
 
   currentPage: number = 1;
   itemsPerPage: number = 9;
@@ -53,6 +54,7 @@ export class CategoryPageComponent implements OnInit {
   suggestedUsers: User[] = [];
   categories: Category[] = [];
   readonly DEFAULT_AUTHOR_IMAGE = DEFAULT_AUTHOR_IMAGE;
+  readonly DEFAULT_POST_IMAGE = DEFAULT_POST_IMAGE;
 
   tags: Tag[] = [];
 
@@ -227,10 +229,12 @@ export class CategoryPageComponent implements OnInit {
   }
 
   loadSuggestedUsers(): void {
-    this.usersService.getAll({ limit: 2 /*, role: 'blogger'*/ }).subscribe({ // Temporarily remove role filter
+    this.showSuggestedUsers = false;
+    this.usersService.getAll({ limit: 2 }).subscribe({
       next: (response) => {
         if (response.data?.users) {
           this.suggestedUsers = response.data.users || [];
+          this.showSuggestedUsers = true;
         } else {
           this.suggestedUsers = [];
         }
@@ -238,6 +242,7 @@ export class CategoryPageComponent implements OnInit {
       error: (err) => {
         console.error('Error loading suggested users:', err);
         this.suggestedUsers = [];
+        // Don't show error to user, just keep the section hidden
       }
     });
   }
@@ -269,6 +274,17 @@ export class CategoryPageComponent implements OnInit {
     }
     // Nếu không có thumbnail, tìm ảnh featured từ postUploads
     const featuredMedia = post.postUploads?.find(media => media.is_featured);
-    return featuredMedia?.file?.url || DEFAULT_POST_IMAGE;
+    if (featuredMedia?.file?.url) {
+      return featuredMedia.file.url;
+    }
+    // Nếu không có ảnh nào, sử dụng ảnh mặc định
+    return this.DEFAULT_POST_IMAGE;
+  }
+
+  getAuthorImageUrl(author: any): string {
+    if (author?.avatar) {
+      return author.avatar;
+    }
+    return this.DEFAULT_AUTHOR_IMAGE;
   }
 }

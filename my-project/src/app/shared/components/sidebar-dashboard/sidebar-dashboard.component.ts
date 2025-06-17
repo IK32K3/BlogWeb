@@ -2,6 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, ElementRef, signal, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router'; // Thêm RouterModule và RouterLinkActive
+import { AuthService } from '../../../core/services/auth.service';
+import { UsersService } from '../../../core/services/users.service';
+import { User } from '../../model/user.model';
+import { Subscription } from 'rxjs';
 
 interface NavItem {
   path?: string;
@@ -29,24 +33,23 @@ export class SidebarDashboardComponent implements OnInit, OnDestroy {
 
   // Dữ liệu cho các mục điều hướng (Lấy từ HTML của bạn)
   navItems: NavItem[] = [
-    { path: '/dashboard/overview', icon: 'fas fa-chart-pie', label: 'Overview', exact: true },
-    { path: 'dashboard/posts', icon: 'fas fa-newspaper', label: 'Posts', badge: 12, exact: true },
-    { path: '/dashboard/media', icon: 'fas fa-image', label: 'Media Library', exact: true },
-    { path: '/audience', icon: 'fas fa-users', label: 'Audience', exact: true },
+    { path: '/dashboard/dashboard-main', icon: 'fas fa-chart-pie', label: 'Overview', exact: true },
+    { path: '/dashboard/dashboard-post', icon: 'fas fa-newspaper', label: 'Posts', badge: 12, exact: true },
+    { path: '/dashboard/dashboard-media', icon: 'fas fa-image', label: 'Media Library', exact: true },
     { isSettingsHeader: true, settingsLabel: 'Settings' },
-    { path: '/dashboard/profile', icon: 'fas fa-user-cog', label: 'Profile', exact: true },
-    { path: '/dashboard/settings', icon: 'fas fa-sliders-h', label: 'Settings', exact: true },
+    { path: '/dashboard/dashboard-setting', icon: 'fas fa-sliders-h', label: 'Settings', exact: true },
     { path: '/help', icon: 'fas fa-question-circle', label: 'Help Center', exact: true },
   ];
 
-  // Dữ liệu người dùng (Lấy từ HTML của bạn)
-  user = {
-    name: 'Edogawa Conan',
-    role: 'Admin Blogger',
-    avatarUrl: 'https://phunuvietnam.mediacdn.vn/179072216278405120/2022/11/4/edogawa-conan--166754179290680712885.jpg'
-  };
+  // User data from AuthService
+  currentUser: User | null = null;
+  private userSubscription: Subscription | null = null;
 
-  constructor(private elementRef: ElementRef) {
+  constructor(
+    private elementRef: ElementRef,
+    private authService: AuthService,
+    private usersService: UsersService
+  ) {
     // Ban đầu, nếu là mobile view, đóng sidebar
     if (this.isMobileView()) {
       this.sidebarOpen.set(false);
@@ -55,10 +58,37 @@ export class SidebarDashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     window.addEventListener('resize', this.onResize);
+    
+    // Subscribe to current user changes
+    this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
+
+    // If no user is loaded yet, try to load the profile
+    if (!this.currentUser) {
+      this.loadUserProfile();
+    }
+  }
+
+  loadUserProfile() {
+    this.usersService.getProfile().subscribe({
+      next: (response) => {
+        if (response.success && response.data.user) {
+          this.currentUser = response.data.user;
+          this.authService.updateCurrentUser(response.data.user);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading user profile:', error);
+      }
+    });
   }
 
   ngOnDestroy() {
     window.removeEventListener('resize', this.onResize);
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
     // Không cần remove document:click listener vì HostListener tự quản lý
   }
 
