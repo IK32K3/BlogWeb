@@ -18,7 +18,7 @@ class PostController {
   // [GET] /posts - Get all posts
   async getAllPosts(req, res) {
     try {
-      const { page, limit, categoryId, search, status, sort, year } = req.query;
+      const { page, limit, categoryId, search, status, sort, year, autocomplete, search_priority, relevance_sort } = req.query;
 
       // Xây dựng bộ lọc
       const filters = {
@@ -28,6 +28,8 @@ class PostController {
         search: search || null,
         status: status || 'published', // Mặc định chỉ lấy bài đã published
         sort: sort || 'latest',
+        search_priority: search_priority || null,
+        relevance_sort: relevance_sort === 'true' || false,
       };
 
       // Xử lý bộ lọc theo năm
@@ -37,6 +39,16 @@ class PostController {
       }
       
       const result = await postService.getPosts(filters); // Gọi hàm đã hợp nhất
+
+      // Nếu là autocomplete, chỉ trả về id, title, thumbnail
+      if (autocomplete === 'true') {
+        result.posts = result.posts.map(post => ({
+          id: post.id,
+          title: post.title,
+          thumbnail: post.thumbnail
+        }));
+      }
+
       return responseUtils.success(res, result);
     } catch (error) {
       console.error('[PostController.getAllPosts] Error:', error);
@@ -307,6 +319,32 @@ class PostController {
     } catch (error) {
       console.error('[PostController.deletePost] Error:', error);
       return responseUtils.serverError(res, 'Failed to delete post');
+    }
+  }
+
+  // [PATCH] /posts/:id/status - Update post status
+  async updateStatus(req, res) {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      const userId = req.user?.id;
+      const isAdmin = req.user?.role === 'Admin';
+
+      if (!userId) {
+        return responseUtils.unauthorized(res, 'Authentication required');
+      }
+      if (!status || !['published', 'draft', 'scheduled'].includes(status.toLowerCase())) {
+        return responseUtils.badRequest(res, 'Invalid status');
+      }
+
+      const updated = await postService.updateStatus(id, userId, isAdmin, status);
+      if (!updated) {
+        return responseUtils.notFound(res, 'Post not found or not authorized');
+      }
+      return responseUtils.success(res, null, 'Status updated successfully');
+    } catch (error) {
+      console.error('[PostController.updateStatus] Error:', error);
+      return responseUtils.serverError(res, 'Failed to update status');
     }
   }
 }

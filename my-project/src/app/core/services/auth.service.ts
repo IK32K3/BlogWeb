@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { StorageService } from '../services/storage.service';
 import { map } from 'rxjs/operators';
+import { UsersService } from '../services/users.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private usersService: UsersService
   ) {
     this.loadUserFromToken();
   }
@@ -327,5 +329,21 @@ export class AuthService {
   getCurrentUserId(): number | null {
     const user = this.currentUserSubject.value;
     return user ? user.id : null;
+  }
+
+  updateAvatar(avatarUrl: string) {
+    const user = this.currentUserSubject.value;
+    if (user) {
+      user.avatar = avatarUrl;
+      this.currentUserSubject.next({ ...user });
+      // Nếu bạn lưu user vào localStorage, cập nhật luôn:
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    }
+  }
+
+  getProfile() {
+    this.usersService.getProfile().subscribe(res => {
+      this.currentUserSubject.next(res.data.user);
+    });
   }
 }

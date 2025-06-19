@@ -9,10 +9,11 @@ import { BlogPostService } from '../../core/services/blog-post.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Post, PostDto } from '../../shared/model/post.model';
 import { ToastrService } from 'ngx-toastr';
+import { SharedModule } from 'app/shared/shared.module';
 
 @Component({
   selector: 'app-update-post',
-  imports: [CommonModule,FormsModule,RouterOutlet,NavBarComponent,FooterComponent,QuillEditorComponent],
+  imports: [CommonModule,FormsModule,RouterOutlet,SharedModule,FooterComponent,QuillEditorComponent],
   templateUrl: './update-post.component.html',
   styleUrl: './update-post.component.css'
 })

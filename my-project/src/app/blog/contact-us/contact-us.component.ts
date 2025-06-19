@@ -9,10 +9,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ContactService } from '../../core/services/contact.service';
 import { ToastrService } from 'ngx-toastr';
+import { SharedModule } from 'app/shared/shared.module';
 
 @Component({
   selector: 'app-contact-us',
-  imports: [CommonModule,RouterOutlet,FormsModule,RouterModule,NavBarComponent,FooterComponent,ReactiveFormsModule],
+  imports: [CommonModule,RouterOutlet,FormsModule,RouterModule,SharedModule,FooterComponent,ReactiveFormsModule],
   templateUrl: './contact-us.component.html',
   styleUrl: './contact-us.component.css'
 })

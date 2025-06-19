@@ -5,25 +5,14 @@ CREATE TABLE `Users` (
    `username` VARCHAR(50) UNIQUE NOT NULL,
    `password` VARCHAR(100) NOT NULL,
    `email` VARCHAR(255) UNIQUE NOT NULL,
+   `avatar` VARCHAR(255) UNIQUE NOT NULL,
    `role_id` INT NOT NULL,
    `description` LONGTEXT NOT NULL,
    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
    `is_active` BOOLEAN NOT NULL DEFAULT TRUE -- Thay đổi từ TINYINT(1) thành BOOLEAN
 );
--- SET FOREIGN_KEY_CHECKS = 0;
--- -- DROP TABLE IF EXISTS Users;
--- DROP TABLE IF EXISTS Users, Media, User_Media, Role, Posts, Post_Media, Categories, 
--- Category_Translate_Language, Comments, Languages, Post_Translate_Language, Setting;
--- SET FOREIGN_KEY_CHECKS = 1;
-CREATE TABLE `Media` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `name` VARCHAR(100) NOT NULL,
-  `url` VARCHAR(500) NOT NULL,
-  `type` VARCHAR(50) NOT NULL,
-  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+
 CREATE TABLE `Categories` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
@@ -46,17 +35,6 @@ CREATE TABLE `Languages` (
    `is_active` BOOLEAN NOT NULL DEFAULT TRUE -- Thay vì TINYINT(1)
 );
 
-
-CREATE TABLE `User_Media` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `user_id` INT NOT NULL,
-  `media_id` INT NOT NULL,
-  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `Users`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`media_id`) REFERENCES `Media`(`id`) ON DELETE CASCADE
-);
-
 CREATE TABLE `Posts` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT NOT NULL,
@@ -66,6 +44,7 @@ CREATE TABLE `Posts` (
   `view` INT NOT NULL DEFAULT 0,
   `description` LONGTEXT NOT NULL,
   `slug` VARCHAR(150) NOT NULL,
+  `thumbnail` VARCHAR(255) NOT NULL,
   `id_post_original` INT,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -73,17 +52,6 @@ CREATE TABLE `Posts` (
   FOREIGN KEY (`category_id`) REFERENCES `Categories`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_post_original`) REFERENCES `Posts`(`id`) ON DELETE SET NULL,
   `status` ENUM('draft', 'published', 'archived') NOT NULL DEFAULT 'draft'
-);
-
-CREATE TABLE `Post_Media` (
-   `id` INT PRIMARY KEY AUTO_INCREMENT,
-   `post_id` INT NOT NULL,
-   `media_id` INT NOT NULL,
-   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-   `is_featured` BOOLEAN DEFAULT FALSE, -- Sửa từ TINYINT(1) thành BOOLEAN
-   FOREIGN KEY (`post_id`) REFERENCES `Posts`(`id`) ON DELETE CASCADE,
-   FOREIGN KEY (`media_id`) REFERENCES `Media`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `Category_Translate_Language` (

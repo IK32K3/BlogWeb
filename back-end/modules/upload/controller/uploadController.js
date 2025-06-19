@@ -1,6 +1,5 @@
-const { processCloudinaryUpload, processMultipleCloudinaryUploads, processEditorUpload, deleteFromCloudinary } = require('../service/uploadService');
-const responseUtils = require('../../../utils/responseUtils');
 const uploadService = require('../service/uploadService');
+const responseUtils = require('../../../utils/responseUtils');
 
 class UploadController {
   /**
@@ -67,7 +66,7 @@ class UploadController {
    */
   async deleteUploadedFile(req, res) {
     try {
-      const { publicId } = req.params;
+      const publicId = req.params[0];
 
       if (!publicId) {
         return responseUtils.badRequest(res, 'Public ID is required');
@@ -76,8 +75,6 @@ class UploadController {
       const result = await uploadService.deleteFromCloudinary(publicId);
 
       if (result.result === 'ok') {
-        const exists = await uploadService.checkFileExists(publicId);
-        const fileInfo = await uploadService.getFileInfo(publicId);
         return responseUtils.success(res, result, 'File deleted successfully');
       } else {
         return responseUtils.error(res, null, 'Failed to delete file', 400);
@@ -85,6 +82,39 @@ class UploadController {
     } catch (error) {
       console.error('[UploadController.deleteUploadedFile] Error:', error);
       return responseUtils.error(res, error, 'Failed to delete file');
+    }
+  }
+
+  /**
+   * Get all media from Cloudinary
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  async getAllMedia(req, res) {
+    try {
+      const {
+        folder,
+        maxResults = 100,
+        nextCursor,
+        type = 'upload',
+        prefix,
+        tags
+      } = req.query;
+
+      const options = {
+        folder,
+        maxResults: parseInt(maxResults),
+        nextCursor,
+        type,
+        prefix,
+        tags
+      };
+
+      const result = await uploadService.getAllMediaFromCloudinary(options);
+      return responseUtils.success(res, result, 'Media retrieved successfully');
+    } catch (error) {
+      console.error('[UploadController.getAllMedia] Error:', error);
+      return responseUtils.error(res, error, 'Failed to retrieve media');
     }
   }
 }

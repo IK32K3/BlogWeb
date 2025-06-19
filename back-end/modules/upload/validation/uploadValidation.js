@@ -29,7 +29,7 @@ const uploadEditorValidation = [
 
 // Validation cho việc xóa file
 const deleteFileValidation = [
-  check('publicId')
+  check('0')
     .notEmpty()
     .withMessage('PublicId không được để trống')
 ];

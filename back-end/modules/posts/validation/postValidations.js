@@ -87,12 +87,14 @@ const translationRule = () => new BodyWithLocale('translations')
 
 const getAllPostsValidation = [
   ...paginationRules(),
-  new QueryWithLocale('search').optional().isString().trim().isLength({ min: 2, max: 100 }).get(),
+  new QueryWithLocale('search').optional().isString().trim().isLength({ min: 1, max: 100 }).get(),
   new QueryWithLocale('categoryId').optional().isInt({ min: 1 }).toInt().get(),
   new QueryWithLocale('userId').optional().isInt({ min: 1 }).toInt().get(),
   new QueryWithLocale('status').optional().isIn(['all', 'published', 'draft', 'scheduled', 'archived']).get(),
   new QueryWithLocale('sort').optional().isIn(['latest', 'oldest', 'most_viewed', 'title_asc', 'title_desc']).get(),
   new QueryWithLocale('year').optional().isInt({ min: 1970, max: new Date().getFullYear() + 1 }).toInt().get(),
+  new QueryWithLocale('search_priority').optional().isIn(['relevance', 'date', 'views', 'comments']).get(),
+  new QueryWithLocale('relevance_sort').optional().isBoolean().toBoolean().get(),
 ];
 
 const createPostValidation = [

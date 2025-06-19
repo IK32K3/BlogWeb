@@ -14,6 +14,7 @@ import { DEFAULT_POST_IMAGE, DEFAULT_AUTHOR_IMAGE } from '../../core/constants/a
 import { CategoryService } from '../../core/services/category.service';
 import { Category } from '../../shared/model/category.model';
 import { Observable } from 'rxjs';
+import { SharedModule } from 'app/shared/shared.module';
 
 interface Tag {
   name: string;
@@ -28,7 +29,7 @@ interface Tag {
     FormsModule,
     RouterOutlet,
     RouterModule,
-    NavBarComponent,
+    SharedModule,
     FooterComponent,
     FilterMovieComponent,
     TranslateModule
@@ -101,7 +102,7 @@ export class CategoryPageComponent implements OnInit {
     // Determine if there are *any* "complex" filters that require the search endpoint
     // "Complex" means: a search query, a year, a sort_by, or a status other than 'published'
     // Explicitly check for a non-empty string for params.search
-    const isComplexFilterActive = (typeof params.search === 'string' && params.search.length > 0) || // Refined check
+    const isComplexFilterActive = (typeof params.search === 'string' && params.search.trim().length > 0) || // Refined check with trim()
                                   !!params.year ||
                                   !!params.sort_by ||
                                   (params.status && params.status !== 'published');
@@ -112,7 +113,7 @@ export class CategoryPageComponent implements OnInit {
       // Case 1: Complex filters are active (e.g., search term, year, sort, or non-default status)
       // Use search endpoint, even if a category is also selected
       const searchParams = {
-        ...(typeof params.search === 'string' && params.search.length > 0 && { query: params.search }), // Refined check
+        ...(typeof params.search === 'string' && params.search.trim().length > 0 && { query: params.search.trim() }), // Refined check with trim()
         page: params.page,
         limit: params.limit,
         category_id: categoryId, // Pass numeric category_id if present
@@ -120,6 +121,9 @@ export class CategoryPageComponent implements OnInit {
         sort: params.sort_by,
         date_from: params.year ? `${params.year}-01-01T00:00:00.000Z` : undefined,
         date_to: params.year ? `${params.year}-12-31T23:59:59.999Z` : undefined,
+        // Thêm parameters để ưu tiên kết quả tìm kiếm
+        search_priority: (typeof params.search === 'string' && params.search.trim().length > 0) ? 'relevance' : undefined,
+        relevance_sort: (typeof params.search === 'string' && params.search.trim().length > 0) ? true : undefined,
       };
       // Clean up undefined/null values for searchParams
       Object.keys(searchParams).forEach(key => (searchParams[key as keyof typeof searchParams] === undefined || searchParams[key as keyof typeof searchParams] === null) && delete searchParams[key as keyof typeof searchParams]);
@@ -178,8 +182,19 @@ export class CategoryPageComponent implements OnInit {
   }
 
   onFilterChange(filters: any): void {
+    // Reset to first page when filters change
     this.currentPage = 1;
     this.loadPosts(filters);
+  }
+
+  // Thêm method riêng cho search để xử lý tốt hơn
+  onSearch(searchTerm: string): void {
+    this.currentPage = 1;
+    const searchFilters = {
+      ...this.currentFilters,
+      search: searchTerm
+    };
+    this.loadPosts(searchFilters);
   }
 
   calculatePages(): void {

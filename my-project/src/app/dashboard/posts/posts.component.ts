@@ -6,6 +6,11 @@ import { SharedModule } from 'app/shared/shared.module';
 import { BlogPostService } from '../../core/services/blog-post.service';
 import { Post as ApiPost } from '../../shared/model/post.model';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../../core/services/auth.service';
+import { CategoryService } from '../../core/services/category.service';
+import { UsersService } from '../../core/services/users.service';
+import { Subject } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 export interface Author {
   name: string;
@@ -43,20 +48,24 @@ export class PostsComponent implements OnInit {
   filteredPosts = signal<Post[]>([]);
 
   // --- Filter Signals ---
-  statusOptions = ['All Status', 'Published', 'Draft', 'Scheduled', 'Trash'];
-  categoryOptions = ['All Categories', 'Technology', 'Programming', 'Design', 'Business', 'Web Design'];
+  statusOptions = ['All Status', 'Published', 'Draft', 'Scheduled'];
+  categoryOptions = signal<string[]>(['All Categories']); // Sẽ cập nhật động từ DB
 
-  // Định nghĩa màu sắc cho từng category
+  // Định nghĩa màu sắc cho từng category (sẽ cập nhật động từ DB)
   categoryColors: CategoryColor[] = [
     { name: 'Technology', bgColor: 'bg-blue-100', textColor: 'text-blue-800' },
     { name: 'Programming', bgColor: 'bg-purple-100', textColor: 'text-purple-800' },
     { name: 'Design', bgColor: 'bg-pink-100', textColor: 'text-pink-800' },
     { name: 'Business', bgColor: 'bg-green-100', textColor: 'text-green-800' },
-    { name: 'Web Design', bgColor: 'bg-yellow-100', textColor: 'text-yellow-800' }
+    { name: 'Web Design', bgColor: 'bg-yellow-100', textColor: 'text-yellow-800' },
+    { name: 'Education', bgColor: 'bg-indigo-100', textColor: 'text-indigo-800' },
+    { name: 'Health', bgColor: 'bg-teal-100', textColor: 'text-teal-800' },
+    { name: 'Lifestyle', bgColor: 'bg-orange-100', textColor: 'text-orange-800' },
+    { name: 'Travel', bgColor: 'bg-cyan-100', textColor: 'text-cyan-800' }
   ];
 
   selectedStatus = signal<string>(this.statusOptions[0]);
-  selectedCategory = signal<string>(this.categoryOptions[0]);
+  selectedCategory = signal<string>(this.categoryOptions()[0]);
   searchTerm = signal<string>('');
 
   // --- Selection Signals ---
@@ -65,6 +74,10 @@ export class PostsComponent implements OnInit {
   // --- Pagination Signals ---
   currentPage = signal<number>(1);
   itemsPerPage = signal<number>(10);
+
+  // --- Delete Modal Signals ---
+  showDeleteModal = signal<boolean>(false);
+  postToDelete = signal<Post | null>(null);
 
   // --- Computed Signals ---
   paginatedPosts = computed(() => {
@@ -98,14 +111,45 @@ export class PostsComponent implements OnInit {
 
   totalFilteredItems = computed(() => this.filteredPosts().length);
 
+  searchInput$ = new Subject<string>();
+  autocompleteResults: any[] = [];
+  showAutocomplete = false;
+
   constructor(
     private router: Router,
     private blogPostService: BlogPostService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthService,
+    private categoryService: CategoryService,
+    private usersService: UsersService
   ) {}
 
   ngOnInit(): void {
     this.loadInitialPosts();
+    this.loadCategoriesFromDB();
+
+    // Lấy user hiện tại nếu cần
+    this.usersService.getProfile().subscribe({
+      next: (response) => {
+        if (response.success && response.data?.user) {
+          // Handle user data if needed
+          console.log('Current user:', response.data.user);
+        }
+      },
+      error: (error) => {
+        console.error('Error getting user profile:', error);
+      }
+    });
+
+    this.searchInput$.pipe(
+      debounceTime(300),
+      switchMap(term => this.blogPostService.getAll({ search: term, autocomplete: true }))
+    ).subscribe({
+      next: (res) => {
+        this.autocompleteResults = res.data.posts;
+        this.showAutocomplete = !!this.searchTerm() && this.autocompleteResults.length > 0;
+      }
+    });
   }
 
   loadInitialPosts(): void {
@@ -113,7 +157,8 @@ export class PostsComponent implements OnInit {
       page: this.currentPage(),
       limit: this.itemsPerPage(),
       status: this.selectedStatus() !== 'All Status' ? this.selectedStatus() : undefined,
-      search: this.searchTerm() || undefined
+      search: this.searchTerm() || undefined,
+      category: this.selectedCategory() !== 'All Categories' ? this.selectedCategory() : undefined
     }).subscribe({
       next: (response) => {
         if (response.success) {
@@ -140,11 +185,11 @@ export class PostsComponent implements OnInit {
       title: apiPost.title,
       tags: apiPost.tags?.join(', ') || '',
       author: {
-        name: apiPost.author?.name || 'Unknown',
+        name: apiPost.author?.username || 'Unknown',
         avatarUrl: apiPost.author?.avatar || 'assets/images/default-avatar.png'
       },
       category: apiPost.category?.name || 'Uncategorized',
-      status: apiPost.status as 'Published' | 'Draft' | 'Scheduled' | 'Trash',
+      status: this.capitalizeFirstLetter(apiPost.status) as 'Published' | 'Draft' | 'Scheduled' | 'Trash',
       date: apiPost.createdAt ? new Date(apiPost.createdAt).toLocaleDateString() : 'Unknown date',
       selected: false
     };
@@ -157,12 +202,19 @@ export class PostsComponent implements OnInit {
   }
 
   applyFilters(): void {
-    this.loadInitialPosts();
+    let posts = this.allPosts();
+    if (this.selectedCategory() !== 'All Categories') {
+      posts = posts.filter(post => post.category === this.selectedCategory());
+    }
+    if (this.selectedStatus() !== 'All Status') {
+      posts = posts.filter(post => post.status === this.selectedStatus());
+    }
+    this.filteredPosts.set(posts);
   }
 
   onFilterChange(): void {
     this.currentPage.set(1);
-    this.applyFilters();
+    this.loadInitialPosts();
   }
 
   toggleSelectAll(event: Event): void {
@@ -189,54 +241,64 @@ export class PostsComponent implements OnInit {
   }
 
   createNewPost(): void {
-    this.router.navigate(['/dashboard/posts/create']);
+    this.router.navigate(['/blog/write-post']);
   }
 
   viewPost(post: Post): void {
-    this.router.navigate(['/blog/post', post.id]);
+    this.router.navigate(['/blog/post-detail', post.id]);
   }
 
   editPost(post: Post): void {
     this.toastr.info('Redirecting to edit post...', 'Info');
-    this.router.navigate(['/dashboard/posts/edit', post.id]);
+    this.router.navigate(['/blog/update-post', post.id]);
   }
 
-  deletePost(post: Post): void {
-    this.toastr.warning('Are you sure you want to delete this post?', 'Warning', {
-      closeButton: true,
-      timeOut: 5000,
-      positionClass: 'toast-top-center',
-      tapToDismiss: true,
-      onActivateTick: true,
-      enableHtml: true,
-      extendedTimeOut: 2000,
-      progressBar: true,
-      progressAnimation: 'decreasing'
-    }).onTap.subscribe(() => {
-      this.blogPostService.delete(post.id).subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.toastr.success('Post deleted successfully', 'Success', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right'
-            });
-            this.loadInitialPosts();
-          } else {
-            this.toastr.error(response.message || 'Failed to delete post', 'Error', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right'
-            });
-          }
-        },
-        error: (error) => {
-          console.error('Error deleting post:', error);
-          this.toastr.error(error.error?.message || 'Failed to delete post', 'Error', {
+  // Hiển thị modal xác nhận delete
+  showDeleteConfirmation(post: Post): void {
+    this.postToDelete.set(post);
+    this.showDeleteModal.set(true);
+  }
+
+  // Đóng modal xác nhận delete
+  closeDeleteModal(): void {
+    this.showDeleteModal.set(false);
+    this.postToDelete.set(null);
+  }
+
+  // Xác nhận delete post
+  confirmDelete(): void {
+    const post = this.postToDelete();
+    if (!post) return;
+
+    this.blogPostService.delete(post.id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.toastr.success('Post deleted successfully', 'Success', {
+            timeOut: 3000,
+            positionClass: 'toast-top-right'
+          });
+          this.closeDeleteModal();
+          this.loadInitialPosts();
+        } else {
+          this.toastr.error(response.message || 'Failed to delete post', 'Error', {
             timeOut: 3000,
             positionClass: 'toast-top-right'
           });
         }
-      });
+      },
+      error: (error) => {
+        console.error('Error deleting post:', error);
+        this.toastr.error(error.error?.message || 'Failed to delete post', 'Error', {
+          timeOut: 3000,
+          positionClass: 'toast-top-right'
+        });
+      }
     });
+  }
+
+  // Phương thức cũ để tương thích (có thể xóa sau)
+  deletePost(post: Post): void {
+    this.showDeleteConfirmation(post);
   }
 
   goToPage(pageNumber: number): void {
@@ -257,6 +319,69 @@ export class PostsComponent implements OnInit {
 
   trackByPostId(index: number, post: Post): number {
     return post.id;
+  }
+
+  private capitalizeFirstLetter(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
+
+  // Lấy danh sách category từ database và cập nhật categoryOptions, categoryColors
+  loadCategoriesFromDB(): void {
+    this.categoryService.getAll().subscribe({
+      next: (response) => {
+        if (response.success && response.data?.categories) {
+          const dbCategories = response.data.categories.map((cat: any) => cat.name);
+          this.categoryOptions.set(['All Categories', ...dbCategories]);
+
+          // Thêm màu cho category mới nếu chưa có
+          response.data.categories.forEach((cat: any, idx: number) => {
+            if (!this.categoryColors.find(c => c.name === cat.name)) {
+              // Sinh màu tự động dựa trên index (hoặc dùng màu mặc định)
+              const colorList = [
+                { bg: 'bg-blue-100', text: 'text-blue-800' },
+                { bg: 'bg-purple-100', text: 'text-purple-800' },
+                { bg: 'bg-pink-100', text: 'text-pink-800' },
+                { bg: 'bg-green-100', text: 'text-green-800' },
+                { bg: 'bg-yellow-100', text: 'text-yellow-800' },
+                { bg: 'bg-indigo-100', text: 'text-indigo-800' },
+                { bg: 'bg-teal-100', text: 'text-teal-800' },
+                { bg: 'bg-orange-100', text: 'text-orange-800' },
+                { bg: 'bg-cyan-100', text: 'text-cyan-800' }
+              ];
+              const color = colorList[idx % colorList.length];
+              this.categoryColors.push({ name: cat.name, bgColor: color.bg, textColor: color.text });
+            }
+          });
+        }
+      },
+      error: (err) => {
+        // fallback giữ nguyên categoryOptions mặc định
+      }
+    });
+  }
+
+  onStatusChange(post: Post, newStatus: 'Published' | 'Draft') {
+    // Gọi API cập nhật status nếu có
+    this.blogPostService.updateStatus(post.id, newStatus).subscribe({
+      next: (res) => {
+        post.status = newStatus;
+        this.toastr.success('Status updated!');
+        this.applyFilters(); // Nếu muốn filter lại
+      },
+      error: () => {
+        this.toastr.error('Failed to update status');
+      }
+    });
+  }
+
+  onSearchInput(term: string) {
+    this.searchTerm.set(term);
+    if (!term || !term.trim() || term.trim().length < 1) {
+      this.showAutocomplete = false;
+      this.autocompleteResults = [];
+      return;
+    }
+    this.searchInput$.next(term);
   }
 }
 

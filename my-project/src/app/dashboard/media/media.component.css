@@ -1,0 +1,5 @@
+/* Border nổi bật khi chọn */
+.media-item.border-4.border-primary-600 {
+  box-shadow: 0 0 0 2px #2563eb, 0 4px 12px rgba(37,99,235,0.15);
+  /* Màu #2563eb là primary-600 */
+}

@@ -1,8 +1,9 @@
-import { Component, ElementRef, HostListener, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Category } from '../../../shared/model/category.model';
+import { Subject, debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 
 interface FilterItem {
   value: string;
@@ -20,7 +21,7 @@ interface CategoryApiResponse {
   templateUrl: './filter-movie.component.html',
   styleUrls: ['./filter-movie.component.css'],
 })
-export class FilterMovieComponent implements OnInit, OnChanges {
+export class FilterMovieComponent implements OnInit, OnChanges, OnDestroy {
   yearsData: FilterItem[] = [
     { value: '2025', name: '2025' }, { value: '2024', name: '2024' },
     { value: '2023', name: '2023' }, { value: '2022', name: '2022' },
@@ -52,12 +53,25 @@ export class FilterMovieComponent implements OnInit, OnChanges {
 
   // Thêm biến cho ô search
   searchQuery: string = '';
+  private searchSubject = new Subject<string>();
+  private searchSubscription?: Subscription;
+  isSearching: boolean = false;
 
   constructor(private elRef: ElementRef, private translateService: TranslateService) {}
 
   ngOnInit(): void {
     // categoriesData will now be populated in ngOnChanges
     this.logSelectedFilters();
+    
+    // Setup live search with debounce
+    this.searchSubscription = this.searchSubject.pipe(
+      debounceTime(500), // Wait 500ms after user stops typing
+      distinctUntilChanged() // Only emit if value has changed
+    ).subscribe(searchTerm => {
+      this.searchQuery = searchTerm;
+      this.isSearching = true;
+      this.search();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -66,6 +80,13 @@ export class FilterMovieComponent implements OnInit, OnChanges {
         value: String(cat.id),
         name: cat.name
       }));
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup subscription to prevent memory leaks
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
     }
   }
 
@@ -139,6 +160,20 @@ export class FilterMovieComponent implements OnInit, OnChanges {
     }
   }
 
+  // Thêm method cho live search
+  onSearchInput(event: any): void {
+    const searchTerm = event.target.value;
+    this.isSearching = true;
+    this.searchSubject.next(searchTerm);
+  }
+
+  // Thêm method để clear search
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.isSearching = false;
+    this.searchSubject.next('');
+  }
+
   search() {
     const filter = {
       search: this.searchQuery,
@@ -147,8 +182,14 @@ export class FilterMovieComponent implements OnInit, OnChanges {
       sort_by: this.selectedFilters.sort,
       sort_order: this.selectedFilters.sort ? 'desc' : undefined,
       status: this.selectedFilters.status,
+      search_priority: this.searchQuery ? 'relevance' : undefined,
+      relevance_sort: this.searchQuery ? true : undefined,
     };
     console.log('Filter to search:', filter);
     this.filterChange.emit(filter);
+    // Reset searching state after a short delay
+    setTimeout(() => {
+      this.isSearching = false;
+    }, 100);
   }
 }

@@ -11,6 +11,34 @@ export interface MediaResponse {
   metadata?: Record<string, any>;
 }
 
+export interface CloudinaryMediaItem {
+  id: string;
+  name: string;
+  type: 'Image' | 'Video' | 'Document' | 'Audio';
+  size: string;
+  dimensionsOrDuration?: string;
+  url: string;
+  thumbnailUrl: string;
+  publicId: string;
+  format: string;
+  width?: number;
+  height?: number;
+  createdAt: Date;
+  tagText: string;
+  tagBgColor: string;
+  tagTextColor: string;
+  isChecked: boolean;
+}
+
+export interface MediaListResponse {
+  mediaItems: CloudinaryMediaItem[];
+  pagination: {
+    nextCursor?: string;
+    hasMore: boolean;
+    totalCount: number;
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -115,5 +143,46 @@ export class UploadService {
    */
   revokePreviewUrl(url: string): void {
     URL.revokeObjectURL(url);
+  }
+
+  /**
+   * Lấy tất cả media từ Cloudinary
+   */
+  getAllMedia(params?: {
+    folder?: string;
+    maxResults?: number;
+    nextCursor?: string;
+    type?: string;
+    prefix?: string;
+    tags?: string;
+  }): Observable<MediaListResponse> {
+    let url = UPLOAD_API.GET_ALL_MEDIA;
+    
+    if (params) {
+      const queryParams = new URLSearchParams();
+      if (params.folder) queryParams.append('folder', params.folder);
+      if (params.maxResults) queryParams.append('maxResults', params.maxResults.toString());
+      if (params.nextCursor) queryParams.append('nextCursor', params.nextCursor);
+      if (params.type) queryParams.append('type', params.type);
+      if (params.prefix) queryParams.append('prefix', params.prefix);
+      if (params.tags) queryParams.append('tags', params.tags);
+      
+      if (queryParams.toString()) {
+        url += `?${queryParams.toString()}`;
+      }
+    }
+
+    return this.http.get<{success: boolean; data: MediaListResponse}>(url).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
+   * Xóa file từ Cloudinary
+   */
+  deleteFile(publicId: string): Observable<any> {
+    return this.http.delete<{success: boolean; data: any}>(UPLOAD_API.DELETE(publicId)).pipe(
+      map(response => response.data)
+    );
   }
 }

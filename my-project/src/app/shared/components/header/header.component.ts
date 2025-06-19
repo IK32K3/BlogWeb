@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { SharedModule } from 'app/shared/shared.module';
 
 @Component({
   selector: 'app-header',
-  imports: [NavBarComponent, NavbarIntroduceComponent, CommonModule, RouterModule, FormsModule],
+  imports: [ CommonModule, RouterModule, FormsModule, SharedModule],
   standalone: true,
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'

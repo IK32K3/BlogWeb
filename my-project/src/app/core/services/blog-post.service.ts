@@ -225,4 +225,11 @@ export class BlogPostService {
       })
     );
   }
+
+  updateStatus(postId: number, status: string) {
+    return this.http.patch(POST_API.UPDATE_STATUS(postId), { status });
+  }
+  searchPosts(keyword: string) {
+    return this.http.get<any>(`${POST_API.BASE}/search?keyword=${encodeURIComponent(keyword)}`);
+  }
 }

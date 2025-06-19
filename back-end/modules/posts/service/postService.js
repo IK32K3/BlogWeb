@@ -21,7 +21,9 @@ class postService {
     status,
     sort,
     dateFrom,
-    dateTo
+    dateTo,
+    search_priority,
+    relevance_sort
   }) {
     const offset = (page - 1) * limit;
 
@@ -48,7 +50,34 @@ class postService {
       if (dateTo) whereClause.created_at[Op.lte] = dateTo;
     }
 
-    const orderClause = this._getSortOrder(sort);
+    // Build sort order with relevance priority
+    let orderClause = [];
+    
+    // Nếu có yêu cầu sắp xếp theo độ liên quan và có search
+    if (relevance_sort && search && search.trim().length > 0) {
+      // Ưu tiên sắp xếp theo độ liên quan của search
+      orderClause.push([
+        Post.sequelize.literal(`
+          CASE 
+            WHEN title LIKE '%${search}%' THEN 1
+            WHEN content LIKE '%${search}%' THEN 2
+            ELSE 3
+          END
+        `),
+        'ASC'
+      ]);
+    }
+    
+    // Thêm sắp xếp theo sort nếu có
+    if (sort) {
+      const sortOrder = this._getSortOrder(sort);
+      orderClause = orderClause.concat(sortOrder);
+    }
+    
+    // Nếu không có sort nào, sắp xếp theo thời gian tạo
+    if (orderClause.length === 0) {
+      orderClause = [['created_at', 'DESC']];
+    }
 
     const { count, rows: posts } = await Post.findAndCountAll({
       where: whereClause,
@@ -99,7 +128,9 @@ class postService {
     sort_by,
     sort_order,
     date_from,
-    date_to
+    date_to,
+    search_priority,
+    relevance_sort
   }) {
     const offset = (page - 1) * limit;
 
@@ -126,8 +157,25 @@ class postService {
         if (date_to) where[createdAtColumn][Op.lte] = new Date(date_to);
     }
 
-    // Build sort order
+    // Build sort order with relevance priority
     let order = [];
+    
+    // Nếu có yêu cầu sắp xếp theo độ liên quan và có query search
+    if (relevance_sort && query && query.trim().length > 0) {
+      // Ưu tiên sắp xếp theo độ liên quan của search
+      order.push([
+        Post.sequelize.literal(`
+          CASE 
+            WHEN title LIKE '%${query}%' THEN 1
+            WHEN content LIKE '%${query}%' THEN 2
+            ELSE 3
+          END
+        `),
+        'ASC'
+      ]);
+    }
+    
+    // Thêm sắp xếp theo sort_by nếu có
     if (sort_by) {
         const columnMap = {
             views: 'views',
@@ -138,7 +186,8 @@ class postService {
         order.push([columnName, orderDirection]);
     }
 
-    if (order.length === 0 || !sort_by) {
+    // Nếu không có sort nào, sắp xếp theo thời gian tạo
+    if (order.length === 0) {
          order.push([createdAtColumn, 'DESC']);
     }
 
@@ -543,7 +592,7 @@ class postService {
       {
         model: User,
         as: 'author',
-        attributes: ['id', 'username']
+        attributes: ['id', 'username','avatar']
       },
       {
         model: Categories,
@@ -599,6 +648,15 @@ class postService {
         console.error("Error updating post translations:", error);
         throw error;
     }
+  }
+
+  async updateStatus(postId, userId, isAdmin, status) {
+    const post = await Post.findByPk(postId);
+    if (!post) return false;
+    if (!isAdmin && post.user_id !== userId) return false;
+    post.status = status.toLowerCase();
+    await post.save();
+    return true;
   }
 }
 

@@ -201,6 +201,149 @@ class UploadService {
       throw new Error(`Lỗi khi lấy thông tin file: ${error.message}`);
     }
   }
+
+  /**
+   * Lấy tất cả media từ Cloudinary
+   * @param {Object} options - Các tùy chọn lọc và phân trang
+   * @returns {Promise<Object>} - Danh sách media và thông tin phân trang
+   */
+  async getAllMediaFromCloudinary(options = {}) {
+    try {
+      const {
+        folder = process.env.CLOUDINARY_FOLDER || 'blog_uploads',
+        maxResults = 100,
+        nextCursor = null,
+        type = 'upload',
+        prefix = null,
+        tags = null
+      } = options;
+
+      const params = {
+        type: type,
+        max_results: maxResults,
+        folder: folder
+      };
+
+      if (nextCursor) {
+        params.next_cursor = nextCursor;
+      }
+
+      if (prefix) {
+        params.prefix = prefix;
+      }
+
+      if (tags) {
+        params.tags = tags;
+      }
+
+      const result = await cloudinary.api.resources(params);
+
+      // Chuyển đổi dữ liệu để phù hợp với frontend
+      const mediaItems = result.resources.map(resource => {
+        const fileType = this.getFileTypeFromFormat(resource.format);
+        const size = this.formatBytes(resource.bytes);
+        const dimensions = resource.width && resource.height ? `${resource.width}×${resource.height}` : null;
+        
+        return {
+          id: resource.public_id,
+          name: resource.public_id.split('/').pop() || resource.public_id,
+          type: fileType,
+          size: size,
+          dimensionsOrDuration: dimensions,
+          url: resource.secure_url,
+          thumbnailUrl: resource.secure_url,
+          publicId: resource.public_id,
+          format: resource.format,
+          width: resource.width,
+          height: resource.height,
+          createdAt: new Date(resource.created_at),
+          tagText: fileType,
+          tagBgColor: this.getTagBgColor(fileType),
+          tagTextColor: this.getTagTextColor(fileType),
+          isChecked: false
+        };
+      });
+
+      return {
+        mediaItems: mediaItems,
+        pagination: {
+          nextCursor: result.next_cursor,
+          hasMore: !!result.next_cursor,
+          totalCount: result.resources.length
+        }
+      };
+    } catch (error) {
+      throw new Error(`Lỗi khi lấy danh sách media từ Cloudinary: ${error.message}`);
+    }
+  }
+
+  /**
+   * Xác định loại file từ format
+   * @param {String} format - Format của file
+   * @returns {String} - Loại file
+   */
+  getFileTypeFromFormat(format) {
+    const imageFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'];
+    const videoFormats = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'];
+    const audioFormats = ['mp3', 'wav', 'ogg', 'aac', 'flac'];
+
+    const lowerFormat = format.toLowerCase();
+    
+    if (imageFormats.includes(lowerFormat)) {
+      return 'Image';
+    } else if (videoFormats.includes(lowerFormat)) {
+      return 'Video';
+    } else if (audioFormats.includes(lowerFormat)) {
+      return 'Audio';
+    } else {
+      return 'Document';
+    }
+  }
+
+  /**
+   * Format bytes thành string dễ đọc
+   * @param {Number} bytes - Số bytes
+   * @param {Number} decimals - Số chữ số thập phân
+   * @returns {String} - String đã format
+   */
+  formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
+
+  /**
+   * Lấy màu nền cho tag
+   * @param {String} type - Loại file
+   * @returns {String} - Class màu nền
+   */
+  getTagBgColor(type) {
+    switch (type) {
+      case 'Image': return 'bg-blue-100';
+      case 'Video': return 'bg-purple-100';
+      case 'Document': return 'bg-green-100';
+      case 'Audio': return 'bg-yellow-100';
+      default: return 'bg-gray-100';
+    }
+  }
+
+  /**
+   * Lấy màu chữ cho tag
+   * @param {String} type - Loại file
+   * @returns {String} - Class màu chữ
+   */
+  getTagTextColor(type) {
+    switch (type) {
+      case 'Image': return 'text-blue-800';
+      case 'Video': return 'text-purple-800';
+      case 'Document': return 'text-green-800';
+      case 'Audio': return 'text-yellow-800';
+      default: return 'text-gray-800';
+    }
+  }
 }
 
 module.exports = new UploadService(); 

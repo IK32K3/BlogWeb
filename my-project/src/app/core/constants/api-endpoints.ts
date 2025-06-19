@@ -42,6 +42,7 @@ export const POST_API = {
   CREATE: `${API_BASE}/posts`,
   UPDATE: (id: string | number) => `${API_BASE}/posts/${id}`,
   DELETE: (id: string | number) => `${API_BASE}/posts/${id}`,
+  UPDATE_STATUS: (id: string | number) => `${API_BASE}/posts/${id}/status`,
   GET_BY_SLUG: (slug: string) => `${API_BASE}/posts/slug/${slug}`,
   GET_BY_CATEGORY: (categoryId: string | number) => `${API_BASE}/posts/categories/${categoryId}`,
   GET_BY_AUTHOR: (userId: string | number) => `${API_BASE}/posts/author/${userId}`,
@@ -84,6 +85,7 @@ export const LANGUAGE_API = {
 // Đường dẫn API cho tải lên tệp
 export const UPLOAD_API = {
   BASE: `${API_BASE}/uploads`,
+  GET_ALL_MEDIA: `${API_BASE}/uploads`,
   UPLOAD_SINGLE: `${API_BASE}/uploads/image`,
   UPLOAD_MULTIPLE: `${API_BASE}/uploads/images`,
   UPLOAD_EDITOR: `${API_BASE}/uploads/editor`,

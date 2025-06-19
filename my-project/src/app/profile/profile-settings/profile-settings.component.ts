@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { NavBarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
+import { SharedModule } from 'app/shared/shared.module';
 
 @Component({
   selector: 'app-profile-settings',
-  imports: [CommonModule, RouterOutlet, FormsModule, NavBarComponent, FooterComponent],
+  imports: [CommonModule, RouterOutlet, FormsModule, SharedModule, FooterComponent],
   templateUrl: './profile-settings.component.html',
   styleUrl: './profile-settings.component.css'
 })

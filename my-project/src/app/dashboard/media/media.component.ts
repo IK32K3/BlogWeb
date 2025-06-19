@@ -5,10 +5,12 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderDashboardComponent } from '../../shared/components/header-dashboard/header-dashboard.component';
 import { SidebarDashboardComponent } from '../../shared/components/sidebar-dashboard/sidebar-dashboard.component';
 import { UploadModalComponent } from '../../shared/components/upload-modal/upload-modal.component';
-import { UploadService } from '../../core/services/upload.service';
+import { UploadService, CloudinaryMediaItem, MediaListResponse } from '../../core/services/upload.service';
+import Swal from 'sweetalert2';
 
 export interface MediaItem {
   id: string | number;
+  publicId?: string;
   name: string;
   type: 'Image' | 'Video' | 'Document' | 'Audio';
   size: string;
@@ -62,16 +64,56 @@ export class MediaComponent implements OnInit {
   showMediaPreviewModal: boolean = false;
   selectedMediaForPreview: MediaItem | null = null;
 
+  // Thêm biến để lưu trữ cursor cho pagination
+  nextCursor: string | null = null;
+  isLoading: boolean = false;
+
   constructor(private uploadService: UploadService) { }
 
   ngOnInit(): void {
     this.loadMediaItems();
-    this.applyFiltersAndPagination();
   }
 
   loadMediaItems(): void {
-    // TODO: Implement actual data fetching from backend
-    // For now, using mock data
+    this.isLoading = true;
+    
+    this.uploadService.getAllMedia({
+      maxResults: 100, // Lấy tối đa 100 items
+      type: 'upload'
+    }).subscribe({
+      next: (response: MediaListResponse) => {
+        // Chuyển đổi CloudinaryMediaItem thành MediaItem
+        this.mediaItems = response.mediaItems.map(item => ({
+          id: item.id,
+          publicId: item.publicId,
+          name: item.name,
+          type: item.type,
+          size: item.size,
+          dimensionsOrDuration: item.dimensionsOrDuration,
+          url: item.url,
+          thumbnailUrl: item.thumbnailUrl,
+          tagText: item.tagText,
+          tagBgColor: item.tagBgColor,
+          tagTextColor: item.tagTextColor,
+          isChecked: false
+        }));
+        
+        this.totalItems = this.mediaItems.length;
+        this.nextCursor = response.pagination.nextCursor || null;
+        this.applyFiltersAndPagination();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading media items:', error);
+        // Fallback to mock data if API fails
+        this.loadMockData();
+        this.isLoading = false;
+      }
+    });
+  }
+
+  // Fallback method với mock data
+  private loadMockData(): void {
     this.mediaItems = [
       {
         id: 1, name: 'beach-sunset.jpg', type: 'Image', size: '1.2 MB', dimensionsOrDuration: '1920×1080',
@@ -88,7 +130,6 @@ export class MediaComponent implements OnInit {
         thumbnailUrl: 'https://images.unsplash.com/photo-1682686580391-615b3f4f56bd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
         tagText: 'Video', tagBgColor: 'bg-purple-100', tagTextColor: 'text-purple-800', isChecked: false
       },
-      // Add more mock items if needed for testing
     ];
     this.totalItems = this.mediaItems.length;
   }
@@ -166,6 +207,11 @@ export class MediaComponent implements OnInit {
       this.mediaItems.unshift(newItem);
     });
     this.applyFiltersAndPagination();
+    
+    // Reload media items from Cloudinary after upload
+    setTimeout(() => {
+      this.loadMediaItems();
+    }, 1000); // Delay 1 second to ensure upload is complete
   }
 
   private getTagBgColor(type: 'Image' | 'Video' | 'Document' | 'Audio'): string {
@@ -199,10 +245,33 @@ export class MediaComponent implements OnInit {
 
   // --- Media Item Actions (Placeholder - implement as needed) ---
   editItem(item: MediaItem): void { console.log('Edit:', item.name); }
+  
   deleteItem(item: MediaItem): void {
-    console.log('Delete:', item.name);
-    this.mediaItems = this.mediaItems.filter(i => i.id !== item.id);
-    this.applyFiltersAndPagination();
+    Swal.fire({
+      title: 'Bạn có chắc muốn xóa file này?',
+      text: item.name,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Thực hiện xóa như cũ
+        this.uploadService.deleteFile(item.publicId as string).subscribe({
+          next: () => {
+            Swal.fire('Đã xóa!', 'File đã được xóa thành công.', 'success');
+            this.mediaItems = this.mediaItems.filter(i => i.id !== item.id);
+            this.applyFiltersAndPagination();
+          },
+          error: (error: any) => {
+            Swal.fire('Lỗi!', 'Không thể xóa file.', 'error');
+          }
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire('Đã hủy', 'File của bạn vẫn an toàn.', 'info');
+      }
+    });
   }
   onItemCheckboxChange(item: MediaItem, event: Event): void {
     item.isChecked = (event.target as HTMLInputElement).checked;
@@ -275,5 +344,81 @@ export class MediaComponent implements OnInit {
     if (file.type.startsWith('video/')) return 'Video';
     if (file.type.startsWith('audio/')) return 'Audio';
     return 'Document';
+  }
+
+  // Load thêm media từ Cloudinary
+  loadMoreMedia(): void {
+    if (this.nextCursor && !this.isLoading) {
+      this.isLoading = true;
+      
+      this.uploadService.getAllMedia({
+        maxResults: 50,
+        nextCursor: this.nextCursor,
+        type: 'upload'
+      }).subscribe({
+        next: (response: MediaListResponse) => {
+          const newItems = response.mediaItems.map(item => ({
+            id: item.id,
+            publicId: item.publicId,
+            name: item.name,
+            type: item.type,
+            size: item.size,
+            dimensionsOrDuration: item.dimensionsOrDuration,
+            url: item.url,
+            thumbnailUrl: item.thumbnailUrl,
+            tagText: item.tagText,
+            tagBgColor: item.tagBgColor,
+            tagTextColor: item.tagTextColor,
+            isChecked: false
+          }));
+          
+          this.mediaItems = [...this.mediaItems, ...newItems];
+          this.totalItems = this.mediaItems.length;
+          this.nextCursor = response.pagination.nextCursor || null;
+          this.applyFiltersAndPagination();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading more media items:', error);
+          this.isLoading = false;
+        }
+      });
+    }
+  }
+
+  /**
+   * Xóa nhiều file đã chọn
+   */
+  deleteSelectedItems(): void {
+    const selectedItems = this.paginatedMediaItems.filter(item => item.isChecked);
+    if (selectedItems.length === 0) return;
+    Swal.fire({
+      title: `Bạn có chắc muốn xóa ${selectedItems.length} file?`,
+      text: selectedItems.map(i => i.name).join(', '),
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete all!',
+      cancelButtonText: 'No',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Promise.all(selectedItems.map(item =>
+          this.uploadService.deleteFile(item.publicId as string).toPromise()
+        )).then(() => {
+          Swal.fire('Đã xóa!', 'Các file đã được xóa thành công.', 'success');
+          // Xóa khỏi danh sách hiển thị
+          this.mediaItems = this.mediaItems.filter(i => !selectedItems.includes(i));
+          this.applyFiltersAndPagination();
+        }).catch(() => {
+          Swal.fire('Lỗi!', 'Không thể xóa một số file.', 'error');
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire('Đã hủy', 'Các file của bạn vẫn an toàn.', 'info');
+      }
+    });
+  }
+
+  hasSelectedItems(): boolean {
+    return this.paginatedMediaItems.some(item => item.isChecked);
   }
 }

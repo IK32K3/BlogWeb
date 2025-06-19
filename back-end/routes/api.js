@@ -71,7 +71,15 @@ router.group("/users", (router) => {
     router.put("/", validate(updateProfileValidation), userController.updateProfile);
     router.post("/settings", validate(saveSettingsValidation), userController.saveSettings);
     router.put("/changePassword", validate(changePasswordValidation), userController.changePassword);
-  }); 
+
+    // Route upload avatar
+    router.post(
+      "/avatar",
+      authenticated,
+      uploadMiddleware.uploadSingleAvatar, // Dùng đúng middleware cho field 'avatar'
+      userController.uploadAvatar
+    );
+  });
 
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
     router.get("/admin", validate(getAllUsersValidation), userController.getAllUsers);
@@ -105,6 +113,10 @@ router.group("/posts", (router) => {
     router.delete("/:id", 
       middlewares([isResourceOwner(Post)]), 
       postController.deletePost
+    );
+    router.patch("/:id/status", 
+      middlewares([authenticated, isResourceOwner(Post)]), 
+      postController.updateStatus
     );
   });
 
@@ -156,6 +168,11 @@ router.group("/languages", (router) => {
 
 // ===== Upload Routes =====
 router.group("/uploads", (router) => {
+  router.get('/', 
+    authenticated, 
+    uploadController.getAllMedia
+  );
+  
   router.post('/image', 
     authenticated, 
     validate(uploadSingleValidation),
@@ -177,7 +194,7 @@ router.group("/uploads", (router) => {
     uploadController.uploadEditorImage
   );
   
-  router.delete('/:publicId', 
+  router.delete('/*', 
     authenticated, 
     validate(deleteFileValidation),
     uploadController.deleteUploadedFile

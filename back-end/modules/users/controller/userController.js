@@ -1,6 +1,8 @@
 const responseUtils = require('utils/responseUtils');
 const userService = require('../service/userService');
-
+const { User } = require('../../../models');
+const cloudinary = require('cloudinary').v2;
+const uploadService = require('../../upload/service/uploadService');
 
 const userController = {
   // GET /api/users
@@ -176,6 +178,24 @@ changePassword: async (req, res) => {
     }
   },
   
+  uploadAvatar: async (req, res) => {
+    try {
+      if (!req.file) {
+        return responseUtils.badRequest(res, 'No file uploaded');
+      }
+      // Upload lên Cloudinary
+      const result = await uploadService.processCloudinaryUpload(req.file, { type: 'avatar' });
+      const avatarUrl = result.secure_url || result.url;
+
+      // Cập nhật avatar cho user hiện tại
+      const userId = req.user.id;
+      await User.update({ avatar: avatarUrl }, { where: { id: userId } });
+
+      return responseUtils.success(res, { avatar: avatarUrl }, 'Avatar updated successfully');
+    } catch (err) {
+      return responseUtils.serverError(res, err.message);
+    }
+  },
 };
 
 module.exports = userController;
