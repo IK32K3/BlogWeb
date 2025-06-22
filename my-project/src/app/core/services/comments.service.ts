@@ -11,6 +11,20 @@ interface ApiResponse<T> {
   message?: string;
 }
 
+export interface CommentsListResponse {
+  success: boolean;
+  message: string;
+  data: {
+    comments: Comment[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -18,6 +32,10 @@ export class CommentsService {
   private API_URL = `${API_BASE}/comments`;
 
   constructor(private http: HttpClient) {}
+
+  getAllComments(params?: any): Observable<CommentsListResponse> {
+    return this.http.get<CommentsListResponse>(this.API_URL, { params });
+  }
 
   // Lấy comment của 1 post
   getCommentsByPost(postId: number, page: number = 1, limit: number = 20): Observable<{ comments: Comment[], pagination: any }> {

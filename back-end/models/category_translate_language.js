@@ -40,7 +40,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'CategoryTranslateLanguage',
     tableName: 'category_translate_language',
-    timestamps: true // Disable Sequelize's automatic timestamps
+    timestamps: true,
+    underscored: true
   });
   return CategoryTranslateLanguage;
 };

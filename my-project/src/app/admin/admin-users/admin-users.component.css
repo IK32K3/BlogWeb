@@ -1,0 +1,261 @@
+/* Custom styles that Tailwind doesn't provide */
+
+/* Custom scrollbar for table */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Custom focus styles for better accessibility */
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom animation for loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Custom hover effects for better UX */
+.hover\:-translate-y-0\.5:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom shadow effects */
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Custom modal backdrop blur effect */
+.bg-black.bg-opacity-50 {
+  backdrop-filter: blur(4px);
+}
+
+/* Custom table hover effects */
+.hover\:bg-gray-50:hover {
+  background-color: #f9fafb;
+}
+
+/* Custom button disabled states */
+.disabled\:opacity-50:disabled {
+  opacity: 0.5;
+}
+
+.disabled\:cursor-not-allowed:disabled {
+  cursor: not-allowed;
+}
+
+/* Custom form validation styles */
+.border-red-500 {
+  border-color: #ef4444;
+}
+
+.text-red-500 {
+  color: #ef4444;
+}
+
+/* Custom responsive breakpoints if needed */
+@media (max-width: 640px) {
+  .max-w-md {
+    max-width: 100%;
+  }
+  
+  .p-6 {
+    padding: 1rem;
+  }
+  
+  .text-3xl {
+    font-size: 1.5rem;
+  }
+}
+
+/* Custom print styles */
+@media print {
+  .bg-white {
+    background-color: white !important;
+  }
+  
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl {
+    box-shadow: none !important;
+  }
+}
+
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Custom styles for admin user management */
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+  transition: opacity 0.3s ease;
+}
+
+.status-badge {
+  padding: 0.25em 0.6em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.375rem;
+}
+
+.status-active {
+  color: #0f5132;
+  background-color: #d1e7dd;
+}
+
+.status-inactive {
+  color: #41464b;
+  background-color: #e2e3e5;
+}
+
+.role-badge {
+  padding: 0.25em 0.6em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.375rem;
+}
+
+.role-admin {
+  color: #6f1a21;
+  background-color: #f8d7da;
+}
+
+.role-moderator {
+  color: #664d03;
+  background-color: #fff3cd;
+}
+
+.role-author {
+  color: #052c65;
+  background-color: #cfe2ff;
+}
+
+.role-user {
+  color: #41464b;
+  background-color: #e2e3e5;
+}
+
+/* Custom form control focus styles */
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  border-color: #3b82f6;
+}
+
+.btn {
+  @apply font-bold py-2 px-4 rounded transition duration-150 ease-in-out;
+}
+
+.btn-primary {
+  @apply bg-blue-500 text-white;
+}
+
+.btn-primary:hover {
+  @apply bg-blue-700;
+}
+
+.btn-danger {
+  @apply bg-red-500 text-white;
+}
+
+.btn-danger:hover {
+  @apply bg-red-700;
+}
+
+.btn-secondary {
+  @apply bg-gray-500 text-white;
+}
+
+.btn-secondary:hover {
+  @apply bg-gray-700;
+}
+
+.btn-icon {
+  @apply p-2 rounded-full;
+}
+
+/* Sorting icons */
+th .sort-icon {
+  opacity: 0.4;
+  transition: opacity 0.2s ease-in-out;
+}
+
+th:hover .sort-icon {
+  opacity: 1;
+}
+
+.sort-icon.active {
+  opacity: 1;
+}
+
+/* Add custom styles for slide-in/out animations for modals if needed */
+.modal-enter {
+  opacity: 0;
+}
+.modal-enter-active {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+.modal-leave {
+  opacity: 1;
+}
+.modal-leave-active {
+  opacity: 0;
+  transition: opacity 200ms;
+}

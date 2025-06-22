@@ -13,11 +13,12 @@ import { SharedModule } from '../../shared/shared.module';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../core/services/auth.service';
+import { HeaderComponent } from 'app/shared/components/header/header.component';
 
 @Component({
   selector: 'app-profile-user',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, FormsModule, SharedModule, FooterComponent, RouterModule],
+  imports: [CommonModule, RouterOutlet, FormsModule, HeaderComponent, FooterComponent, RouterModule],
   templateUrl: './profile-user.component.html',
   styleUrls: ['./profile-user.component.css']
 })

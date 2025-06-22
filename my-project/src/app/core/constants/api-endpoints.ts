@@ -80,6 +80,10 @@ export const LANGUAGE_API = {
   CREATE: `${API_BASE}/languages`,
   UPDATE: (id: string | number) => `${API_BASE}/languages/${id}`,
   DELETE: (id: string | number) => `${API_BASE}/languages/${id}`,
+  GET_TRANSLATIONS: (id: string | number) => `${API_BASE}/languages/${id}/translations`,
+  ADD_TRANSLATION: (id: string | number) => `${API_BASE}/languages/${id}/translations`,
+  UPDATE_TRANSLATION: (id: string | number, translationId: string | number) => `${API_BASE}/languages/${id}/translations/${translationId}`,
+  DELETE_TRANSLATION: (id: string | number, translationId: string | number) => `${API_BASE}/languages/${id}/translations/${translationId}`,
 };
 
 // Đường dẫn API cho tải lên tệp
@@ -184,4 +188,33 @@ export interface PostSearchParams {
   limit?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+}
+
+// Translation interfaces
+export interface TranslationDto {
+  id?: number;
+  key: string;
+  value: string;
+  language_id: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CreateTranslationDto {
+  key: string;
+  value: string;
+  language_id: number;
+}
+
+export interface UpdateTranslationDto {
+  key?: string;
+  value?: string;
+}
+
+export interface LanguageTranslationParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  key?: string;
+  [key: string]: string | number | boolean | undefined;
 }

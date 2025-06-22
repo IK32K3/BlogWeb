@@ -25,9 +25,16 @@ const getMyCommentsValidation = [
   new QueryWithLocale('limit').optional().isNumeric().withMessage('Limit must be a number').get()
 ];
 
+// Get all comments validation (admin only)
+const getAllCommentsValidation = [
+  new QueryWithLocale('page').optional().isNumeric().withMessage('Page must be a number').get(),
+  new QueryWithLocale('limit').optional().isNumeric().withMessage('Limit must be a number').get()
+];
+
 module.exports = {
   getCommentsByPostValidation,
   addCommentValidation,
   updateCommentValidation,
-  getMyCommentsValidation
+  getMyCommentsValidation,
+  getAllCommentsValidation
 };

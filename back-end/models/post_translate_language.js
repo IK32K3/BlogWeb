@@ -50,19 +50,13 @@ module.exports = (sequelize, DataTypes) => {
     description: {
       type: DataTypes.TEXT,
       allowNull: true
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
+    }
   }, {
     sequelize,
     modelName: 'PostTranslateLanguage',
     tableName: 'post_translate_language',
     timestamps: true,
-      // --- THÊM underscored ĐỂ KHỚP VỚI TÊN CỘT created_at/updated_at ---
-      underscored: true, // Rất quan trọng nếu tên cột DB có dấu gạch dưới
+    underscored: true, // This will use created_at and updated_at column names
     indexes: [
       {
         unique: true,

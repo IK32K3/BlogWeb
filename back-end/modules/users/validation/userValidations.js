@@ -47,6 +47,10 @@ changePasswordValidation = [
   new BodyWithLocale('new_password').optional().notEmpty().isLength({ min: 6, max: 100 }).get()
 ];
 
+// Delete account validation
+const deleteAccountValidation = [
+  new BodyWithLocale('currentPassword').notEmpty().withMessage('Current password is required to delete account').get()
+];
 
 module.exports = {
   getAllUsersValidation,
@@ -56,5 +60,5 @@ module.exports = {
   updateProfileValidation,
   saveSettingsValidation,
   changePasswordValidation,
-  
+  deleteAccountValidation,
 };

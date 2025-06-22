@@ -85,5 +85,15 @@ module.exports = {
       console.error('Get my comments error:', error);
       return responseUtils.serverError(res, error.message);
     }
+  },
+
+  getAllComments: async (req, res) => {
+    try {
+      const result = await commentService.getAllComments(req.query);
+      return responseUtils.success(res, result);
+    } catch (error) {
+      console.error('Get all comments error:', error);
+      return responseUtils.serverError(res, error.message);
+    }
   }
 };

@@ -36,7 +36,7 @@ Chart.register(
 
 @Component({
   selector: 'app-dashboard-main',
-  imports: [CommonModule,FormsModule,RouterOutlet,SharedModule,HttpClientModule],
+  imports: [CommonModule,FormsModule,RouterOutlet,HttpClientModule,HeaderDashboardComponent,SidebarDashboardComponent],
   templateUrl: './dashboard-main.component.html',
   styleUrl: './dashboard-main.component.css'
 })

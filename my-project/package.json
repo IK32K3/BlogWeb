@@ -27,6 +27,7 @@
     "@tailwindcss/postcss": "^4.1.8",
     "chart.js": "^4.4.9",
     "cloudinary": "^2.6.1",
+    "ng2-charts": "^8.0.0",
     "ngx-quill": "^27.0.2",
     "ngx-toastr": "^19.0.0",
     "postcss": "^8.5.4",

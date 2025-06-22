@@ -32,6 +32,7 @@ export interface MediaItem {
 
 @Component({
   selector: 'app-media',
+  standalone : true,
   imports: [CommonModule, FormsModule, RouterOutlet, HeaderDashboardComponent,
     SidebarDashboardComponent, UploadModalComponent
   ],

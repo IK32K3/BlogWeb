@@ -14,7 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
 import { UploadService, MediaResponse } from '../../core/services/upload.service';
 import { firstValueFrom } from 'rxjs';
-import { SharedModule } from 'app/shared/shared.module';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-write-post',
@@ -23,9 +23,9 @@ import { SharedModule } from 'app/shared/shared.module';
     CommonModule, 
     FormsModule, 
     RouterOutlet, 
-    SharedModule, 
     FooterComponent, 
-    QuillEditorComponent
+    QuillEditorComponent,
+    HeaderComponent
   ],
   templateUrl: './write-post.component.html',
   styleUrl: './write-post.component.css'

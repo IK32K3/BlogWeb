@@ -44,7 +44,7 @@ export class HeroSectionComponent implements OnInit, OnDestroy {
       next: (res) => {
         const posts: Post[] = res?.data?.posts || [];
         this.slides = posts.map((post: Post): Slide => {
-          console.log('created_at:', post.created_at);
+          console.log('created_at:', post.createdAt);
           
           let imageUrl = this.DEFAULT_POST_IMAGE;
           if (post.thumbnail) {
@@ -55,7 +55,7 @@ export class HeroSectionComponent implements OnInit, OnDestroy {
             image: imageUrl,
             title: post.title || 'No Title',
             author: post.author?.username || 'Unknown Author',
-            date: post.created_at ? new Date(post.created_at).toLocaleDateString('vi-VN', {
+            date: post.createdAt ? new Date(post.createdAt).toLocaleDateString('vi-VN', {
               day: '2-digit',
               month: '2-digit',
               year: 'numeric'

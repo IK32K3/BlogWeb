@@ -25,8 +25,8 @@ const userService = {
     
     if (search) {
       whereClause[Op.or] = [
-        { username: { [Op.iLike]: `%${search}%` } }, // Case-insensitive search
-        { email: { [Op.iLike]: `%${search}%` } }
+        { username: { [Op.like]: `%${search}%` } }, // Case-insensitive search for MySQL
+        { email: { [Op.like]: `%${search}%` } }
       ];
     }
     
@@ -101,7 +101,7 @@ const userService = {
     const transaction = await db.sequelize.transaction();
   
     try {
-      const { username, email, password, role_id , description} = userData;
+      const { username, email, password, role_id, description, avatar } = userData;
   
       // Kiểm tra xem email và username có tồn tại trong hệ thống không
       const existingUser = await User.findOne({
@@ -130,6 +130,7 @@ const userService = {
         password: hashedPassword,
         role_id,
         description,
+        avatar,
         is_active: true // Mặc định là true
       }, { transaction });
   
@@ -191,26 +192,6 @@ const userService = {
       // Update user
       await user.update(updateData, { transaction });
       
-      // Update media if provided
-      if (Array.isArray(mediaIds)) {
-        // Remove existing media
-        await UserMedia.destroy({ 
-          where: { user_id: id },
-          transaction
-        });
-        
-        // Add new media
-        if (mediaIds.length > 0) {
-          await UserMedia.bulkCreate(
-            mediaIds.map(mediaId => ({
-              user_id: id,
-              media_id: mediaId
-            })),
-            { transaction }
-          );
-        }
-      }
-      
       await transaction.commit();
       return await userService.getUserById(id);
     } catch (error) {
@@ -230,7 +211,6 @@ const userService = {
     try {
       // Delete related data first
       await Setting.destroy({ where: { user_id: id }, transaction });
-      await UserMedia.destroy({ where: { user_id: id }, transaction });
       
       // Delete user
       const deleted = await User.destroy({ 
@@ -339,6 +319,44 @@ const userService = {
     
     await user.save();
     return true;
+  },
+
+  /**
+   * Delete current user account and all related data
+   * @param {number} userId - User ID
+   * @param {string} currentPassword - Current password for verification
+   * @returns {Promise<boolean>} - True if successful
+   */
+  deleteAccount: async (userId, currentPassword) => {
+    const user = await User.findByPk(userId);
+    if (!user) throw new Error('User not found');
+    
+    // Verify current password for security
+    const valid = await bcrypt.compare(currentPassword, user.password);
+    if (!valid) throw new Error('Current password is incorrect');
+    
+    const transaction = await db.sequelize.transaction();
+    
+    try {
+      // Delete related data first
+      await Setting.destroy({ where: { user_id: userId }, transaction });
+      
+      // Delete user
+      const deleted = await User.destroy({ 
+        where: { id: userId },
+        transaction
+      });
+      
+      if (!deleted) {
+        throw new Error('Failed to delete user account');
+      }
+      
+      await transaction.commit();
+      return true;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
 };
 

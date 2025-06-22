@@ -21,35 +21,10 @@ import { HeaderComponent } from './components/header/header.component';
 
   ],
   exports: [
-    NavbarIntroduceComponent,
-    FooterComponent,
-    HeroSectionComponent,
-    PostCardComponent,
-    NavBarComponent,
-    QuillEditorComponent, // Export your QuillEditorComponent if you want to use it in other modules
-    FilterMovieComponent,
-    HeaderDashboardComponent,
-    SidebarDashboardComponent,
-    UploadModalComponent,
-    HeaderComponent,
+
   ],
   imports: [
-    CommonModule,
-    NavbarIntroduceComponent,
-    FormsModule,
-    RouterModule,
-    RouterOutlet,
-    FooterComponent,
-    HeroSectionComponent,
-    PostCardComponent,
-    NavBarComponent,
-    QuillModule,
-    QuillEditorComponent,
-    FilterMovieComponent, // Import your FilterMovieComponent if you want to use it in this module,
-    HeaderDashboardComponent,
-    SidebarDashboardComponent,
-    UploadModalComponent,
-    HeaderComponent
+
   ]
 })
 export class SharedModule { }

@@ -1,5 +1,393 @@
 <app-header-dashboard></app-header-dashboard>
-<div class="flex">
-    <app-sidebar-dashboard></app-sidebar-dashboard>
+<div class="bg-gray-100 dark:bg-gray-900 min-h-screen">
+  <div class="text-gray-900 dark:text-white">
+    <div class="flex">
+      <app-sidebar-dashboard></app-sidebar-dashboard>
+      <!-- Main Content -->
+      <div class="flex-1 flex max-w flex-col py-10 px-4 bg-gray-300">
+        <h1 class="text-3xl font-bold mb-1">Settings</h1>
+        <p class="text-gray-500 mb-8">Manage your account, blog, and preferences</p>
+        <!-- Tabs -->
+        <div class="flex border-b mb-8 gap-2">
+          <button class="px-4 py-2 -mb-px border-b-2 font-medium flex items-center gap-2 focus:outline-none"
+            [ngClass]="activeTab === 'appearance' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-gray-600'"
+            (click)="switchTab('appearance')">
+            <span>🎨</span> Appearance
+          </button>
+          <button class="px-4 py-2 -mb-px border-b-2 font-medium flex items-center gap-2 focus:outline-none"
+            [ngClass]="activeTab === 'account' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-gray-600'"
+            (click)="switchTab('account')">
+            <span>👤</span> Account
+          </button>
+          <button class="px-4 py-2 -mb-px border-b-2 font-medium flex items-center gap-2 focus:outline-none"
+            [ngClass]="activeTab === 'security' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-gray-600'"
+            (click)="switchTab('security')">
+            <span>🛡️</span> Security & Privacy
+          </button>
+          <button class="px-4 py-2 -mb-px border-b-2 font-medium flex items-center gap-2 focus:outline-none"
+            [ngClass]="activeTab === 'advanced' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-gray-600'"
+            (click)="switchTab('advanced')">
+            <span>⚙️</span> Advanced
+          </button>
+        </div>
+        <!-- Profile Card Example (Account Tab) -->
+        <div *ngIf="activeTab === 'account'" class="bg-white rounded-xl shadow p-8 mb-8 max-w-8xl w-full mx-auto">
+          <h2 class="text-xl font-semibold mb-1">Public Profile</h2>
+          <p class="text-gray-500 mb-6">This information may be displayed publicly. Be careful what you share.</p>
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Avatar upload -->
+            <div class="flex flex-col items-center md:items-start w-full md:w-1/4">
+              <img *ngIf="avatarPreviewUrl || user?.avatar" [src]="avatarPreviewUrl || user?.avatar" alt="Avatar" class="w-20 h-20 rounded-full object-cover border mb-5" />
+              <div class="flex flex-col gap-2">
+                <label class="cursor-pointer inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition-colors">
+                  <span class="material-icons mr-2 text-sm">upload</span>
+                  Choose Image
+                  <input type="file" (change)="onAvatarChange($event)" accept="image/*" class="hidden" #fileInput>
+                </label>
+                
+                <button 
+                  *ngIf="account.avatar instanceof File"
+                  (click)="uploadAvatar()"
+                  [disabled]="loading"
+                  class="px-4 py-2 gap-2 bg-green-600 text-white rounded shadow hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center">
+                  <span class="material-icons text-sm" *ngIf="!loading">cloud_upload</span>
+                  <span class="material-icons text-sm animate-spin" *ngIf="loading">hourglass_empty</span>
+                  Upload Avatar
+                </button>
+                
+                <span class="mt-2 text-sm text-gray-500" *ngIf="selectedAvatarName">{{ selectedAvatarName }}</span>
+              </div>
+              
+              <button
+                *ngIf="avatarPreviewUrl || user?.avatar"
+                type="button"
+                (click)="avatarPreviewUrl = null; account.avatar = null; selectedAvatarName = ''"
+                class="mt-3 px-3 py-1 bg-red-300 text-red-600 rounded font-medium hover:bg-red-700 hover:text-white transition-colors">
+                Remove
+              </button>
+              
+              <span class="text-xs text-gray-400 mt-1 text-center">Recommended: Square JPG, PNG, or GIF, 1MB max.</span>
+            </div>
+            <!-- Profile fields -->
+            <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <label class="flex flex-col md:col-span-2">
+                Username
+                <input type="text" [(ngModel)]="account.name" name="name" class="mt-1 p-2 border rounded" />
+              </label>
+              <label class="flex flex-col md:col-span-2">
+                Bio
+                <textarea [(ngModel)]="account.bio" name="bio" class="mt-1 p-2 border rounded" rows="2"></textarea>
+                <span class="text-xs text-gray-400 mt-1">Appears on your profile page. Markdown supported.</span>
+              </label>
+              <label class="flex flex-col md:col-span-2">
+                Email
+                <input type="email" [(ngModel)]="account.email" name="email" class="mt-1 p-2 border rounded" />
+              </label>
+              <label class="flex flex-col md:col-span-2">
+                Website URL
+                <input type="url" [(ngModel)]="account.website" name="website" class="mt-1 p-2 border rounded" placeholder="https://www.yourblog.com" />
+              </label>
+              <label class="flex flex-col md:col-span-2">
+                Location
+                <input type="text" [(ngModel)]="account.location" name="location" class="mt-1 p-2 border rounded" />
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- Appearance Tab (keep as column layout, but inside card) -->
+        <div *ngIf="activeTab === 'appearance'" class="bg-white rounded-xl shadow py-6 px-7 mb-8 max-w-8xl w-full mx-auto">
+          <h2 class="text-xl font-semibold mb-1">Appearance Settings</h2>
+          <div class="flex flex-col gap-8 w-full mt-6">
+            <!-- New Theme Selector -->
+            <div class="w-full">
+              <label class="text-base font-medium text-gray-900">Theme</label>
+              <p class="text-sm leading-5 text-gray-500">Select your preferred theme to be applied across the app.</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+                <!-- Light Mode -->
+                <div 
+                    (click)="setTheme('light')"
+                    class="relative rounded-lg border-2 p-4 cursor-pointer transition-all duration-200"
+                    [ngClass]="appearance.theme === 'light' ? 'border-blue-600 ring-2 ring-blue-300' : 'border-gray-300 hover:border-gray-400'">
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold text-gray-800">Light Mode</span>
+                        <span *ngIf="appearance.theme === 'light'" class="text-blue-600">
+                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="mt-2 p-2 h-20 bg-gray-100 border border-gray-200 rounded-md flex items-center justify-center text-xs text-gray-500">Preview</div>
+                </div>
+                <!-- Dark Mode -->
+                <div
+                    (click)="setTheme('dark')"
+                    class="relative rounded-lg border-2 p-4 cursor-pointer transition-all duration-200"
+                    [ngClass]="appearance.theme === 'dark' ? 'border-blue-600 ring-2 ring-blue-300' : 'border-gray-300 hover:border-gray-400'">
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold text-gray-800">Dark Mode</span>
+                        <span *ngIf="appearance.theme === 'dark'" class="text-blue-600">
+                           <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="mt-2 p-2 h-20 bg-gray-800 border border-gray-600 rounded-md flex items-center justify-center text-xs text-gray-200">Preview</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Language Selector -->
+            <div class="w-full border-t pt-6">
+              <label class="flex flex-col w-full">
+                Language:
+                <div class="relative mt-1 language-selector">
+                  <button type="button" 
+                          (click)="toggleLanguageDropdown()"
+                          class="relative w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left border focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                    <span class="flex items-center">
+                      <span class="fi fi-{{getCountryCode(appearance.language)}} mr-2"></span>
+                      <span class="block truncate">{{getLanguageName(appearance.language)}}</span>
+                    </span>
+                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  </button>
+  
+                  <div *ngIf="showLanguageDropdown" 
+                       class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div *ngFor="let lang of languages" 
+                         (click)="selectLanguage(lang.code)"
+                         class="relative cursor-pointer select-none py-2 pl-3 pr-9 hover:bg-blue-100"
+                         [class.bg-blue-50]="appearance.language === lang.code">
+                      <div class="flex items-center">
+                        <span class="fi fi-{{lang.flag}} mr-2"></span>
+                        <span class="font-normal block truncate">{{lang.name}}</span>
+                      </div>
+                      <span *ngIf="appearance.language === lang.code" 
+                            class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600">
+                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <!-- File Uploaders -->
+            <div class="w-full border-t pt-6 space-y-6">
+              <label class="flex flex-col w-full">
+                Logo:
+                <div class="mt-1 flex items-center gap-4">
+                  <label class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                    <span class="material-icons mr-2">upload_file</span>
+                    Chọn tệp
+                    <input type="file" (change)="onLogoChange($event)" class="hidden" accept="image/*">
+                  </label>
+                  <span *ngIf="appearance.logo" class="text-sm text-gray-500 flex items-center">
+                    <span class="material-icons text-green-500 mr-1">check_circle</span>
+                    {{ getFileName(appearance.logo) }}
+                    <button type="button" (click)="removeLogo()" class="ml-2 text-red-500 hover:text-red-700">
+                      <span class="material-icons">close</span>
+                    </button>
+                  </span>
+                </div>
+              </label>
+  
+              <label class="flex flex-col w-full">
+                Favicon:
+                <div class="mt-1 flex items-center gap-4">
+                  <label class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                    <span class="material-icons mr-2">upload_file</span>
+                    Chọn tệp
+                    <input type="file" (change)="onFaviconChange($event)" class="hidden" accept="image/*">
+                  </label>
+                  <span *ngIf="appearance.favicon" class="text-sm text-gray-500 flex items-center">
+                    <span class="material-icons text-green-500 mr-1">check_circle</span>
+                    {{ getFileName(appearance.favicon) }}
+                    <button type="button" (click)="removeFavicon()" class="ml-2 text-red-500 hover:text-red-700">
+                      <span class="material-icons">close</span>
+                    </button>
+                  </span>
+                </div>
+              </label>
+            </div>
+
+          </div>
+        </div>
+        <!-- Advanced Tab (keep as column layout, but inside card) -->
+        <div *ngIf="activeTab === 'advanced'" class="bg-white rounded-xl shadow p-10 mb-8 max-w-8xl w-full">
+          <h2 class="text-xl font-semibold mb-1">Advanced Settings</h2>
+          <div class="flex flex-col gap-6 items-center w-full max-w-md mt-6">
+            <label class="flex items-center gap-2 w-full">
+              <input type="checkbox" [(ngModel)]="advanced.betaFeatures" name="betaFeatures" class="accent-blue-600" />
+              Enable Beta Features
+            </label>
+            <!-- Custom Switch for Lock Comments -->
+            <div class="flex flex-col gap-1 w-full">
+              <label class="flex items-center gap-3 cursor-pointer select-none">
+                <input type="checkbox" [(ngModel)]="advanced.lockComments" name="lockComments" class="sr-only peer" />
+                <div class="w-12 h-7 rounded-full relative transition-colors duration-200"
+                     [ngClass]="advanced.lockComments ? 'bg-blue-600' : 'bg-gray-500'">
+                  <span class="absolute top-1 left-1 w-5 h-5 rounded-full flex items-center justify-center shadow transition-all duration-200"
+                        [ngClass]="advanced.lockComments ? 'translate-x-5 bg-blue-600' : 'bg-white'">
+                    <svg *ngIf="!advanced.lockComments" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <svg *ngIf="advanced.lockComments" xmlns="http://www.w3.org/2000/svg" class="text-blue-600 bg-white rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                </div>
+                <span class="text-base font-medium">
+                  {{ advanced.lockComments ? 'Đã khóa bình luận' : 'Cho phép bình luận' }}
+                </span>
+              </label>
+              <span class="text-xs text-gray-400 ml-16">
+                Khi bật, người khác sẽ không thể bình luận vào các bài viết của bạn.
+              </span>
+            </div>
+            <!-- Blocked Users -->
+            <div class="flex flex-col w-full">
+              <label for="block-search" class="font-medium text-gray-800">Blocked Users</label>
+              <p class="text-sm text-gray-500 mb-2">Search for users and click to block them. They won't be able to see your posts or interact with you.</p>
+              
+              <div class="relative">
+                <input 
+                  id="block-search"
+                  type="text" 
+                  [(ngModel)]="searchTerm"
+                  (ngModelChange)="onSearchChange($event)"
+                  placeholder="Search by username or email..."
+                  class="mt-1 p-2 w-full border rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  autocomplete="off">
+                
+                <!-- Search Spinner -->
+                <div *ngIf="isSearching" class="absolute top-2 right-2 mt-1">
+                  <svg class="animate-spin h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </div>
+
+                <!-- Search Results Dropdown -->
+                <div *ngIf="searchTerm && (userSearchResults.length > 0 || !isSearching)" class="absolute z-20 w-full bg-white border rounded-md mt-1 shadow-lg max-h-60 overflow-y-auto">
+                  <ul *ngIf="!isSearching">
+                    <li *ngFor="let foundUser of userSearchResults" (click)="blockUser(foundUser)" class="p-3 hover:bg-gray-100 cursor-pointer flex items-center gap-3 transition-colors">
+                       <img [src]="foundUser.avatar || 'assets/images/default-avatar.jpg'" class="w-8 h-8 rounded-full object-cover">
+                       <span class="font-medium">{{ foundUser.username }}</span>
+                    </li>
+                    <li *ngIf="userSearchResults.length === 0 && searchTerm && !isSearching" class="p-3 text-gray-500 text-center">No users found for "{{searchTerm}}".</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Blocked Users Pills -->
+              <div *ngIf="blockedUsernames.length > 0" class="mt-4 p-3 bg-gray-50 rounded-md border">
+                <h4 class="font-medium text-gray-700 mb-2">Currently Blocked</h4>
+                <div class="flex flex-wrap gap-2">
+                  <span *ngFor="let username of blockedUsernames" class="flex items-center gap-2 bg-red-100 text-red-800 rounded-full px-3 py-1 text-sm font-medium">
+                    {{ username }}
+                    <button (click)="unblockUser(username)" class="text-red-600 hover:text-red-800 font-bold -mr-1">
+                      &times;
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Security & Privacy Tab -->
+        <div *ngIf="activeTab === 'security'" class="bg-white rounded-xl shadow p-8 space-y-8 max-w-8xl w-full mx-auto mb-6">
+          <h2 class="text-2xl font-bold mb-6 border-b pb-4">Security & Privacy</h2>
+
+          <!-- Change Password -->
+          <div class="border-b pb-8">
+            <h3 class="text-xl font-semibold mb-1">Change Password</h3>
+            <p class="text-gray-500 mb-4">For your security, we recommend choosing a strong password that you don't use elsewhere.</p>
+            <div class="max-w-md space-y-4">
+              <label class="block">
+                <span class="text-gray-700 font-medium">Current Password</span>
+                <input type="password" [(ngModel)]="security.currentPassword" name="currentPassword" class="mt-1 p-2 block w-full border rounded-md focus:ring-blue-500 focus:border-blue-500">
+              </label>
+              <label class="block">
+                <span class="text-gray-700 font-medium">New Password</span>
+                <input type="password" [(ngModel)]="security.newPassword" name="newPassword" class="mt-1 p-2 block w-full border rounded-md focus:ring-blue-500 focus:border-blue-500">
+              </label>
+              <label class="block">
+                <span class="text-gray-700 font-medium">Confirm New Password</span>
+                <input type="password" [(ngModel)]="security.confirmPassword" name="confirmPassword" class="mt-1 p-2 block w-full border rounded-md focus:ring-blue-500 focus:border-blue-500">
+              </label>
+            </div>
+          </div>
+
+          <!-- Two-Factor Authentication -->
+          <div class="border-b pb-8">
+            <h3 class="text-xl font-semibold mb-1">Two-Factor Authentication (2FA)</h3>
+            <p class="text-gray-500 mb-4">Add an extra layer of security to your account by requiring a code from your authenticator app.</p>
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <span class="font-medium">Enable 2FA</span>
+              <label class="flex items-center gap-3 cursor-pointer select-none">
+                <input type="checkbox" [(ngModel)]="security.twoFactorEnabled" (change)="toggle2FA()" name="twoFactor" class="sr-only peer" />
+                <div class="w-12 h-7 rounded-full relative transition-colors duration-200" [ngClass]="security.twoFactorEnabled ? 'bg-blue-600' : 'bg-gray-300'">
+                  <span class="absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200" [ngClass]="security.twoFactorEnabled ? 'translate-x-5' : ''"></span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Logged-in Devices -->
+          <div class="border-b pb-8">
+            <h3 class="text-xl font-semibold mb-4">Logged-in Devices</h3>
+            <p class="text-gray-500 mb-4">You are currently logged in on these devices. You can log out from any session you don't recognize.</p>
+            <ul class="space-y-4">
+              <li *ngFor="let device of security.devices" class="flex items-center justify-between p-4 border rounded-md hover:bg-gray-50">
+                <div class="flex items-center gap-4">
+                  <span class="material-icons text-3xl text-gray-600">{{ getDeviceIcon(device.os) }}</span>
+                  <div>
+                    <p class="font-semibold">{{ device.browser }} on {{ device.os }} <span *ngIf="device.current" class="text-xs font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded-full ml-2">Current</span></p>
+                    <p class="text-sm text-gray-500">{{ device.location }} &bull; Last active: {{ device.last_active }}</p>
+                  </div>
+                </div>
+                <button *ngIf="!device.current" (click)="logoutDevice(device.id)" class="px-3 py-1 text-sm font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-100 hover:text-red-700">Log out</button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Delete Account -->
+          <div>
+            <h3 class="text-xl font-semibold mb-2 text-red-600">Delete Account</h3>
+            <p class="text-gray-500 mb-4">Permanently delete your account, posts, and all of your content. This action is not reversible. Please be certain.</p>
+            <button (click)="confirmDeleteAccount()" class="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700">Delete My Account</button>
+          </div>
+        </div>
+        <!-- Save/Cancel Buttons -->
+        <div class="flex justify-end gap-4 max-w-8xl w-full ">
+          <button 
+            type="button" 
+            (click)="cancelChanges()" 
+            [disabled]="loading"
+            class="px-6 py-2 rounded border border-gray-300 text-gray-600 bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+            Cancel
+          </button>
+          <button 
+            type="button" 
+            (click)="saveAllSettings()" 
+            [disabled]="loading || !hasChanges()"
+            class="px-6 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+            <span class="material-icons text-sm" *ngIf="!loading">save</span>
+            <span class="material-icons text-sm animate-spin" *ngIf="loading">hourglass_empty</span>
+            {{ loading ? 'Saving...' : 'Save All Settings' }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <router-outlet></router-outlet>
+  </div>
 </div>
-<router-outlet></router-outlet>
+
+<!-- Media Modal -->
+<app-media *ngIf="showMediaModal" (selectImage)="onSelectMediaImage($event)" (close)="showMediaModal = false"></app-media>

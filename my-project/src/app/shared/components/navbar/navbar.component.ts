@@ -6,6 +6,9 @@ import { AuthService } from '../../../core/services/auth.service';
 import { UsersService } from '../../../core/services/users.service';
 import { User } from '../../model/user.model';
 import { BlogPostService } from '../../../core/services/blog-post.service';
+import { Subject } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
+import { Post } from '../../model/post.model';
 
 interface NavItem {
   path: string;
@@ -24,6 +27,7 @@ export class NavBarComponent implements OnInit {
   dropdownOpen = false;
   menuOpen = false;
   isLargeScreen = false;
+  @Input() posts: Post[] = [];
   
   readonly LARGE_SCREEN_BREAKPOINT = 1024;
   
@@ -32,16 +36,7 @@ export class NavBarComponent implements OnInit {
     { path: '/blog/write-post', label: 'Write', icon: 'fas fa-pen' }
   ];
 
-  dropdownItems: NavItem[] = [
-    { path: '/profile/profile-user', label: 'Profile', icon: 'fas fa-user' },
-    { path: '/category', label: 'Category', icon: 'fas fa-list' },
-    { path: '/blog/write-post', label: 'Write', icon: 'fas fa-pen' },
-    { path: '/blog/contact-us', label: 'Contact Us', icon: 'fas fa-envelope' },
-    { path: '/dashboard/dashboard-setting', label: 'Settings', icon: 'fas fa-cog' },
-    { path: '/home/about-page', label: 'About Us', icon: 'fas fa-info-circle' },
-    { path: '/dashboard/dashboard-main', label: 'Dashboard', icon: 'fas fa-tachometer-alt' },
-    { path: '/home/introduce-page', label: 'Log out', icon: 'fas fa-sign-out-alt' }
-  ];
+  dropdownItems: NavItem[] = [];
 
   currentUser: User | null = null;
 
@@ -52,16 +47,58 @@ export class NavBarComponent implements OnInit {
   searchBoxOpen = false;
   searchKeyword = '';
   searchResults: any[] = [];
+  autocompleteResults: any[] = [];
+  showAutocomplete = false;
+  searchInput$ = new Subject<string>();
 
   ngOnInit(): void {
     this.checkScreenSize();
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
-      // Nếu có user nhưng chưa có avatar hoặc avatar từ userUploads, load profile
+      this.updateDropdownItems();
       if (user && (!user.avatar || user.avatar === 'assets/images/default-avatar.jpg')) {
         this.loadUserProfile();
       }
     });
+    // Autocomplete logic
+    this.searchInput$
+      .pipe(
+        debounceTime(300),
+        switchMap(term => this.blogPostService.getAll({ search: term, autocomplete: true }))
+      )
+      .subscribe({
+        next: (res) => {
+          this.autocompleteResults = res.data?.posts || [];
+          this.showAutocomplete = !!this.searchKeyword && this.autocompleteResults.length > 0;
+        },
+        error: () => {
+          this.autocompleteResults = [];
+          this.showAutocomplete = false;
+        }
+      });
+  }
+
+  updateDropdownItems(): void {
+    const baseItems: NavItem[] = [
+      { path: '/profile/profile-user', label: 'Profile', icon: 'fas fa-user' },
+      { path: '/category', label: 'Category', icon: 'fas fa-list' },
+      { path: '/blog/write-post', label: 'Write', icon: 'fas fa-pen' },
+      { path: '/blog/contact-us', label: 'Contact Us', icon: 'fas fa-envelope' },
+      { path: '/dashboard/dashboard-setting', label: 'Settings', icon: 'fas fa-cog' },
+      { path: '/home/about-page', label: 'About Us', icon: 'fas fa-info-circle' },
+    ];
+
+    if (this.currentUser) {
+      if (this.currentUser.role_id === 1) { // Admin
+        baseItems.push({ path: '/admin/dashboard', label: 'Dashboard', icon: 'fas fa-tachometer-alt' });
+      } else if (this.currentUser.role_id === 2) { // Blogger
+        baseItems.push({ path: '/dashboard/dashboard-main', label: 'Dashboard', icon: 'fas fa-tachometer-alt' });
+      }
+    }
+
+    baseItems.push({ path: 'logout', label: 'Log out', icon: 'fas fa-sign-out-alt' });
+
+    this.dropdownItems = baseItems;
   }
 
   loadUserProfile(): void {
@@ -111,6 +148,9 @@ export class NavBarComponent implements OnInit {
     this.menuOpen = !this.menuOpen;
   }
 
+  logout(): void {
+    this.authService.logout();
+  }
 
   get avatarUrl(): string {
     if (this.currentUser?.avatar) {
@@ -148,12 +188,32 @@ export class NavBarComponent implements OnInit {
     this.searchBoxOpen = true;
     this.searchKeyword = '';
     this.searchResults = [];
+    this.autocompleteResults = [];
+    this.showAutocomplete = false;
   }
 
   closeSearchBox() {
     this.searchBoxOpen = false;
     this.searchKeyword = '';
     this.searchResults = [];
+    this.autocompleteResults = [];
+    this.showAutocomplete = false;
+  }
+
+  onSearchInput(term: string) {
+    this.searchKeyword = term;
+    if (!term || !term.trim() || term.trim().length < 1) {
+      this.showAutocomplete = false;
+      this.autocompleteResults = [];
+      return;
+    }
+    this.searchInput$.next(term);
+  }
+
+  selectAutocomplete(post: any) {
+    this.searchKeyword = post.title;
+    this.showAutocomplete = false;
+    this.searchResults = [post];
   }
 
   onSearch() {
@@ -163,11 +223,12 @@ export class NavBarComponent implements OnInit {
     }
     this.blogPostService.searchPosts(this.searchKeyword).subscribe({
       next: (res) => {
-        // Tùy vào API trả về, có thể là res.data.posts hoặc res.data
         this.searchResults = res.data?.posts || res.data || [];
+        this.showAutocomplete = false;
       },
       error: () => {
         this.searchResults = [];
+        this.showAutocomplete = false;
       }
     });
   }

@@ -34,7 +34,7 @@ export class SidebarDashboardComponent implements OnInit, OnDestroy {
   // Dữ liệu cho các mục điều hướng (Lấy từ HTML của bạn)
   navItems: NavItem[] = [
     { path: '/dashboard/dashboard-main', icon: 'fas fa-chart-pie', label: 'Overview', exact: true },
-    { path: '/dashboard/dashboard-post', icon: 'fas fa-newspaper', label: 'Posts', badge: 12, exact: true },
+    { path: '/dashboard/dashboard-post', icon: 'fas fa-newspaper', label: 'Posts', exact: true },
     { path: '/dashboard/dashboard-media', icon: 'fas fa-image', label: 'Media Library', exact: true },
     { isSettingsHeader: true, settingsLabel: 'Settings' },
     { path: '/dashboard/dashboard-setting', icon: 'fas fa-sliders-h', label: 'Settings', exact: true },

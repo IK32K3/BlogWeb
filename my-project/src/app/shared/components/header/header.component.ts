@@ -10,7 +10,7 @@ import { SharedModule } from 'app/shared/shared.module';
 
 @Component({
   selector: 'app-header',
-  imports: [ CommonModule, RouterModule, FormsModule, SharedModule],
+  imports: [ CommonModule, RouterModule, FormsModule, NavBarComponent, NavbarIntroduceComponent],
   standalone: true,
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'

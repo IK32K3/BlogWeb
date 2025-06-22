@@ -26,9 +26,9 @@ const { authenticated, isAdmin, isBlogOwnerRole, isResourceOwner } = require("ke
 
 // Import Validations (cập nhật tên cho nhất quán)
 const { registerValidation, loginValidation, forgotPasswordValidation, resetPasswordValidation, refreshTokenValidation, logoutValidation } = require("modules/auth/validation/authValidations");
-const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, updateProfileValidation, saveSettingsValidation, changePasswordValidation } = require("modules/users/validation/userValidations");
+const { getAllUsersValidation, getUserByIdValidation, createUserValidation, updateUserValidation, updateProfileValidation, saveSettingsValidation, changePasswordValidation, deleteAccountValidation } = require("modules/users/validation/userValidations");
 const { createPostValidation, updatePostValidation, getPostByIdValidation, getPostBySlugValidation, getPostsByCategoryValidation, getAllPostsValidation, getMyPostsValidation, getPostsByAuthorValidation } = require("modules/posts/validation/postValidations");
-const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, getMyCommentsValidation } = require("modules/comments/validation/commentValidations");
+const { getCommentsByPostValidation, addCommentValidation, updateCommentValidation, getMyCommentsValidation, getAllCommentsValidation } = require("modules/comments/validation/commentValidations");
 const { getAllCategoriesValidation, getCategoryByIdValidation, createCategoryValidation, updateCategoryValidation } = require("modules/categories/validation/categoryValidations");
 const { getAllLanguagesValidation, getLanguageByIdValidation, createLanguageValidation, updateLanguageValidation } = require("modules/languages/validation/languageValidations");
 // Cập nhật tên các validation cho media
@@ -71,6 +71,7 @@ router.group("/users", (router) => {
     router.put("/", validate(updateProfileValidation), userController.updateProfile);
     router.post("/settings", validate(saveSettingsValidation), userController.saveSettings);
     router.put("/changePassword", validate(changePasswordValidation), userController.changePassword);
+    router.delete("/", validate(deleteAccountValidation), userController.deleteAccount);
 
     // Route upload avatar
     router.post(
@@ -82,6 +83,7 @@ router.group("/users", (router) => {
   });
 
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
+    router.get("/", validate(getAllUsersValidation), userController.getAllUsers);
     router.get("/admin", validate(getAllUsersValidation), userController.getAllUsers);
     router.post("/admin", validate(createUserValidation), userController.createUser);
     router.get("/:id", validate(getUserByIdValidation), userController.getUserById);
@@ -140,13 +142,18 @@ router.group("/comments", (router) => {
     router.put("/:commentId", middlewares([isResourceOwner(Comment)]), validate(updateCommentValidation), commentController.updateComment);
     router.delete("/:commentId", middlewares([isResourceOwner(Comment)]), commentController.deleteComment);
   });
+
+  // Add route for getting all comments (admin only)
+  router.get("/", middlewares([authenticated, isAdmin]), validate(getAllCommentsValidation), commentController.getAllComments);
 });
 
 // ===== Category Routes =====
 router.group("/categories", (router) => {
+  // Public routes - ai cũng có thể xem
   router.get("/", validate(getAllCategoriesValidation), categoryController.getAllCategories);
   router.get("/:id", validate(getCategoryByIdValidation), categoryController.getCategoryById);
 
+  // Admin only routes - chỉ admin mới có thể thao tác
   router.group("/", middlewares([authenticated, isAdmin]), (router) => {
     router.post("/", validate(createCategoryValidation), categoryController.createCategory);
     router.put("/:id", validate(updateCategoryValidation), categoryController.updateCategory);

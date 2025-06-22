@@ -39,8 +39,13 @@ const userController = {
   // POST /api/users
   createUser: async (req, res) => {
     try {
+      const userData = req.body;
+      // Provide a default avatar if one is not provided
+      if (!userData.avatar) {
+        userData.avatar = 'assets/images/default-avatar.jpg';
+      }
       // Tạo người dùng mới
-      const newUser = await userService.createUser(req.body);
+      const newUser = await userService.createUser(userData);
   
       // Trả về phản hồi thành công với thông tin người dùng mới
       return responseUtils.created(res, {
@@ -194,6 +199,38 @@ changePassword: async (req, res) => {
       return responseUtils.success(res, { avatar: avatarUrl }, 'Avatar updated successfully');
     } catch (err) {
       return responseUtils.serverError(res, err.message);
+    }
+  },
+
+  /**
+   * @desc Delete current user's account
+   * @route DELETE /api/users/me
+   * @access Private
+   */
+  deleteAccount: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { currentPassword } = req.body;
+
+      if (!currentPassword) {
+        return responseUtils.badRequest(res, 'Current password is required to delete account');
+      }
+
+      await userService.deleteAccount(userId, currentPassword);
+
+      return responseUtils.success(res, { message: 'Account deleted successfully' });
+    } catch (error) {
+      console.error('Delete account error:', error);
+      if (error.message === 'User not found') {
+        return responseUtils.notFound(res, 'User not found');
+      }
+      if (error.message === 'Current password is incorrect') {
+        return responseUtils.unauthorized(res, 'Current password is incorrect');
+      }
+      if (error.message === 'Failed to delete user account') {
+        return responseUtils.serverError(res, 'Failed to delete account. Please try again.');
+      }
+      return responseUtils.serverError(res, error.message);
     }
   },
 };

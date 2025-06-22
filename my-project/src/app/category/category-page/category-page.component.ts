@@ -14,7 +14,7 @@ import { DEFAULT_POST_IMAGE, DEFAULT_AUTHOR_IMAGE } from '../../core/constants/a
 import { CategoryService } from '../../core/services/category.service';
 import { Category } from '../../shared/model/category.model';
 import { Observable } from 'rxjs';
-import { SharedModule } from 'app/shared/shared.module';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 
 interface Tag {
   name: string;
@@ -29,10 +29,10 @@ interface Tag {
     FormsModule,
     RouterOutlet,
     RouterModule,
-    SharedModule,
     FooterComponent,
     FilterMovieComponent,
-    TranslateModule
+    TranslateModule,
+    HeaderComponent
   ],
   templateUrl: './category-page.component.html',
   styleUrl: './category-page.component.css'

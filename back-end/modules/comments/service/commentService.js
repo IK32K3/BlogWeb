@@ -145,5 +145,40 @@ module.exports = {
         limit: parseInt(limit)
       }
     };
+  },
+
+  /**
+   * Get all comments with pagination (admin only)
+   */
+  getAllComments: async ({ page = 1, limit = 20 }) => {
+    const offset = (page - 1) * limit;
+    
+    const { count, rows: comments } = await Comment.findAndCountAll({
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'username']
+        },
+        {
+          model: Post,
+          as: 'post',
+          attributes: ['id', 'title', 'slug']
+        }
+      ]
+    });
+    
+    return {
+      comments,
+      pagination: {
+        total: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: parseInt(page),
+        limit: parseInt(limit)
+      }
+    };
   }
 };

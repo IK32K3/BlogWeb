@@ -9,7 +9,7 @@ import { CategoryService } from '../../core/services/category.service';
 import { Post } from '../../shared/model/post.model';
 import { Category } from '../../shared/model/category.model';
 import { PostCardComponent } from '../../shared/components/post-card/post-card.component';
-import { SharedModule } from '../../shared/shared.module';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-home-page',
@@ -19,10 +19,10 @@ import { SharedModule } from '../../shared/shared.module';
     FormsModule,
     RouterOutlet,
     RouterLink,
-    SharedModule,
     FooterComponent,
     HeroSectionComponent,
-    PostCardComponent
+    PostCardComponent,
+    HeaderComponent
   ],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.css'

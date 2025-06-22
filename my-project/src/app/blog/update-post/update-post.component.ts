@@ -9,11 +9,11 @@ import { BlogPostService } from '../../core/services/blog-post.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Post, PostDto } from '../../shared/model/post.model';
 import { ToastrService } from 'ngx-toastr';
-import { SharedModule } from 'app/shared/shared.module';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-update-post',
-  imports: [CommonModule,FormsModule,RouterOutlet,SharedModule,FooterComponent,QuillEditorComponent],
+  imports: [CommonModule,FormsModule,RouterOutlet,FooterComponent,QuillEditorComponent,HeaderComponent],
   templateUrl: './update-post.component.html',
   styleUrl: './update-post.component.css'
 })
@@ -82,12 +82,16 @@ export class UpdatePostComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data?.post) {
           const post = response.data.post;
-          // Check if user is the author of the post
-          if (post.user_id !== this.authService.getCurrentUserId()) {
-            this.error = 'You are not authorized to edit this post';
+          const currentUser = this.authService.getCurrentUserId();
+          const isAdmin = this.authService.hasRole('Admin');
+
+          // Check if user is the author of the post or an admin
+          if (post.user_id !== currentUser && !isAdmin) {
+            this.toastr.error('You are not authorized to edit this post', 'Unauthorized');
             this.router.navigate(['/blog']);
             return;
           }
+
           this.title = post.title;
           this.content = post.content;
           this.description = post.description;
@@ -199,17 +203,26 @@ export class UpdatePostComponent implements OnInit {
     this.blogPostService.update(this.postId!, formData).subscribe({
       next: (response) => {
         if (response.success) {
-          this.success = 'Post updated successfully!';
+          this.toastr.success('Post updated successfully!', 'Success');
           this.isLoading = false;
           this.lastSavedTime = new Date().toLocaleTimeString();
+
           if (response.data?.post?.updatedAt) {
             this.lastUpdated = response.data.post.updatedAt;
           }
-          // Clear selectedFile after successful upload/update to avoid re-uploading
+          
           this.selectedFile = null;
           this.fileInput.nativeElement.value = '';
+
+          // Redirect to post detail page
+          const postId = response.data?.post?.id || this.postId;
+          if (postId) {
+            this.router.navigate(['/post-detail', postId]);
+          } else {
+            this.router.navigate(['/blog']); // Fallback
+          }
         } else {
-          this.error = response.message || 'Failed to update post';
+          this.toastr.error(response.message || 'Failed to update post', 'Error');
           this.isLoading = false;
         }
       },
@@ -218,7 +231,7 @@ export class UpdatePostComponent implements OnInit {
           this.authService.logout();
           this.router.navigate(['/auth/login']);
         } else {
-          this.error = err.error?.message || 'Failed to update post. Please try again.';
+          this.toastr.error(err.error?.message || 'Failed to update post. Please try again.', 'Error');
         }
         this.isLoading = false;
         console.error('Error updating post:', err);

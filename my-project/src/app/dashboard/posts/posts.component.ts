@@ -11,6 +11,8 @@ import { CategoryService } from '../../core/services/category.service';
 import { UsersService } from '../../core/services/users.service';
 import { Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
+import { HeaderDashboardComponent } from '../../shared/components/header-dashboard/header-dashboard.component';
+import { SidebarDashboardComponent } from '../../shared/components/sidebar-dashboard/sidebar-dashboard.component';
 
 export interface Author {
   name: string;
@@ -38,7 +40,7 @@ interface CategoryColor {
 @Component({
   selector: 'app-posts',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterOutlet, SharedModule],
+  imports: [CommonModule, FormsModule, RouterOutlet, HeaderDashboardComponent, SidebarDashboardComponent],
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.css'
 })
@@ -64,9 +66,9 @@ export class PostsComponent implements OnInit {
     { name: 'Travel', bgColor: 'bg-cyan-100', textColor: 'text-cyan-800' }
   ];
 
-  selectedStatus = signal<string>(this.statusOptions[0]);
-  selectedCategory = signal<string>(this.categoryOptions()[0]);
-  searchTerm = signal<string>('');
+  selectedStatus: string = this.statusOptions[0];
+  selectedCategory: string = 'All Categories';
+  searchTerm: string = '';
 
   // --- Selection Signals ---
   allSelected = signal<boolean>(false);
@@ -147,7 +149,7 @@ export class PostsComponent implements OnInit {
     ).subscribe({
       next: (res) => {
         this.autocompleteResults = res.data.posts;
-        this.showAutocomplete = !!this.searchTerm() && this.autocompleteResults.length > 0;
+        this.showAutocomplete = !!this.searchTerm && this.autocompleteResults.length > 0;
       }
     });
   }
@@ -156,9 +158,9 @@ export class PostsComponent implements OnInit {
     this.blogPostService.getMyPosts({
       page: this.currentPage(),
       limit: this.itemsPerPage(),
-      status: this.selectedStatus() !== 'All Status' ? this.selectedStatus() : undefined,
-      search: this.searchTerm() || undefined,
-      category: this.selectedCategory() !== 'All Categories' ? this.selectedCategory() : undefined
+      status: this.selectedStatus !== 'All Status' ? this.selectedStatus : undefined,
+      search: this.searchTerm || undefined,
+      category: this.selectedCategory !== 'All Categories' ? this.selectedCategory : undefined
     }).subscribe({
       next: (response) => {
         if (response.success) {
@@ -203,18 +205,23 @@ export class PostsComponent implements OnInit {
 
   applyFilters(): void {
     let posts = this.allPosts();
-    if (this.selectedCategory() !== 'All Categories') {
-      posts = posts.filter(post => post.category === this.selectedCategory());
+
+    // Lọc theo category
+    if (this.selectedCategory !== 'All Categories') {
+      posts = posts.filter(post => post.category === this.selectedCategory);
     }
-    if (this.selectedStatus() !== 'All Status') {
-      posts = posts.filter(post => post.status === this.selectedStatus());
+
+    // Lọc theo status
+    if (this.selectedStatus !== 'All Status') {
+      posts = posts.filter(post => post.status === this.selectedStatus);
     }
+
     this.filteredPosts.set(posts);
   }
 
   onFilterChange(): void {
     this.currentPage.set(1);
-    this.loadInitialPosts();
+    this.applyFilters();
   }
 
   toggleSelectAll(event: Event): void {
@@ -375,7 +382,7 @@ export class PostsComponent implements OnInit {
   }
 
   onSearchInput(term: string) {
-    this.searchTerm.set(term);
+    this.searchTerm = term;
     if (!term || !term.trim() || term.trim().length < 1) {
       this.showAutocomplete = false;
       this.autocompleteResults = [];

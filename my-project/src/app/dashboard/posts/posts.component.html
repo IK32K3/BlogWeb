@@ -30,7 +30,8 @@
                     <div class="flex items-center space-x-2">
                         <div class="relative">
                             <select
-                                [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()"
+                                [(ngModel)]="selectedStatus"
+                                (ngModelChange)="onFilterChange()"
                                 class="appearance-none bg-white pl-3 pr-8 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                                 <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
                             </select>
@@ -41,7 +42,8 @@
 
                         <div class="relative">
                             <select
-                                [(ngModel)]="selectedCategory" (ngModelChange)="onFilterChange()"
+                                [(ngModel)]="selectedCategory"
+                                (ngModelChange)="onFilterChange()"
                                 class="appearance-none bg-white pl-3 pr-8 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                                 <option *ngFor="let category of categoryOptions()" [value]="category">{{ category }}</option>
                             </select>

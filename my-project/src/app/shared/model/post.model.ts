@@ -71,10 +71,8 @@ export interface Post {
   views: number;
   slug: string;
   id_post_original?: number | null;
-  created_at: string;
-  updated_at: string;
-  createdAt?: string;  // For API response compatibility
-  updatedAt?: string;  // For API response compatibility
+  createdAt: string;
+  updatedAt: string;
   comments?: number;
   likes_count?: number;
   comments_count?: number;

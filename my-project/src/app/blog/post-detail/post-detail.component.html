@@ -40,7 +40,7 @@
                     <div>
                         <p class="font-medium">{{ post.author?.username || 'Anonymous' }}</p>
                         <div class="flex items-center text-sm text-gray-500 space-x-4">
-                            <span><i class="far fa-calendar-alt mr-1"></i> {{ post.created_at | date:'mediumDate' }}</span>
+                            <span><i class="far fa-calendar-alt mr-1"></i> {{ post.createdAt | date:'mediumDate' }}</span>
                             <span><i class="far fa-clock mr-1"></i> {{ post.views || 0 }} views</span>
                         </div>
                     </div>
