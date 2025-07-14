@@ -6,7 +6,7 @@ const registerValidation = [
   // Username: bắt buộc, 3-50 ký tự, chỉ chứa chữ cái, số và gạch dưới
   new BodyWithLocale('username')
     .notEmpty()
-    .matches(/^[a-zA-Z0-9_]{3,50}$/, 'Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới (3-50 ký tự)')
+    .matches(/^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/, 'Sai tên người dùng , xin vui lòng nhập lại')
     .unique(User, 'username', 'Tên người dùng đã được sử dụng')
     .get(),
 
@@ -14,7 +14,7 @@ const registerValidation = [
   new BodyWithLocale('email')
     .notEmpty()
     .isEmail().withMessage('Email không hợp lệ')
-    .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+    .matches(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
     .unique(User, 'email', 'Email đã được sử dụng')
     .get(),
 
@@ -23,12 +23,6 @@ const registerValidation = [
     .notEmpty()
     .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>])/, 'Mật khẩu phải chứa ít nhất một số và một ký tự đặc biệt')
     .isLength({ min: 6, max: 100 })
-    .get(),
-
-  // Confirm Password: giống password
-  new BodyWithLocale('confirmPassword')
-    .notEmpty()
-    .confirmed('password', 'Xác nhận mật khẩu không khớp')
     .get(),
 ];
 

@@ -63,6 +63,8 @@ router.group("/auth", (router) => {
     validate(logoutValidation), 
     authController.logout
   );
+  router.get("/check-username", authController.checkUsername);
+  router.get("/check-email", authController.checkEmail);
 });
 // ===== User Routes =====
 router.group("/users", (router) => {
@@ -82,13 +84,16 @@ router.group("/users", (router) => {
     );
   });
 
-  router.group("/", middlewares([authenticated, isAdmin]), (router) => {
+  router.group("/", middlewares([authenticated]), (router) => {
     router.get("/", validate(getAllUsersValidation), userController.getAllUsers);
-    router.get("/admin", validate(getAllUsersValidation), userController.getAllUsers);
     router.post("/admin", validate(createUserValidation), userController.createUser);
     router.get("/:id", validate(getUserByIdValidation), userController.getUserById);
     router.put("/:id", validate(updateUserValidation), userController.updateUser);
     router.delete("/:id", userController.deleteUser);
+
+    // Block/Unblock user (admin only)
+    router.post('/:id/block', isAdmin, userController.blockUser);
+    router.post('/:id/unblock', isAdmin, userController.unblockUser);
   });
 });
 
@@ -97,6 +102,7 @@ router.group("/users", (router) => {
 // ===== Post Routes =====
 router.group("/posts", (router) => {
   router.get("/", validate(getAllPostsValidation), postController.getAllPosts);
+  router.get("/search", validate(getAllPostsValidation), postController.getAllPosts);
   
   router.group("/", middlewares([authenticated]), (router) => {
     router.get("/my", validate(getMyPostsValidation), postController.getMyPosts);
@@ -132,18 +138,15 @@ router.group("/posts", (router) => {
   router.post("/:postId/comments", middlewares([authenticated]), validate(addCommentValidation), commentController.addComment);
 });
 
-// ===== Comment Routes (Removed post-related routes)
+// ===== Comment Routes (standalone) =====
 router.group("/comments", (router) => {
-  // router.get("/post/:postId", validate(getCommentsByPostValidation), commentController.getCommentsByPost); // Moved to /posts/:postId/comments
-
-  router.group("/", middlewares([authenticated]), (router) => {
-    // router.post("/post/:postId", validate(addCommentValidation), commentController.addComment); // Moved to /posts/:postId/comments
-    router.get("/my", validate(getMyCommentsValidation), commentController.getMyComments);
-    router.put("/:commentId", middlewares([isResourceOwner(Comment)]), validate(updateCommentValidation), commentController.updateComment);
-    router.delete("/:commentId", middlewares([isResourceOwner(Comment)]), commentController.deleteComment);
-  });
-
-  // Add route for getting all comments (admin only)
+  // Lấy comment của chính mình
+  router.get("/my", middlewares([authenticated]), validate(getMyCommentsValidation), commentController.getMyComments);
+  // Sửa comment
+  router.put("/:id", middlewares([authenticated, isResourceOwner(Comment)]), validate(updateCommentValidation), commentController.updateComment);
+  // Xóa comment
+  router.delete("/:id", middlewares([authenticated, isResourceOwner(Comment)]), commentController.deleteComment);
+  // Lấy tất cả comment (admin only)
   router.get("/", middlewares([authenticated, isAdmin]), validate(getAllCommentsValidation), commentController.getAllComments);
 });
 

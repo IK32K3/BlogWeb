@@ -7,7 +7,6 @@
    Ensure your build process (like PostCSS) is configured correctly 
    to handle these, or replace them with a link to the compiled Tailwind CSS file.
 */
-@import "tailwindcss/base"; 
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 

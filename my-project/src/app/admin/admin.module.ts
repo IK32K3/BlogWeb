@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { NgChartsModule } from 'ng2-charts';
 import { AdminRoutingModule } from './admin-routing.module';
   
 @NgModule({
@@ -12,7 +12,8 @@ import { AdminRoutingModule } from './admin-routing.module';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    NgChartsModule
   ]
 })
 export class AdminModule { }

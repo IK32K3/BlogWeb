@@ -47,12 +47,12 @@ class NotFoundError extends AuthError {
 const authService = {
   /**
    * Handles user registration logic.
-   * @param {object} userData - Contains username, email, password, description.
+   * @param {object} userData - Contains username, email, password, description, avatar.
    * @returns {Promise<object>} - { user, tokens }
    * @throws {AuthError|ConflictError}
    */
     registerUser: async (userData) => {
-    const { username, email, password, description } = userData;
+    const { username, email, password, description, avatar } = userData;
 
     // --- Check for existing user ---
     const existingUser = await User.findOne({
@@ -68,7 +68,7 @@ const authService = {
 
     // --- Get default role ---
     const defaultRole = await Role.findOne({
-      where: { name: 'Blogger' },
+      where: { name: 'Viewer' },
       attributes: ['id', 'name'] // Chỉ lấy những cột cần thiết
     });
     if (!defaultRole) {
@@ -83,9 +83,10 @@ const authService = {
       password: hashedPassword,
       role_id: defaultRole.id,
       description: description || '',
-      is_active: true
+      is_active: true,
+      avatar: avatar || ''
     }, {
-      fields: ['username', 'email', 'password', 'role_id', 'description', 'is_active']
+      fields: ['username', 'email', 'password', 'role_id', 'description', 'is_active', 'avatar']
     });
 
     // --- Generate tokens ---
@@ -284,8 +285,46 @@ const authService = {
     const accessToken = jwtUtils.sign(user.id, user.role.name);
 
     return accessToken;
+  },
+
+  /**
+   * Check if username exists
+   * @param {string} username
+   * @returns {Promise<boolean>} - true if username exists
+   */
+  checkUsernameExists: async (username) => {
+    const user = await User.findOne({
+      where: { username },
+      attributes: ['id'] // Only fetch id for efficiency
+    });
+    return !!user;
+  },
+
+  /**
+   * Check if email exists
+   * @param {string} email
+   * @returns {Promise<boolean>} - true if email exists
+   */
+  checkEmailExists: async (email) => {
+    const user = await User.findOne({
+      where: { email },
+      attributes: ['id'] // Only fetch id for efficiency
+    });
+    return !!user;
+  },
+
+  /**
+   * Handles user logout logic.
+   * @param {string} refreshToken
+   * @returns {Promise<boolean>} - true if successful
+   */
+  logoutUser: async (refreshToken) => {
+    // Nếu bạn lưu refresh token ở DB, hãy xóa nó ở đây.
+    // Ví dụ:
+    // await RefreshToken.destroy({ where: { token: refreshToken } });
+    // Nếu không lưu, chỉ cần trả về true
+    return true;
   }
-  
 };
 
 module.exports = authService;

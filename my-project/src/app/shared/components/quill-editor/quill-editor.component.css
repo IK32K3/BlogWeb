@@ -11,7 +11,7 @@
 
 /* Quill Toolbar Styling */
 .ql-toolbar.ql-snow {
-  border: 1px solid #e5e7eb; /* Tailwind gray-200 */
+  border: 1px solid #9ca3af; /* Tailwind gray-200 */
   border-radius: 0.5rem 0.5rem 0 0;
   background-color: #f3f4f6; /* Tailwind gray-100 */
   padding: 0.5rem 1rem;
@@ -20,7 +20,7 @@
 
 /* Quill Container Styling */
 .ql-container.ql-snow {
-  border: 1px solid #e5e7eb;
+  border: 1px solid #9ca3af;
   border-radius: 0 0 0.5rem 0.5rem;
   background-color: #ffffff;
   font-size: 1rem;

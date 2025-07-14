@@ -45,10 +45,10 @@ export class BlogPostService {
   // ============================================
   /**
    * Tạo bài viết mới
-   * @param data - Dữ liệu bài viết
+   * @param data - Dữ liệu bài viết (PostDto hoặc FormData)
    * @returns Observable - Dữ liệu bài viết đã tạo
    */
-  create(data: PostDto): Observable<any> {
+  create(data: PostDto | FormData): Observable<any> {
     return this.http.post(POST_API.BASE, data).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('Create post error:', error);
@@ -157,6 +157,9 @@ export class BlogPostService {
       ...params,
       include: ['category', 'author']
     };
+    if (params && params.includeDrafts !== undefined) {
+      queryParams.includeDrafts = params.includeDrafts;
+    }
     return this.http.get<{ success: boolean, message: string, data: { posts: Post[], pagination: any } }>(POST_API.GET_MY, { params: queryParams }).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('Get my posts error:', error);

@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, Router, ActivatedRoute } from '@angular/router';
-import { NavBarComponent } from '../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { QuillEditorComponent } from '../../shared/components/quill-editor/quill-editor.component';
 import { BlogPostService } from '../../core/services/blog-post.service';
@@ -63,6 +62,7 @@ export class WritePostComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.categories.sort((a, b) => a.name.localeCompare(b.name));
     this.loadCategories();
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
@@ -71,6 +71,7 @@ export class WritePostComponent implements OnInit {
         this.loadPost(this.postId);
       }
     });
+    
   }
 
   loadPost(id: number) {
@@ -188,14 +189,17 @@ export class WritePostComponent implements OnInit {
       this.toastr.error('Please add a title before publishing');
       return;
     }
-
     if (!this.post.category_id) {
       this.toastr.error('Please select a category');
       return;
     }
-
     if (!this.postContent.trim()) {
       this.toastr.error('Please add some content to your post');
+      return;
+    }
+    // Add thumbnail check
+    if (!this.imageSelected || !this.selectedFile) {
+      this.toastr.error('Please select a thumbnail image before publishing.');
       return;
     }
 
@@ -241,7 +245,19 @@ export class WritePostComponent implements OnInit {
       if (this.postId) {
         response = await firstValueFrom(this.blogPostService.update(this.postId, this.post));
       } else {
-        response = await firstValueFrom(this.blogPostService.create(this.post));
+        const formData = new FormData();
+        formData.append('title', this.post.title);
+        formData.append('content', this.post.content);
+        formData.append('description', this.post.description || '');
+        formData.append('category_id', String(this.post.category_id));
+        formData.append('status', this.post.status || 'draft');
+        if (this.post.translations) {
+          formData.append('translations', JSON.stringify(this.post.translations));
+        }
+        if (this.selectedFile) {
+          formData.append('thumbnail', this.selectedFile);
+        }
+        response = await firstValueFrom(this.blogPostService.create(formData));
       }
 
       if (response.success) {
@@ -267,9 +283,13 @@ export class WritePostComponent implements OnInit {
       this.toastr.error('A title is required to save a draft');
       return;
     }
-
     if (!this.postContent.trim()) {
       this.toastr.error('Content is required to save a draft');
+      return;
+    }
+    // Add thumbnail check for draft as well (if required by backend)
+    if (!this.imageSelected || !this.selectedFile) {
+      this.toastr.error('Please select a thumbnail image before saving draft.');
       return;
     }
 
@@ -315,7 +335,19 @@ export class WritePostComponent implements OnInit {
       if (this.postId) {
         response = await firstValueFrom(this.blogPostService.update(this.postId, this.post));
       } else {
-        response = await firstValueFrom(this.blogPostService.create(this.post));
+        const formData = new FormData();
+        formData.append('title', this.post.title);
+        formData.append('content', this.post.content);
+        formData.append('description', this.post.description || '');
+        formData.append('category_id', String(this.post.category_id));
+        formData.append('status', this.post.status || 'draft');
+        if (this.post.translations) {
+          formData.append('translations', JSON.stringify(this.post.translations));
+        }
+        if (this.selectedFile) {
+          formData.append('thumbnail', this.selectedFile);
+        }
+        response = await firstValueFrom(this.blogPostService.create(formData));
       }
 
       if (response.success) {
@@ -338,25 +370,12 @@ export class WritePostComponent implements OnInit {
     }
   }
 
-  discardPost() {
-    if (confirm('Are you sure you want to discard this post? All changes will be lost.')) {
-      this.post = {
-        title: '',
-        content: '',
-        description: '',
-        category_id: 0,
-        status: 'draft',
-        translations: []
-      };
-      this.postContent = '';
-      this.selectedCategoryName = '';
-      this.resetImage(new MouseEvent('click'));
-    }
-  }
+  
 
   hideCategoryOptionsWithDelay() {
     setTimeout(() => {
       this.categoryOptionsVisible = false;
     }, 200);
   }
+  
 }

@@ -22,24 +22,16 @@ interface NavItem {
   imports: [CommonModule, FormsModule, RouterModule, RouterLink, RouterLinkActive], // Thêm RouterModule
   standalone: true,
   templateUrl: './sidebar-dashboard.component.html',
-  styleUrls: ['./sidebar-dashboard.component.css'] // Sửa 'styleUrl' thành 'styleUrls' (mảng)
+  styleUrls: ['./sidebar-dashboard.component.css'] 
 })
 export class SidebarDashboardComponent implements OnInit, OnDestroy {
-  // Sử dụng signal để quản lý trạng thái
   sidebarOpen = signal(true); // Mặc định mở trên desktop, đóng trên mobile ban đầu
   isMobileView = signal(window.innerWidth < 1024); // lg breakpoint của Tailwind
 
   @Output() sidebarToggled = new EventEmitter<boolean>(); // Để thông báo cho layout cha nếu cần
 
   // Dữ liệu cho các mục điều hướng (Lấy từ HTML của bạn)
-  navItems: NavItem[] = [
-    { path: '/dashboard/dashboard-main', icon: 'fas fa-chart-pie', label: 'Overview', exact: true },
-    { path: '/dashboard/dashboard-post', icon: 'fas fa-newspaper', label: 'Posts', exact: true },
-    { path: '/dashboard/dashboard-media', icon: 'fas fa-image', label: 'Media Library', exact: true },
-    { isSettingsHeader: true, settingsLabel: 'Settings' },
-    { path: '/dashboard/dashboard-setting', icon: 'fas fa-sliders-h', label: 'Settings', exact: true },
-    { path: '/help', icon: 'fas fa-question-circle', label: 'Help Center', exact: true },
-  ];
+  navItems: NavItem[] = [];
 
   // User data from AuthService
   currentUser: User | null = null;
@@ -62,6 +54,25 @@ export class SidebarDashboardComponent implements OnInit, OnDestroy {
     // Subscribe to current user changes
     this.userSubscription = this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
+      // Cập nhật navItems dựa trên role_id
+      const roleId = user?.role_id;
+      if (roleId === 1 || roleId === 2) {
+        this.navItems = [
+          { path: '/dashboard/dashboard-main', icon: 'fas fa-chart-pie', label: 'Overview', exact: true },
+          { path: '/dashboard/dashboard-post', icon: 'fas fa-newspaper', label: 'Posts', exact: true },
+          { path: '/dashboard/dashboard-media', icon: 'fas fa-image', label: 'Media Library', exact: true },
+          { isSettingsHeader: true, settingsLabel: 'Settings' },
+          { path: '/dashboard/dashboard-setting', icon: 'fas fa-sliders-h', label: 'Settings', exact: true },
+          { path: '/help', icon: 'fas fa-question-circle', label: 'Help Center', exact: true },
+        ];
+      } else if (roleId === 3) {
+        this.navItems = [
+          { isSettingsHeader: true, settingsLabel: 'Settings' },
+          { path: '/dashboard/dashboard-setting', icon: 'fas fa-sliders-h', label: 'Settings', exact: true },
+        ];
+      } else {
+        this.navItems = [];
+      }
     });
 
     // If no user is loaded yet, try to load the profile

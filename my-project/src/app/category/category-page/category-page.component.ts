@@ -119,11 +119,12 @@ export class CategoryPageComponent implements OnInit {
         category_id: categoryId, // Pass numeric category_id if present
         status: params.status,
         sort: params.sort_by,
-        date_from: params.year ? `${params.year}-01-01T00:00:00.000Z` : undefined,
-        date_to: params.year ? `${params.year}-12-31T23:59:59.999Z` : undefined,
+        date_from: params.year === '1111' ? '1900-01-01T00:00:00.000Z' : (params.year ? `${params.year}-01-01T00:00:00.000Z` : undefined),
+        date_to: params.year === '1111' ? '2013-12-31T23:59:59.999Z' : (params.year ? `${params.year}-12-31T23:59:59.999Z` : undefined),
         // Thêm parameters để ưu tiên kết quả tìm kiếm
         search_priority: (typeof params.search === 'string' && params.search.trim().length > 0) ? 'relevance' : undefined,
         relevance_sort: (typeof params.search === 'string' && params.search.trim().length > 0) ? true : undefined,
+        sort_order: params.sort_order,
       };
       // Clean up undefined/null values for searchParams
       Object.keys(searchParams).forEach(key => (searchParams[key as keyof typeof searchParams] === undefined || searchParams[key as keyof typeof searchParams] === null) && delete searchParams[key as keyof typeof searchParams]);

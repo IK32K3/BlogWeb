@@ -25,7 +25,7 @@ import { HeaderComponent } from 'app/shared/components/header/header.component';
 export class ProfileUserComponent implements OnInit {
   selectedTab: string = 'posts';
   user: User | undefined;
-  userPosts: Post[] = [];
+  userPosts: (Post & { showMenu: boolean })[] = [];
   isLoading = true;
   error: string | null = null;
 
@@ -94,7 +94,8 @@ export class ProfileUserComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.blogPostService.getMyPosts().pipe(
+    // Lấy cả bài viết draft và published
+    this.blogPostService.getMyPosts({ includeDrafts: true }).pipe(
       catchError((error) => {
         console.error('Error fetching user posts:', error);
         this.error = 'Failed to load user posts.';
@@ -103,7 +104,8 @@ export class ProfileUserComponent implements OnInit {
       })
     ).subscribe(response => {
       if (response.success && response.data?.posts) {
-        this.userPosts = response.data.posts;
+        // Add showMenu property for UI state
+        this.userPosts = response.data.posts.map((post: Post) => ({ ...post, showMenu: false }));
       }
       this.isLoading = false;
     });

@@ -163,7 +163,7 @@ export class UsersService {
    * @param currentPassword Current password for verification
    */
   deleteAccount(currentPassword: string): Observable<AccountDeleteResponse> {
-    return this.http.delete<AccountDeleteResponse>(USER_API.ME, {
+    return this.http.delete<AccountDeleteResponse>(USER_API.DELETE_ACCOUNT, {
       body: { currentPassword }
     });
   }
@@ -200,5 +200,11 @@ export class UsersService {
    */
   isRegularUser(user: User): boolean {
     return user.role?.name === 'user' || user.role_id === 4;
+  }
+
+  uploadAvatar(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return this.http.post(USER_API.UPLOAD_AVATAR, formData);
   }
 }

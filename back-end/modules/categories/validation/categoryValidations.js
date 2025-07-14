@@ -14,14 +14,28 @@ const getCategoryByIdValidation = [
 
 // Create category validation
 const createCategoryValidation = [
-    new BodyWithLocale('name').notEmpty().isLength({ min: 2, max: 50 }).get()
+    new BodyWithLocale('name')
+      .notEmpty()
+      .isLength({ min: 2, max: 50 })
+      .matches(/^[^\d]*$/, 'i').withMessage('Tên không được chứa số')
+      .custom(value => !/<script[\s>]/i.test(value)).withMessage('Tên không được chứa <script>'),
+    new BodyWithLocale('slug')
+      .optional()
+      .isLength({ min: 2, max: 255 })
+      .custom(value => !/<script[\s>]/i.test(value)).withMessage('Slug không được chứa <script>'),
 ];
 
 // Update category validation
 const updateCategoryValidation = [
-  
     new ParamWithLocale('id').notEmpty().isNumeric().get(),
-    new BodyWithLocale('name').isLength({ min: 2, max: 50 }).get()
+    new BodyWithLocale('name')
+      .isLength({ min: 2, max: 50 })
+      .matches(/^[^\d]*$/, 'i').withMessage('Tên không được chứa số')
+      .custom(value => !/<script[\s>]/i.test(value)).withMessage('Tên không được chứa <script>'),
+    new BodyWithLocale('slug')
+      .optional()
+      .isLength({ min: 2, max: 255 })
+      .custom(value => !/<script[\s>]/i.test(value)).withMessage('Slug không được chứa <script>'),
 ];
 
 

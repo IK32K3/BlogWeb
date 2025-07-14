@@ -14,6 +14,8 @@ export const AUTH_API = {
   FORGOT_PASSWORD: `${API_BASE}/auth/forgot-password`,
   RESET_PASSWORD: `${API_BASE}/auth/reset-password`,
   LOGOUT: `${API_BASE}/auth/logout`,
+  CHECK_USERNAME: `${API_BASE}/auth/check-username`,
+  CHECK_EMAIL: `${API_BASE}/auth/check-email`,
 };
 
 // Đường dẫn API cho người dùng
@@ -24,6 +26,7 @@ export const USER_API = {
   UPDATE_PROFILE: `${API_BASE}/users/me`,
   SAVE_SETTINGS: `${API_BASE}/users/me/settings`,
   CHANGE_PASSWORD: `${API_BASE}/users/me/changePassword`,
+  UPLOAD_AVATAR: `${API_BASE}/users/me/avatar`,
   ADMIN: {
     BASE: `${API_BASE}/users/admin`,
     GET_ALL: `${API_BASE}/users/admin`,
@@ -32,6 +35,7 @@ export const USER_API = {
   GET_BY_ID: (id: string | number) => `${API_BASE}/users/${id}`,
   UPDATE: (id: string | number) => `${API_BASE}/users/${id}`,
   DELETE: (id: string | number) => `${API_BASE}/users/${id}`,
+  DELETE_ACCOUNT: `${API_BASE}/users/me`,
 };
 
 // Đường dẫn API cho bài viết
@@ -48,18 +52,17 @@ export const POST_API = {
   GET_BY_AUTHOR: (userId: string | number) => `${API_BASE}/posts/author/${userId}`,
   GET_BY_ID: (id: string | number) => `${API_BASE}/posts/${id}`,
   GET_COMMENTS: (postId: string | number) => `${API_BASE}/posts/${postId}/comments`,
-  ADD_COMMENT: (postId: string | number) => `${API_BASE}/posts/${postId}/comments`,
 };
 
 // Đường dẫn API cho bình luận (old routes, will be removed or refactored if needed)
 export const COMMENT_API = {
   BASE: `${API_BASE}/comments`,
-  // These will be deprecated/removed if not used elsewhere
-  // GET_BY_POST: (postId: string | number) => `${API_BASE}/comments/post/${postId}`,
-  // ADD_TO_POST: (postId: string | number) => `${API_BASE}/comments/post/${postId}`,
   GET_MY: `${API_BASE}/comments/my`,
+  GET_ALL: `${API_BASE}/comments`,
+  GET_BY_ID: (commentId: string | number) => `${API_BASE}/comments/${commentId}`,
   UPDATE: (commentId: string | number) => `${API_BASE}/comments/${commentId}`,
   DELETE: (commentId: string | number) => `${API_BASE}/comments/${commentId}`,
+  GET_BY_POST: (postId: string | number) => `${API_BASE}/posts/${postId}/comments`,
 };
 
 // Đường dẫn API cho danh mục
@@ -120,6 +123,7 @@ export interface AuthRegisterDto {
   username: string;
   email: string;
   password: string;
+  avatar?: string;
 }
 
 export interface AuthLoginDto {

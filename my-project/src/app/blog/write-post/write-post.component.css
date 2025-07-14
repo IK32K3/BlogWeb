@@ -1,6 +1,6 @@
 ::ng-deep app-quill-editor,
 ::ng-deep app-quill-editor .ql-container {
-  width: 100% !important;
+  width: 100%;
 }
 
 ::ng-deep .ql-editor {

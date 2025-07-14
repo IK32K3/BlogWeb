@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { HeaderDashboardComponent } from '../../shared/components/header-dashboard/header-dashboard.component';
 import { SidebarDashboardComponent } from '../../shared/components/sidebar-dashboard/sidebar-dashboard.component';
 import { CommonModule } from '@angular/common';
@@ -14,12 +14,6 @@ import { map, catchError, debounceTime, distinctUntilChanged, switchMap, tap } f
 import { HttpClient } from '@angular/common/http';
 import { LanguagesService } from '../../core/services/languages.service';
 import { CreateTranslationDto, USER_API } from '../../core/constants/api-endpoints';
-
-interface Toast {
-  message: string;
-  type: 'success' | 'error' | 'info' | 'warning';
-  icon: string;
-}
 
 @Component({
   selector: 'app-setting',
@@ -37,6 +31,8 @@ export class SettingComponent implements OnInit {
   isSearching: boolean = false;
   blockedUsernames: string[] = [];
   private searchSubject = new Subject<string>();
+
+  securityPasswordError: string = '';
 
   appearance = {
     theme: 'light',
@@ -101,7 +97,8 @@ export class SettingComponent implements OnInit {
     private usersService: UsersService,
     private authService: AuthService,
     private http: HttpClient,
-    private languagesService: LanguagesService
+    private languagesService: LanguagesService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -138,19 +135,20 @@ export class SettingComponent implements OnInit {
     this.loading = true;
     this.usersService.getProfile().subscribe({
       next: (res) => {
-        this.user = res.data.user;
+        const user = res.data.user;
+        this.user = user;
         const userSettings = (this.user.settings?.settings as any) || {};
 
         // --- Populate current state from server ---
         this.account = {
-          name: this.user.username || '',
-          email: this.user.email || '',
-          bio: (this.user as any).bio || '',
-          website: (this.user as any).website || '',
-          location: (this.user as any).location || '',
-          avatar: this.user.avatar || null,
-          firstName: (this.user as any).firstName || '',
-          lastName: (this.user as any).lastName || '',
+          name: user.username || '',
+          email: user.email || '',
+          bio: user.description || '',
+          website: (user as any).website || '',
+          location: (user as any).location || '',
+          avatar: user.avatar || null,
+          firstName: (user as any).firstName || '',
+          lastName: (user as any).lastName || '',
           phone: '', // These fields are not part of the backup/save logic for now
           password: '',
           currentPassword: '',
@@ -238,26 +236,19 @@ export class SettingComponent implements OnInit {
     this.loading = true;
     const tasks: Observable<any>[] = [];
 
-    // Task 1: Update Profile
-    if (JSON.stringify(this.account) !== JSON.stringify(this.initialSettings.account)) {
-      const formData = new FormData();
-      
-      // --- Map frontend account fields to backend API keys ---
-      formData.append('username', this.account.name);
-      formData.append('email', this.account.email);
-      formData.append('description', this.account.bio); // Use 'bio' from the component's 'account' object
-      formData.append('website', this.account.website);
-      formData.append('location', this.account.location);
-
-      if (this.account.avatar instanceof File) {
-        formData.append('avatar', this.account.avatar);
-      }
-
-      tasks.push(this.usersService.updateProfile(formData).pipe(
-        map(response => ({ source: 'updateProfile', data: response.data.user })),
-        catchError(err => of({ source: 'updateProfile', error: err }))
-      ));
-    }
+    // Nếu không upload avatar, gửi JSON
+    const data = {
+      username: this.account.name,
+      email: this.account.email,
+      description: this.account.bio,
+      website: this.account.website,
+      location: this.account.location,
+      avatar: typeof this.account.avatar === 'string' ? this.account.avatar : undefined // chỉ gửi URL/avatar string
+    };
+    tasks.push(this.usersService.updateProfile(data).pipe(
+      map(response => ({ source: 'updateProfile', data: response.data.user })),
+      catchError(err => of({ source: 'updateProfile', error: err }))
+    ));
 
     // Task 2: Change Password
     if (this.security.newPassword) {
@@ -430,9 +421,14 @@ export class SettingComponent implements OnInit {
         this.avatarPreviewUrl = e.target.result;
       };
       reader.readAsDataURL(file);
+
+      // Tự động upload avatar sau khi chọn file hợp lệ
+      this.uploadAvatar();
     }
   }
-
+  get isFileAvatar(): boolean {
+    return this.account.avatar instanceof File;
+  }
   uploadAvatar() {
     if (!this.account.avatar || !(this.account.avatar instanceof File)) {
       this.showSwal('Please select an image to upload.', 'warning');
@@ -440,11 +436,7 @@ export class SettingComponent implements OnInit {
     }
 
     this.loading = true;
-    const formData = new FormData();
-    formData.append('avatar', this.account.avatar);
-
-    // Use the upload avatar endpoint
-    this.http.post(`${USER_API.BASE}/avatar`, formData).subscribe({
+    this.usersService.uploadAvatar(this.account.avatar).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (response.success) {
@@ -471,9 +463,9 @@ export class SettingComponent implements OnInit {
     this.usersService.deleteAccount(this.security.currentPassword).subscribe({
         next: (response) => {
             Swal.fire('Deleted!', 'Your account has been permanently deleted.', 'success').then(() => {
-                // Here you would typically log the user out and redirect
-                // e.g., this.authService.logout();
-                // this.router.navigate(['/login']);
+                // Logout, redirect to introduce page
+                this.authService.logout();
+                this.router.navigate(['/home/introduce-page']);
             });
         },
         error: (err) => {
@@ -535,12 +527,17 @@ export class SettingComponent implements OnInit {
   }
 
   getDeviceIcon(os: string): string {
-    const lowerOs = os.toLowerCase();
-    if (lowerOs.includes('windows')) return 'desktop_windows';
-    if (lowerOs.includes('mac')) return 'desktop_mac';
-    if (lowerOs.includes('android')) return 'phone_android';
-    if (lowerOs.includes('ios')) return 'phone_iphone';
-    return 'computer';
+    if (!os) return 'fa-question-circle';
+    const osLower = os.toLowerCase();
+    if (osLower.includes('windows')) return 'fa-windows';
+    if (osLower.includes('mac')) return 'fa-apple';
+    if (osLower.includes('android')) return 'fa-android';
+    if (osLower.includes('linux')) return 'fa-linux';
+    if (osLower.includes('ios')) return 'fa-mobile-alt';
+    if (osLower.includes('mobile')) return 'fa-mobile-alt';
+    if (osLower.includes('desktop') || osLower.includes('pc')) return 'fa-desktop';
+    if (osLower.includes('laptop')) return 'fa-laptop';
+    return 'fa-question-circle';
   }
 
   logoutDevice(deviceId: number) {
@@ -564,18 +561,15 @@ export class SettingComponent implements OnInit {
   confirmDeleteAccount() {
     Swal.fire({
       title: 'Are you absolutely sure?',
+      
       html: `
         <p class="text-gray-600">This action cannot be undone. This will permanently delete your account and all associated data.</p>
-        <p class="text-red-500 font-semibold mt-2">Please type your username <strong>${this.user?.username}</strong> to confirm.</p>
+        <p class="text-red-500 font-semibold mt-2">Please type your Password to confirm.</p>
         <div class="mt-4">
           <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-          <input type="password" id="currentPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Enter your current password">
+          <input type="password" id="currentPassword" class="w-full px-2 py-3 border border-gray-300 rounded-md focus:outline-none" placeholder="Enter your current password">
         </div>
       `,
-      input: 'text',
-      inputAttributes: {
-        autocapitalize: 'off'
-      },
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -585,16 +579,11 @@ export class SettingComponent implements OnInit {
       preConfirm: (username) => {
         const currentPassword = (document.getElementById('currentPassword') as HTMLInputElement)?.value;
         
-        if (username !== this.user?.username) {
-          Swal.showValidationMessage('The entered username does not match.');
-          return false;
-        }
         
         if (!currentPassword) {
           Swal.showValidationMessage('Current password is required.');
           return false;
         }
-        
         this.security.currentPassword = currentPassword;
         return username;
       }

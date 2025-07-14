@@ -1,6 +1,6 @@
-<app-header></app-header>
-<div class="bg-gray-300 mt-16">
-    <main class="container mx-auto px-4 py-8 max-w-4xl">
+<div class="bg-gray-300 h-screen overflow-y-auto scale-z-100">
+    <app-header></app-header>
+    <main class="container mx-auto py-8 max-w-6xl">
         <!-- Error Message -->
         <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
             <strong class="font-bold">Error!</strong>
@@ -30,12 +30,13 @@
             </div>
  
             <div class="p-6 md:p-8 prose">
-                <div class="flex items-center space-x-4 mb-6">
+                <div class="flex items-center space-x-4 mb-6 ">
                     <img 
                         [src]="getImageUrl(post.author?.avatar)" 
                         [alt]="post.author?.username || 'Author'" 
-                        class="w-14 h-14 rounded-full border-2 border-blue-200"
+                        class="w-14 h-14 rounded-full border-2 border-blue-200 cursor-pointer"
                         (error)="handleImageError($event)"
+                        (click)="goToProfile(post.author?.id)"
                     >
                     <div>
                         <p class="font-medium">{{ post.author?.username || 'Anonymous' }}</p>
@@ -44,13 +45,31 @@
                             <span><i class="far fa-clock mr-1"></i> {{ post.views || 0 }} views</span>
                         </div>
                     </div>
+                    <div class="flex justify-end items-end mt-4  mb-2">
+                        <div class="relative inline-block">
+                          <button (click)="showDropdown = !showDropdown"
+                            class="flex items-center border border-gray-300 rounded-lg px-2 py-1 text-sm bg-white min-w-[120px] shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all">
+                            <img [src]="selectedLanguageFlag" alt="flag" class="w-4 h-4 mr-2 rounded border border-gray-200" />
+                            <span class="font-medium text-gray-800">{{ selectedLanguageObj?.name }}</span>
+                            <svg class="w-5 h-5 ml-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                          </button>
+                          <div *ngIf="showDropdown" class="absolute right-0 z-20 w-52 bg-white border border-gray-200 rounded-xl shadow-xl mt-2 max-h-60 overflow-y-auto animate-fade-in">
+                            <div *ngFor="let lang of availableLanguages"
+                                 (click)="selectedLanguage = lang.locale; showDropdown = false; onLanguageChange({ target: { value: lang.locale } })"
+                                 class="flex items-center px-4 py-2 hover:bg-blue-50 cursor-pointer transition-colors duration-100 rounded-lg mb-1 last:mb-0">
+                              <img [src]="lang.flag" alt="flag" class="w-6 h-6 mr-3 rounded-md border border-gray-200" />
+                              <span class="text-gray-800 font-medium">{{ lang.name }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                 </div>
-
+                
                 <div class="border-l-4 border-blue-500 bg-blue-50 px-4 py-2 mb-6">
                     <p class="text-gray-700 italic font-medium">"{{ post.description }}"</p>
                 </div>
 
-                <div class="prose max-w-none" [innerHTML]="post.content"></div>
+                <div class="post-content" [innerHTML]="getSanitizedContent(post.content)"></div>
 
                 <!-- Language Translations -->
                 <div *ngIf="post.postTranslateLanguage && post.postTranslateLanguage.length > 0" class="mt-8 border-t pt-6">
@@ -81,21 +100,91 @@
                 </div>
             </div>
         </article>
+        <section class="mt-8">
+                    <div class="bg-white shadow-md rounded-xl overflow-hidden">
+                        <div class="p-6 border-b">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-2xl font-bold text-gray-800">Bình luận ({{ comments.length || 0 }})</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6">
+                            <!-- Comment Form -->
+                            <div *ngIf="isLoggedIn" class="mb-6">
+                                <h3 class="text-lg font-medium mb-4">Để lại bình luận</h3>
+                                <textarea [(ngModel)]="newComment" 
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                                        rows="4" 
+                                        placeholder="Viết bình luận của bạn tại đây..."></textarea>
+                                <div class="flex justify-end mt-4">
+                                    <button (click)="postComment()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                                        <i class="fa-solid fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
 
+                            <!-- Message for unauthenticated users -->
+                            <div *ngIf="!isLoggedIn" class="mb-6 text-center text-gray-600">
+                                <p>Vui lòng <a routerLink="/auth/login" class="text-blue-600 hover:underline font-medium">đăng nhập</a> để bình luận.</p>
+                            </div>
+
+                            <!-- Comments List -->
+                            <div class="space-y-6">
+                                <div *ngFor="let comment of comments" class="flex items-start space-x-4 bg-gray-50 p-4 rounded-lg shadow-sm">
+                                    <img [src]="getImageUrl(comment.user?.avatar)"
+                                         (error)="handleImageError($event)"
+                                         width="40" height="40"
+                                         class="rounded-full shadow-sm object-cover"
+                                         alt="Avatar">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-1 relative">
+                                            <span class="font-semibold text-gray-800">{{ comment.user?.username || 'Anonymous' }}</span>
+                                            <span class="text-xs text-gray-500">{{ comment.createdAt | date:'short' }}</span>
+                                            <!-- Menu 3 chấm góc phải -->
+                                            <div class="ml-auto relative items-end" *ngIf="isPostOwner || isCommentOwner(comment)">
+                                                <button (click)="toggleMenu(comment)" class="p-1 rounded-full hover:bg-gray-200 focus:outline-none">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <div *ngIf="comment.showMenu" class="absolute right-0 mt-2 w-24 bg-white border rounded shadow-lg z-10">
+                                                    <button *ngIf="isCommentOwner(comment)" (click)="editComment(comment); toggleMenu(comment, false)" class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                                                        <i class="fas fa-edit mr-1"></i> Sửa
+                                                    </button>
+                                                    <button (click)="confirmDeleteComment(comment)" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                                        <i class="fas fa-trash-alt mr-1"></i> Xóa
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="editingComment?.id === comment.id; else showCommentContent">
+                                            <textarea [(ngModel)]="editingContent" class="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"></textarea>
+                                            <div class="flex space-x-2 mt-2">
+                                                <button (click)="saveEditComment()" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs">Lưu</button>
+                                                <button (click)="cancelEdit()" class="bg-gray-300 text-gray-700 px-3 py-1 rounded hover:bg-gray-400 text-xs">Hủy</button>
+                                            </div>
+                                        </div>
+                                        <ng-template #showCommentContent>
+                                            <p class="text-gray-700">{{ comment.content }}</p>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
         <!-- Related Posts -->
         <section *ngIf="relateposts.length > 0" class="mt-8">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Related Posts</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Bài viết liên quan</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <article *ngFor="let relatedPost of relateposts" class="bg-white shadow-md rounded-lg overflow-hidden hover-scale">
                     <img [src]="getThumbnailUrl(relatedPost)" 
                          [alt]="relatedPost.title" 
                          class="w-full h-48 object-cover">
                     <div class="p-5">
-                        <span class="text-xs font-semibold text-blue-600 uppercase">{{ relatedPost.category?.name || 'Uncategorized' }}</span>
+                        <span class="text-xs font-semibold text-blue-600 uppercase">{{ relatedPost.category?.name || 'Chưa phân loại' }}</span>
                         <h3 class="text-xl font-bold mb-2 text-gray-800">{{ relatedPost.title }}</h3>
                         <p class="text-gray-600 text-sm mb-4">{{ relatedPost.description }}</p>
                         <div class="flex items-center text-sm text-gray-500">
-                            <span><i class="far fa-clock mr-1"></i> {{ relatedPost.views || 0 }} views</span>
+                            <span><i class="far fa-clock mr-1"></i> {{ relatedPost.views || 0 }} lượt xem</span>
                         </div>
                     </div>
                 </article>
@@ -103,61 +192,8 @@
         </section>
 
         <!-- Comments Section -->
-        <section class="mt-8">
-            <div class="bg-white shadow-md rounded-xl overflow-hidden">
-                <div class="p-6 border-b">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold text-gray-800">Comments ({{ comments.length || 0 }})</h2>
-                    </div>
-                </div>
-                
-                <div class="p-6">
-                    <!-- Comment Form -->
-                    <div *ngIf="isLoggedIn" class="mb-6">
-                        <h3 class="text-lg font-medium mb-4">Leave a comment</h3>
-                        <textarea [(ngModel)]="newComment" 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                                rows="4" 
-                                placeholder="Write your comment here..."></textarea>
-                        <div class="flex justify-end mt-4">
-                            <button (click)="postComment()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                                <i class="fa-solid fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Message for unauthenticated users -->
-                    <div *ngIf="!isLoggedIn" class="mb-6 text-center text-gray-600">
-                        <p>Please <a routerLink="/auth/login" class="text-blue-600 hover:underline font-medium">sign in</a> to leave a comment.</p>
-                    </div>
-
-                    <!-- Comments List -->
-                    <div class="space-y-6">
-                        <div *ngFor="let comment of comments" class="flex space-x-4">
-                            <div class="relative">
-                                <img [src]="getImageUrl(comment.user?.avatar)" 
-                                     [alt]="comment.user?.username || 'User'" 
-                                     class="w-12 h-12 rounded-full"
-                                     (error)="handleImageError($event)"
-                                >
-                            </div>
-                            <div class="flex-1">
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <div>
-                                            <h4 class="font-bold text-gray-800">{{ comment.user?.username || 'Anonymous' }}</h4>
-                                            <span class="text-xs text-gray-500">{{ comment.createdAt | date:'medium' }}</span>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-700 mb-3">{{ comment.content }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
+    <app-footer></app-footer>
 </div>
-<app-footer></app-footer>
+
 <router-outlet></router-outlet>

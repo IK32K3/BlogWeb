@@ -1,6 +1,14 @@
 <aside id="sidebar" class="h-full fixed inset-y-0 left-0 z-20 w-64 flex-shrink-0 transform overflow-y-auto bg-gray-900 text-white transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static">
-  <div class="flex h-full flex-col px-4 py-6">
-    <nav class="flex-1 space-y-2">
+  <div class="flex h-full flex-col px-4 py-4">
+      <nav class="flex-1 space-y-2">
+        <a routerLink="/home/home-page" class="flex items-center mb-8">
+          <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <i class="fas fa-pen-fancy text-white text-sm"></i>
+          </div>
+          <span class="ml-2 text-3xl font-bold bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text text-transparent hidden sm:block">
+            My<span class="bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent">Blog</span>
+          </span>
+        </a>
       <a routerLink="/admin/dashboard" routerLinkActive="bg-gray-700" [routerLinkActiveOptions]="{ exact: true }" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-gray-700">
         <i class="fas fa-tachometer-alt w-5 text-center"></i>
         <span>Dashboard</span>
@@ -20,16 +28,13 @@
         <i class="fas fa-tags w-5 text-center"></i>
         <span>Categories</span>
       </a>
+      <a routerLink="/admin/media" routerLinkActive="bg-gray-700" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-gray-700">
+        <i class="fas fa-image w-5 text-center"></i>
+        <span>Media</span>
+      </a>
       <a routerLink="/admin/comments" routerLinkActive="bg-gray-700" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-gray-700">
         <i class="fas fa-comments w-5 text-center"></i>
         <span>Comments</span>
-      </a>
-      <div class="px-3 pt-4 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
-        System
-      </div>
-      <a routerLink="/admin/settings" routerLinkActive="bg-gray-700" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-gray-700">
-        <i class="fas fa-cog w-5 text-center"></i>
-        <span>Settings</span>
       </a>
     </nav>
   </div>

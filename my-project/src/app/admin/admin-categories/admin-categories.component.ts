@@ -65,7 +65,6 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
     this.categoryForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       slug: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
-      description: ['', [Validators.maxLength(500)]]
     });
   }
 
@@ -209,12 +208,42 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
   addCategory(): void {
     if (this.categoryForm.valid) {
       const categoryData = this.categoryForm.value;
-      
+
+      // Check for <script> tag
+      const hasScript = (str: string) => /<script[\s>]/i.test(str || '');
+      if (
+        hasScript(categoryData.name) ||
+        hasScript(categoryData.slug)
+      ) {
+        this.toastr.error('Không được chứa thẻ <script> trong tên, slug hoặc mô tả.', 'Lỗi');
+        return;
+      }
+
+      // Không cho phép tên chứa số
+      if (/\d/.test(categoryData.name)) {
+        this.toastr.error('Tên danh mục không được chứa số.', 'Lỗi');
+        return;
+      }
+
+      // Check duplicate name or slug
+      const isDuplicate = this.allCategories.some(
+        c =>
+          c.name.trim().toLowerCase() === categoryData.name.trim().toLowerCase() ||
+          c.slug.trim().toLowerCase() === categoryData.slug.trim().toLowerCase()
+      );
+      if (isDuplicate) {
+        this.toastr.error('Tên hoặc slug đã tồn tại.', 'Lỗi');
+        return;
+      }
+
       this.categoryService.create(categoryData).subscribe({
         next: (response) => {
           if (response.success && response.data && response.data.category) {
             const newCategory = response.data.category;
-            this.toastr.success(`Category "${newCategory.name}" created on ${new Date(newCategory.created_at).toLocaleDateString()}.`, 'Success');
+            this.toastr.success(
+              `Category "${newCategory.name}" created on ${new Date(newCategory.created_at).toLocaleDateString()}.`,
+              'Success'
+            );
             this.closeAddDialog();
             this.loadAllCategories();
           } else {
@@ -237,7 +266,6 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
     this.categoryForm.patchValue({
       name: category.name,
       slug: category.slug,
-      description: category.description || ''
     });
     this.showEditDialog = true;
   }
@@ -252,6 +280,33 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
     if (this.categoryForm.valid && this.selectedCategory) {
       const categoryData = this.categoryForm.value;
       
+      // Check for <script> tag
+      const hasScript = (str: string) => /<script[\s>]/i.test(str || '');
+      if (
+        hasScript(categoryData.name) ||
+        hasScript(categoryData.slug)
+      ) {
+        this.toastr.error('Không được chứa thẻ <script> trong tên, slug hoặc mô tả.', 'Lỗi');
+        return;
+      }
+
+      // Không cho phép tên chứa số
+      if (/\d/.test(categoryData.name)) {
+        this.toastr.error('Tên danh mục không được chứa số.', 'Lỗi');
+        return;
+      }
+
+      // Check duplicate name or slug
+      const isDuplicate = this.allCategories.some(
+        c =>
+          c.name.trim().toLowerCase() === categoryData.name.trim().toLowerCase() ||
+          c.slug.trim().toLowerCase() === categoryData.slug.trim().toLowerCase()
+      );
+      if (isDuplicate) {
+        this.toastr.error('Tên  đã tồn tại.', 'Lỗi');
+        return;
+      }
+
       this.categoryService.update(this.selectedCategory.id, categoryData).subscribe({
         next: (response) => {
           if (response.success && response.data.category) {
@@ -371,5 +426,18 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
   // Track by function for ngFor
   trackByCategoryId(index: number, category: Category): number {
     return category.id;
+  }
+
+  getCategoryRowClass(index: number): string {
+    const colorClasses = [
+      'bg-blue-50',
+      'bg-green-50',
+      'bg-yellow-50',
+      'bg-pink-50',
+      'bg-purple-50',
+      'bg-orange-50',
+      'bg-teal-50'
+    ];
+    return colorClasses[index % colorClasses.length];
   }
 }

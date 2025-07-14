@@ -344,8 +344,8 @@ class postService {
     }
   }
 
-  // --- Helper Methods ---
-
+ // --- Helper Methods ---
+ 
   async _generateUniqueSlug(title, excludePostId = null) {
     let baseSlug = slugify(title, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g });
     let slug = baseSlug;
@@ -478,7 +478,7 @@ class postService {
 
     const whereClause = { user_id: userId };
     if (!includeDrafts) {
-        whereClause.status = { [Op.in]: ['published', 'scheduled'] };
+        whereClause.status = { [Op.in]: ['published', 'draft'] };
     }
 
     const { count, rows: posts } = await Post.findAndCountAll({

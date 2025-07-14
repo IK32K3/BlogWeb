@@ -1,36 +1,39 @@
-<app-header></app-header> 
-<app-hero-section class="mb-10"></app-hero-section > 
-<div class="bg-gray-300 overflow-x-hidden">
-    <!-- Posts Section -->
-    <app-post-card [posts]="posts"></app-post-card>
-    <!-- Features Section -->
-      <!-- about.component.html -->
-<section class="bg-gray-100 py-16">
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row items-center">
-            <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
-                <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="About Us" class="rounded-lg shadow-md w-full">
-            </div>
-            <div class="md:w-1/2">
-                <h2 class="text-3xl font-bold mb-4">About Our Blog</h2>
-                <p class="text-gray-600 mb-4">
-                    Welcome to BlogHub, where we share insights, stories, and knowledge about various topics including 
-                    lifestyle, travel, productivity, and more. Our mission is to create a community of curious minds 
-                    who love to learn and share.
-                </p>
-                <p class="text-gray-600 mb-6">
-                    Founded in 2020, we've grown from a small team of writers to a diverse community of contributors 
-                    from around the world. We believe in the power of sharing knowledge and experiences to inspire 
-                    and educate others.
-                </p>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
-                    Learn More About Us
-                </button>
+
+    <div class="overflow-y-auto h-screen scale-z-100">  
+    <app-header></app-header> 
+    <app-hero-section class="mb-10"></app-hero-section > 
+    <div class="bg-gray-300 overflow-x-hidden">
+        <!-- Posts Section -->
+        <app-post-card [posts]="posts"></app-post-card>
+        <!-- Features Section -->
+        <!-- about.component.html -->
+    <section class="bg-gray-100 py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+                    <img src="https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj" alt="About Us" class="rounded-lg shadow-md w-full">
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl font-bold mb-4">About Our Blog</h2>
+                    <p class="text-gray-600 mb-4">
+                        Welcome to BlogHub, where we share insights, stories, and knowledge about various topics including 
+                        lifestyle, travel, productivity, and more. Our mission is to create a community of curious minds 
+                        who love to learn and share.
+                    </p>
+                    <p class="text-gray-600 mb-6">
+                        Founded in 2020, we've grown from a small team of writers to a diverse community of contributors 
+                        from around the world. We believe in the power of sharing knowledge and experiences to inspire 
+                        and educate others.
+                    </p>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
+                        Learn More About Us
+                    </button>
+                </div>
             </div>
         </div>
+    </section>
     </div>
-</section>
+    <!-- Footer -->
+    <app-footer></app-footer>
 </div>
-<!-- Footer -->
-<app-footer></app-footer>
 <router-outlet></router-outlet>

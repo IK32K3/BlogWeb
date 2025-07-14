@@ -148,39 +148,36 @@ const userService = {
   },
   
   /**
-   * Update user with transaction support
+   * Update user with transaction support (async/await version)
    * @param {number} id - User ID
    * @param {Object} updateData - Data to update
-   * @param {Array<number>} [mediaIds] - New media IDs
    * @returns {Promise<Object>} - Updated user
    */
-  updateUser: async (id, updateData, mediaIds) => {
+  updateUser: async (id, updateData) => {
     const transaction = await db.sequelize.transaction();
-    
     try {
       const user = await User.findByPk(id, { transaction });
-      
       if (!user) {
         throw new Error('User not found');
       }
-      
+
       // Validate username/email uniqueness
       if (updateData.username && updateData.username !== user.username) {
-        const existing = await User.findOne({ 
+        const existing = await User.findOne({
           where: { username: updateData.username },
           transaction
         });
         if (existing) throw new Error('Username already exists');
       }
-      
+
       if (updateData.email && updateData.email !== user.email) {
-        const existing = await User.findOne({ 
+        const existing = await User.findOne({
           where: { email: updateData.email },
           transaction
         });
         if (existing) throw new Error('Email already exists');
       }
-      
+
       // Hash new password if provided
       if (updateData.password) {
         updateData.password = await bcrypt.hash(
@@ -188,11 +185,12 @@ const userService = {
           config.hashing.bcrypt.rounds
         );
       }
-      
-      // Update user
+
+      // Update user (bao gồm cả description nếu có)
       await user.update(updateData, { transaction });
-      
+
       await transaction.commit();
+      // Đảm bảo trả về user mới nhất, có trường description
       return await userService.getUserById(id);
     } catch (error) {
       await transaction.rollback();
@@ -357,6 +355,32 @@ const userService = {
       await transaction.rollback();
       throw error;
     }
+  },
+
+  /**
+   * Block a user (set is_active to false)
+   * @param {number} id - User ID
+   * @returns {Promise<Object>} - Blocked user
+   */
+  blockUser: async (id) => {
+    const user = await User.findByPk(id);
+    if (!user) throw new Error('User not found');
+    if (!user.is_active) throw new Error('User is already blocked');
+    await user.update({ is_active: false });
+    return user;
+  },
+
+  /**
+   * Unblock a user (set is_active to true)
+   * @param {number} id - User ID
+   * @returns {Promise<Object>} - Unblocked user
+   */
+  unblockUser: async (id) => {
+    const user = await User.findByPk(id);
+    if (!user) throw new Error('User not found');
+    if (user.is_active) throw new Error('User is already active');
+    await user.update({ is_active: true });
+    return user;
   }
 };
 

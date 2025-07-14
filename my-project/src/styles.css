@@ -312,6 +312,8 @@ input.custom-radio + .filter-label > span:first-child {
     max-width: 100%; /* Usually handled by container */
     line-height: 1.7; /* Slightly increased line-height */
     color: #374151; /* text-gray-700 */
+    white-space: pre-line;
+    word-break: break-word;
 }
 .prose h2 {
     margin-top: 2em;
@@ -424,5 +426,26 @@ input.custom-radio + .filter-label > span:first-child {
 .status-dot { /* Example usage */
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
-
+/* Custom scrollbar for the whole page or a specific class */
+.overflow-y-auto {
+    scrollbar-width: thin; 
+    z-index: 70;             /* Firefox */
+    scrollbar-color: #4f46e5 #e5e7eb;   /* Firefox */
+  }
+  
+  /* Chrome, Edge, Safari */
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 8px;
+    background: #e5e7eb; /* Màu nền thanh cuộn */
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #4f46e5; /* Màu nút kéo */
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #6366f1; /* Hover màu đậm hơn */
+  }
 

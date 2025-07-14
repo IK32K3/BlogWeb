@@ -39,8 +39,4 @@ export class FooterComponent implements AfterViewInit {
     }
   }
 
-  // Hàm cuộn lên đầu trang
-  scrollToTop(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
 }

@@ -10,11 +10,13 @@ import { UsersService } from 'app/core/services/users.service';
 import { BlogPostService } from 'app/core/services/blog-post.service';
 import { User } from 'app/shared/model/user.model';
 import { CommentsService } from 'app/core/services/comments.service';
+import { ChartConfiguration, ChartType } from 'chart.js';
+import { NgChartsModule } from 'ng2-charts';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, HeaderAdminComponent, SlidebarAdminComponent, RouterModule,RouterOutlet],
+  imports: [CommonModule, HeaderAdminComponent, SlidebarAdminComponent, RouterModule,RouterOutlet,NgChartsModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
@@ -32,38 +34,24 @@ export class AdminDashboardComponent implements OnInit {
   allUsers: User[] = [];
 
   // Recent activities
-  recentActivities = [
-    {
-      user: 'John Doe',
-      action: 'published a new post',
-      time: '2 minutes ago',
-      color: 'green'
-    },
-    {
-      user: 'Jane Smith',
-      action: 'commented on a post',
-      time: '15 minutes ago',
-      color: 'blue'
-    },
-    {
-      user: 'Mike Johnson',
-      action: 'updated their profile',
-      time: '1 hour ago',
-      color: 'yellow'
-    },
-    {
-      user: 'Sarah Wilson',
-      action: 'created a new category',
-      time: '2 hours ago',
-      color: 'purple'
-    },
-    {
-      user: 'Admin',
-      action: 'deleted a spam comment',
-      time: '3 hours ago',
-      color: 'red'
-    }
-  ];
+
+  // Chart data for Posts Overview
+  postsChartData: ChartConfiguration<'bar'>['data'] = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    datasets: [
+      { data: [10, 20, 15, 30, 25, 40], label: 'Posts' }
+    ]
+  };
+  postsChartType: ChartType = 'bar';
+
+  // Chart data for User Growth
+  usersChartData: ChartConfiguration<'line'>['data'] = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    datasets: [
+      { data: [5, 10, 20, 35, 50, 70], label: 'Users', fill: true }
+    ]
+  };
+  usersChartType: ChartType = 'line';
 
   constructor(
     private dashboardService: DashboardService,

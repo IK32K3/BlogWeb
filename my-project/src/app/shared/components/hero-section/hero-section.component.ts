@@ -28,7 +28,7 @@ export class HeroSectionComponent implements OnInit, OnDestroy {
   slides: Slide[] = [];
 
   // Ảnh fallback
-  public readonly DEFAULT_POST_IMAGE = DEFAULT_POST_IMAGE;
+  public readonly DEFAULT_POST_IMAGE = DEFAULT_POST_IMAGE || 'https://res.cloudinary.com/dejapatma/image/upload/v1751453224/Doraemon-Cartoon-Illustration-410092-pixahive_oguct6.jpg';
   private readonly DEFAULT_AUTHOR_IMAGE = DEFAULT_AUTHOR_IMAGE;
 
   constructor(private blogPostService: BlogPostService) {}

@@ -95,4 +95,10 @@ export class LanguagesService {
       responseType: 'blob'
     });
   }
+
+  getPostTranslation(postId: number | string, lang: string) {
+    return this.http.get<{ title: string, description: string, content: string }>(`/api/posts/${postId}/translate`, {
+      params: { lang }
+    });
+  }
 }

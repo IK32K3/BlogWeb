@@ -5,8 +5,8 @@ import { ProfileSettingsComponent } from './profile-settings/profile-settings.co
 
 const routes: Routes = [
   { path: 'profile-user', component: ProfileUserComponent },
-  { path: 'profile', component: ProfileSettingsComponent },
-  { path: '', redirectTo: 'profile', pathMatch: 'full' }
+  { path: 'profile-settings/:id', component: ProfileSettingsComponent },
+  { path: '', redirectTo: 'profile-user', pathMatch: 'full' }
 ];
 
 @NgModule({

@@ -25,8 +25,8 @@ const postContentRules = (isOptional = false) => {
 
   return [
     chain('title', { min: 3, max: 300 }),
-    chain('content', { min: 10, max: 10000 }),
-    chain('description', { min: 10, max: 500 }),
+    chain('content', { min: 10, max: 50000 }),
+    chain('description', { min: 10, max: 5000 }),
     isOptional
       ? new BodyWithLocale('category_id').optional().isNumeric().toInt().get()
       : new BodyWithLocale('category_id').notEmpty().isNumeric().toInt().get(),
@@ -91,7 +91,8 @@ const getAllPostsValidation = [
   new QueryWithLocale('categoryId').optional().isInt({ min: 1 }).toInt().get(),
   new QueryWithLocale('userId').optional().isInt({ min: 1 }).toInt().get(),
   new QueryWithLocale('status').optional().isIn(['all', 'published', 'draft', 'scheduled', 'archived']).get(),
-  new QueryWithLocale('sort').optional().isIn(['latest', 'oldest', 'most_viewed', 'title_asc', 'title_desc']).get(),
+  new QueryWithLocale('sort').optional().isIn(['latest', 'oldest', 'views', 'comments', 'views_desc','comments_desc']).get(),
+  
   new QueryWithLocale('year').optional().isInt({ min: 1970, max: new Date().getFullYear() + 1 }).toInt().get(),
   new QueryWithLocale('search_priority').optional().isIn(['relevance', 'date', 'views', 'comments']).get(),
   new QueryWithLocale('relevance_sort').optional().isBoolean().toBoolean().get(),
@@ -119,7 +120,7 @@ const getPostsByAuthorValidation = [
   new ParamWithLocale('userId').notEmpty().isInt({ min: 1 }).toInt().get(),
   ...paginationRules(),
   new QueryWithLocale('status').optional().isIn(['published', 'draft', 'archived']).get(),
-  new QueryWithLocale('sort').optional().isIn(['newest', 'oldest', 'most_viewed']).get(),
+  new QueryWithLocale('sort').optional().isIn(['newest', 'oldest', 'views']).get(),
 ];
 
 const getPostsByCategoryValidation = [

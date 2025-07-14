@@ -27,6 +27,7 @@ const updateUserValidation = [
   new ParamWithLocale('id').notEmpty().isNumeric().get(),
   new BodyWithLocale('username').optional().isLength({ min: 3, max: 50 }).get(),
   new BodyWithLocale('email').optional().isEmail().get(),
+  new BodyWithLocale('description').get(),
   new BodyWithLocale('role_id').optional().isNumeric().get()
 ];
 

@@ -46,7 +46,6 @@ export class AdminPostsComponent implements OnInit, OnDestroy {
     { value: 'published', label: 'Published' },
     { value: 'draft', label: 'Draft' },
     { value: 'scheduled', label: 'Scheduled' },
-    { value: 'archived', label: 'Archived' }
   ];
   
   // Categories and authors for filters
@@ -124,7 +123,9 @@ export class AdminPostsComponent implements OnInit, OnDestroy {
       params.search = this.searchTerm;
     }
 
-    if (this.selectedStatus !== 'all') {
+    if (this.selectedStatus === 'all') {
+      params.status = 'all'; // Bắt buộc truyền status=all để backend trả về cả draft và published
+    } else {
       params.status = this.selectedStatus;
     }
 

@@ -10,6 +10,9 @@ import { AuthService } from '../../core/services/auth.service';
 import { Post, PostDto } from '../../shared/model/post.model';
 import { ToastrService } from 'ngx-toastr';
 import { HeaderComponent } from '../../shared/components/header/header.component';
+import Swal from 'sweetalert2';
+import { CategoryService } from '../../core/services/category.service';
+import { Category } from '../../shared/model/category.model';
 
 @Component({
   selector: 'app-update-post',
@@ -32,13 +35,14 @@ export class UpdatePostComponent implements OnInit {
   
   // Category and tags
   categorySearch: string = '';
-  categories: string[] = ['Technology', 'Business', 'Design', 'Health & Wellness', 'Lifestyle'];
-  filteredCategories: string[] = [...this.categories];
+  categories: Category[] = [];
+  filteredCategories: Category[] = [];
+  selectedCategoryName: string = '';
+  categoryOptionsVisible = false;
 
   // Update post status
   postStatus: string = 'Draft';
   lastUpdated: string = '';
-  showCategoryOptions: boolean = false;
 
   // Translations
   translations: any[] = [];
@@ -47,6 +51,7 @@ export class UpdatePostComponent implements OnInit {
   featuredImage: string | ArrayBuffer | null = null;
   selectedFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
+  selectedCategoryId: number | null = null;
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -55,7 +60,8 @@ export class UpdatePostComponent implements OnInit {
     private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private categoryService: CategoryService
   ) {}
 
   ngOnInit() {
@@ -63,7 +69,7 @@ export class UpdatePostComponent implements OnInit {
       this.router.navigate(['/auth/login']);
       return;
     }
-
+    this.loadCategories();
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.postId = +params['id'];
@@ -72,30 +78,66 @@ export class UpdatePostComponent implements OnInit {
     });
   }
 
+  loadCategories() {
+    this.categoryService.getAll().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.categories = response.data.categories || [];
+          this.filteredCategories = [...this.categories];
+        }
+      },
+      error: (err) => {
+        console.error('Error loading categories:', err);
+        this.toastr.error('Failed to load categories');
+      }
+    });
+  }
+
+  filterCategories() {
+    const search = this.categorySearch.toLowerCase();
+    this.filteredCategories = this.categories.filter(cat =>
+      cat.name.toLowerCase().includes(search)
+    );
+  }
+
+  showCategoryOptions() {
+    this.categoryOptionsVisible = true;
+  }
+
+  hideCategoryOptionsWithDelay() {
+    setTimeout(() => {
+      this.categoryOptionsVisible = false;
+    }, 200);
+  }
+
+  selectCategory(category: Category) {
+    this.selectedCategoryName = category.name;
+    this.categorySearch = category.name;
+    this.categoryOptionsVisible = false;
+    this.selectedCategoryId = category.id;
+  }
+
   loadPost() {
     if (!this.postId) return;
-    
     this.isLoading = true;
     this.error = null;
-    
     this.blogPostService.getById(this.postId).subscribe({
       next: (response) => {
         if (response.success && response.data?.post) {
           const post = response.data.post;
           const currentUser = this.authService.getCurrentUserId();
           const isAdmin = this.authService.hasRole('Admin');
-
-          // Check if user is the author of the post or an admin
           if (post.user_id !== currentUser && !isAdmin) {
             this.toastr.error('You are not authorized to edit this post', 'Unauthorized');
             this.router.navigate(['/blog']);
             return;
           }
-
           this.title = post.title;
           this.content = post.content;
           this.description = post.description;
           this.existingPostContent = post.content;
+          this.selectedCategoryId = post.category_id;
+          this.selectedCategoryName = post.category?.name || '';
           this.categorySearch = post.category?.name || '';
           this.postStatus = post.status;
           this.lastUpdated = post.updatedAt || new Date().toISOString();
@@ -115,20 +157,6 @@ export class UpdatePostComponent implements OnInit {
         console.error('Error loading post:', err);
       }
     });
-  }
-
-  // Method to filter categories based on search input
-  filterCategories() {
-    const search = this.categorySearch.toLowerCase();
-    this.filteredCategories = this.categories.filter(cat =>
-      cat.toLowerCase().includes(search)
-    );
-  }
-
-  // Method to select a category
-  selectCategory(category: string) {
-    this.categorySearch = category;
-    this.showCategoryOptions = false;
   }
 
   triggerFileInput(): void {
@@ -162,11 +190,25 @@ export class UpdatePostComponent implements OnInit {
     }
   }
 
-  removeImage(): void {
+  // Getter để xác định đã chọn ảnh hay chưa
+  get imageSelected(): boolean {
+    return !!(this.selectedFile || this.featuredImage);
+  }
+
+  // Getter cho trạng thái submit/loading
+  get isSubmitting(): boolean {
+    return this.isLoading;
+  }
+
+  // Sửa removeImage nhận event tùy chọn (để không lỗi khi truyền $event)
+  removeImage(event?: Event): void {
+    if (event) { event.stopPropagation(); }
     this.featuredImage = null;
     this.imagePreview = null;
     this.selectedFile = null;
-    this.fileInput.nativeElement.value = '';
+    if (this.fileInput && this.fileInput.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
   }
 
   updatePost() {
@@ -174,52 +216,44 @@ export class UpdatePostComponent implements OnInit {
       this.router.navigate(['/auth/login']);
       return;
     }
-
     this.isLoading = true;
     this.error = null;
     this.success = null;
-
     const formData = new FormData();
     formData.append('title', this.title);
-    formData.append('content', this.updatedContent);
+    const contentToSend = this.updatedContent && this.updatedContent.trim() !== '' ? this.updatedContent : (this.content || this.existingPostContent || '');
+    formData.append('content', contentToSend);
     formData.append('description', this.description);
-    formData.append('category_id', (this.categories.indexOf(this.categorySearch) + 1).toString()); // Ensure category_id is a string for FormData
+    // Kiểm tra category hợp lệ
+    if (!this.selectedCategoryId) {
+      this.toastr.error('Please select a valid category');
+      this.isLoading = false;
+      return;
+    }
+    formData.append('category_id', String(this.selectedCategoryId));
     formData.append('status', this.postStatus);
-
-    // Append thumbnail file if a new file is selected
     if (this.selectedFile) {
       formData.append('thumbnail', this.selectedFile, this.selectedFile.name);
-    } else if (this.featuredImage && typeof this.featuredImage === 'string') {
-      // If no new file, but there's an existing image URL, send it as a string
-      // Backend should handle if this is a URL vs a file
-      formData.append('thumbnail', this.featuredImage);
     }
-
-    // Append translations if they exist and are not empty
     if (this.translations && this.translations.length > 0) {
       formData.append('translations', JSON.stringify(this.translations));
     }
-
     this.blogPostService.update(this.postId!, formData).subscribe({
       next: (response) => {
         if (response.success) {
           this.toastr.success('Post updated successfully!', 'Success');
           this.isLoading = false;
           this.lastSavedTime = new Date().toLocaleTimeString();
-
           if (response.data?.post?.updatedAt) {
             this.lastUpdated = response.data.post.updatedAt;
           }
-          
           this.selectedFile = null;
           this.fileInput.nativeElement.value = '';
-
-          // Redirect to post detail page
           const postId = response.data?.post?.id || this.postId;
           if (postId) {
             this.router.navigate(['/post-detail', postId]);
           } else {
-            this.router.navigate(['/blog']); // Fallback
+            this.router.navigate(['/blog']);
           }
         } else {
           this.toastr.error(response.message || 'Failed to update post', 'Error');
@@ -234,7 +268,7 @@ export class UpdatePostComponent implements OnInit {
           this.toastr.error(err.error?.message || 'Failed to update post. Please try again.', 'Error');
         }
         this.isLoading = false;
-        console.error('Error updating post:', err);
+        console.error('Error updating post:', err.error || err);
       }
     });
   }
@@ -251,18 +285,31 @@ export class UpdatePostComponent implements OnInit {
 
   moveToTrash() {
     if (!this.postId) return;
-    
-    if (confirm('Are you sure you want to move this post to trash?')) {
-      this.blogPostService.deletePost(this.postId).subscribe({
-        next: () => {
-          this.router.navigate(['/blog/my-posts']);
-        },
-        error: (err) => {
-          this.error = 'Failed to move post to trash. Please try again.';
-          console.error('Error moving post to trash:', err);
-        }
-      });
-    }
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to move this post to trash?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, move to trash!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed && this.postId !== null) {
+        this.blogPostService.deletePost(this.postId).subscribe({
+          next: () => {
+            Swal.fire('Deleted!', 'Your post has been moved to trash.', 'success');
+            this.router.navigate(['/blog/my-posts']);
+          },
+          error: (err) => {
+            this.error = 'Failed to move post to trash. Please try again.';
+            Swal.fire('Error', this.error, 'error');
+            console.error('Error moving post to trash:', err);
+          }
+        });
+      }
+    });
   }
 }
 

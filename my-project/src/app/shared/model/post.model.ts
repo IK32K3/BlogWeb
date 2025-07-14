@@ -76,6 +76,7 @@ export interface Post {
   comments?: number;
   likes_count?: number;
   comments_count?: number;
+  commentsList?: Comment[];
 
   author?: User;
   category?: Category;

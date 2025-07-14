@@ -19,7 +19,7 @@ export class PostCardComponent implements OnInit {
   @Input() description: string = 'Check out our most popular and recent articles on various topics';
 
   // Ảnh mặc định nếu không có ảnh bài viết
-  readonly DEFAULT_IMAGE = 'https://placehold.co/400x200';
+  readonly DEFAULT_IMAGE = 'https://res.cloudinary.com/dejapatma/image/upload/v1751453224/Doraemon-Cartoon-Illustration-410092-pixahive_oguct6.jpg';
   readonly DEFAULT_AUTHOR_IMAGE = DEFAULT_AUTHOR_IMAGE;
 
   constructor(private blogPostService: BlogPostService) { }
@@ -51,7 +51,7 @@ export class PostCardComponent implements OnInit {
     // Ưu tiên lấy ảnh thumbnail từ trường 'thumbnail' của post
     if (post.thumbnail) {
       return post.thumbnail;
-    }
+    } 
     return this.DEFAULT_IMAGE;
   }
 }

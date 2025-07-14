@@ -26,3 +26,23 @@ export const SessionStorageUtil = {
     sessionStorage.clear();
   }
 };
+
+export const LocalStorageUtil = {
+  set(key: string, value: any) {
+    localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
+  },
+  get<T = any>(key: string): T | null {
+    const val = localStorage.getItem(key);
+    try {
+      return val ? (JSON.parse(val) as T) : null;
+    } catch {
+      return val as any;
+    }
+  },
+  remove(key: string) {
+    localStorage.removeItem(key);
+  },
+  clear() {
+    localStorage.clear();
+  }
+};

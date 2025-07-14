@@ -9,17 +9,18 @@ const authController = {
    */
   register: async (req, res) => {
     // Basic request validation
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
-      return responseUtils.badRequest(res, 'Username, email and password are required');
+    const { username, email, password, avatar } = req.body;
+    if (!username || !email || !password ) {
+      return responseUtils.badRequest(res, 'Username, email, password and confirm password are required');
     }
 
     try {
-      // Call the service with only required fields
+      // Call the service with avatar (default if not provided)
       const result = await authService.registerUser({ 
         username, 
         email, 
-        password 
+        password,
+        avatar: avatar || '',
       });
       return responseUtils.created(res, result);
 
@@ -179,6 +180,52 @@ const authController = {
         return responseUtils.unauthorized(res, error.message);
       }
       return responseUtils.serverError(res, 'Logout failed');
+    }
+  },
+
+  /**
+   * Check if username exists
+   */
+  checkUsername: async (req, res) => {
+    try {
+      const { username } = req.query;
+      
+      if (!username) {
+        return responseUtils.badRequest(res, 'Username parameter is required');
+      }
+
+      const exists = await authService.checkUsernameExists(username);
+      
+      return responseUtils.success(res, {
+        exists: exists
+      });
+
+    } catch (error) {
+      console.error('Check Username Controller Error:', error.message);
+      return responseUtils.serverError(res, 'Username check failed');
+    }
+  },
+
+  /**
+   * Check if email exists
+   */
+  checkEmail: async (req, res) => {
+    try {
+      const { email } = req.query;
+      
+      if (!email) {
+        return responseUtils.badRequest(res, 'Email parameter is required');
+      }
+
+      const exists = await authService.checkEmailExists(email);
+      
+      return responseUtils.success(res, {
+        exists: exists
+      });
+
+    } catch (error) {
+      console.error('Check Email Controller Error:', error.message);
+      return responseUtils.serverError(res, 'Email check failed');
     }
   }
 };

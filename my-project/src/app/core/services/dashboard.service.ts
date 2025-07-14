@@ -48,4 +48,11 @@ export class DashboardService {
       map(res => res.data.posts)
     );
   }
+
+  getPostsStatsByMonth() {
+    return this.http.get<{ labels: string[], data: number[] }>('/api/posts/stats-by-month');
+  }
+  getUsersStatsByMonth() {
+    return this.http.get<{ labels: string[], data: number[] }>('/api/users/stats-by-month');
+  }
 } 

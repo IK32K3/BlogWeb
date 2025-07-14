@@ -18,7 +18,7 @@ import { SharedModule } from 'app/shared/shared.module';
 export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   private authSubscription?: Subscription;
-
+  
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {

@@ -233,6 +233,42 @@ changePassword: async (req, res) => {
       return responseUtils.serverError(res, error.message);
     }
   },
+
+  // POST /api/users/:id/block
+  blockUser: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = await userService.blockUser(id);
+      return responseUtils.success(res, { message: 'User blocked successfully', user });
+    } catch (error) {
+      console.error('Block user error:', error);
+      if (error.message === 'User not found') {
+        return responseUtils.notFound(res, 'User not found');
+      }
+      if (error.message === 'User is already blocked') {
+        return responseUtils.conflict(res, 'User is already blocked');
+      }
+      return responseUtils.serverError(res, error.message);
+    }
+  },
+
+  // POST /api/users/:id/unblock
+  unblockUser: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = await userService.unblockUser(id);
+      return responseUtils.success(res, { message: 'User unblocked successfully', user });
+    } catch (error) {
+      console.error('Unblock user error:', error);
+      if (error.message === 'User not found') {
+        return responseUtils.notFound(res, 'User not found');
+      }
+      if (error.message === 'User is already active') {
+        return responseUtils.conflict(res, 'User is already active');
+      }
+      return responseUtils.serverError(res, error.message);
+    }
+  },
 };
 
 module.exports = userController;

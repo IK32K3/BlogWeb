@@ -35,7 +35,6 @@ export class FilterMovieComponent implements OnInit, OnChanges, OnDestroy {
     category: false,
     year: false,
     sort: false,
-    status: false
   };
 
   // Selected filter values
@@ -43,7 +42,6 @@ export class FilterMovieComponent implements OnInit, OnChanges, OnDestroy {
     categories: new Set<string>(),
     year: null as string | null,
     sort: null as 'views' | 'comments' | null,
-    status: null as string | null,
   };
 
   @Input() categories: Category[] = [];
@@ -94,9 +92,9 @@ export class FilterMovieComponent implements OnInit, OnChanges, OnDestroy {
     return Object.values(this.sectionsOpen).some(isOpen => isOpen);
   }
 
-  tabs: ('category' | 'year' | 'sort' | 'status')[] = ['category', 'year', 'sort', 'status'];
+  tabs: ('category' | 'year' | 'sort' )[] = ['category', 'year', 'sort'];
   
-  toggleSection(tab: 'category' | 'year' | 'sort' | 'status'): void {
+  toggleSection(tab: 'category' | 'year' | 'sort' ): void {
     this.sectionsOpen[tab] = !this.sectionsOpen[tab];
   }
 
@@ -114,19 +112,17 @@ export class FilterMovieComponent implements OnInit, OnChanges, OnDestroy {
   selectYear(yearValue: string): void {
     this.selectedFilters.year = this.selectedFilters.year === yearValue ? null : yearValue;
     this.logSelectedFilters();
+    this.search();
   }
 
   selectSort(value: 'views' | 'comments'): void {
     this.selectedFilters.sort = this.selectedFilters.sort === value ? null : value;
     this.logSelectedFilters();
+    this.search();
   }
 
-  selectStatus(value: string): void {
-    this.selectedFilters.status = this.selectedFilters.status === value ? null : value;
-    this.logSelectedFilters();
-  }
 
-  isFilterActive(type: 'category' | 'year' | 'sort' | 'status', value: string): boolean {
+  isFilterActive(type: 'category' | 'year' | 'sort' , value: string): boolean {
     switch (type) {
       case 'category':
         return this.selectedFilters.categories.has(value);
@@ -134,8 +130,6 @@ export class FilterMovieComponent implements OnInit, OnChanges, OnDestroy {
         return this.selectedFilters.year === value;
       case 'sort':
         return this.selectedFilters.sort === value;
-      case 'status':
-        return this.selectedFilters.status === value;
       default:
         return false;
     }
@@ -147,7 +141,6 @@ export class FilterMovieComponent implements OnInit, OnChanges, OnDestroy {
       categories: Array.from(this.selectedFilters.categories),
       year: this.selectedFilters.year,
       sort: this.selectedFilters.sort,
-      status: this.selectedFilters.status,
     });
   }
 
@@ -175,19 +168,21 @@ export class FilterMovieComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   search() {
+    let sortValue = null;
+    if (this.selectedFilters.sort === 'views') sortValue = 'views';
+    else if (this.selectedFilters.sort === 'comments') sortValue = 'comments';
+
     const filter = {
       search: this.searchQuery,
       categories: Array.from(this.selectedFilters.categories),
       year: this.selectedFilters.year,
-      sort_by: this.selectedFilters.sort,
-      sort_order: this.selectedFilters.sort ? 'desc' : undefined,
-      status: this.selectedFilters.status,
+      sort_by: sortValue,
+      sort_order: sortValue ? 'desc' : undefined,
       search_priority: this.searchQuery ? 'relevance' : undefined,
       relevance_sort: this.searchQuery ? true : undefined,
     };
     console.log('Filter to search:', filter);
     this.filterChange.emit(filter);
-    // Reset searching state after a short delay
     setTimeout(() => {
       this.isSearching = false;
     }, 100);

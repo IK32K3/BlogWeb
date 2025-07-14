@@ -1,33 +1,41 @@
-<app-header></app-header>
-<div class="bg-gray-300 min-h-screen flex flex-col mt-16">
-    <main class="flex-1 flex items-center justify-center py-10">
-        <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg overflow-hidden">
+<div class="bg-gray-300 h-screen overflow-y-auto scale-z-100">
+    <app-header></app-header>
+    <main class="flex-1 flex items-center justify-center py-10 overflow-y-auto">
+        <div class="w-full max-w-6xl bg-white rounded-2xl shadow-lg overflow-hidden">
             <div class="px-8 py-6 border-b border-gray-100">
-                <input type="text" [(ngModel)]="post.title" class="w-full border-none outline-none text-3xl md:text-4xl font-bold mb-4 placeholder:text-gray-400 placeholder:opacity-70 bg-transparent" placeholder="Your amazing post title...">
+                <textarea
+                    [(ngModel)]="post.title"
+                    class="w-full border-none outline-none text-3xl md:text-4xl font-bold mb-2  
+                        placeholder:text-gray-400 placeholder:opacity-70 bg-transparent resize-none"
+                    rows="2"
+                    placeholder="Your amazing post title..."
+                ></textarea>
 
                 <div class="flex flex-col md:flex-row gap-6 mt-4">
                     <div class="flex-1 min-w-[200px]">
                         <label for="category" class="block text-lg font-medium text-gray-700 mb-2">Category</label>
                         <div class="relative">
-                            <input type="text" [(ngModel)]="selectedCategoryName" id="category-search" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
+                            <input type="text" [(ngModel)]="selectedCategoryName" id="category-search" class="w-full px-4  py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
                                 placeholder="Search or select a category" (focus)="showCategoryOptions()" (input)="filterCategoryOptions($event)" (blur)="hideCategoryOptionsWithDelay()">
-                            <ul *ngIf="categoryOptionsVisible" id="category-options" class="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto">
-                                <li *ngFor="let option of filteredCategories" class="px-4 py-2 hover:bg-indigo-100 cursor-pointer" (click)="selectCategory(option)">
+                            <ul *ngIf="categoryOptionsVisible" id="category-options" class="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300">
+                                <li *ngFor="let option of filteredCategories" class="px-4 py-2 hover:bg-indigo-200 cursor-pointer" (click)="selectCategory(option)">
                                     {{ option.name }}
                                 </li>
                             </ul>
                         </div>
                     </div>
 
-                    <div class="flex-1 min-w-[200px]">
-                        <label for="description" class="block text-lg font-medium text-gray-700 mb-2">Description</label>
-                        <textarea [(ngModel)]="post.description" id="description" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
-                                  placeholder="Enter a brief description for your post"></textarea>
-                    </div>
                 </div>
             </div>
+            
 
             <div class="px-8">
+                <div class="flex-1 min-w-[200px]">
+                    <label for="description" class="block text-lg font-medium text-gray-700 mb-2">Description</label>
+                    <textarea [(ngModel)]="post.description" id="description" class="w-full px-4 py-2 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300 resize-none border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent max-h-32 min-h-[80px]" 
+                              placeholder="Enter a brief description for your post" wrap="soft"></textarea>
+                </div>
+
                 <div
                     class="my-6 border-2 border-dashed border-gray-400 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-300 hover:bg-gray-50 transition-colors"
                     (click)="triggerFileInput()"
@@ -89,22 +97,16 @@
                 </div>
 
                 <div class="flex flex-wrap gap-2">
+                    
                     <button 
-                        [disabled]="isSubmitting"
-                        (click)="discardPost()" 
-                        class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i class="fas fa-trash"></i>
-                        <span>Discard</span>
-                    </button>
-                    <button 
-                        [disabled]="isSubmitting"
+                        [disabled]="isSubmitting || !imageSelected"
                         (click)="saveDraft()" 
                         class="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas fa-save"></i>
                         <span>Save Draft</span>
                     </button>
                     <button 
-                        [disabled]="isSubmitting"
+                        [disabled]="isSubmitting || !imageSelected"
                         (click)="publishPost()" 
                         class="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas" [class]="isSubmitting ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
@@ -114,6 +116,6 @@
             </div>
         </div>
     </main>
+    <app-footer></app-footer>
 </div>
-<app-footer></app-footer>
 <router-outlet></router-outlet>

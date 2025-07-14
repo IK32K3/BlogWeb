@@ -1,12 +1,13 @@
-<app-header-admin></app-header-admin>
 <div class="flex h-screen bg-gray-300">
   <!-- Sidebar -->
   <app-slidebar-admin></app-slidebar-admin>
-
-  <div class="flex flex-col flex-1">
-    <!-- Main Content -->
-    <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-      <div class="max-w-7xl mx-auto">
+  <!-- Main content -->
+  <div class="flex flex-col flex-1 min-w-0">
+    <!-- Header -->
+    <app-header-admin></app-header-admin>
+    <!-- Main scrollable area -->
+    <main class="flex-1 overflow-y-auto ">
+      <div class="container p-6 mx-auto w-full">
         <!-- Page Title -->
         <h1 class="text-2xl font-bold text-gray-800 mb-6">Admin Dashboard</h1>
         
@@ -83,7 +84,7 @@
         </div>
 
         <!-- Charts and Tables Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:grid-cols-3 gap-8">
           <!-- Recent Posts Table -->
           <div class="lg:col-span-2">
             <div class="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -128,28 +129,6 @@
           </div>
 
           <!-- Recent Activity -->
-          <div class="lg:col-span-1">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900">Recent Activity</h3>
-              </div>
-              <div class="p-6">
-                <div class="space-y-4">
-                  <div *ngFor="let activity of recentActivities" class="flex items-start space-x-3">
-                    <div class="flex-shrink-0">
-                      <div class="w-2 h-2 rounded-full mt-2" [ngClass]="getActivityColor(activity.color)"></div>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <p class="text-sm text-gray-900">
-                        <span class="font-medium">{{ activity.user }}</span> {{ activity.action }}
-                      </p>
-                      <p class="text-xs text-gray-500">{{ activity.time }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- Charts Section -->
@@ -157,16 +136,24 @@
           <!-- Posts Chart -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h3 class="text-lg font-medium text-gray-900 mb-4">Posts Overview</h3>
-            <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-              <p class="text-gray-500">Chart will be implemented here</p>
+            <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+              <canvas baseChart
+                [data]="postsChartData"
+                [type]="postsChartType"
+                [options]="{ responsive: true, maintainAspectRatio: false }"
+                style="height: 100%; width: 100%;"></canvas>
             </div>
           </div>
 
           <!-- User Growth Chart -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h3 class="text-lg font-medium text-gray-900 mb-4">User Growth</h3>
-            <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-              <p class="text-gray-500">Chart will be implemented here</p>
+            <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+              <canvas baseChart
+                [data]="usersChartData"
+                [type]="usersChartType"
+                [options]="{ responsive: true, maintainAspectRatio: false }"
+                style="height: 100%; width: 100%;"></canvas>
             </div>
           </div>
         </div>

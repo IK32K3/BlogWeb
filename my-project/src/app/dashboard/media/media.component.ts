@@ -211,8 +211,22 @@ export class MediaComponent implements OnInit {
     
     // Reload media items from Cloudinary after upload
     setTimeout(() => {
+      // Xóa các ảnh tạm (id là number và không có publicId)
+      this.mediaItems = this.mediaItems.filter(item => item.publicId);
+
+      this.currentPage = 1; // Reset về trang đầu tiên
       this.loadMediaItems();
-    }, 1000); // Delay 1 second to ensure upload is complete
+      this.handleCloseUploadModal(); // Đóng modal upload
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Upload thành công!',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true
+      });
+    }, 1000);
   }
 
   private getTagBgColor(type: 'Image' | 'Video' | 'Document' | 'Audio'): string {

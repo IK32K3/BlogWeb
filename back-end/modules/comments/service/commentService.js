@@ -3,6 +3,16 @@ const { Op } = require('sequelize');
 
 module.exports = {
   /**
+   * Bật/tắt bình luận cho bài post
+   */
+  setCommentsEnabled: async (postId, enabled) => {
+    const post = await Post.findByPk(postId);
+    if (!post) throw new Error('Post not found');
+    await post.update({ allow_comments: !!enabled });
+    return post;
+  },
+
+  /**
    * Get comments by post ID with pagination
    */
   getCommentsByPost: async (postId, { page = 1, limit = 20 }) => {
@@ -14,6 +24,19 @@ module.exports = {
       throw new Error('Post not found');
     }
     
+    // Nếu post không cho phép bình luận
+    if (postExists.allow_comments === false) {
+      return {
+        comments: [],
+        pagination: {
+          total: 0,
+          totalPages: 0,
+          currentPage: parseInt(page),
+          limit: parseInt(limit)
+        }
+      };
+    }
+    
     const { count, rows: comments } = await Comment.findAndCountAll({
       where: { post_id: postId },
       limit: parseInt(limit),
@@ -23,7 +46,7 @@ module.exports = {
         { 
           model: User,
           as: 'user',
-          attributes: ['id', 'username']
+          attributes: ['id', 'username','avatar']
         }
       ]
     });
@@ -49,6 +72,11 @@ module.exports = {
       throw new Error('Post not found');
     }
     
+    // Nếu post không cho phép bình luận
+    if (post.allow_comments === false) {
+      throw new Error('Comments are disabled for this post');
+    }
+    
     const comment = await Comment.create({
       post_id: postId,
       user_id: userId,
@@ -61,7 +89,7 @@ module.exports = {
         {
           model: User,
             as: 'user',
-          attributes: ['id', 'username']
+          attributes: ['id', 'username','avatar']
         }
       ]
     });
@@ -89,7 +117,7 @@ module.exports = {
         {
           model: User,
             as: 'user',
-          attributes: ['id', 'username']
+          attributes: ['id', 'username','avatar']
         }
       ]
     });
@@ -161,7 +189,7 @@ module.exports = {
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'username']
+          attributes: ['id', 'username','avatar']
         },
         {
           model: Post,

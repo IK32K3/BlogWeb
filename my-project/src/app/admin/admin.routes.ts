@@ -4,7 +4,7 @@ import { AdminUsersComponent } from './admin-users/admin-users.component';
 import { AdminPostsComponent } from './admin-posts/admin-posts.component';
 import { AdminCategoriesComponent } from './admin-categories/admin-categories.component';
 import { AdminCommentsComponent } from './admin-comments/admin-comments.component';
-import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
+import { AdminMediaComponent } from './admin-media/admin-media.component';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -39,8 +39,8 @@ export const ADMIN_ROUTES: Routes = [
     title: 'Comment Management'
   },
   {
-    path: 'settings',
-    component: AdminSettingsComponent,
-    title: 'Admin Settings'
+    path: 'media',
+    component: AdminMediaComponent,
+    title: 'Admin media'
   }
 ];

@@ -15,7 +15,7 @@ const addCommentValidation = [
 
 // Update comment validation
 const updateCommentValidation = [
-  new ParamWithLocale('commentId').notEmpty().isNumeric().get(),
+  new ParamWithLocale('id').notEmpty().isNumeric().get(),
   new BodyWithLocale('content').notEmpty().get()
 ];
 

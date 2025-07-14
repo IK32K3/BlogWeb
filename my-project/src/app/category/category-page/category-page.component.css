@@ -5,3 +5,25 @@
 .pagination-link:hover {
   transition: background-color 0.2s, color 0.2s;
 }
+/* Custom scrollbar for the whole page or a specific class */
+.overflow-y-auto {
+  position: relative;
+  scrollbar-width: thin;              /* Firefox */
+  scrollbar-color: #4f46e5 #e5e7eb;   /* Firefox */
+}
+
+/* Chrome, Edge, Safari */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+  background: #e5e7eb; /* Màu nền thanh cuộn */
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #4f46e5; /* Màu nút kéo */
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #6366f1; /* Hover màu đậm hơn */
+}

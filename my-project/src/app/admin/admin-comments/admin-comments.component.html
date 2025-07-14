@@ -1,1 +1,146 @@
-<p>admin-comments works!</p>
+<div class="flex h-screen bg-gray-300">
+    <app-slidebar-admin></app-slidebar-admin>
+    
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <app-header-admin></app-header-admin>
+        
+      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-300">
+        
+            <!-- admin-comments.component.html -->
+        <div class="container mx-auto px-6 py-8 w-full">
+            <div class="mb-10">
+                <h1 class="text-3xl font-bold text-gray-900">Quản lý bình luận</h1>
+                <p class="mt-2 text-sm text-gray-600">Quản lý tất cả bình luận trong hệ thống</p>
+              </div>
+        <!-- Dashboard thống kê -->
+        <div class="mb-6 grid grid-cols-1  lg:grid-cols-3 gap-4 w-full">
+          <div class="bg-white rounded-lg shadow p-4 flex items-center gap-3 w-full">
+            <i class="fas fa-comments fa-2x text-primary-600"></i>
+            <div>
+              <div class="font-bold text-gray-700">Tổng bình luận</div>
+              <div class="text-2xl">{{ totalComments }}</div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-4 flex items-center gap-3 w-full">
+            <i class="fas fa-eye-slash fa-2x text-gray-400"></i>
+            <div>
+              <div class="font-bold text-gray-700">Bị ẩn</div>
+              <div class="text-2xl">{{ hiddenComments }}</div>
+            </div>
+          </div>
+          <div class="bg-white rounded-lg shadow p-4 flex items-center gap-3 w-full">
+            <i class="fas fa-percentage fa-2x text-pink-500"></i>
+            <div>
+              <div class="font-bold text-gray-700">Tỉ lệ spam</div>
+              <div class="text-2xl">{{ spamRate }}%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form lọc/tìm kiếm -->
+        <form class="mb-4 w-full flex flex-wrap gap-3 items-end" (submit)="applyFilter(); $event.preventDefault()">
+          <div class="relative flex-1 min-w-[180px] w-full bg-amber-50">
+            <i class="fas fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-900"></i>
+            <select [(ngModel)]="filter.userName"
+                    name="userName"
+                    class="border rounded px-8 py-3 w-full bg-amber-50 text-gray-900 focus:ring-amber-200 focus:border-amber-400">
+              <option value="">-- Chọn người dùng --</option>
+              <option *ngFor="let u of users" [value]="u">{{ u }}</option>
+            </select>
+          </div>
+          <div class="relative flex-1 min-w-[180px] w-full bg-amber-50">
+            <i class="fas fa-file-alt absolute left-3 top-1/2 -translate-y-1/2 text-gray-900"></i>
+            <select [(ngModel)]="filter.postTitle"
+                    name="postTitle"
+                    class="border rounded px-8 py-3 w-full bg-amber-50 text-gray-900 focus:ring-amber-200 focus:border-amber-400">
+              <option value="">-- Chọn bài viết/SP --</option>
+              <option *ngFor="let p of posts" [value]="p">{{ p }}</option>
+            </select>
+          </div>
+          <button type="submit" class="bg-primary-600 text-white px-6 py-3 rounded hover:bg-primary-700 flex items-center gap-2 font-semibold w-full sm:w-auto"><i class="fas fa-filter"></i> Lọc</button>
+        <button
+            type="button"
+            (click)="resetFilter()"
+            class="px-6 py-3 rounded border border-amber-200 flex items-center gap-2 w-full sm:w-auto bg-amber-50 text-gray-900 transition"
+            >
+            <i class="fas fa-undo"></i> Đặt lại
+        </button>
+        </form>
+
+        <!-- Table danh sách bình luận -->
+        <div class="bg-white rounded-xl shadow-lg p-4 overflow-x-auto w-full">
+            <table class="min-w-full w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                <th class="px-3 py-2 text-center"><input type="checkbox" (change)="toggleAllRows($event)" [checked]="isAllSelected()" /></th>
+                <th class="px-3 py-2 text-center">ID</th>
+                <th class="px-3 py-2 text-center">Tác giả</th>
+                <th class="px-3 py-2 text-center">Nội dung</th>
+                <th class="px-3 py-2 text-center"></th>
+                <th class="px-3 py-2 text-center">Ngày đăng</th>
+                <th class="px-3 py-2 text-center">Bài viết/SP</th>
+                <th class="px-3 py-2 text-center">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of pagedComments" class="hover:bg-gray-100 transition">
+                <td class="px-3 py-2 text-center"><input type="checkbox" [(ngModel)]="row.selected" /></td>
+                <td class="px-3 py-2 text-center">{{ row.id }}</td>
+                <td class="px-3 py-2 text-center flex items-center gap-2 justify-center"><i class="fas fa-user-circle text-lg text-gray-400"></i> {{ row.userName }}</td>
+                <td class="px-3 py-2 text-center">
+                  <div class="break-words line-clamp-2 max-w-xs text-ellipsis overflow-hidden whitespace-normal">{{ row.content }}</div>
+                </td>
+                <td class="px-3 py-2 text-center">
+                    
+                </td>
+                <td class="px-3 py-2 text-center">{{ row.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="px-3 py-2 text-center flex items-center gap-2 justify-center"><i class="fas fa-file-alt text-gray-400"></i> {{ row.postTitle }}</td>
+                <td class="px-3 py-2 text-center">
+                    <div class="relative inline-block text-left">
+                    <button (click)="row.showMenu = !row.showMenu" class="p-2 rounded hover:bg-gray-200 transition"><i class="fas fa-ellipsis-v"></i></button>
+                    <div *ngIf="row.showMenu" class="origin-top-right absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                        <div class="py-1 space-y-1">
+                        <button class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2" (click)="editComment(row); row.showMenu = false"><i class="fas fa-edit text-blue-600"></i> Chỉnh sửa</button>
+                        <button class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2" (click)="blockUser(row); row.showMenu = false"><i class="fas fa-user-slash text-pink-600"></i> Chặn người dùng</button>
+                        <button class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2" (click)="deleteComment(row); row.showMenu = false"><i class="fas fa-trash text-red-600"></i> Xóa</button>
+                        </div>
+                    </div>
+                    </div>
+                </td>
+                </tr>
+                <tr *ngIf="pagedComments.length === 0">
+                <td colspan="8" class="text-center text-gray-500 py-4">Không có bình luận nào.</td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+
+        <!-- Bulk action -->
+        <div class="mt-4">
+            <button class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center gap-2" (click)="bulkDelete()" [disabled]="!hasSelectedRows()"><i class="fas fa-trash"></i> Xóa hàng loạt</button>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex justify-between items-center mt-4 bg-gray-200 rounded-lg px-4 py-2">
+            <div>
+            Hiển thị {{ (currentPage - 1) * pageSize + 1 }} -
+            {{ min(currentPage * pageSize, filteredComments.length) }} /
+            {{ filteredComments.length }} bình luận
+            </div>
+            <div class="flex gap-1 items-center">
+            <button class="px-3 py-1 border rounded bg-white hover:bg-gray-100" (click)="previousPage()" [disabled]="currentPage === 1"><i class="fas fa-chevron-left"></i></button>
+            <span *ngFor="let page of totalPagesArray" [class.font-bold]="page === currentPage" class="px-2 cursor-pointer" (click)="goToPage(page)">
+                {{ page }}
+            </span>
+            <button class="px-3 py-1 border rounded bg-white hover:bg-gray-100" (click)="nextPage()" [disabled]="currentPage === totalPages"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  
+
+  
+  

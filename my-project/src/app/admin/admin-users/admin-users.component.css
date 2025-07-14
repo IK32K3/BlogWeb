@@ -116,11 +116,6 @@
   }
 }
 
-/* You can add global styles to this file, and also import other style files */
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-
 /* Custom styles for admin user management */
 .table-responsive {
   display: block;
@@ -199,35 +194,47 @@
 }
 
 .btn {
-  @apply font-bold py-2 px-4 rounded transition duration-150 ease-in-out;
+  font-weight: bold;
+  padding-top: 0.5rem;    /* py-2 */
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;     /* px-4 */
+  padding-right: 1rem;
+  border-radius: 0.25rem; /* rounded */
+  transition-property: all;
+  transition-duration: 150ms; /* duration-150 */
+  transition-timing-function: ease-in-out; /* ease-in-out */
 }
 
 .btn-primary {
-  @apply bg-blue-500 text-white;
+  background-color: #3b82f6; /* bg-blue-500 */
+  color: white;
 }
 
 .btn-primary:hover {
-  @apply bg-blue-700;
+  background-color: #1d4ed8; /* bg-blue-700 */
 }
 
 .btn-danger {
-  @apply bg-red-500 text-white;
+  background-color: #ef4444; /* bg-red-500 */
+  color: white;
 }
 
 .btn-danger:hover {
-  @apply bg-red-700;
+  background-color: #b91c1c; /* bg-red-700 */
 }
 
 .btn-secondary {
-  @apply bg-gray-500 text-white;
+  background-color: #6b7280; /* bg-gray-500 */
+  color: white;
 }
 
 .btn-secondary:hover {
-  @apply bg-gray-700;
+  background-color: #374151; /* bg-gray-700 */
 }
 
 .btn-icon {
-  @apply p-2 rounded-full;
+  padding: 0.5rem;          /* p-2 */
+  border-radius: 9999px;    /* rounded-full */
 }
 
 /* Sorting icons */

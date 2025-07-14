@@ -33,7 +33,10 @@ class PostController {
       };
 
       // Xử lý bộ lọc theo năm
-      if (year && !isNaN(parseInt(year))) {
+      if (req.query.date_from && req.query.date_to) {
+        filters.dateFrom = new Date(req.query.date_from);
+        filters.dateTo = new Date(req.query.date_to);
+      } else if (year && !isNaN(parseInt(year))) {
         filters.dateFrom = new Date(`${year}-01-01T00:00:00Z`);
         filters.dateTo = new Date(`${year}-12-31T23:59:59Z`);
       }

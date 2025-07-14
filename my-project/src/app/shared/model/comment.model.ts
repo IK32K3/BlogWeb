@@ -25,6 +25,7 @@ export interface Comment {
   post?: Post;
 
   replies?: Comment[]; // Cho phép nested comment
+  showMenu?: boolean;
 }
 
 export interface CreateCommentDto {

@@ -4,3 +4,10 @@
 .hover-scale:hover {
     transform: scale(1.01); /* Slightly more noticeable scale */
 }
+/* --- Prose (for rendering Markdown/HTML content) --- */
+.post-content {
+    white-space: pre-line;
+    word-break: break-word;
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }

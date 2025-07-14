@@ -1,5 +1,6 @@
-<app-header></app-header>
-<div class="bg-gray-300">
+
+<div class="bg-gray-300 overflow-y-auto h-screen scale-z-100">
+    <app-header></app-header>
     <div class="items-title container mx-auto px-4 py-4"> <!-- Giảm mt một chút -->
         <div class="flex items-center">
             <div class="title-line text-xl font-semibold px-4 text-indigo-700 bg-white rounded-md shadow-sm py-2 border-l-4 border-indigo-600 ">Bảng lọc Post</div>
@@ -138,7 +139,7 @@
             </button>
         </div>
     </section>
-
+    <app-footer></app-footer>
 </div>
-<app-footer></app-footer>
+
 <router-outlet></router-outlet>

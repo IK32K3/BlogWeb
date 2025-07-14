@@ -28,6 +28,7 @@ export interface CloudinaryMediaItem {
   tagBgColor: string;
   tagTextColor: string;
   isChecked: boolean;
+  permission?: 'admin' | 'public';
 }
 
 export interface MediaListResponse {
@@ -78,6 +79,7 @@ export class UploadService {
     name?: string;
     type?: 'image' | 'video' | 'document' | 'gallery';
     metadata?: Record<string, any>;
+    folder?: string; // Thêm dòng này
   }): Observable<MediaResponse[]> {
     const formData = new FormData();
     files.forEach(file => {
@@ -92,6 +94,9 @@ export class UploadService {
     }
     if (options?.metadata) {
       formData.append('metadata', JSON.stringify(options.metadata));
+    }
+    if (options?.folder) {
+      formData.append('folder', options.folder);
     }
 
     return this.http.post<{success: boolean; data: MediaResponse[]}>(UPLOAD_API.UPLOAD_MULTIPLE, formData).pipe(

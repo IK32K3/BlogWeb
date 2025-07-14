@@ -18,7 +18,7 @@ import { AppComponent } from '../app.component'; // Nếu bạn muốn sử dụ
     ProfileRoutingModule,
     RouterModule.forChild([
       { path: 'profile-user', component: ProfileUserComponent },
-      { path: 'profile', component: ProfileSettingsComponent },
+      { path: 'profile-settings/:id', component: ProfileSettingsComponent },
     ]),
     SharedModule, // Nếu bạn có module chia sẻ nào đó
     FormsModule, // Nếu bạn sử dụng FormsModule trong các component

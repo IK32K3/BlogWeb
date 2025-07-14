@@ -1,4 +1,4 @@
-<section class="relative w-full h-[70vh] md:h-[80vh] text-white overflow-hidden mt-11">
+<section class="relative w-full h-[70vh] md:h-[80vh] text-white overflow-hidden">
   <!-- Hiển thị khi không có slide nào -->
   <div *ngIf="slides.length === 0" class="w-full h-full flex flex-col justify-center items-center bg-gray-800">
     <img [src]="DEFAULT_POST_IMAGE" alt="No slides available" class="w-1/2 h-1/2 object-contain opacity-50">
@@ -10,10 +10,10 @@
       <div class="flex transition-transform duration-500 ease-in-out h-full" [style.transform]="getTransform()" #carousel>
         <ng-container *ngFor="let slide of slides; index as i">
           <div class="carousel-item min-w-full h-[70vh] md:h-[80vh] relative flex items-center justify-center">
-            <img [src]="slide.image"
+            <img [src]="slide.image || DEFAULT_POST_IMAGE"
                  [alt]="slide.title || 'Slide image'"
                  class="w-full h-full object-cover"
-                 onError="this.src='https://pixahive.com/wp-content/uploads/2021/04/Doraemon-Cartoon-Illustration-410092-pixahive.jpg'">
+                 onError="this.src='https://res.cloudinary.com/dejapatma/image/upload/v1751453224/Doraemon-Cartoon-Illustration-410092-pixahive_oguct6.jpg'">
             <div class="absolute inset-0 bg-black bg-opacity-30 flex flex-col items-center justify-center text-center px-4">
               <span
                 class="inline-block text-white text-xs px-4 py-1 rounded-full mb-4 font-semibold"

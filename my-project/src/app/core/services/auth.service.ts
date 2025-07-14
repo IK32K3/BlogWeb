@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, throwError, BehaviorSubject, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, delay } from 'rxjs/operators';
 import { AUTH_API, USER_API, AuthLoginDto, AuthRegisterDto } from '../constants/api-endpoints';
 import { AUTH_TOKEN_KEY, USER_INFO_KEY, REFRESH_TOKEN_KEY } from '../constants/storage-key';
 import { User } from '../../shared/model/user.model';
@@ -31,12 +31,12 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    console.log('AuthService: getToken called');
-    const token = this.storageService.getLocalItem<string>(AUTH_TOKEN_KEY);
-    if (!token) return null;
-    
-    // Removed token expiration check here. The interceptor will handle 401 errors.
-    return token;
+    // Ưu tiên lấy từ localStorage, nếu không có thì lấy từ sessionStorage
+    let token = this.storageService.getLocalItem<string>(AUTH_TOKEN_KEY);
+    if (!token) {
+      token = this.storageService.getSessionItem<string>(AUTH_TOKEN_KEY);
+    }
+    return token || null;
   }
 
   private isTokenExpired(token: string): boolean {
@@ -55,7 +55,7 @@ export class AuthService {
     return user.role.name.toLowerCase() === role.toLowerCase();
   }
 
-  login(data: AuthLoginDto): Observable<{ success: boolean, message: string, data: { user: User, tokens: { access_token: string; refresh_token: string } } }> {
+  login(data: AuthLoginDto & { rememberMe?: boolean }): Observable<{ success: boolean, message: string, data: { user: User, tokens: { access_token: string; refresh_token: string } } }> {
     console.log('AuthService: login called');
     return this.http.post<{ success: boolean, message: string, data: { user: User, tokens: { access_token: string; refresh_token: string } } }>(AUTH_API.LOGIN, {
       usernameOrEmail: data.usernameOrEmail,
@@ -66,33 +66,24 @@ export class AuthService {
         const accessToken = res.data.tokens.access_token;
         const refreshToken = res.data.tokens.refresh_token;
         const user = res.data.user;
+        const rememberMe = data.rememberMe;
 
         if (accessToken && refreshToken && user) {
           console.log('AuthService: Saving tokens and user data');
-          
-          // Lưu access token
-          this.storageService.setLocalItem(AUTH_TOKEN_KEY, accessToken);
-          console.log('AuthService: Access token saved:', !!accessToken);
-          
-          // Lưu refresh token
-          this.storageService.setLocalItem(REFRESH_TOKEN_KEY, refreshToken);
-          console.log('AuthService: Refresh token saved:', !!refreshToken);
-          
-          // Lưu thông tin user
-          this.storageService.setLocalItem(USER_INFO_KEY, user);
-          console.log('AuthService: User info saved:', !!user);
-          
-          // Verify tokens were saved correctly
-          const savedAccessToken = this.storageService.getLocalItem(AUTH_TOKEN_KEY);
-          const savedRefreshToken = this.storageService.getLocalItem(REFRESH_TOKEN_KEY);
-          console.log('AuthService: Verification - Access Token exists:', !!savedAccessToken);
-          console.log('AuthService: Verification - Refresh Token exists:', !!savedRefreshToken);
-          
+          if (rememberMe) {
+            // Lưu vào localStorage
+            this.storageService.setLocalItem(AUTH_TOKEN_KEY, accessToken);
+            this.storageService.setLocalItem(REFRESH_TOKEN_KEY, refreshToken);
+            this.storageService.setLocalItem(USER_INFO_KEY, user);
+          } else {
+            // Lưu vào sessionStorage
+            this.storageService.setSessionItem(AUTH_TOKEN_KEY, accessToken);
+            this.storageService.setSessionItem(REFRESH_TOKEN_KEY, refreshToken);
+            this.storageService.setSessionItem(USER_INFO_KEY, user);
+          }
           // Update login state
           this.isLoggedInSubject.next(true);
           this.currentUserSubject.next(user);
-          
-          // Verify token expiration
           if (this.isTokenExpired(accessToken)) {
             console.error('AuthService: Access token is expired immediately after login');
             this.logout();
@@ -100,20 +91,17 @@ export class AuthService {
           }
         } else {
           console.error('AuthService: Invalid response from server - missing required fields');
-          console.error('Response contains:', {
-            hasAccessToken: !!accessToken,
-            hasRefreshToken: !!refreshToken,
-            hasUser: !!user
-          });
           throwError(() => new Error('Invalid response from server'));
         }
       }),
       catchError(error => {
         console.error('AuthService: Login error:', error);
-        // Clear any partial data on error
         this.storageService.removeLocalItem(AUTH_TOKEN_KEY);
         this.storageService.removeLocalItem(REFRESH_TOKEN_KEY);
         this.storageService.removeLocalItem(USER_INFO_KEY);
+        this.storageService.removeSessionItem(AUTH_TOKEN_KEY);
+        this.storageService.removeSessionItem(REFRESH_TOKEN_KEY);
+        this.storageService.removeSessionItem(USER_INFO_KEY);
         return throwError(() => error);
       })
     );
@@ -123,7 +111,8 @@ export class AuthService {
     return this.http.post(AUTH_API.REGISTER, {
       username: data.username,
       email: data.email,
-      password: data.password
+      password: data.password,
+      avatar: data.avatar
     }).pipe(
       tap((response: any) => {
         if (response.success && response.data) {
@@ -141,6 +130,7 @@ export class AuthService {
           }
         }
       }),
+      map(response => response),
       catchError(error => {
         console.error('Registration error:', error);
         return throwError(() => error);
@@ -221,22 +211,27 @@ export class AuthService {
 
   logout(): void {
     console.log('AuthService: logout called');
-    // Clear tokens and user data first
-    this.storageService.removeLocalItem(AUTH_TOKEN_KEY);
-    this.storageService.removeLocalItem(REFRESH_TOKEN_KEY);
-    this.storageService.removeLocalItem(USER_INFO_KEY);
+    const refreshToken = this.storageService.getLocalItem<string>(REFRESH_TOKEN_KEY);
+    if (!refreshToken) {
+      console.error('AuthService: No refresh token found');
+      this.storageService.removeLocalItem(AUTH_TOKEN_KEY);
+      this.currentUserSubject.next(null);
+      this.isLoggedInSubject.next(false);
+      this.router.navigate(['/home/introduce-page']);
+      return;
+    }
 
-    this.currentUserSubject.next(null);
-    this.isLoggedInSubject.next(false);
-
-    // Optionally: send request to backend to invalidate token (may fail if token is already invalid/expired)
-    // Ensure AUTH_API.LOGOUT is defined if used
-    this.http.post(`${AUTH_API.LOGOUT}`, {}).pipe(
-      catchError(() => of(null)) // Ignore errors from the logout API call
-    ).subscribe();
-
-    // Navigate to the correct login route
-    this.router.navigate(['/auth/login']);
+    this.http.post(`${AUTH_API.LOGOUT}`, { refresh_token: refreshToken }).pipe(
+      catchError(() => of(null))
+    ).subscribe(() => {
+      // Sau khi gọi API logout xong, mới xóa token local
+      this.storageService.removeLocalItem(AUTH_TOKEN_KEY);
+      this.storageService.removeLocalItem(REFRESH_TOKEN_KEY);
+      this.storageService.removeLocalItem(USER_INFO_KEY);
+      this.currentUserSubject.next(null);
+      this.isLoggedInSubject.next(false);
+      this.router.navigate(['/home/introduce-page']);
+    });
   }
 
   ngOnDestroy(): void {
@@ -327,9 +322,21 @@ export class AuthService {
     }
   }
 
-  getProfile() {
-    this.usersService.getProfile().subscribe(res => {
-      this.currentUserSubject.next(res.data.user);
-    });
+  // Check if username exists
+  checkUsernameExists(username: string): Observable<boolean> {
+    return this.http.get<{ success: boolean, data: { exists: boolean } }>(`${AUTH_API.CHECK_USERNAME}?username=${username}`).pipe(
+      delay(500),
+      map(res => res.data.exists),
+      catchError(() => of(false))
+    );
+  }
+
+  // Check if email exists
+  checkEmailExists(email: string): Observable<boolean> {
+    return this.http.get<{success: boolean, data: { exists: boolean } }>(`${AUTH_API.CHECK_EMAIL}?email=${email}`).pipe(
+      delay(500),
+      map(res => res.data.exists),
+      catchError(() => of(false))
+    );
   }
 }

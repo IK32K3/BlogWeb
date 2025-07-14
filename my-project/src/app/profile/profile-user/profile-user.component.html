@@ -1,7 +1,7 @@
-<app-header></app-header> 
-<div class="bg-gray-300 min-h-screen">
-    <div class="container mx-auto py-6 px-4">
-        <div class="relative rounded-lg shadow-sm bg-white overflow-hidden">
+<div class="bg-gray-300 overflow-y-auto h-screen scale-z-100">
+    <app-header></app-header> 
+    <div class="container mx-auto py-6 px-4 mt-1">
+        <div class="relative rounded-lg shadow-sm bg-white overflow-x-hidden">
             <!-- Cover Photo -->
             <div class="h-48 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-t-lg overflow-hidden">
                 <img src="https://kenh14cdn.com/2017/powerrangers0828131280jpg-8dd373-1280w-1-1490847186920.jpg" 
@@ -72,25 +72,46 @@
                         <p class="mb-6">When you publish stories, they'll appear here.</p>
                         <button class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-300" routerLink="/blog/write-post">Write Your First Post</button>
                     </div>
-                    <div *ngFor="let post of userPosts" class="post-card flex flex-col rounded-lg shadow-sm overflow-hidden border border-gray-800 hover:shadow-md mb-10 last:mb-0">
+                    <div *ngFor="let post of userPosts" class="post-card flex flex-col rounded-lg shadow-sm overflow-hidden border border-gray-800 hover:shadow-md mb-10 last:mb-0 relative">
+                        <!-- Three-dot More button in top-right -->
+                        <button (click)="post.showMenu = !post.showMenu" class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-lg focus:outline-none px-2 py-1 rounded-full z-30">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <!-- Menu Edit/Delete -->
+                        <div *ngIf="post.showMenu" class="absolute right-3 top-10 bg-white border border-gray-200 rounded shadow-md z-40 flex flex-col min-w-[100px]">
+                            <button (click)="$event.stopPropagation(); editPost(post.id); post.showMenu = false" class="text-blue-600 hover:text-blue-800 text-sm font-medium px-4 py-2 text-left w-full"><i class="fas fa-edit"></i> Edit</button>
+                            <button (click)="$event.stopPropagation(); deletePost(post.id); post.showMenu = false" class="text-red-600 hover:text-red-800 text-sm font-medium px-4 py-2 text-left w-full"><i class="fas fa-trash-alt"></i> Delete</button>
+                        </div>
                         <a [routerLink]="['/posts', post.slug]" class="flex flex-col md:flex-row h-full">
                             <img [src]="post.thumbnail || 'https://placehold.co/400x200'" alt="Post Thumbnail" class="w-full md:w-40 h-32 md:h-auto object-cover flex-shrink-0 rounded-l-lg" />
-                            <div class="p-4 flex flex-col flex-grow">
+                            <div class="p-4 flex flex-col h-full flex-grow">
                                 <h3 class="text-lg font-bold mb-1 leading-tight text-gray-800">{{post.title}}</h3>
-                                <p class="text-sm text-gray-600 mb-3 flex-grow">{{post.content | slice:0:150}}...</p>
-                                <div class="flex items-center text-xs mt-auto pt-2 border-t border-gray-100">
+                                <span class="inline-flex items-center justify-center gap-1 text-xs font-semibold mb-2 px-2 py-1 w-28 border-solid border-2 rounded-full "
+                                      [ngClass]="{
+                                        'text-green-600 bg-green-100 border-green-400': post.status === 'published',
+                                        'text-yellow-700 bg-yellow-100 border-yellow-400': post.status === 'draft',
+                                        'text-gray-600 bg-gray-200 border-gray-400': post.status === 'archived'
+                                      }">
+                                  <ng-container [ngSwitch]="post.status">
+                                    <i *ngSwitchCase="'published'" class="fas fa-check-circle"></i>
+                                    <i *ngSwitchCase="'draft'" class="fas fa-pencil-alt"></i>
+                                    <i *ngSwitchCase="'archived'" class="fas fa-archive"></i>
+                                  </ng-container>
+                                  {{ post.status === 'published' ? 'Published' : (post.status === 'draft' ? 'Draft' : 'Archived') }}
+                                </span>
+                                <p class="text-sm text-gray-600 mb-3 flex-grow">{{post.description | slice:0:150}}...</p>
+                                <div class="flex items-center text-xs border-t border-gray-100 mt-auto pt-2">
                                     <div class="flex items-center gap-2 text-gray-500">
                                         <span><i class="fas fa-heart"></i> {{post.likes_count || 0}}</span>
                                         <span><i class="fas fa-comment"></i> {{post.comments_count || 0}}</span>
                                     </div>
                                 </div>
+                                <div class="flex items-center justify-end pt-1">
+                                    <span class="text-gray-500">{{post.createdAt | date: 'mediumDate'}}</span>
+                                </div>
                             </div>
                         </a>
-                        <div class="ml-auto flex items-center gap-3 mb-2 ">
-                            <button (click)="$event.stopPropagation(); editPost(post.id)" class="text-blue-600 hover:text-blue-800 text-sm font-medium"><i class="fas fa-edit"></i> Edit</button>
-                            <button (click)="$event.stopPropagation(); deletePost(post.id)" class="text-red-600 hover:text-red-800 text-sm font-medium"><i class="fas fa-trash-alt"></i> Delete</button>
-                            <span class="text-gray-500">{{post.createdAt | date: 'mediumDate'}}</span>
-                        </div>
+                       
                     </div>
                 </div>
 
@@ -118,6 +139,6 @@
             </div>
         </div>
     </div>
+    <app-footer></app-footer>
 </div>
-<app-footer></app-footer>
 <router-outlet></router-outlet>
